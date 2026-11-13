@@ -7,29 +7,30 @@
    1. VARIABLES GLOBALES (:root)
    -------------------------------------------------------------------------- */
 :root {
-  /* --- Paleta de Fondos (Tonos tiza, crema y arena) --- */
-  --bg-primary: #F9F8F6;          /* Tiza suave / Canvas principal */
-  --bg-surface: #F5F4F0;          /* Arena claro / Contenedores y secciones secundarias */
-  --bg-surface-warm: #EFECE6;     /* Lino crudo / Elementos destacados suaves */
-  --bg-overlay: rgba(249, 248, 246, 0.85);
+  /* --- Paleta de Fondos (Tonos Lino Avena, Arena Cálida y Travertino) --- */
+  --bg-primary: #F3EFE8;          /* Lino avena cálido / Canvas orgánico moderno */
+  --bg-surface: #EAE3D8;          /* Arena travertino suave / Secciones y bloques */
+  --bg-surface-warm: #E3D9CC;     /* Lino tostado / Elementos destacados suaves */
+  --bg-card: #FAF8F4;             /* Tiza cálida luminosa / Elementos flotantes */
+  --bg-overlay: rgba(243, 239, 232, 0.94);
 
   /* --- Tipografía y Contraste de Texto --- */
-  --text-primary: #2C2A29;        /* Carbón cálido / Gris oscuro profundo */
-  --text-secondary: #635E59;      /* Arcilla suave / Párrafos y subtítulos */
-  --text-muted: #8E8881;          /* Tono lino neutro / Detalles y metadata */
-  --text-inverted: #F9F8F6;       /* Texto claro sobre fondos oscuros */
+  --text-primary: #2B2625;        /* Carbón cálido / Gris oscuro profundo */
+  --text-secondary: #5F5852;      /* Arcilla suave / Párrafos y subtítulos */
+  --text-muted: #8A837A;          /* Tono lino neutro / Detalles y metadata */
+  --text-inverted: #FAF8F4;       /* Texto claro sobre fondos oscuros */
 
   /* --- Acentos Tierra Sutiles --- */
-  --accent-terracotta: #A4634E;   /* Terracota artesanal suave */
-  --accent-terracotta-hover: #8B4F3D;
+  --accent-terracotta: #A45A44;   /* Terracota artesanal suave */
+  --accent-terracotta-hover: #8C4733;
   --accent-clay: #C4987E;         /* Arcilla cocida / tono cálido */
   --accent-linen: #D8CBC0;        /* Fibra de lino natural / bordes sutiles */
   --accent-sage: #8C9986;         /* Verde salvia suave / Acento vegetal tenue */
   --accent-sand: #E5DCCE;         /* Arena cálida */
 
   /* --- Bordes y Delimitadores --- */
-  --border-subtle: rgba(44, 42, 41, 0.08);
-  --border-medium: rgba(44, 42, 41, 0.16);
+  --border-subtle: rgba(54, 45, 40, 0.09);
+  --border-medium: rgba(54, 45, 40, 0.16);
   --border-focus: var(--accent-terracotta);
 
   /* --- Tipografías (Google Fonts) --- */
@@ -97,6 +98,11 @@ body {
   line-height: 1.7;
   color: var(--text-primary);
   background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(ellipse at 88% 8%, rgba(228, 218, 204, 0.6) 0%, transparent 60%),
+    radial-gradient(ellipse at 10% 35%, rgba(235, 224, 210, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 70%, rgba(226, 213, 197, 0.45) 0%, transparent 60%);
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
