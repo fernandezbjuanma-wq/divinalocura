@@ -863,7 +863,89 @@ ul, ol {
 }
 
 /* --------------------------------------------------------------------------
-   12. BANNER DE CONTACTO WHATSAPP DIRECTO
+   12. SECCIÓN: FEED DE INSTAGRAM DE ELENA
+   -------------------------------------------------------------------------- */
+.instagram-feed {
+  padding: var(--space-4xl) 0;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.instagram-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.instagram-post {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  display: block;
+  border: 1px solid var(--border-subtle);
+}
+
+.instagram-post__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+}
+
+.instagram-post__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(44, 42, 41, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.instagram-post:hover .instagram-post__overlay {
+  opacity: 1;
+}
+
+.instagram-post:hover .instagram-post__img {
+  transform: scale(1.06);
+}
+
+.instagram-cta {
+  text-align: center;
+}
+
+.btn--instagram {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  padding: 0.95rem 2.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-smooth);
+}
+
+.btn--instagram:hover {
+  background-color: #E1306C;
+  border-color: #E1306C;
+  color: #FFFFFF;
+  box-shadow: 0 4px 20px rgba(225, 48, 108, 0.28);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   13. BANNER DE CONTACTO WHATSAPP DIRECTO
    -------------------------------------------------------------------------- */
 .whatsapp-banner {
   padding: var(--space-3xl) 0;
@@ -998,6 +1080,10 @@ ul, ol {
   .catalog-item--medium {
     grid-column: span 6;
   }
+
+  .instagram-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 992px) {
@@ -1059,6 +1145,11 @@ ul, ol {
     overflow-x: auto;
     padding-bottom: var(--space-2xs);
     white-space: nowrap;
+  }
+
+  .instagram-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xs);
   }
 
   .whatsapp-banner__inner {
