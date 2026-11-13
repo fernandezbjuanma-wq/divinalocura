@@ -112,11 +112,11 @@
 
       <!-- Contenido Editorial Central -->
       <div class="hero__editorial-content">
-        <span class="hero__eyebrow-zh">CONFECCIÓN ARTESANAL &middot; BUENOS AIRES</span>
-        <h1 class="hero__title-zh">El arte del detalle. Diseño hecho a mano para abrazar tu hogar.</h1>
-        <p class="hero__tagline-zh">Textiles con alma. Organización y calidez para tu día a día.</p>
+        <span class="hero__eyebrow-zh" id="hero-eyebrow">CONFECCIÓN ARTESANAL &middot; BUENOS AIRES</span>
+        <h1 class="hero__title-zh" id="hero-title">El arte del detalle. Diseño hecho a mano para abrazar tu hogar.</h1>
+        <p class="hero__tagline-zh" id="hero-tagline">Textiles con alma. Organización y calidez para tu día a día.</p>
         <a href="#catalogo" class="btn btn--hero-zh">
-          <span>Explorar la Colección</span>
+          <span id="hero-cta-text">Explorar la Colección</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </a>
       </div>
@@ -137,9 +137,9 @@
       <div class="container">
         
         <header class="section-header">
-          <span class="section-eyebrow">Explorar por Colección</span>
+          <span class="section-eyebrow" id="categories-eyebrow">Explorar por Colección</span>
           <h2 class="section-title" id="previews-title">Categorías Artesanales</h2>
-          <p class="section-desc">Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.</p>
+          <p class="section-desc" id="categories-desc">Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.</p>
         </header>
 
         <!-- Cuadros con Imágenes de Vista Previa (Grid de 6 Columnas como en Anthropologie) -->
@@ -197,9 +197,9 @@
         
         <div class="catalog-header">
           <div class="catalog-header__text">
-            <span class="section-eyebrow">Confección Auténtica de Elena</span>
+            <span class="section-eyebrow" id="catalog-eyebrow">Confección Auténtica de Elena</span>
             <h2 class="section-title" id="catalog-title">Colección de Taller</h2>
-            <p class="section-desc">Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos.</p>
+            <p class="section-desc" id="catalog-desc">Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos.</p>
           </div>
 
           <!-- Botonera de Filtros Interactiva -->
@@ -469,25 +469,25 @@
     <section class="about-section" id="sobre-elena" aria-labelledby="about-title">
       <div class="container about__inner">
         <div class="about__text">
-          <span class="section-eyebrow">Manos Creadoras</span>
+          <span class="section-eyebrow" id="about-eyebrow">Manos Creadoras</span>
           <h2 class="section-title" id="about-title">Confeccionado por Elena</h2>
-          <p class="about__lead">
+          <p class="about__lead" id="about-lead">
             Detrás de cada dobladillo, cada cierre y cada elección de tela está la pasión de Elena por transformar fibras nobles en objetos que brindan serenidad y calidez.
           </p>
-          <p class="about__body">
+          <p class="about__body" id="about-body">
             En <strong>Divina Locura Deco</strong> no creemos en la producción masiva. Cada pieza se confecciona individualmente en nuestro taller, prelavando las telas para garantizar que mantengan su textura y dimensión original lavado tras lavado.
           </p>
           <div class="about__cta">
             <a href="#catalogo" class="btn btn--secondary">
-              <span>Explorar la Colección Completa</span>
+              <span id="about-cta-text">Explorar la Colección Completa</span>
             </a>
           </div>
         </div>
         <div class="about__image-card">
           <img src="assets/images/hero-textile.jpg" alt="Taller de costura artesanal de Elena" class="about__img" loading="lazy" />
           <div class="about__quote">
-            <p>&ldquo;Coser es una forma de cuidar a quienes habitan el hogar.&rdquo;</p>
-            <span>&mdash; Elena</span>
+            <p id="about-quote">&ldquo;Coser es una forma de cuidar a quienes habitan el hogar.&rdquo;</p>
+            <span id="about-author">&mdash; Elena</span>
           </div>
         </div>
       </div>
@@ -497,9 +497,9 @@
     <section class="spaces-section" id="espacios" aria-labelledby="spaces-title">
       <div class="container">
         <header class="section-header">
-          <span class="section-eyebrow">Atmósferas &amp; Calidez &middot; Inspiración Zara Home &amp; Anthropologie</span>
+          <span class="section-eyebrow" id="spaces-eyebrow">Atmósferas &amp; Calidez &middot; Inspiración Zara Home &amp; Anthropologie</span>
           <h2 class="section-title" id="spaces-title">Espacios que Inspiran Calma</h2>
-          <p class="section-desc">Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa.</p>
+          <p class="section-desc" id="spaces-desc">Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa.</p>
         </header>
 
         <div class="spaces-grid">
@@ -554,7 +554,7 @@
 
         <div class="spaces-cta">
           <a href="#contacto" class="btn btn--secondary">
-            <span>Consultar Asesoramiento Textil para tu Espacio &rarr;</span>
+            <span id="spaces-cta-text">Consultar Asesoramiento Textil para tu Espacio &rarr;</span>
           </a>
         </div>
       </div>
@@ -564,9 +564,9 @@
     <section class="whatsapp-banner" id="contacto">
       <div class="container whatsapp-banner__inner">
         <div class="whatsapp-banner__content">
-          <span class="whatsapp-banner__eyebrow">¿Tienes una medida especial o consulta?</span>
-          <h2 class="whatsapp-banner__title">Charlemos directamente por WhatsApp</h2>
-          <p class="whatsapp-banner__text">
+          <span class="whatsapp-banner__eyebrow" id="wa-banner-eyebrow">¿Tienes una medida especial o consulta?</span>
+          <h2 class="whatsapp-banner__title" id="wa-banner-title">Charlemos directamente por WhatsApp</h2>
+          <p class="whatsapp-banner__text" id="wa-banner-desc">
             Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio.
           </p>
         </div>
@@ -575,7 +575,7 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
             </svg>
-            <span>Escribir a Elena</span>
+            <span id="wa-banner-btn-text">Escribir a Elena</span>
           </button>
         </div>
       </div>
@@ -590,7 +590,7 @@
         <div class="footer-brand">
           <span class="brand-name">Divina Locura</span>
           <span class="brand-tag">DECO</span>
-          <p>Textiles artesanales y piezas utilitarias en tela por Elena.</p>
+          <p id="footer-brand-desc">Textiles artesanales y piezas utilitarias en tela por Elena.</p>
         </div>
         <div class="footer-links">
           <a href="#categorias">Categorías</a>
@@ -604,7 +604,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-copy">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
+        <p class="footer-copy" id="footer-copy-text">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
       </div>
     </div>
   </footer>
@@ -1237,27 +1237,214 @@
     <div class="admin-modal__card admin-modal__card--wide">
       <div class="admin-modal__header">
         <div class="profile-badge-inline profile-badge--juanma">💻 Juanma &middot; Programación &amp; Sistema</div>
-        <h3 class="admin-modal__title">Configuración del Sitio Web</h3>
-        <p class="admin-modal__desc">Ajusta los parámetros técnicos de la tienda, datos de contacto, enlaces y sincronización con GitHub.</p>
+        <h3 class="admin-modal__title">Configuración del Sitio Web &amp; Textos</h3>
+        <p class="admin-modal__desc">Personaliza los títulos, frases, datos de contacto, enlaces y sincronización con GitHub para toda la tienda.</p>
       </div>
 
       <form id="dev-settings-form">
-        <div class="admin-form-group">
-          <label for="setting-whatsapp" class="admin-label">Número de WhatsApp (Receptor de Pedidos de Clientes)</label>
-          <input type="text" id="setting-whatsapp" class="admin-input" placeholder="Ej: 5491100000000 (sin espacios ni guiones)" />
-          <small style="color:var(--text-muted); font-size:0.75rem;">A este número llegarán todos los pedidos que los clientes hagan desde las fichas de productos.</small>
+        <!-- 1. Contacto & Redes -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">📱 Parámetros de Contacto &amp; Redes</h4>
+          <p class="admin-settings-section__desc">Configura los canales directos para la recepción de pedidos de clientes y enlaces sociales.</p>
+          
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-whatsapp" class="admin-label">WhatsApp Receptor de Pedidos</label>
+              <input type="text" id="setting-whatsapp" class="admin-input" placeholder="Ej: 5491100000000 (sin espacios ni guiones)" />
+              <small style="color:var(--text-muted); font-size:0.72rem;">Número al que se envían los pedidos desde la bolsa y botones directos.</small>
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-instagram" class="admin-label">Usuario de Instagram (@)</label>
+              <input type="text" id="setting-instagram" class="admin-input" placeholder="divina.locura.deco" />
+              <small style="color:var(--text-muted); font-size:0.72rem;">Actualiza automáticamente todos los links de Instagram de la web.</small>
+            </div>
+          </div>
         </div>
 
-        <div class="admin-form-group">
-          <label for="setting-announcement" class="admin-label">Texto de la Barra de Anuncios Superior</label>
-          <input type="text" id="setting-announcement" class="admin-input" placeholder="Ej: Confección artesanal &middot; Piezas únicas elaboradas a fuego lento por Elena" />
+        <!-- 2. Portada & Hero (Zara Home inspiration) -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🏛️ Portada Principal &amp; Hero</h4>
+          <p class="admin-settings-section__desc">Títulos y frases de impacto al ingresar a la tienda.</p>
+          
+          <div class="admin-form-group">
+            <label for="setting-announcement" class="admin-label">Barra Superior de Anuncios</label>
+            <input type="text" id="setting-announcement" class="admin-input" placeholder="Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena" />
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-hero-eyebrow" class="admin-label">Antetítulo / Eyebrow Hero</label>
+              <input type="text" id="setting-hero-eyebrow" class="admin-input" placeholder="CONFECCIÓN ARTESANAL · BUENOS AIRES" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-hero-cta" class="admin-label">Texto del Botón CTA Portada</label>
+              <input type="text" id="setting-hero-cta" class="admin-input" placeholder="Explorar la Colección" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-hero-title" class="admin-label">Título Principal (H1) Hero</label>
+            <input type="text" id="setting-hero-title" class="admin-input" placeholder="El arte del detalle. Diseño hecho a mano para abrazar tu hogar." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-hero-tagline" class="admin-label">Bajada / Frase Inspiracional Hero</label>
+            <input type="text" id="setting-hero-tagline" class="admin-input" placeholder="Textiles con alma. Organización y calidez para tu día a día." />
+          </div>
         </div>
 
-        <!-- Sincronización con GitHub & PAT -->
+        <!-- 3. Categorías & Catálogo de Taller -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🧵 Categorías &amp; Catálogo Lookbook</h4>
+          <p class="admin-settings-section__desc">Encabezados para las secciones de colecciones y grilla de productos de Elena.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-cat-eyebrow" class="admin-label">Antetítulo Categorías</label>
+              <input type="text" id="setting-cat-eyebrow" class="admin-input" placeholder="Explorar por Colección" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-cat-title" class="admin-label">Título Categorías</label>
+              <input type="text" id="setting-cat-title" class="admin-input" placeholder="Categorías Artesanales" />
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label for="setting-cat-desc" class="admin-label">Descripción Categorías</label>
+            <input type="text" id="setting-cat-desc" class="admin-input" placeholder="Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena." />
+          </div>
+
+          <hr style="border:0; border-top:1px dashed var(--border-medium); margin:1rem 0;" />
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-catalog-eyebrow" class="admin-label">Antetítulo Catálogo</label>
+              <input type="text" id="setting-catalog-eyebrow" class="admin-input" placeholder="Confección Auténtica de Elena" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-catalog-title" class="admin-label">Título Catálogo</label>
+              <input type="text" id="setting-catalog-title" class="admin-input" placeholder="Colección de Taller" />
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label for="setting-catalog-desc" class="admin-label">Descripción Catálogo</label>
+            <input type="text" id="setting-catalog-desc" class="admin-input" placeholder="Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos." />
+          </div>
+        </div>
+
+        <!-- 4. Sección Sobre Elena (El Taller) -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🌸 El Taller de Elena (Historia de Marca)</h4>
+          <p class="admin-settings-section__desc">La narrativa artesanal y la filosofía de trabajo de Elena.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-about-eyebrow" class="admin-label">Antetítulo Sección</label>
+              <input type="text" id="setting-about-eyebrow" class="admin-input" placeholder="Manos Creadoras" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-about-title" class="admin-label">Título Sección</label>
+              <input type="text" id="setting-about-title" class="admin-input" placeholder="Confeccionado por Elena" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-lead" class="admin-label">Párrafo Principal (Destacado)</label>
+            <textarea id="setting-about-lead" class="admin-textarea" rows="2" placeholder="Detrás de cada dobladillo, cada cierre y cada elección de tela..."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-body" class="admin-label">Párrafo Secundario (Filosofía de Taller)</label>
+            <textarea id="setting-about-body" class="admin-textarea" rows="3" placeholder="En Divina Locura Deco no creemos en la producción masiva..."></textarea>
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-about-quote" class="admin-label">Frase / Cita Célebre</label>
+              <input type="text" id="setting-about-quote" class="admin-input" placeholder="“Coser es una forma de cuidar a quienes habitan el hogar.”" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-about-author" class="admin-label">Firma de la Cita</label>
+              <input type="text" id="setting-about-author" class="admin-input" placeholder="— Elena" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-cta" class="admin-label">Texto del Botón Explorar</label>
+            <input type="text" id="setting-about-cta" class="admin-input" placeholder="Explorar la Colección Completa" />
+          </div>
+        </div>
+
+        <!-- 5. Espacios & Estilismo -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🌿 Espacios &amp; Estilismo (Atmósferas)</h4>
+          <p class="admin-settings-section__desc">Encabezado y llamado a la acción de la sección de lifestyle.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-spaces-eyebrow" class="admin-label">Antetítulo Espacios</label>
+              <input type="text" id="setting-spaces-eyebrow" class="admin-input" placeholder="Atmósferas &amp; Calidez · Inspiración Zara Home &amp; Anthropologie" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-spaces-title" class="admin-label">Título Espacios</label>
+              <input type="text" id="setting-spaces-title" class="admin-input" placeholder="Espacios que Inspiran Calma" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-spaces-desc" class="admin-label">Descripción Espacios</label>
+            <input type="text" id="setting-spaces-desc" class="admin-input" placeholder="Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-spaces-cta" class="admin-label">Texto del Botón de Asesoramiento</label>
+            <input type="text" id="setting-spaces-cta" class="admin-input" placeholder="Consultar Asesoramiento Textil para tu Espacio →" />
+          </div>
+        </div>
+
+        <!-- 6. Banner WhatsApp & Footer -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">💬 Banner WhatsApp &amp; Pie de Página</h4>
+          <p class="admin-settings-section__desc">Mensajes de cierre y textos del pie de página.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-wa-banner-eyebrow" class="admin-label">Antetítulo Banner WhatsApp</label>
+              <input type="text" id="setting-wa-banner-eyebrow" class="admin-input" placeholder="¿Tienes una medida especial o consulta?" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-wa-banner-title" class="admin-label">Título Banner WhatsApp</label>
+              <input type="text" id="setting-wa-banner-title" class="admin-input" placeholder="Charlemos directamente por WhatsApp" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-wa-banner-desc" class="admin-label">Descripción Banner WhatsApp</label>
+            <textarea id="setting-wa-banner-desc" class="admin-textarea" rows="2" placeholder="Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-wa-banner-btn" class="admin-label">Texto del Botón Banner WhatsApp</label>
+            <input type="text" id="setting-wa-banner-btn" class="admin-input" placeholder="Escribir a Elena" />
+          </div>
+
+          <hr style="border:0; border-top:1px dashed var(--border-medium); margin:1rem 0;" />
+
+          <div class="admin-form-group">
+            <label for="setting-footer-desc" class="admin-label">Descripción de Marca en el Pie de Página</label>
+            <input type="text" id="setting-footer-desc" class="admin-input" placeholder="Textiles artesanales y piezas utilitarias en tela por Elena." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-footer-copy" class="admin-label">Línea de Copyright &amp; Créditos</label>
+            <input type="text" id="setting-footer-copy" class="admin-input" placeholder="© 2026 Divina Locura Deco — Confección artesanal por Elena. Diseñado con calidez &amp; dedicación." />
+          </div>
+        </div>
+
+        <!-- 7. Sincronización con GitHub & PAT -->
         <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-sm); border:1px solid var(--border-medium); margin:1.25rem 0;">
           <h4 style="font-family:var(--font-serif); font-size:1.05rem; margin-bottom:0.4rem; color:var(--text-primary);">🚀 Sincronización Directa con GitHub Pages</h4>
           <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.45; margin-bottom:0.75rem;">
-            Ingresa tu GitHub Personal Access Token (PAT) con permisos de <code>repo</code> para enviar los cambios de productos directamente a <code>fernandezbjuanma-wq/divinalocura</code> (rama main).
+            Ingresa tu GitHub Personal Access Token (PAT) con permisos de <code>repo</code> para enviar los productos y configuración de textos directamente a <code>fernandezbjuanma-wq/divinalocura</code> (rama main).
           </p>
           <input type="password" id="setting-gh-token" class="admin-input" placeholder="github_pat_... o ghp_..." />
           <div style="display:flex; gap:0.5rem; margin-top:0.6rem; flex-wrap:wrap;">
@@ -1267,6 +1454,9 @@
             <button type="button" class="btn btn--secondary" id="btn-download-backup" style="font-size:0.8rem; padding:0.5rem 1rem;">
               <span>📥 Descargar products-data.js</span>
             </button>
+            <button type="button" class="btn btn--secondary" id="btn-reset-texts" style="font-size:0.8rem; padding:0.5rem 1rem; color:var(--accent-terracotta);">
+              <span>✍️ Restablecer Textos por Defecto</span>
+            </button>
             <button type="button" class="btn btn--secondary" id="btn-reset-factory" style="font-size:0.8rem; padding:0.5rem 1rem; color:#ED4956; border-color:rgba(237,73,86,0.3);">
               <span>🔄 Restablecer Catálogo Original</span>
             </button>
@@ -1275,7 +1465,7 @@
 
         <div class="admin-modal__buttons">
           <button type="button" class="btn btn--secondary" id="dev-settings-close-btn">Cerrar</button>
-          <button type="submit" class="btn btn--primary" id="dev-settings-save-btn">Guardar Ajustes</button>
+          <button type="submit" class="btn btn--primary" id="dev-settings-save-btn">Guardar Ajustes &amp; Textos</button>
         </div>
       </form>
     </div>

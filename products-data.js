@@ -1,7 +1,41 @@
 /**
- * Divina Locura Deco - Base de Datos Inicial de Productos
- * Contiene la información de catálogo, fotos multivista y posteo estilo Instagram para cada producto.
+ * Divina Locura Deco - Base de Datos de Productos & Configuración
+ * Contiene la información de catálogo, fotos multivista y textos editoriales.
  */
+
+const INITIAL_SITE_SETTINGS = {
+  whatsapp_phone: "5491100000000",
+  instagram_user: "divina.locura.deco",
+  announcement: "Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena",
+  gh_token: "",
+  hero_eyebrow: "CONFECCIÓN ARTESANAL · BUENOS AIRES",
+  hero_title: "El arte del detalle. Diseño hecho a mano para abrazar tu hogar.",
+  hero_tagline: "Textiles con alma. Organización y calidez para tu día a día.",
+  hero_cta: "Explorar la Colección",
+  categories_eyebrow: "Explorar por Colección",
+  categories_title: "Categorías Artesanales",
+  categories_desc: "Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.",
+  catalog_eyebrow: "Confección Auténtica de Elena",
+  catalog_title: "Colección de Taller",
+  catalog_desc: "Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos.",
+  about_eyebrow: "Manos Creadoras",
+  about_title: "Confeccionado por Elena",
+  about_lead: "Detrás de cada dobladillo, cada cierre y cada elección de tela está la pasión de Elena por transformar fibras nobles en objetos que brindan serenidad y calidez.",
+  about_body: "En Divina Locura Deco no creemos en la producción masiva. Cada pieza se confecciona individualmente en nuestro taller, prelavando las telas para garantizar que mantengan su textura y dimensión original lavado tras lavado.",
+  about_quote: "“Coser es una forma de cuidar a quienes habitan el hogar.”",
+  about_author: "— Elena",
+  about_cta: "Explorar la Colección Completa",
+  spaces_eyebrow: "Atmósferas & Calidez · Inspiración Zara Home & Anthropologie",
+  spaces_title: "Espacios que Inspiran Calma",
+  spaces_desc: "Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa.",
+  spaces_cta: "Consultar Asesoramiento Textil para tu Espacio →",
+  wa_banner_eyebrow: "¿Tienes una medida especial o consulta?",
+  wa_banner_title: "Charlemos directamente por WhatsApp",
+  wa_banner_desc: "Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio.",
+  wa_banner_btn: "Escribir a Elena",
+  footer_desc: "Textiles artesanales y piezas utilitarias en tela por Elena.",
+  footer_copy: "© 2026 Divina Locura Deco — Confección artesanal por Elena. Diseñado con calidez & dedicación."
+};
 
 const INITIAL_PRODUCTS = [
   {

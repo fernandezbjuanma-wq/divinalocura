@@ -26,10 +26,47 @@ document.addEventListener('DOMContentLoaded', () => {
     whatsapp_phone: '5491100000000',
     instagram_user: 'divina.locura.deco',
     announcement: 'Confección artesanal \u00B7 Piezas únicas elaboradas a fuego lento por Elena',
-    gh_token: ''
+    gh_token: '',
+    // Hero & Portada
+    hero_eyebrow: 'CONFECCIÓN ARTESANAL \u00B7 BUENOS AIRES',
+    hero_title: 'El arte del detalle. Diseño hecho a mano para abrazar tu hogar.',
+    hero_tagline: 'Textiles con alma. Organización y calidez para tu día a día.',
+    hero_cta: 'Explorar la Colección',
+    // Categorías
+    categories_eyebrow: 'Explorar por Colección',
+    categories_title: 'Categorías Artesanales',
+    categories_desc: 'Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.',
+    // Catálogo
+    catalog_eyebrow: 'Confección Auténtica de Elena',
+    catalog_title: 'Colección de Taller',
+    catalog_desc: 'Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos.',
+    // Sobre Elena (El Taller)
+    about_eyebrow: 'Manos Creadoras',
+    about_title: 'Confeccionado por Elena',
+    about_lead: 'Detrás de cada dobladillo, cada cierre y cada elección de tela está la pasión de Elena por transformar fibras nobles en objetos que brindan serenidad y calidez.',
+    about_body: 'En Divina Locura Deco no creemos en la producción masiva. Cada pieza se confecciona individualmente en nuestro taller, prelavando las telas para garantizar que mantengan su textura y dimensión original lavado tras lavado.',
+    about_quote: '\u201CCoser es una forma de cuidar a quienes habitan el hogar.\u201D',
+    about_author: '\u2014 Elena',
+    about_cta: 'Explorar la Colección Completa',
+    // Espacios & Estilismo
+    spaces_eyebrow: 'Atmósferas & Calidez \u00B7 Inspiración Zara Home & Anthropologie',
+    spaces_title: 'Espacios que Inspiran Calma',
+    spaces_desc: 'Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa.',
+    spaces_cta: 'Consultar Asesoramiento Textil para tu Espacio \u2192',
+    // Banner WhatsApp & Footer
+    wa_banner_eyebrow: '¿Tienes una medida especial o consulta?',
+    wa_banner_title: 'Charlemos directamente por WhatsApp',
+    wa_banner_desc: 'Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio.',
+    wa_banner_btn: 'Escribir a Elena',
+    footer_desc: 'Textiles artesanales y piezas utilitarias en tela por Elena.',
+    footer_copy: '\u00A9 2026 Divina Locura Deco \u2014 Confección artesanal por Elena. Diseñado con calidez & dedicación.'
   };
 
-  // Cargar Ajustes
+  // Cargar Ajustes (integrando posibles ajustes precargados en products-data.js)
+  if (typeof INITIAL_SITE_SETTINGS !== 'undefined' && INITIAL_SITE_SETTINGS) {
+    Object.assign(DEFAULT_SETTINGS, INITIAL_SITE_SETTINGS);
+  }
+
   let settings = { ...DEFAULT_SETTINGS };
   try {
     const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
@@ -110,14 +147,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const topAnnouncementText = document.getElementById('top-announcement-text');
   const toastContainer = document.getElementById('toast-container');
 
-  // Aplicar ajustes visuales iniciales
+  // Helper para asignar texto de forma segura si el elemento existe
+  function setElText(id, text) {
+    if (!id || typeof text !== 'string') return;
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  // Aplicar ajustes visuales y textos en toda la web
   function applySystemSettings() {
-    if (topAnnouncementText && settings.announcement) {
-      topAnnouncementText.textContent = settings.announcement;
-    }
+    setElText('top-announcement-text', settings.announcement);
+
+    // Hero & Portada
+    setElText('hero-eyebrow', settings.hero_eyebrow);
+    setElText('hero-title', settings.hero_title);
+    setElText('hero-tagline', settings.hero_tagline);
+    setElText('hero-cta-text', settings.hero_cta);
+
+    // Categorías
+    setElText('categories-eyebrow', settings.categories_eyebrow);
+    setElText('previews-title', settings.categories_title);
+    setElText('categories-desc', settings.categories_desc);
+
+    // Catálogo
+    setElText('catalog-eyebrow', settings.catalog_eyebrow);
+    setElText('catalog-title', settings.catalog_title);
+    setElText('catalog-desc', settings.catalog_desc);
+
+    // Sobre Elena
+    setElText('about-eyebrow', settings.about_eyebrow);
+    setElText('about-title', settings.about_title);
+    setElText('about-lead', settings.about_lead);
+    setElText('about-body', settings.about_body);
+    setElText('about-quote', settings.about_quote);
+    setElText('about-author', settings.about_author);
+    setElText('about-cta-text', settings.about_cta);
+
+    // Espacios & Estilismo
+    setElText('spaces-eyebrow', settings.spaces_eyebrow);
+    setElText('spaces-title', settings.spaces_title);
+    setElText('spaces-desc', settings.spaces_desc);
+    setElText('spaces-cta-text', settings.spaces_cta);
+
+    // Banner WhatsApp & Footer
+    setElText('wa-banner-eyebrow', settings.wa_banner_eyebrow);
+    setElText('wa-banner-title', settings.wa_banner_title);
+    setElText('wa-banner-desc', settings.wa_banner_desc);
+    setElText('wa-banner-btn-text', settings.wa_banner_btn);
+    setElText('footer-brand-desc', settings.footer_desc);
+    setElText('footer-copy-text', settings.footer_copy);
+
     // Actualizar enlaces de Instagram en el sitio
     if (settings.instagram_user) {
-      const igUrl = `https://www.instagram.com/${settings.instagram_user.replace(/^@/, '')}`;
+      const igUser = settings.instagram_user.replace(/^@/, '');
+      const igUrl = `https://www.instagram.com/${igUser}`;
       document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
         a.href = igUrl;
       });
@@ -1036,21 +1119,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const devSettingsForm = document.getElementById('dev-settings-form');
   const devSettingsCloseBtn = document.getElementById('dev-settings-close-btn');
 
-  const settingWhatsapp = document.getElementById('setting-whatsapp');
-  const settingInstagram = document.getElementById('setting-instagram');
-  const settingAnnouncement = document.getElementById('setting-announcement');
-  const settingGhToken = document.getElementById('setting-gh-token');
-
   const btnSyncGithubDirect = document.getElementById('btn-sync-github-direct');
   const btnDownloadBackup = document.getElementById('btn-download-backup');
   const btnResetFactory = document.getElementById('btn-reset-factory');
+  const btnResetTexts = document.getElementById('btn-reset-texts');
+
+  // Mapeo completo de inputs del modal de ajustes <-> propiedades de settings
+  const SETTING_FIELD_MAP = [
+    { id: 'setting-whatsapp', key: 'whatsapp_phone' },
+    { id: 'setting-instagram', key: 'instagram_user' },
+    { id: 'setting-announcement', key: 'announcement' },
+    { id: 'setting-gh-token', key: 'gh_token' },
+    // Hero & Portada
+    { id: 'setting-hero-eyebrow', key: 'hero_eyebrow' },
+    { id: 'setting-hero-cta', key: 'hero_cta' },
+    { id: 'setting-hero-title', key: 'hero_title' },
+    { id: 'setting-hero-tagline', key: 'hero_tagline' },
+    // Categorías
+    { id: 'setting-cat-eyebrow', key: 'categories_eyebrow' },
+    { id: 'setting-cat-title', key: 'categories_title' },
+    { id: 'setting-cat-desc', key: 'categories_desc' },
+    // Catálogo
+    { id: 'setting-catalog-eyebrow', key: 'catalog_eyebrow' },
+    { id: 'setting-catalog-title', key: 'catalog_title' },
+    { id: 'setting-catalog-desc', key: 'catalog_desc' },
+    // Sobre Elena
+    { id: 'setting-about-eyebrow', key: 'about_eyebrow' },
+    { id: 'setting-about-title', key: 'about_title' },
+    { id: 'setting-about-lead', key: 'about_lead' },
+    { id: 'setting-about-body', key: 'about_body' },
+    { id: 'setting-about-quote', key: 'about_quote' },
+    { id: 'setting-about-author', key: 'about_author' },
+    { id: 'setting-about-cta', key: 'about_cta' },
+    // Espacios & Estilismo
+    { id: 'setting-spaces-eyebrow', key: 'spaces_eyebrow' },
+    { id: 'setting-spaces-title', key: 'spaces_title' },
+    { id: 'setting-spaces-desc', key: 'spaces_desc' },
+    { id: 'setting-spaces-cta', key: 'spaces_cta' },
+    // Banner WhatsApp & Footer
+    { id: 'setting-wa-banner-eyebrow', key: 'wa_banner_eyebrow' },
+    { id: 'setting-wa-banner-title', key: 'wa_banner_title' },
+    { id: 'setting-wa-banner-desc', key: 'wa_banner_desc' },
+    { id: 'setting-wa-banner-btn', key: 'wa_banner_btn' },
+    { id: 'setting-footer-desc', key: 'footer_desc' },
+    { id: 'setting-footer-copy', key: 'footer_copy' }
+  ];
 
   function openDevSettings() {
     if (!devSettingsModal) return;
-    if (settingWhatsapp) settingWhatsapp.value = settings.whatsapp_phone || '';
-    if (settingInstagram) settingInstagram.value = settings.instagram_user || '';
-    if (settingAnnouncement) settingAnnouncement.value = settings.announcement || '';
-    if (settingGhToken) settingGhToken.value = settings.gh_token || '';
+    SETTING_FIELD_MAP.forEach(({ id, key }) => {
+      const el = document.getElementById(id);
+      if (el) el.value = settings[key] || '';
+    });
     devSettingsModal.classList.add('is-open');
   }
 
@@ -1064,15 +1184,33 @@ document.addEventListener('DOMContentLoaded', () => {
   if (devSettingsForm) {
     devSettingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (settingWhatsapp) settings.whatsapp_phone = (settingWhatsapp.value || '').trim();
-      if (settingInstagram) settings.instagram_user = (settingInstagram.value || '').trim();
-      if (settingAnnouncement) settings.announcement = (settingAnnouncement.value || '').trim();
-      if (settingGhToken) settings.gh_token = (settingGhToken.value || '').trim();
+      SETTING_FIELD_MAP.forEach(({ id, key }) => {
+        const el = document.getElementById(id);
+        if (el) settings[key] = (el.value || '').trim();
+      });
 
       localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
       applySystemSettings();
       closeDevSettings();
-      showToast('⚙️ Configuración del sitio guardada correctamente.');
+      showToast('⚙️ Configuración y textos guardados correctamente.');
+    });
+  }
+
+  // Botón Restablecer Textos Originales
+  if (btnResetTexts) {
+    btnResetTexts.addEventListener('click', () => {
+      if (confirm('¿Restablecer los títulos y frases a los textos originales del taller?')) {
+        SETTING_FIELD_MAP.forEach(({ id, key }) => {
+          if (key !== 'whatsapp_phone' && key !== 'instagram_user' && key !== 'gh_token') {
+            settings[key] = DEFAULT_SETTINGS[key];
+            const el = document.getElementById(id);
+            if (el) el.value = DEFAULT_SETTINGS[key] || '';
+          }
+        });
+        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+        applySystemSettings();
+        showToast('✍️ Títulos y frases restaurados a los valores originales.');
+      }
     });
   }
 
@@ -1101,9 +1239,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function generateProductsDataJs() {
     return `/**
- * Divina Locura Deco - Base de Datos de Productos
+ * Divina Locura Deco - Base de Datos de Productos & Configuración
  * Generado automáticamente desde el Modo Administrador.
  */
+
+const INITIAL_SITE_SETTINGS = ${JSON.stringify(settings, null, 2)};
 
 const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
 `;

@@ -3611,3 +3611,29 @@ body.admin-mode-active .catalog-item__admin-bar {
 .btn-contact-client-wa:hover {
   background: #1EBE5D;
 }
+
+/* Paneles de Ajustes y Personalización de Textos (Admin Juanma) */
+.admin-settings-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-settings-section__title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-settings-section__desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 1rem;
+}
