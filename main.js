@@ -486,16 +486,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (drawerAdminBtn) {
-    drawerAdminBtn.addEventListener('click', () => {
-      closeSideDrawer();
-      openAdminLogin('team');
-    });
-  }
-
   if (headerLoginBtn) {
     headerLoginBtn.addEventListener('click', () => {
-      openAdminLogin('client');
+      openClientLogin();
     });
   }
 
@@ -651,10 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // =========================================================================
   // 6. SISTEMA DE PERFILES DE ADMINISTRACIÓN (ELENA & JUANMA)
+  //    ACCESO EXCLUSIVO DESDE EL PIE DE PÁGINA (ABAJO DEL TODO)
   // =========================================================================
   const openAdminBtn = document.getElementById('open-admin-btn');
-  const adminLoginModal = document.getElementById('admin-login-modal');
-  const adminLoginCancelBtn = document.getElementById('admin-login-cancel-btn');
+  const teamAdminModal = document.getElementById('team-admin-modal');
+  const teamAdminCancelBtn = document.getElementById('team-admin-cancel-btn');
 
   // Perfil Elena
   const passElenaInput = document.getElementById('pass-elena');
@@ -696,26 +690,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateElenaOrdersBadge === 'function') updateElenaOrdersBadge();
   }
 
-  function openAdminLogin(defaultTab = 'client') {
-    if (adminLoginModal) {
-      adminLoginModal.classList.add('is-open');
+  function openTeamAdminLogin() {
+    if (teamAdminModal) {
+      teamAdminModal.classList.add('is-open');
       if (passElenaInput) passElenaInput.value = '';
       if (passJuanmaInput) passJuanmaInput.value = '';
-
-      if (defaultTab === 'team' && tabBtnTeam) {
-        tabBtnTeam.click();
-      } else if (tabBtnClient) {
-        tabBtnClient.click();
-      }
     }
   }
 
-  function closeAdminLogin() {
-    if (adminLoginModal) adminLoginModal.classList.remove('is-open');
+  function closeTeamAdminLogin() {
+    if (teamAdminModal) teamAdminModal.classList.remove('is-open');
   }
 
-  if (openAdminBtn) openAdminBtn.addEventListener('click', openAdminLogin);
-  if (adminLoginCancelBtn) adminLoginCancelBtn.addEventListener('click', closeAdminLogin);
+  // Compatibilidad
+  function openAdminLogin() {
+    openTeamAdminLogin();
+  }
+  function closeAdminLogin() {
+    closeTeamAdminLogin();
+  }
+
+  if (openAdminBtn) openAdminBtn.addEventListener('click', openTeamAdminLogin);
+  if (teamAdminCancelBtn) teamAdminCancelBtn.addEventListener('click', closeTeamAdminLogin);
 
   // Login Elena
   if (btnLoginElena) {
@@ -724,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (PASSWORDS.elena.includes(pass) || pass === '') {
         currentRole = 'elena';
         localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
-        closeAdminLogin();
+        closeTeamAdminLogin();
         updateAdminUi();
         showToast('🌸 ¡Bienvenida Elena! Ya puedes publicar fotos y cambiar precios fácilmente.');
       } else {
@@ -746,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (PASSWORDS.juanma.includes(pass) || pass === '') {
         currentRole = 'juanma';
         localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
-        closeAdminLogin();
+        closeTeamAdminLogin();
         updateAdminUi();
         showToast('💻 ¡Modo Programador Activado! Acceso total a configuración, GitHub y respaldos.');
       } else {
@@ -776,13 +772,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeLookbookModal();
-      closeAdminLogin();
+      closeClientLogin();
+      closeTeamAdminLogin();
       closeProductEditor();
       closeDevSettings();
       closeGithubModal();
+      closeElenaTutorial();
+      closeElenaOrders();
     }
     if ((e.altKey && e.key.toLowerCase() === 'e') || (e.altKey && e.key.toLowerCase() === 'a')) {
-      openAdminLogin();
+      openTeamAdminLogin();
     }
   });
 
@@ -1231,13 +1230,11 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   // =========================================================================
-  // 11. SISTEMA DE CLIENTAS & AUTENTICACIÓN UNIFICADA
+  // 11. SISTEMA DE CLIENTAS & INICIO DE SESIÓN EXCLUSIVO CLIENTAS
   // =========================================================================
+  const clientLoginModal = document.getElementById('client-login-modal');
+  const clientLoginCancelBtn = document.getElementById('client-login-cancel-btn');
   const headerUserLabel = document.getElementById('header-user-label');
-  const tabBtnClient = document.getElementById('tab-btn-client');
-  const tabBtnTeam = document.getElementById('tab-btn-team');
-  const authPanelClient = document.getElementById('auth-panel-client');
-  const authPanelTeam = document.getElementById('auth-panel-team');
 
   const clientViewLoggedOut = document.getElementById('client-view-logged-out');
   const clientViewLoggedIn = document.getElementById('client-view-logged-in');
@@ -1255,6 +1252,18 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const clientOrdersList = document.getElementById('client-orders-list');
   const btnLogoutClient = document.getElementById('btn-logout-client');
   const btnOpenCartFromProfile = document.getElementById('btn-open-cart-from-profile');
+
+  function openClientLogin() {
+    if (clientLoginModal) clientLoginModal.classList.add('is-open');
+  }
+
+  function closeClientLogin() {
+    if (clientLoginModal) clientLoginModal.classList.remove('is-open');
+  }
+
+  if (clientLoginCancelBtn) {
+    clientLoginCancelBtn.addEventListener('click', closeClientLogin);
+  }
 
   function updateClientUi() {
     if (headerUserLabel) {
@@ -1316,33 +1325,6 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // Pestañas del Modal de Autenticación (Clientas vs Equipo)
-  if (tabBtnClient) {
-    tabBtnClient.addEventListener('click', () => {
-      tabBtnClient.classList.add('is-active');
-      tabBtnClient.setAttribute('aria-selected', 'true');
-      if (tabBtnTeam) {
-        tabBtnTeam.classList.remove('is-active');
-        tabBtnTeam.setAttribute('aria-selected', 'false');
-      }
-      if (authPanelClient) authPanelClient.style.display = 'block';
-      if (authPanelTeam) authPanelTeam.style.display = 'none';
-    });
-  }
-
-  if (tabBtnTeam) {
-    tabBtnTeam.addEventListener('click', () => {
-      tabBtnTeam.classList.add('is-active');
-      tabBtnTeam.setAttribute('aria-selected', 'true');
-      if (tabBtnClient) {
-        tabBtnClient.classList.remove('is-active');
-        tabBtnClient.setAttribute('aria-selected', 'false');
-      }
-      if (authPanelTeam) authPanelTeam.style.display = 'block';
-      if (authPanelClient) authPanelClient.style.display = 'none';
-    });
-  }
-
   // Guardar Registro de Clienta
   if (btnSaveClientAccount) {
     btnSaveClientAccount.addEventListener('click', () => {
@@ -1362,6 +1344,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       } catch (e) {}
 
       updateClientUi();
+      closeClientLogin();
       showToast(`🌸 ¡Bienvenida ${name}! Tus datos quedaron guardados.`);
     });
   }
@@ -1379,7 +1362,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   // Abrir Carrito desde el perfil
   if (btnOpenCartFromProfile) {
     btnOpenCartFromProfile.addEventListener('click', () => {
-      closeAdminLogin();
+      closeClientLogin();
       openCartDrawer();
     });
   }
@@ -1977,9 +1960,11 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     openLookbookModal,
     openInstagramModal: openLookbookModal, // Compatibilidad retroactiva
     closeLookbookModal,
-    openProductEditor,
-    closeProductEditor,
-    openAdminLogin,
+    openClientLogin,
+    closeClientLogin,
+    openTeamAdminLogin,
+    closeTeamAdminLogin,
+    openAdminLogin: openTeamAdminLogin,
     openCartDrawer,
     closeCartDrawer,
     addToCart,

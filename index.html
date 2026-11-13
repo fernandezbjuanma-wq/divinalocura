@@ -51,9 +51,7 @@
         </ul>
       </nav>
       <div class="side-drawer__footer">
-        <button type="button" class="btn-drawer-admin" id="drawer-admin-btn">
-          <span>🌸 Acceso Modo Admin (Elena / Juanma)</span>
-        </button>
+        <span class="side-drawer__brand-note">Confección artesanal &middot; Piezas únicas por Elena</span>
       </div>
     </div>
   </aside>
@@ -766,150 +764,141 @@
     </div>
   </div>
 
-  <!-- MODAL UNIFICADO: Mi Cuenta (Clientas) & Acceso Equipo (Elena / Juanma) -->
-  <div class="admin-modal" id="admin-login-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <!-- MODAL: MI CUENTA DE CLIENTA (INICIO DE SESIÓN & REGISTRO EXCLUSIVO CLIENTAS) -->
+  <div class="admin-modal" id="client-login-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="admin-modal__card admin-modal__card--profiles">
       
-      <!-- Pestañas de Cambio de Modo (Clienta vs Equipo) -->
-      <div class="auth-tabs" role="tablist">
-        <button type="button" class="auth-tab is-active" id="tab-btn-client" role="tab" aria-selected="true">
-          <span>👤 Soy Clienta (Mi Cuenta &amp; Pedidos)</span>
-        </button>
-        <button type="button" class="auth-tab" id="tab-btn-team" role="tab" aria-selected="false">
-          <span>🔑 Acceso Equipo (Elena &amp; Juanma)</span>
-        </button>
+      <!-- Estado NO Logueado: Registro / Inicio Rápido -->
+      <div id="client-view-logged-out" class="client-auth-box">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+          <span class="section-eyebrow" style="color:var(--accent-terracotta);">Bienvenida al Taller</span>
+          <h3 class="admin-modal__title" style="margin-top:0.25rem;">Mi Cuenta de Clienta</h3>
+          <p class="admin-modal__desc">Completá tus datos para agilizar tus pedidos de confección y recibir el seguimiento directo de Elena por WhatsApp o email.</p>
+        </div>
+
+        <form id="client-register-form" class="client-form" onsubmit="return false;">
+          <div class="client-form-grid">
+            <div class="admin-form-group">
+              <label for="reg-client-name" class="admin-label">Nombre y Apellido *</label>
+              <input type="text" id="reg-client-name" class="admin-input" placeholder="Ej: Mariana Gómez" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-phone" class="admin-label">WhatsApp / Teléfono *</label>
+              <input type="tel" id="reg-client-phone" class="admin-input" placeholder="Ej: 11 5555 5555" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-email" class="admin-label">Correo Electrónico (opcional)</label>
+              <input type="email" id="reg-client-email" class="admin-input" placeholder="ejemplo@correo.com" />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-address" class="admin-label">Dirección o Localidad de Entrega</label>
+              <input type="text" id="reg-client-address" class="admin-input" placeholder="Ej: Palermo, CABA / Rosario, Santa Fe" />
+            </div>
+          </div>
+
+          <div class="client-form-footer">
+            <button type="button" class="btn btn--profile btn--profile-elena" id="btn-save-client-account" style="width:100%;">
+              <span>🌸 Guardar mis datos e Ingresar</span>
+            </button>
+            <p class="client-privacy-note">Tus datos se guardan de forma segura en tu navegador para autocompletar tus futuras compras con Elena.</p>
+          </div>
+        </form>
       </div>
 
-      <!-- VISTA 1: ÁREA DE CLIENTAS (REGISTRO / MI CUENTA) -->
-      <div class="auth-panel auth-panel--client" id="auth-panel-client">
-        
-        <!-- Estado NO Logueado: Registro / Inicio Rápido -->
-        <div id="client-view-logged-out" class="client-auth-box">
-          <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
-            <span class="section-eyebrow" style="color:var(--accent-terracotta);">Bienvenida al Taller</span>
-            <h3 class="admin-modal__title" style="margin-top:0.25rem;">Mi Cuenta de Clienta</h3>
-            <p class="admin-modal__desc">Completá tus datos para agilizar tus pedidos de confección y recibir el seguimiento directo de Elena por WhatsApp o email.</p>
-          </div>
-
-          <form id="client-register-form" class="client-form" onsubmit="return false;">
-            <div class="client-form-grid">
-              <div class="admin-form-group">
-                <label for="reg-client-name" class="admin-label">Nombre y Apellido *</label>
-                <input type="text" id="reg-client-name" class="admin-input" placeholder="Ej: Mariana Gómez" required />
-              </div>
-
-              <div class="admin-form-group">
-                <label for="reg-client-phone" class="admin-label">WhatsApp / Teléfono *</label>
-                <input type="tel" id="reg-client-phone" class="admin-input" placeholder="Ej: 11 5555 5555" required />
-              </div>
-
-              <div class="admin-form-group">
-                <label for="reg-client-email" class="admin-label">Correo Electrónico (opcional)</label>
-                <input type="email" id="reg-client-email" class="admin-input" placeholder="ejemplo@correo.com" />
-              </div>
-
-              <div class="admin-form-group">
-                <label for="reg-client-address" class="admin-label">Dirección o Localidad de Entrega</label>
-                <input type="text" id="reg-client-address" class="admin-input" placeholder="Ej: Palermo, CABA / Rosario, Santa Fe" />
-              </div>
-            </div>
-
-            <div class="client-form-footer">
-              <button type="button" class="btn btn--profile btn--profile-elena" id="btn-save-client-account" style="width:100%;">
-                <span>🌸 Guardar mis datos e Ingresar</span>
-              </button>
-              <p class="client-privacy-note">Tus datos se guardan de forma segura en tu navegador para autocompletar tus futuras compras con Elena.</p>
-            </div>
-          </form>
+      <!-- Estado LOGUEADO: Perfil y Pedidos Anteriores -->
+      <div id="client-view-logged-in" class="client-auth-box" style="display:none;">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+          <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
+          <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
+          <p class="admin-modal__desc">Estos son tus datos para pedidos y el historial de tus creaciones encargadas a Elena.</p>
         </div>
 
-        <!-- Estado LOGUEADO: Perfil y Pedidos Anteriores -->
-        <div id="client-view-logged-in" class="client-auth-box" style="display:none;">
-          <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
-            <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
-            <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
-            <p class="admin-modal__desc">Estos son tus datos para pedidos y el historial de tus creaciones encargadas a Elena.</p>
+        <div class="client-profile-card">
+          <div class="client-profile-row">
+            <span class="client-profile-label">WhatsApp:</span>
+            <strong class="client-profile-val" id="logged-client-phone">-</strong>
           </div>
-
-          <div class="client-profile-card">
-            <div class="client-profile-row">
-              <span class="client-profile-label">WhatsApp:</span>
-              <strong class="client-profile-val" id="logged-client-phone">-</strong>
-            </div>
-            <div class="client-profile-row">
-              <span class="client-profile-label">Email:</span>
-              <span class="client-profile-val" id="logged-client-email">-</span>
-            </div>
-            <div class="client-profile-row">
-              <span class="client-profile-label">Entrega:</span>
-              <span class="client-profile-val" id="logged-client-address">-</span>
-            </div>
+          <div class="client-profile-row">
+            <span class="client-profile-label">Email:</span>
+            <span class="client-profile-val" id="logged-client-email">-</span>
           </div>
-
-          <div class="client-orders-history">
-            <h4 class="client-orders-title">Mis Pedidos Realizados</h4>
-            <div id="client-orders-list" class="client-orders-list">
-              <p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>
-            </div>
-          </div>
-
-          <div class="client-logged-actions">
-            <button type="button" class="btn btn--secondary" id="btn-open-cart-from-profile">
-              <span>🛍️ Ver mi Bolsa de Pedidos</span>
-            </button>
-            <button type="button" class="btn btn--admin-logout" id="btn-logout-client">
-              <span>Cerrar Sesión</span>
-            </button>
+          <div class="client-profile-row">
+            <span class="client-profile-label">Entrega:</span>
+            <span class="client-profile-val" id="logged-client-address">-</span>
           </div>
         </div>
 
+        <div class="client-orders-history">
+          <h4 class="client-orders-title">Mis Pedidos Realizados</h4>
+          <div id="client-orders-list" class="client-orders-list">
+            <p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>
+          </div>
+        </div>
+
+        <div class="client-logged-actions">
+          <button type="button" class="btn btn--secondary" id="btn-open-cart-from-profile">
+            <span>🛍️ Ver mi Bolsa de Pedidos</span>
+          </button>
+          <button type="button" class="btn btn--admin-logout" id="btn-logout-client">
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
       </div>
 
-      <!-- VISTA 2: ACCESO EQUIPO (ELENA & JUANMA) -->
-      <div class="auth-panel auth-panel--team" id="auth-panel-team" style="display:none;">
-        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.5rem;">
-          <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración</span>
-          <h3 class="admin-modal__title" style="margin-top:0.25rem;">¿Quién ingresa hoy?</h3>
-          <p class="admin-modal__desc" style="margin-bottom:0;">Selecciona el perfil según lo que desees realizar en la web:</p>
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
+        <button type="button" class="btn btn--secondary" id="client-login-cancel-btn">Volver a la Tienda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ACCESO EQUIPO (ELENA & JUANMA) - SÓLO ACCESIBLE DESDE EL FOOTER ABAJO DEL TODO -->
+  <div class="admin-modal" id="team-admin-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--profiles">
+      <div class="admin-modal__header" style="text-align:center; margin-bottom:1.5rem;">
+        <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración</span>
+        <h3 class="admin-modal__title" style="margin-top:0.25rem;">¿Quién ingresa hoy?</h3>
+        <p class="admin-modal__desc" style="margin-bottom:0;">Acceso restringido para gestión del taller y configuración técnica:</p>
+      </div>
+
+      <div class="profile-cards-grid">
+        <!-- PERFIL 1: ELENA (TALLER & CREACIONES) -->
+        <div class="profile-card profile-card--elena" id="profile-card-elena">
+          <div class="profile-card__badge">🌸 Perfil de Mamá</div>
+          <div class="profile-card__icon">🧵</div>
+          <h4 class="profile-card__name">Elena</h4>
+          <span class="profile-card__role">Taller &amp; Creaciones</span>
+          <p class="profile-card__desc">Subir fotos de nuevos productos, cambiar precios y descripciones de forma fácil y directa.</p>
+          
+          <div class="profile-card__form" id="form-role-elena">
+            <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (elena)" autocomplete="current-password" />
+            <button type="button" class="btn btn--profile btn--profile-elena" id="btn-login-elena">
+              <span>Entrar al Taller de Elena 🌸</span>
+            </button>
+          </div>
         </div>
 
-        <div class="profile-cards-grid">
-          <!-- PERFIL 1: ELENA (TALLER & CREACIONES) -->
-          <div class="profile-card profile-card--elena" id="profile-card-elena">
-            <div class="profile-card__badge">🌸 Perfil de Mamá</div>
-            <div class="profile-card__icon">🧵</div>
-            <h4 class="profile-card__name">Elena</h4>
-            <span class="profile-card__role">Taller &amp; Creaciones</span>
-            <p class="profile-card__desc">Subir fotos de nuevos productos, cambiar precios y descripciones de forma fácil y directa.</p>
-            
-            <div class="profile-card__form" id="form-role-elena">
-              <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (elena)" autocomplete="current-password" />
-              <button type="button" class="btn btn--profile btn--profile-elena" id="btn-login-elena">
-                <span>Entrar al Taller de Elena 🌸</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- PERFIL 2: JUANMA (PROGRAMADOR & WEB) -->
-          <div class="profile-card profile-card--juanma" id="profile-card-juanma">
-            <div class="profile-card__badge">💻 Perfil Técnico</div>
-            <div class="profile-card__icon">⚙️</div>
-            <h4 class="profile-card__name">Juanma</h4>
-            <span class="profile-card__role">Programación &amp; Web</span>
-            <p class="profile-card__desc">Sincronización con GitHub, configuración de WhatsApp, anuncios, copias de seguridad y código.</p>
-            
-            <div class="profile-card__form" id="form-role-juanma">
-              <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (juanma)" autocomplete="current-password" />
-              <button type="button" class="btn btn--profile btn--profile-juanma" id="btn-login-juanma">
-                <span>Entrar como Programador 💻</span>
-              </button>
-            </div>
+        <!-- PERFIL 2: JUANMA (PROGRAMADOR & WEB) -->
+        <div class="profile-card profile-card--juanma" id="profile-card-juanma">
+          <div class="profile-card__badge">💻 Perfil Técnico</div>
+          <div class="profile-card__icon">⚙️</div>
+          <h4 class="profile-card__name">Juanma</h4>
+          <span class="profile-card__role">Programación &amp; Web</span>
+          <p class="profile-card__desc">Sincronización con GitHub, configuración de WhatsApp, anuncios, copias de seguridad y código.</p>
+          
+          <div class="profile-card__form" id="form-role-juanma">
+            <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (juanma)" autocomplete="current-password" />
+            <button type="button" class="btn btn--profile btn--profile-juanma" id="btn-login-juanma">
+              <span>Entrar como Programador 💻</span>
+            </button>
           </div>
         </div>
       </div>
 
       <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
-        <button type="button" class="btn btn--secondary" id="admin-login-cancel-btn">Volver a la Tienda</button>
+        <button type="button" class="btn btn--secondary" id="team-admin-cancel-btn">Cerrar</button>
       </div>
     </div>
   </div>
