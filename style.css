@@ -1,0 +1,546 @@
+/* ==========================================================================
+   DIVINA LOCURA DECO - ESTILOS BASE Y SISTEMA DE DISEÑO
+   Inspiración: Estética boutique Anthropologie (cálida, táctil, espaciosa)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. VARIABLES GLOBALES (:root)
+   -------------------------------------------------------------------------- */
+:root {
+  /* --- Paleta de Fondos (Tonos tiza, crema y arena) --- */
+  --bg-primary: #F9F8F6;          /* Tiza suave / Canvas principal */
+  --bg-surface: #F5F4F0;          /* Arena claro / Contenedores y secciones secundarias */
+  --bg-surface-warm: #EFECE6;     /* Lino crudo / Elementos destacados suaves */
+  --bg-overlay: rgba(249, 248, 246, 0.85);
+
+  /* --- Tipografía y Contraste de Texto --- */
+  --text-primary: #2C2A29;        /* Carbón cálido / Gris oscuro profundo */
+  --text-secondary: #635E59;      /* Arcilla suave / Párrafos y subtítulos */
+  --text-muted: #8E8881;          /* Tono lino neutro / Detalles y metadata */
+  --text-inverted: #F9F8F6;       /* Texto claro sobre fondos oscuros */
+
+  /* --- Acentos Tierra Sutiles --- */
+  --accent-terracotta: #A4634E;   /* Terracota artesanal suave */
+  --accent-terracotta-hover: #8B4F3D;
+  --accent-clay: #C4987E;         /* Arcilla cocida / tono cálido */
+  --accent-linen: #D8CBC0;        /* Fibra de lino natural / bordes sutiles */
+  --accent-sage: #8C9986;         /* Verde salvia suave / Acento vegetal tenue */
+  --accent-sand: #E5DCCE;         /* Arena cálida */
+
+  /* --- Bordes y Delimitadores --- */
+  --border-subtle: rgba(44, 42, 41, 0.08);
+  --border-medium: rgba(44, 42, 41, 0.16);
+  --border-focus: var(--accent-terracotta);
+
+  /* --- Tipografías (Google Fonts) --- */
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* --- Escala Tipográfica y Tracking --- */
+  --tracking-tighter: -0.03em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.06em;
+  --tracking-widest: 0.18em;
+
+  /* --- Espaciado Generoso (Boutique / Editorial) --- */
+  --space-3xs: 0.25rem;  /* 4px */
+  --space-2xs: 0.5rem;   /* 8px */
+  --space-xs: 0.75rem;   /* 12px */
+  --space-sm: 1rem;      /* 16px */
+  --space-md: 1.5rem;    /* 24px */
+  --space-lg: 2.25rem;   /* 36px */
+  --space-xl: 3.5rem;    /* 56px */
+  --space-2xl: 5rem;     /* 80px */
+  --space-3xl: 7.5rem;   /* 120px */
+
+  /* --- Bordes y Sombras --- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;      /* Radio leve para imágenes y tarjetas (según requerimiento) */
+  --radius-pill: 9999px;
+
+  --shadow-soft: 0 4px 20px -2px rgba(44, 42, 41, 0.04);
+  --shadow-medium: 0 12px 32px -4px rgba(44, 42, 41, 0.08);
+
+  /* --- Transiciones --- */
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Estructura y Layout --- */
+  --container-max-width: 1240px;
+  --container-gutter: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET Y ESTILOS BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   3. TIPOGRAFÍA EDITORIAL
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tighter);
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+}
+
+h3 {
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+}
+
+p {
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* --------------------------------------------------------------------------
+   4. LAYOUT & UTILIDADES DE CONTENEDOR
+   -------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--container-gutter);
+  padding-right: var(--container-gutter);
+}
+
+#main-content {
+  flex: 1 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   5. COMPONENTES BASE DE ESTRUCTURA (Header & Barra de Anuncio)
+   -------------------------------------------------------------------------- */
+.announcement-bar {
+  background-color: var(--bg-surface-warm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.6rem var(--space-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  font-weight: 500;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--bg-overlay);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: all var(--transition-smooth);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-md);
+}
+
+.site-header__brand .brand-link {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+}
+
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+.brand-tag {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-widest);
+  color: var(--accent-terracotta);
+}
+
+.nav-list {
+  display: flex;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+.nav-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--accent-terracotta);
+  transition: width var(--transition-smooth);
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   6. BOTONES Y LLAMADOS A LA ACCIÓN (CTA)
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: 0.85rem 1.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-decoration: none;
+}
+
+.btn--primary {
+  background-color: var(--accent-terracotta);
+  color: #FFFFFF;
+  border-color: var(--accent-terracotta);
+  box-shadow: 0 4px 14px rgba(164, 99, 78, 0.2);
+}
+
+.btn--primary:hover {
+  background-color: var(--accent-terracotta-hover);
+  border-color: var(--accent-terracotta-hover);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(164, 99, 78, 0.3);
+}
+
+.btn--primary .btn__icon {
+  transition: transform var(--transition-fast);
+}
+
+.btn--primary:hover .btn__icon {
+  transform: translateX(4px);
+}
+
+.btn--text {
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border-medium);
+  border-radius: 0;
+}
+
+.btn--text:hover {
+  color: var(--accent-terracotta);
+  border-bottom-color: var(--accent-terracotta);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   7. SECCIÓN HERO (Fase 2)
+   -------------------------------------------------------------------------- */
+.hero {
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-3xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-right: var(--space-md);
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--accent-terracotta);
+  margin-bottom: var(--space-xs);
+  position: relative;
+}
+
+.hero__title {
+  font-size: clamp(2.75rem, 5vw, 4.25rem);
+  line-height: 1.12;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.hero__title-italic {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-clay);
+}
+
+.hero__tagline {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  max-width: 530px;
+  margin-bottom: var(--space-xl);
+  font-weight: 300;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.hero__features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+  width: 100%;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+}
+
+.feature-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-clay);
+  display: inline-block;
+}
+
+/* Visual e Imagen Hero */
+.hero__visual {
+  position: relative;
+}
+
+.hero__image-wrapper {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  background-color: var(--bg-surface);
+  aspect-ratio: 4 / 3;
+}
+
+.hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero__image-wrapper:hover .hero__image {
+  transform: scale(1.03);
+}
+
+.hero__badge {
+  position: absolute;
+  bottom: var(--space-md);
+  left: var(--space-md);
+  background-color: rgba(249, 248, 246, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-soft);
+}
+
+.hero__badge-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  color: var(--accent-terracotta);
+  font-weight: 600;
+}
+
+.hero__badge-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   8. PIE DE PÁGINA BASE
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  padding: var(--space-xl) 0;
+  margin-top: var(--space-3xl);
+  text-align: center;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* --------------------------------------------------------------------------
+   9. RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .hero__content {
+    padding-right: 0;
+  }
+
+  .hero__image-wrapper {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --container-gutter: 1.25rem;
+    --space-xl: 2.25rem;
+    --space-2xl: 3.5rem;
+    --space-3xl: 4.5rem;
+  }
+
+  .nav-list {
+    gap: var(--space-md);
+  }
+
+  .nav-link {
+    font-size: 0.72rem;
+  }
+
+  .brand-name {
+    font-size: 1.35rem;
+  }
+
+  .hero {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-2xl);
+  }
+
+  .hero__title {
+    font-size: 2.5rem;
+  }
+
+  .hero__tagline {
+    font-size: 0.95rem;
+  }
+
+  .hero__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .hero__features {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+}
+
