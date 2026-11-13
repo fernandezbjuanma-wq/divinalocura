@@ -1,76 +1,80 @@
-# 📖 Guía: Modo Administrador en Vivo & Posteos de Instagram en Divina Locura Deco
+# 📖 Guía: Dos Perfiles de Administración en Divina Locura Deco
+**Sitio en Vivo:** [https://fernandezbjuanma-wq.github.io/divinalocura/](https://fernandezbjuanma-wq.github.io/divinalocura/)
 
-¡Ya está implementado el **Modo Administrador directo en la página** y el **sistema de Posteo estilo Instagram** para cada producto! Ahora puedes editar imágenes, precios, descripciones y crear nuevos productos desde tu propio celular o computadora sin tocar código.
-
-Sitio en vivo: **https://fernandezbjuanma-wq.github.io/divinalocura/**
+La web cuenta con **dos perfiles independientes** diseñados específicamente para cada necesidad:
+1. **🌸 Perfil Elena (Mamá · Modo Taller)**: Súper intuitivo, cálido y directo. Para subir fotos de nuevas creaciones, cambiar precios y descripciones desde el celular o la computadora sin tocar código ni conceptos técnicos.
+2. **💻 Perfil Juanma (Modo Programador & Web)**: Herramientas avanzadas para programación, ajustes de WhatsApp, anuncios, sincronización directa con GitHub y copias de seguridad.
 
 ---
 
-## 🔐 1. Cómo Activar el Modo Administrador en la Página
+## 🔐 1. Cómo Ingresar al Panel de Administración
 
 1. Baja hasta el final de la página (el pie de página o footer).
-2. Haz clic en el botón discreto que dice **`Modo Admin`** (o presiona en tu teclado las teclas `Alt + E`).
-3. Te aparecerá una ventana pidiendo la contraseña:
-   - **Contraseña predeterminada:** `elena2026`
-4. Al ingresar, verás en la parte superior de la pantalla la barra flotante negra:
-   `🟢 Modo Admin Activo · Elena`
+2. Haz clic en el botón discreto que dice **`Modo Admin`** (o presiona las teclas `Alt + E` en tu teclado).
+3. Aparecerá la ventana con las dos tarjetas:
+   - **🌸 Elena · Taller & Creaciones**: Clave rápida: `elena` o `elena2026`.
+   - **💻 Juanma · Programación & Web**: Clave rápida: `juanma` o `juanma2026`.
+4. Ingresas la clave de tu perfil y haces clic en el botón.
 
 ---
 
-## ✏️ 2. Cómo Editar Productos, Precios, Fotos y Descripciones
+## 🌸 2. Guía para Elena (Modo Taller de Creaciones)
 
-Cuando el Modo Admin está activo:
-1. En cada tarjeta de producto del catálogo verás dos botones arriba a la derecha:
-   - **`✏️ Editar`**: Abre el editor completo del producto.
-   - **`🗑️`**: Elimina el producto del catálogo.
-2. Al presionar **`✏️ Editar`**, puedes modificar:
-   - **Título del Producto**
-   - **Categoría** (Cuidado Personal, Hogar & Cocina, Organización, Bebés & Infantil)
-   - **Etiqueta Superior** (ej: *Favorito Skincare*, *Clásico del Taller*)
-   - **Materiales / Textura** (ej: *Satén de seda premium anti-frizz*)
-   - **Precio o Texto** (ej: *$12.500*, *Consultar Colores*, etc.)
-   - **Descripción detallada**
-   - **Fotografías y Vistas**:
-     - Puedes cambiar el nombre de cada vista (ej: *Con Modelo*, *En Mesa*, *Detalle Taller*).
-     - Puedes subir una foto nueva directamente desde tu celular o computadora con el botón **`Subir Foto desde tu Dispositivo`** (la procesa y muestra de inmediato).
-     - Puedes agregar más fotos o eliminar fotos existentes con la cruz `✕`.
-   - **Posteo de Instagram**:
-     - La historia o caption detrás del producto (lo que Elena comparte en Instagram).
-     - Los hashtags temáticos.
-3. Haz clic en **`Guardar Producto`** y verás los cambios reflejados al instante en la tienda.
+¡Hola Elena! Este modo está pensado para que puedas gestionar tus creaciones de la forma más fácil y rápida:
 
----
+### A. Para Publicar una Nueva Creación
+1. En la parte superior de la pantalla verás una barra que dice:  
+   `🌸 ¡Hola Elena! · Modo Taller de Creaciones`
+2. Haz clic en el botón terracota: **`📸 Publicar Nueva Pieza`**.
+3. Completa los datos con tus palabras:
+   - **¿Cómo se llama la pieza?** (ej: *Set de Satén Antifrizz*, *Repasador Waffle con Guarda Vichy*).
+   - **¿En qué categoría va?** (Dormitorio & Descanso, Hogar & Cocina, Organización, Bebés).
+   - **Precio**: Pones el monto (ej: *$12.500*) o podés escribir *"Consultar"*.
+   - **Telas & Materiales**: Qué tela usaste (ej: *Satén de seda premium*, *100% puro algodón*).
+   - **Descripción**: Para qué sirve y qué incluye.
+   - **Fotos**: Haz clic en el botón **`📸 Elegir foto desde tu celular o compu`** y selecciona una o más fotos de tu galería.
+   - **Historia de la Pieza**: Contá brevemente cómo la confeccionaste o qué te inspiró.
+4. Haz clic en **`✨ Guardar y Publicar en la Tienda`**.
+5. ¡Listo! Tu producto aparecerá de inmediato publicado en la tienda.
 
-## ➕ 3. Cómo Agregar un Nuevo Producto
-
-1. Con el Modo Admin activo, haz clic en el botón naranja de la barra superior: **`+ Nuevo Producto`**.
-2. Completa los datos, sube las fotos que quieras y escribe la historia para el posteo de Instagram.
-3. Haz clic en **`Guardar Producto`** y aparecerá de primero en el catálogo.
+### B. Para Modificar una Creación Existente o Cambiar el Precio
+1. Busca la tarjeta de la pieza en el catálogo.
+2. Arriba a la derecha de la foto verás el botón: **`✏️ Modificar Creación`**.
+3. Cambias el precio, la foto o lo que quieras y le das a **`✨ Guardar y Publicar en la Tienda`**.
 
 ---
 
-## 📸 4. Posteo Estilo Instagram para Cada Producto
+## 💻 3. Guía para Juanma (Programación & Funcionamiento Web)
 
-Todos los clientes (incluso sin ser administradores) pueden interactuar con los posteos:
-- En cada tarjeta hay un botón con el degradé de Instagram: **`Ver Posteo`** (o haciendo clic directamente sobre la foto del producto).
-- Se abre una ventana interactiva idéntica a Instagram:
-  - **Carrusel de Fotos**: Puedes deslizar las fotos con flechas o tocando los puntos.
-  - **Doble toque / doble clic**: Al hacer doble toque en la foto, aparece el corazón animado latiendo y suma un me gusta.
-  - **Historia de Elena**: El texto artesanal y cálido que cuenta los materiales y cómo se hizo la prenda.
-  - **Comentarios**: Preguntas y opiniones de clientes.
-  - **Botón de WhatsApp**: Permite que el cliente consulte o compre ese producto específico con un solo toque.
+Cuando ingresas como Juanma (`juanma`), verás la barra técnica superior con acceso total:
+
+### A. ⚙️ Configuración Web (`dev-settings-modal`)
+Al hacer clic en **`Configuración Web`** puedes:
+- **Número de WhatsApp**: Configura el número telefónico receptor de pedidos (ej: `54911...`). Se actualiza dinámicamente en todos los botones de la web y en las fichas editoriales.
+- **Usuario de Instagram**: Cambia el usuario `@divina.locura.deco` y sus enlaces.
+- **Barra de Anuncios**: Cambia el texto marquesina superior de la web en tiempo real.
+- **GitHub Personal Access Token (PAT)**: Para enviar commits automáticos con un solo clic.
+- **🔄 Restablecer Catálogo Original**: Recupera los 8 productos de fábrica en caso de pruebas.
+
+### B. 🚀 Sincronizar Cambios con GitHub Pages
+Para que los cambios hechos desde el navegador queden publicados permanentemente para todos los clientes en internet:
+1. **Opción Directa (con Token)**:
+   - Ingresa tu GitHub PAT en Configuración y haz clic en **`🚀 Enviar Commit a GitHub`**.
+   - La web enviará la actualización de `products-data.js` a la rama `main` vía GitHub REST API.
+2. **Opción Backup (Descargar archivo)**:
+   - Haz clic en **`Backup`** para descargar el archivo `products-data.js` actualizado.
+   - Puedes commitearlo con git:
+     ```bash
+     git add products-data.js && git commit -m "feat: actualizar catalogo" && git push origin main
+     ```
 
 ---
 
-## ☁️ 5. Cómo Guardar los Cambios para Todo el Mundo (GitHub)
+## ✨ 4. Experiencia Lookbook Inspirada en Anthropologie
 
-Los cambios que haces en tu navegador se guardan automáticamente en tu dispositivo para que no se pierdan. Para que queden publicados permanentemente para todos los visitantes:
-
-### Opción A (La más sencilla en 2 clics):
-1. En la barra superior de administración, haz clic en **`📥 Descargar Datos`**.
-2. Se descargará el archivo `products-data.js` con todos tus productos y fotos actualizados.
-3. Entras al repositorio en GitHub ([products-data.js en GitHub](https://github.com/fernandezbjuanma-wq/divinalocura/blob/main/products-data.js)), le das al lápiz ✏️, pegas el contenido y guardas con **Commit changes**.
-
-### Opción B (Sincronización Automática con Token):
-1. En la barra superior, haz clic en **`Publicar en GitHub`**.
-2. Pegas tu Token Personal de GitHub (con permisos de `repo`) y la página enviará el commit automáticamente a GitHub sin que tengas que descargar nada.
+Cada pieza del catálogo cuenta con una **Ficha Lookbook Editorial** (haciendo clic en la foto o en **`✨ Ficha Lookbook`**):
+- **Galería Multivista**: Deslizador de fotos con miniaturas interactivas (vistas de taller, en uso, con modelo).
+- **Kicker & Tipografía Serif**: Estilo editorial de alta gama.
+- **Historia de la Pieza**: La narrativa del taller de Elena.
+- **Detalles & Cuidados Textiles**: Recomendaciones de lavado slow-fashion.
+- **Botón de Pedido a Medida por WhatsApp**: Abre directamente el chat con Elena con el producto preseleccionado.

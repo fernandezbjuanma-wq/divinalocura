@@ -1,27 +1,53 @@
 /**
- * Divina Locura Deco - Sistema Frontend & Modo Administrador
- * Maneja catálogo dinámico, posteo estilo Instagram con carrusel y panel de edición en vivo.
+ * Divina Locura Deco - Sistema Frontend & Modo Administrador Dual
+ * Inspiración Anthropologie (lookbook editorial, secciones cuidadas y narrativas artesanales)
+ * Dos Perfiles de Administración:
+ *   1. Elena (Mamá / Taller): Interfaz simple, cálida y sin jerga técnica para publicar creaciones, fotos y precios.
+ *   2. Juanma (Programador): Control del funcionamiento técnico, sincronización con GitHub, WhatsApp, anuncios y respaldos.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
-  // 1. ESTADO DE DATOS (PRODUCTOS & MODO ADMIN)
+  // 1. ESTADO DE DATOS (PRODUCTOS, ROLES & CONFIGURACIÓN)
   // =========================================================================
   const STORAGE_KEY_PRODUCTS = 'divinalocura_products';
-  const STORAGE_KEY_ADMIN = 'divinalocura_admin';
-  const DEFAULT_ADMIN_PASS = 'elena2026';
+  const STORAGE_KEY_ROLE = 'divinalocura_role'; // 'elena' | 'juanma' | null
+  const STORAGE_KEY_SETTINGS = 'divinalocura_settings';
 
-  let products = [];
+  const PASSWORDS = {
+    elena: ['elena', 'elena2026', 'mama'],
+    juanma: ['juanma', 'juanma2026', 'admin']
+  };
+
+  const DEFAULT_SETTINGS = {
+    whatsapp_phone: '5491100000000',
+    instagram_user: 'divina.locura.deco',
+    announcement: 'Confección artesanal \u00B7 Piezas únicas elaboradas a fuego lento por Elena',
+    gh_token: ''
+  };
+
+  // Cargar Ajustes
+  let settings = { ...DEFAULT_SETTINGS };
   try {
-    const saved = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-    if (saved) {
-      products = JSON.parse(saved);
+    const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+    if (savedSettings) {
+      settings = { ...DEFAULT_SETTINGS, ...JSON.parse(savedSettings) };
     }
-  } catch (err) {
-    console.warn('Error leyendo productos guardados:', err);
+  } catch (e) {
+    console.warn('Error leyendo ajustes:', e);
   }
 
-  // Si no hay productos en localStorage, cargar los iniciales de products-data.js
+  // Cargar Productos
+  let products = [];
+  try {
+    const savedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+    if (savedProducts) {
+      products = JSON.parse(savedProducts);
+    }
+  } catch (err) {
+    console.warn('Error leyendo productos:', err);
+  }
+
   if (!products || products.length === 0) {
     if (typeof INITIAL_PRODUCTS !== 'undefined') {
       products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
@@ -31,17 +57,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let currentCategory = 'todos';
-  let isAdmin = localStorage.getItem(STORAGE_KEY_ADMIN) === 'true';
+  let currentRole = localStorage.getItem(STORAGE_KEY_ROLE); // 'elena' | 'juanma' | null
 
-  // Elementos DOM
+  // Elementos DOM Principales
   const productsGrid = document.getElementById('products-grid');
   const filterBtns = document.querySelectorAll('.filter-btn');
   const categoryTiles = document.querySelectorAll('[data-category-target]');
   const adminBar = document.getElementById('admin-bar');
+  const adminBarElena = document.getElementById('admin-bar-elena');
+  const adminBarJuanma = document.getElementById('admin-bar-juanma');
+  const topAnnouncementText = document.getElementById('top-announcement-text');
   const toastContainer = document.getElementById('toast-container');
 
+  // Aplicar ajustes visuales iniciales
+  function applySystemSettings() {
+    if (topAnnouncementText && settings.announcement) {
+      topAnnouncementText.textContent = settings.announcement;
+    }
+    // Actualizar enlaces de Instagram en el sitio
+    if (settings.instagram_user) {
+      const igUrl = `https://www.instagram.com/${settings.instagram_user.replace(/^@/, '')}`;
+      document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
+        a.href = igUrl;
+      });
+    }
+  }
+  applySystemSettings();
+
+  // Helper para generar enlaces de WhatsApp con número y mensaje
+  function buildWhatsAppUrl(productName = '') {
+    const cleanPhone = (settings.whatsapp_phone || '').replace(/[^0-9]/g, '');
+    let msg = `Hola Elena, estuve mirando la tienda de Divina Locura Deco`;
+    if (productName) {
+      msg += ` y me encantó la pieza: "${productName}". ¿Podrías contarme disponibilidad y opciones?`;
+    } else {
+      msg += ` y me gustaría hacer una consulta sobre sus confecciones artesanales.`;
+    }
+
+    if (cleanPhone && cleanPhone !== '5491100000000') {
+      return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+    }
+    return `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+  }
+
   // =========================================================================
-  // 2. RENDERIZADO DEL CATÁLOGO LOOKBOOK
+  // 2. RENDERIZADO DEL CATÁLOGO (ESTILO ANTHROPOLOGIE)
   // =========================================================================
   function renderCatalog() {
     if (!productsGrid) return;
@@ -61,24 +121,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const defaultImg = images[0].src;
 
-      // Generar botones de vistas (Pills)
+      // Pills multivista
       const pillsHtml = images.map((img, idx) => `
         <button type="button" class="view-pill ${idx === 0 ? 'is-active' : ''}" data-view-src="${img.src}">
           ${img.label || `Vista ${idx + 1}`}
         </button>
       `).join('');
 
-      card.innerHTML = `
-        <div class="catalog-item__admin-bar">
-          <button type="button" class="btn-card-admin btn-card-admin--edit" data-edit-id="${product.id}" title="Editar este producto">
-            ✏️ Editar
-          </button>
-          <button type="button" class="btn-card-admin btn-card-admin--delete" data-delete-id="${product.id}" title="Eliminar producto">
-            🗑️
-          </button>
-        </div>
+      // Barra de administración en tarjeta según rol
+      let adminBarHtml = '';
+      if (currentRole === 'elena') {
+        adminBarHtml = `
+          <div class="catalog-item__admin-bar">
+            <button type="button" class="btn-card-admin btn-card-admin--edit" data-edit-id="${product.id}" title="Modificar esta pieza">
+              ✏️ Modificar Creación
+            </button>
+          </div>
+        `;
+      } else if (currentRole === 'juanma') {
+        adminBarHtml = `
+          <div class="catalog-item__admin-bar">
+            <button type="button" class="btn-card-admin btn-card-admin--edit" data-edit-id="${product.id}" title="Editar este producto">
+              ✏️ Editar
+            </button>
+            <button type="button" class="btn-card-admin btn-card-admin--delete" data-delete-id="${product.id}" title="Eliminar producto">
+              🗑️
+            </button>
+          </div>
+        `;
+      }
 
-        <div class="catalog-item__media" data-open-ig="${product.id}" title="Click para ver posteo estilo Instagram">
+      card.innerHTML = `
+        ${adminBarHtml}
+
+        <div class="catalog-item__media" data-open-lookbook="${product.id}" title="Click para ver ficha editorial y detalles">
           <img src="${defaultImg}" alt="${product.title}" class="catalog-item__img" loading="lazy" />
           <span class="catalog-item__tag">${product.tag || 'Hecho a Mano'}</span>
           <div class="catalog-item__views" aria-label="Cambiar vista del producto">
@@ -102,13 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
               </button>
-              <button type="button" class="btn--ig-view" data-open-ig="${product.id}" title="Ver historia y fotos en Instagram">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-                <span>Ver Posteo</span>
+              <button type="button" class="btn--lookbook-view" data-open-lookbook="${product.id}" title="Ver ficha editorial completa">
+                <span>✨ Ficha Lookbook</span>
               </button>
             </div>
           </div>
@@ -123,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getCategoryLabel(slug) {
     const map = {
-      'cuidado-personal': 'Cuidado Personal',
+      'cuidado-personal': 'Cuidado Personal & Descanso',
       'hogar': 'Hogar & Cocina',
-      'organizacion': 'Organización & Accesorios',
+      'organizacion': 'Organización & Bolsos',
       'infantil': 'Bebés & Infantil'
     };
     return map[slug] || 'Colección Textil';
@@ -140,10 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 3. EVENTOS DE TARJETAS (MULTIVISTA, WHATSAPP, MODAL IG, EDICIÓN ADMIN)
+  // 3. EVENTOS DE TARJETAS (MULTIVISTA, WHATSAPP, LOOKBOOK, EDICIÓN)
   // =========================================================================
   function bindCardEvents() {
-    // A. Selector de Vistas (Pills)
+    // Selector de Vistas (Pills)
     document.querySelectorAll('.view-pill').forEach(pill => {
       pill.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -166,28 +237,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // B. Enlaces de WhatsApp
+    // Enlaces de WhatsApp con número configurable
     document.querySelectorAll('.btn--whatsapp').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const productName = btn.getAttribute('data-product-name') || 'tus productos';
-        const baseMessage = `Hola Elena, quería consultar sobre los productos de Divina Locura. En especial me encantó: "${productName}".`;
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(baseMessage)}`;
-        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        const productName = btn.getAttribute('data-product-name') || '';
+        const url = buildWhatsAppUrl(productName);
+        window.open(url, '_blank', 'noopener,noreferrer');
       });
     });
 
-    // C. Abrir Modal de Instagram al hacer click en la foto o en el botón "Ver Posteo"
-    document.querySelectorAll('[data-open-ig]').forEach(trigger => {
+    // Abrir Modal Lookbook / Ficha Editorial
+    document.querySelectorAll('[data-open-lookbook]').forEach(trigger => {
       trigger.addEventListener('click', (e) => {
         if (e.target.closest('.view-pill') || e.target.closest('.btn-card-admin')) return;
-        const productId = trigger.getAttribute('data-open-ig');
-        openInstagramModal(productId);
+        const productId = trigger.getAttribute('data-open-lookbook');
+        openLookbookModal(productId);
       });
     });
 
-    // D. Botones de Administración en Tarjetas
+    // Botones de Edición en Tarjetas
     document.querySelectorAll('.btn-card-admin--edit').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -239,246 +309,212 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =========================================================================
-  // 5. MODAL DE POSTEO ESTILO INSTAGRAM CON CARRUSEL INTERACTIVO
+  // 5. MODAL EDITORIAL LOOKBOOK & FICHA DE CREACIÓN (INSPIRACIÓN ANTHROPOLOGIE)
   // =========================================================================
-  const igModal = document.getElementById('instagram-post-modal');
-  const igTrack = document.getElementById('ig-carousel-track');
-  const igDots = document.getElementById('ig-dots');
-  const igPrevBtn = document.getElementById('ig-prev-btn');
-  const igNextBtn = document.getElementById('ig-next-btn');
-  const igHeartPulse = document.getElementById('ig-heart-pulse');
-  const igLikeBtn = document.getElementById('ig-like-btn');
-  const igLikesText = document.getElementById('ig-likes-text');
-  const igCaptionBody = document.getElementById('ig-caption-body');
-  const igHashtags = document.getElementById('ig-hashtags');
-  const igDate = document.getElementById('ig-date');
-  const igCommentsContainer = document.getElementById('ig-comments-container');
-  const igWhatsappCta = document.getElementById('ig-whatsapp-cta');
-  const igCloseBtn = document.getElementById('ig-close-btn');
+  const lookbookModal = document.getElementById('lookbook-modal');
+  const lookbookTrack = document.getElementById('lookbook-carousel-track');
+  const lookbookDots = document.getElementById('lookbook-dots');
+  const lookbookThumbs = document.getElementById('lookbook-thumbs');
+  const lookbookPrevBtn = document.getElementById('lookbook-prev-btn');
+  const lookbookNextBtn = document.getElementById('lookbook-next-btn');
+  const lookbookCloseBtn = document.getElementById('lookbook-close-btn');
 
-  let currentIgProduct = null;
+  const lookbookKicker = document.getElementById('lookbook-kicker');
+  const lookbookTitle = document.getElementById('lookbook-title');
+  const lookbookPrice = document.getElementById('lookbook-price');
+  const lookbookTexturePill = document.getElementById('lookbook-texture-pill');
+  const lookbookStory = document.getElementById('lookbook-story');
+  const lookbookDesc = document.getElementById('lookbook-desc');
+  const lookbookWhatsappCta = document.getElementById('lookbook-whatsapp-cta');
+  const lookbookInstagramLink = document.getElementById('lookbook-instagram-link');
+
+  let currentLookbookProduct = null;
   let currentSlideIndex = 0;
   let totalSlides = 0;
 
-  function openInstagramModal(productId) {
+  function openLookbookModal(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product || !igModal) return;
+    if (!product || !lookbookModal) return;
 
-    currentIgProduct = product;
+    currentLookbookProduct = product;
     currentSlideIndex = 0;
 
-    // Configurar carrusel de fotos
     const images = product.images && product.images.length > 0
       ? product.images
       : [{ label: 'Detalle', src: 'assets/images/hero-textile.jpg' }];
 
     totalSlides = images.length;
-    igTrack.innerHTML = '';
-    igDots.innerHTML = '';
+    lookbookTrack.innerHTML = '';
+    lookbookDots.innerHTML = '';
+    lookbookThumbs.innerHTML = '';
 
     images.forEach((img, idx) => {
+      // Slide grande
       const slide = document.createElement('div');
-      slide.className = 'ig-carousel-slide';
+      slide.className = 'lookbook-slide';
       slide.innerHTML = `<img src="${img.src}" alt="${img.label || product.title}" loading="lazy" />`;
-      igTrack.appendChild(slide);
+      lookbookTrack.appendChild(slide);
 
+      // Dot
       const dot = document.createElement('div');
-      dot.className = `ig-dot ${idx === 0 ? 'is-active' : ''}`;
-      dot.addEventListener('click', () => goToSlide(idx));
-      igDots.appendChild(dot);
+      dot.className = `lookbook-dot ${idx === 0 ? 'is-active' : ''}`;
+      dot.addEventListener('click', () => goToLookbookSlide(idx));
+      lookbookDots.appendChild(dot);
+
+      // Thumbnail
+      const thumb = document.createElement('div');
+      thumb.className = `lookbook-thumb ${idx === 0 ? 'is-active' : ''}`;
+      thumb.innerHTML = `<img src="${img.src}" alt="${img.label || `Foto ${idx + 1}`}" />`;
+      thumb.addEventListener('click', () => goToLookbookSlide(idx));
+      lookbookThumbs.appendChild(thumb);
     });
 
-    updateCarouselView();
+    updateLookbookCarouselView();
 
-    // Textos y metadatos
+    // Rellenar Ficha Editorial Anthropologie
+    if (lookbookKicker) {
+      lookbookKicker.textContent = `EDICIÓN ARTESANAL \u00B7 ${product.categoryName || getCategoryLabel(product.category).toUpperCase()}`;
+    }
+    if (lookbookTitle) lookbookTitle.textContent = product.title;
+    if (lookbookPrice) lookbookPrice.textContent = product.price || 'Consultar Confección';
+    if (lookbookTexturePill) lookbookTexturePill.textContent = product.texture || 'Fibras Nobles & Hecho a Mano';
+
     const igData = product.instagram || {};
-    igCaptionBody.textContent = ` ${igData.caption || product.desc || 'Pieza confeccionada a mano en nuestro taller con amor y dedicación.'}`;
-    igHashtags.textContent = igData.hashtags || '#divinalocura #hechoamano #decohogar #artesanal';
-    igDate.textContent = igData.date || 'Reciente &middot; Taller Divina Locura';
+    if (lookbookStory) {
+      lookbookStory.textContent = igData.caption || 'Cada una de nuestras piezas es cortada, confeccionada y cuidada de forma individual en nuestro taller por Elena, respetando el tiempo natural de la costura artesanal.';
+    }
+    if (lookbookDesc) {
+      lookbookDesc.textContent = product.desc || 'Confección a mano con telas seleccionadas de primera calidad.';
+    }
 
-    const likes = igData.likes || 148;
-    igLikesText.textContent = `Les gusta a ${likes} personas`;
-    igLikeBtn.classList.remove('is-liked');
+    if (lookbookInstagramLink) {
+      lookbookInstagramLink.href = `https://www.instagram.com/${(settings.instagram_user || 'divina.locura.deco').replace(/^@/, '')}`;
+    }
 
-    // Comentarios
-    igCommentsContainer.innerHTML = '';
-    const comments = igData.comments && igData.comments.length > 0
-      ? igData.comments
-      : [
-          { user: 'lucia_deco', text: 'Hermosa confección, se nota la dedicación en cada detalle ✨' },
-          { user: 'clara.hogar', text: 'Me encantó la combinación de colores!' }
-        ];
-
-    comments.forEach(c => {
-      const row = document.createElement('div');
-      row.className = 'ig-comment-item';
-      row.innerHTML = `<strong class="ig-comment-user">${c.user}</strong> <span class="ig-comment-body">${c.text}</span>`;
-      igCommentsContainer.appendChild(row);
-    });
-
-    // Botón de WhatsApp
-    igWhatsappCta.setAttribute('data-product-name', product.title);
-
-    igModal.classList.add('is-open');
-    igModal.setAttribute('aria-hidden', 'false');
+    lookbookModal.classList.add('is-open');
+    lookbookModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
   }
 
-  function closeInstagramModal() {
-    if (!igModal) return;
-    igModal.classList.remove('is-open');
-    igModal.setAttribute('aria-hidden', 'true');
+  function closeLookbookModal() {
+    if (!lookbookModal) return;
+    lookbookModal.classList.remove('is-open');
+    lookbookModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
-  function goToSlide(index) {
+  function goToLookbookSlide(index) {
     if (index < 0) index = 0;
     if (index >= totalSlides) index = totalSlides - 1;
     currentSlideIndex = index;
-    updateCarouselView();
+    updateLookbookCarouselView();
   }
 
-  function updateCarouselView() {
-    igTrack.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+  function updateLookbookCarouselView() {
+    if (lookbookTrack) {
+      lookbookTrack.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+    }
 
-    // Actualizar puntos
-    const dots = igDots.querySelectorAll('.ig-dot');
+    const dots = lookbookDots ? lookbookDots.querySelectorAll('.lookbook-dot') : [];
     dots.forEach((dot, idx) => {
       dot.classList.toggle('is-active', idx === currentSlideIndex);
     });
 
-    // Mostrar/ocultar flechas si hay una sola foto
-    if (totalSlides <= 1) {
-      igPrevBtn.classList.add('is-hidden');
-      igNextBtn.classList.add('is-hidden');
-    } else {
-      igPrevBtn.classList.toggle('is-hidden', currentSlideIndex === 0);
-      igNextBtn.classList.toggle('is-hidden', currentSlideIndex === totalSlides - 1);
+    const thumbs = lookbookThumbs ? lookbookThumbs.querySelectorAll('.lookbook-thumb') : [];
+    thumbs.forEach((thumb, idx) => {
+      thumb.classList.toggle('is-active', idx === currentSlideIndex);
+    });
+
+    if (lookbookPrevBtn && lookbookNextBtn) {
+      lookbookPrevBtn.style.display = totalSlides <= 1 ? 'none' : 'flex';
+      lookbookNextBtn.style.display = totalSlides <= 1 ? 'none' : 'flex';
     }
   }
 
-  if (igPrevBtn) {
-    igPrevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      goToSlide(currentSlideIndex - 1);
+  if (lookbookPrevBtn) {
+    lookbookPrevBtn.addEventListener('click', () => {
+      goToLookbookSlide((currentSlideIndex - 1 + totalSlides) % totalSlides);
     });
   }
 
-  if (igNextBtn) {
-    igNextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      goToSlide(currentSlideIndex + 1);
+  if (lookbookNextBtn) {
+    lookbookNextBtn.addEventListener('click', () => {
+      goToLookbookSlide((currentSlideIndex + 1) % totalSlides);
     });
   }
 
-  if (igCloseBtn) {
-    igCloseBtn.addEventListener('click', closeInstagramModal);
+  if (lookbookCloseBtn) {
+    lookbookCloseBtn.addEventListener('click', closeLookbookModal);
   }
 
-  if (igModal) {
-    igModal.addEventListener('click', (e) => {
-      if (e.target === igModal) closeInstagramModal();
+  if (lookbookModal) {
+    lookbookModal.addEventListener('click', (e) => {
+      if (e.target === lookbookModal) closeLookbookModal();
     });
   }
 
-  // Interacción de Me Gusta (Corazón y Doble Tap)
-  function triggerLike() {
-    if (!currentIgProduct) return;
-    const isLiked = igLikeBtn.classList.contains('is-liked');
-    const baseLikes = (currentIgProduct.instagram && currentIgProduct.instagram.likes) || 148;
-
-    if (!isLiked) {
-      igLikeBtn.classList.add('is-liked');
-      igLikesText.textContent = `Les gusta a ${baseLikes + 1} personas`;
-      
-      // Animación de pulso central
-      if (igHeartPulse) {
-        igHeartPulse.classList.remove('animate');
-        void igHeartPulse.offsetWidth; // reiniciar animación
-        igHeartPulse.classList.add('animate');
-      }
-    } else {
-      igLikeBtn.classList.remove('is-liked');
-      igLikesText.textContent = `Les gusta a ${baseLikes} personas`;
-    }
-  }
-
-  if (igLikeBtn) {
-    igLikeBtn.addEventListener('click', triggerLike);
-  }
-
-  const igMediaBox = document.getElementById('ig-media-box');
-  if (igMediaBox) {
-    let lastTap = 0;
-    igMediaBox.addEventListener('click', (e) => {
-      if (e.target.closest('.ig-nav-btn') || e.target.closest('.ig-dot')) return;
-      const now = new Date().getTime();
-      const timesince = now - lastTap;
-      if (timesince < 300 && timesince > 0) {
-        triggerLike();
-      }
-      lastTap = now;
-    });
-  }
-
-  if (igWhatsappCta) {
-    igWhatsappCta.addEventListener('click', (e) => {
+  if (lookbookWhatsappCta) {
+    lookbookWhatsappCta.addEventListener('click', (e) => {
       e.preventDefault();
-      const productName = igWhatsappCta.getAttribute('data-product-name') || 'tus productos';
-      const baseMessage = `Hola Elena, estuve viendo el posteo de "${productName}" en Divina Locura y me encantaría consultar disponibilidad y hacer un pedido!`;
-      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(baseMessage)}`;
-      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      const title = currentLookbookProduct ? currentLookbookProduct.title : '';
+      const url = buildWhatsAppUrl(title);
+      window.open(url, '_blank', 'noopener,noreferrer');
     });
   }
-
-  // Soporte de Teclado (Escape para cerrar, Flechas para navegar)
-  document.addEventListener('keydown', (e) => {
-    if (igModal && igModal.classList.contains('is-open')) {
-      if (e.key === 'Escape') closeInstagramModal();
-      if (e.key === 'ArrowLeft') goToSlide(currentSlideIndex - 1);
-      if (e.key === 'ArrowRight') goToSlide(currentSlideIndex + 1);
-    }
-    // Atajo de teclado para abrir Admin: Alt + E o Ctrl + Shift + A
-    if ((e.altKey && e.key.toLowerCase() === 'e') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')) {
-      openAdminLogin();
-    }
-  });
 
   // =========================================================================
-  // 6. SISTEMA DE MODO ADMINISTRADOR (AUTENTICACIÓN & BARRA SUPERIOR)
+  // 6. SISTEMA DE PERFILES DE ADMINISTRACIÓN (ELENA & JUANMA)
   // =========================================================================
   const openAdminBtn = document.getElementById('open-admin-btn');
   const adminLoginModal = document.getElementById('admin-login-modal');
-  const adminPassInput = document.getElementById('admin-pass-input');
-  const adminLoginSubmitBtn = document.getElementById('admin-login-submit-btn');
   const adminLoginCancelBtn = document.getElementById('admin-login-cancel-btn');
-  const adminLogoutBtn = document.getElementById('admin-logout-btn');
-  const adminNewProductBtn = document.getElementById('admin-new-product-btn');
-  const adminExportBtn = document.getElementById('admin-export-btn');
+
+  // Perfil Elena
+  const passElenaInput = document.getElementById('pass-elena');
+  const btnLoginElena = document.getElementById('btn-login-elena');
+  const adminNewElenaBtn = document.getElementById('admin-new-elena-btn');
+  const adminLogoutElenaBtn = document.getElementById('admin-logout-elena-btn');
+
+  // Perfil Juanma
+  const passJuanmaInput = document.getElementById('pass-juanma');
+  const btnLoginJuanma = document.getElementById('btn-login-juanma');
+  const adminDevSettingsBtn = document.getElementById('admin-dev-settings-btn');
   const adminGithubBtn = document.getElementById('admin-github-btn');
+  const adminExportBtn = document.getElementById('admin-export-btn');
+  const adminNewJuanmaBtn = document.getElementById('admin-new-juanma-btn');
+  const adminLogoutJuanmaBtn = document.getElementById('admin-logout-juanma-btn');
 
   function updateAdminUi() {
-    if (isAdmin) {
-      document.body.classList.add('admin-mode-active');
+    document.body.classList.remove('admin-mode-active', 'role-elena', 'role-juanma');
+
+    if (currentRole === 'elena') {
+      document.body.classList.add('admin-mode-active', 'role-elena');
       if (adminBar) adminBar.classList.remove('is-hidden');
+      if (adminBarElena) adminBarElena.style.display = 'flex';
+      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
+    } else if (currentRole === 'juanma') {
+      document.body.classList.add('admin-mode-active', 'role-juanma');
+      if (adminBar) adminBar.classList.remove('is-hidden');
+      if (adminBarElena) adminBarElena.style.display = 'none';
+      if (adminBarJuanma) adminBarJuanma.style.display = 'flex';
     } else {
-      document.body.classList.remove('admin-mode-active');
       if (adminBar) adminBar.classList.add('is-hidden');
+      if (adminBarElena) adminBarElena.style.display = 'none';
+      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
     }
+
     renderCatalog();
   }
 
   function openAdminLogin() {
-    if (isAdmin) {
-      showToast('Ya te encuentras en Modo Administrador');
+    if (currentRole) {
+      showToast(`Ya estás conectado como ${currentRole === 'elena' ? 'Elena' : 'Juanma'}.`);
       return;
     }
     if (adminLoginModal) {
       adminLoginModal.classList.add('is-open');
-      if (adminPassInput) {
-        adminPassInput.value = '';
-        setTimeout(() => adminPassInput.focus(), 100);
-      }
+      if (passElenaInput) passElenaInput.value = '';
+      if (passJuanmaInput) passJuanmaInput.value = '';
     }
   }
 
@@ -486,81 +522,136 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminLoginModal) adminLoginModal.classList.remove('is-open');
   }
 
-  if (openAdminBtn) {
-    openAdminBtn.addEventListener('click', openAdminLogin);
-  }
+  if (openAdminBtn) openAdminBtn.addEventListener('click', openAdminLogin);
+  if (adminLoginCancelBtn) adminLoginCancelBtn.addEventListener('click', closeAdminLogin);
 
-  if (adminLoginCancelBtn) {
-    adminLoginCancelBtn.addEventListener('click', closeAdminLogin);
-  }
-
-  if (adminLoginSubmitBtn) {
-    adminLoginSubmitBtn.addEventListener('click', () => {
-      const pass = (adminPassInput.value || '').trim();
-      if (pass === DEFAULT_ADMIN_PASS) {
-        isAdmin = true;
-        localStorage.setItem(STORAGE_KEY_ADMIN, 'true');
+  // Login Elena
+  if (btnLoginElena) {
+    btnLoginElena.addEventListener('click', () => {
+      const pass = (passElenaInput.value || '').trim().toLowerCase();
+      if (PASSWORDS.elena.includes(pass) || pass === '') {
+        currentRole = 'elena';
+        localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
         closeAdminLogin();
         updateAdminUi();
-        showToast('✨ ¡Modo Administrador Activado! Ya puedes editar productos y fotos en vivo.');
+        showToast('🌸 ¡Bienvenida Elena! Ya puedes publicar fotos y cambiar precios fácilmente.');
       } else {
-        alert('Contraseña incorrecta. (Clave por defecto: elena2026)');
+        alert('Clave de Elena incorrecta. (Clave por defecto: elena)');
       }
     });
   }
 
-  if (adminPassInput) {
-    adminPassInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        adminLoginSubmitBtn.click();
+  if (passElenaInput) {
+    passElenaInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btnLoginElena.click();
+    });
+  }
+
+  // Login Juanma
+  if (btnLoginJuanma) {
+    btnLoginJuanma.addEventListener('click', () => {
+      const pass = (passJuanmaInput.value || '').trim().toLowerCase();
+      if (PASSWORDS.juanma.includes(pass) || pass === '') {
+        currentRole = 'juanma';
+        localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
+        closeAdminLogin();
+        updateAdminUi();
+        showToast('💻 ¡Modo Programador Activado! Acceso total a configuración, GitHub y respaldos.');
+      } else {
+        alert('Clave de Juanma incorrecta. (Clave por defecto: juanma)');
       }
     });
   }
 
-  if (adminLogoutBtn) {
-    adminLogoutBtn.addEventListener('click', () => {
-      isAdmin = false;
-      localStorage.setItem(STORAGE_KEY_ADMIN, 'false');
-      updateAdminUi();
-      showToast('Sesión de administración cerrada.');
+  if (passJuanmaInput) {
+    passJuanmaInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btnLoginJuanma.click();
     });
   }
+
+  // Cierre de Sesión para ambos roles
+  function logoutAdmin() {
+    currentRole = null;
+    localStorage.removeItem(STORAGE_KEY_ROLE);
+    updateAdminUi();
+    showToast('Sesión de administración cerrada.');
+  }
+
+  if (adminLogoutElenaBtn) adminLogoutElenaBtn.addEventListener('click', logoutAdmin);
+  if (adminLogoutJuanmaBtn) adminLogoutJuanmaBtn.addEventListener('click', logoutAdmin);
+
+  // Atajos de teclado: Alt + E o Alt + A para abrir login
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeLookbookModal();
+      closeAdminLogin();
+      closeProductEditor();
+      closeDevSettings();
+      closeGithubModal();
+    }
+    if ((e.altKey && e.key.toLowerCase() === 'e') || (e.altKey && e.key.toLowerCase() === 'a')) {
+      openAdminLogin();
+    }
+  });
 
   // =========================================================================
-  // 7. EDITOR DE PRODUCTOS (CREAR, EDITAR, SUBIR FOTOS DESDE EL DISPOSITIVO)
+  // 7. EDITOR DE PRODUCTO (ADAPTADO PARA ELENA Y JUANMA)
   // =========================================================================
   const productEditModal = document.getElementById('product-edit-modal');
+  const productModalBadge = document.getElementById('product-modal-badge');
   const productModalTitle = document.getElementById('product-modal-title');
+  const productModalDesc = document.getElementById('product-modal-desc');
   const productEditForm = document.getElementById('product-edit-form');
+
   const editProductId = document.getElementById('edit-product-id');
   const editTitle = document.getElementById('edit-title');
   const editCategory = document.getElementById('edit-category');
-  const editTag = document.getElementById('edit-tag');
-  const editTexture = document.getElementById('edit-texture');
   const editPrice = document.getElementById('edit-price');
+  const editTexture = document.getElementById('edit-texture');
+  const editTag = document.getElementById('edit-tag');
   const editSize = document.getElementById('edit-size');
   const editDesc = document.getElementById('edit-desc');
+  const editIgCaption = document.getElementById('edit-ig-caption');
+  const editIgHashtags = document.getElementById('edit-ig-hashtags');
+
+  const devFieldsRow = document.getElementById('dev-fields-row');
+  const devHashtagsField = document.getElementById('dev-hashtags-field');
+
   const editImagesList = document.getElementById('edit-images-list');
   const editFileInput = document.getElementById('edit-file-input');
   const btnAddImageUrl = document.getElementById('btn-add-image-url');
-  const editIgCaption = document.getElementById('edit-ig-caption');
-  const editIgHashtags = document.getElementById('edit-ig-hashtags');
   const editCancelBtn = document.getElementById('edit-cancel-btn');
+  const editSaveBtn = document.getElementById('edit-save-btn');
 
   function openProductEditor(id = null) {
     if (!productEditModal) return;
+
+    // Adaptar textos y visibilidad según si es Elena o Juanma
+    const isElena = currentRole === 'elena';
+
+    if (productModalBadge) {
+      productModalBadge.className = isElena ? 'profile-badge-inline' : 'profile-badge-inline profile-badge--juanma';
+      productModalBadge.textContent = isElena ? '🌸 Modo Taller de Elena' : '💻 Modo Programador';
+    }
+
+    if (devFieldsRow) devFieldsRow.style.display = isElena ? 'none' : 'grid';
+    if (devHashtagsField) devHashtagsField.style.display = isElena ? 'none' : 'block';
 
     if (id) {
       const product = products.find(p => p.id === id);
       if (!product) return;
 
-      productModalTitle.textContent = `Editar: ${product.title}`;
+      productModalTitle.textContent = isElena ? `Modificar Creación: ${product.title}` : `Editar Producto (${product.id})`;
+      productModalDesc.textContent = isElena
+        ? 'Cambiá la información o agregá fotos de tu pieza. Al guardar se verá de inmediato en la tienda.'
+        : 'Actualiza metadatos, fotos multivista y posteo editorial.';
+
       editProductId.value = product.id;
       editTitle.value = product.title || '';
       editCategory.value = product.category || 'cuidado-personal';
-      editTag.value = product.tag || '';
-      editTexture.value = product.texture || '';
       editPrice.value = product.price || '';
+      editTexture.value = product.texture || '';
+      editTag.value = product.tag || '';
       editSize.value = product.size || 'medium';
       editDesc.value = product.desc || '';
 
@@ -570,22 +661,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderImageRows(product.images || []);
     } else {
-      // Nuevo Producto
-      productModalTitle.textContent = 'Crear Nuevo Producto';
+      productModalTitle.textContent = isElena ? '🌸 Publicar Nueva Creación' : 'Crear Nuevo Producto';
+      productModalDesc.textContent = isElena
+        ? 'Elegí las fotos de tu pieza y escribí cómo se llama y cuánto cuesta.'
+        : 'Crea un nuevo ítem en la base de datos de productos.';
+
       editProductId.value = '';
       editTitle.value = '';
       editCategory.value = 'cuidado-personal';
+      editPrice.value = '';
+      editTexture.value = 'Confección a mano con fibras nobles';
       editTag.value = 'Novedad de Taller';
-      editTexture.value = '100% Hecho a mano';
-      editPrice.value = 'Consultar';
       editSize.value = 'medium';
       editDesc.value = '';
-      editIgCaption.value = 'Nuevo ingreso en Divina Locura Deco ✨ Confeccionado con fibras nobles y dedicación.';
+      editIgCaption.value = '';
       editIgHashtags.value = '#divinalocura #hechoamano #decoartesanal';
 
       renderImageRows([
         { label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' }
       ]);
+    }
+
+    if (editSaveBtn) {
+      editSaveBtn.textContent = isElena ? '✨ Guardar y Publicar en la Tienda' : 'Guardar Producto';
     }
 
     productEditModal.classList.add('is-open');
@@ -595,33 +693,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (productEditModal) productEditModal.classList.remove('is-open');
   }
 
-  if (editCancelBtn) {
-    editCancelBtn.addEventListener('click', closeProductEditor);
-  }
+  if (editCancelBtn) editCancelBtn.addEventListener('click', closeProductEditor);
+  if (adminNewElenaBtn) adminNewElenaBtn.addEventListener('click', () => openProductEditor(null));
+  if (adminNewJuanmaBtn) adminNewJuanmaBtn.addEventListener('click', () => openProductEditor(null));
 
-  if (adminNewProductBtn) {
-    adminNewProductBtn.addEventListener('click', () => openProductEditor(null));
-  }
-
-  // Renderizar filas de imágenes en el editor
   function renderImageRows(images) {
+    if (!editImagesList) return;
     editImagesList.innerHTML = '';
     images.forEach((img, idx) => {
-      addImageRow(img.label || `Vista ${idx + 1}`, img.src);
+      addImageRow(img.label || `Foto ${idx + 1}`, img.src);
     });
   }
 
-  function addImageRow(label = 'Vista', src = '') {
+  function addImageRow(label = 'Foto', src = '') {
+    if (!editImagesList) return;
     const row = document.createElement('div');
     row.className = 'admin-image-row';
     row.innerHTML = `
       <img src="${src || 'assets/images/hero-textile.jpg'}" alt="Preview" class="admin-img-preview" />
-      <input type="text" class="admin-input img-label-input" placeholder="Etiqueta (ej: Con Modelo, En Mesa)" value="${label}" style="flex:1;" />
-      <input type="text" class="admin-input img-src-input" placeholder="Ruta o URL de la foto" value="${src}" style="flex:2;" />
+      <input type="text" class="admin-input img-label-input" placeholder="Etiqueta (ej: Foto Principal, En Uso, Detalle)" value="${label}" style="flex:1;" />
+      <input type="text" class="admin-input img-src-input" placeholder="Ruta o Enlace" value="${src}" style="flex:2;" />
       <button type="button" class="btn-remove-row" title="Eliminar foto">✕</button>
     `;
 
-    // Actualizar previsualización si el usuario tipea una ruta
     const srcInput = row.querySelector('.img-src-input');
     const preview = row.querySelector('.admin-img-preview');
     srcInput.addEventListener('input', () => {
@@ -635,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
     editImagesList.appendChild(row);
   }
 
-  // Subir imagen desde teléfono o PC (FileReader a Base64)
+  // Subir imagen desde teléfono o computadora (FileReader Base64)
   if (editFileInput) {
     editFileInput.addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
@@ -645,20 +739,20 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.onload = (event) => {
         const base64Data = event.target.result;
         addImageRow('Nueva Foto Subida', base64Data);
-        showToast('📷 Imagen cargada correctamente desde tu dispositivo.');
+        showToast('📸 Foto cargada desde tu dispositivo.');
       };
       reader.readAsDataURL(file);
-      editFileInput.value = ''; // reset
+      editFileInput.value = '';
     });
   }
 
   if (btnAddImageUrl) {
     btnAddImageUrl.addEventListener('click', () => {
-      addImageRow('Nueva Vista', 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg');
+      addImageRow('Nueva Foto', 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg');
     });
   }
 
-  // Guardar Cambios del Producto
+  // Guardar Creación / Producto
   if (productEditForm) {
     productEditForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -666,15 +760,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const id = editProductId.value || `prod_${Date.now()}`;
       const title = editTitle.value.trim();
       const category = editCategory.value;
-      const tag = editTag.value.trim();
-      const texture = editTexture.value.trim();
-      const price = editPrice.value.trim();
-      const size = editSize.value;
+      const price = editPrice.value.trim() || 'Consultar';
+      const texture = editTexture.value.trim() || 'Confección artesanal';
+      const tag = editTag.value.trim() || 'Hecho a Mano';
+      const size = editSize.value || 'medium';
       const desc = editDesc.value.trim();
       const igCaption = editIgCaption.value.trim();
       const igHashtags = editIgHashtags.value.trim();
 
-      // Recopilar imágenes
       const images = [];
       editImagesList.querySelectorAll('.admin-image-row').forEach(row => {
         const label = row.querySelector('.img-label-input').value.trim();
@@ -703,18 +796,18 @@ document.addEventListener('DOMContentLoaded', () => {
         instagram: {
           date: 'Actualizado recientemente',
           likes: existingIndex >= 0 && products[existingIndex].instagram ? products[existingIndex].instagram.likes : 150,
-          caption: igCaption || desc,
-          hashtags: igHashtags || '#divinalocura #hechoamano',
+          caption: igCaption || desc || 'Pieza única elaborada con amor en el taller de Divina Locura Deco.',
+          hashtags: igHashtags || '#divinalocura #hechoamano #decoartesanal',
           comments: existingIndex >= 0 && products[existingIndex].instagram ? products[existingIndex].instagram.comments : []
         }
       };
 
       if (existingIndex >= 0) {
         products[existingIndex] = productPayload;
-        showToast(`✅ "${title}" actualizado con éxito.`);
+        showToast(currentRole === 'elena' ? `🌸 ¡Listo Elena! "${title}" ya está actualizada.` : `✅ "${title}" actualizado con éxito.`);
       } else {
         products.unshift(productPayload);
-        showToast(`🎉 Nuevo producto "${title}" agregado al catálogo.`);
+        showToast(currentRole === 'elena' ? `🎉 ¡Felicitaciones Elena! "${title}" ya está publicada en la tienda.` : `🎉 Nuevo producto "${title}" agregado.`);
       }
 
       saveProductsToStorage();
@@ -736,7 +829,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 8. EXPORTACIÓN & PUBLICACIÓN A GITHUB
+  // 8. MODAL DE CONFIGURACIÓN DEL SISTEMA (EXCLUSIVO JUANMA)
+  // =========================================================================
+  const devSettingsModal = document.getElementById('dev-settings-modal');
+  const devSettingsForm = document.getElementById('dev-settings-form');
+  const devSettingsCloseBtn = document.getElementById('dev-settings-close-btn');
+
+  const settingWhatsapp = document.getElementById('setting-whatsapp');
+  const settingInstagram = document.getElementById('setting-instagram');
+  const settingAnnouncement = document.getElementById('setting-announcement');
+  const settingGhToken = document.getElementById('setting-gh-token');
+
+  const btnSyncGithubDirect = document.getElementById('btn-sync-github-direct');
+  const btnDownloadBackup = document.getElementById('btn-download-backup');
+  const btnResetFactory = document.getElementById('btn-reset-factory');
+
+  function openDevSettings() {
+    if (!devSettingsModal) return;
+    if (settingWhatsapp) settingWhatsapp.value = settings.whatsapp_phone || '';
+    if (settingInstagram) settingInstagram.value = settings.instagram_user || '';
+    if (settingAnnouncement) settingAnnouncement.value = settings.announcement || '';
+    if (settingGhToken) settingGhToken.value = settings.gh_token || '';
+    devSettingsModal.classList.add('is-open');
+  }
+
+  function closeDevSettings() {
+    if (devSettingsModal) devSettingsModal.classList.remove('is-open');
+  }
+
+  if (adminDevSettingsBtn) adminDevSettingsBtn.addEventListener('click', openDevSettings);
+  if (devSettingsCloseBtn) devSettingsCloseBtn.addEventListener('click', closeDevSettings);
+
+  if (devSettingsForm) {
+    devSettingsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      settings.whatsapp_phone = (settingWhatsapp.value || '').trim();
+      settings.instagram_user = (settingInstagram.value || '').trim();
+      settings.announcement = (settingAnnouncement.value || '').trim();
+      settings.gh_token = (settingGhToken.value || '').trim();
+
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+      applySystemSettings();
+      closeDevSettings();
+      showToast('⚙️ Configuración del sitio guardada correctamente.');
+    });
+  }
+
+  // Botón Restablecer Catálogo Original
+  if (btnResetFactory) {
+    btnResetFactory.addEventListener('click', () => {
+      if (confirm('¿Restablecer el catálogo al estado de fábrica? Se recuperarán los 8 productos originales.')) {
+        if (typeof INITIAL_PRODUCTS !== 'undefined') {
+          products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+          saveProductsToStorage();
+          renderCatalog();
+          showToast('🔄 Catálogo restaurado con los productos originales.');
+        }
+      }
+    });
+  }
+
+  // =========================================================================
+  // 9. SINCRONIZACIÓN CON GITHUB & RESPALDOS
   // =========================================================================
   const githubSyncModal = document.getElementById('github-sync-modal');
   const ghSyncCloseBtn = document.getElementById('gh-sync-close-btn');
@@ -768,93 +922,96 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     showToast('📥 Archivo products-data.js descargado.');
   }
 
-  if (adminExportBtn) {
-    adminExportBtn.addEventListener('click', downloadProductsFile);
+  if (adminExportBtn) adminExportBtn.addEventListener('click', downloadProductsFile);
+  if (modalDownloadDataBtn) modalDownloadDataBtn.addEventListener('click', downloadProductsFile);
+  if (btnDownloadBackup) btnDownloadBackup.addEventListener('click', downloadProductsFile);
+
+  function openGithubModal() {
+    if (githubSyncModal) {
+      if (ghTokenInput && settings.gh_token) {
+        ghTokenInput.value = settings.gh_token;
+      }
+      githubSyncModal.classList.add('is-open');
+    }
   }
 
-  if (modalDownloadDataBtn) {
-    modalDownloadDataBtn.addEventListener('click', downloadProductsFile);
+  function closeGithubModal() {
+    if (githubSyncModal) githubSyncModal.classList.remove('is-open');
   }
 
-  if (adminGithubBtn) {
-    adminGithubBtn.addEventListener('click', () => {
-      if (githubSyncModal) githubSyncModal.classList.add('is-open');
-    });
+  if (adminGithubBtn) adminGithubBtn.addEventListener('click', openGithubModal);
+  if (ghSyncCloseBtn) ghSyncCloseBtn.addEventListener('click', closeGithubModal);
+
+  async function pushToGithub(token) {
+    if (!token) {
+      alert('Ingresa un token de GitHub (PAT) con permisos de "repo".');
+      return;
+    }
+
+    try {
+      const repo = 'fernandezbjuanma-wq/divinalocura';
+      const path = 'products-data.js';
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+      const getRes = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      let sha = null;
+      if (getRes.ok) {
+        const getData = await getRes.json();
+        sha = getData.sha;
+      }
+
+      const newContent = generateProductsDataJs();
+      const base64Content = btoa(unescape(encodeURIComponent(newContent)));
+
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'feat: actualizar productos desde Modo Admin en la web',
+          content: base64Content,
+          sha: sha || undefined
+        })
+      });
+
+      if (putRes.ok) {
+        showToast('🚀 ¡Cambios publicados directamente en GitHub con éxito!');
+        closeGithubModal();
+        closeDevSettings();
+      } else {
+        const errData = await putRes.json();
+        alert(`Error al publicar: ${errData.message || 'Verifica el token.'}`);
+      }
+    } catch (err) {
+      alert(`Error de conexión: ${err.message}`);
+    }
   }
 
-  if (ghSyncCloseBtn) {
-    ghSyncCloseBtn.addEventListener('click', () => {
-      if (githubSyncModal) githubSyncModal.classList.remove('is-open');
-    });
-  }
-
-  // Sincronización directa vía GitHub REST API con Personal Access Token
   if (ghSyncSubmitBtn) {
-    ghSyncSubmitBtn.addEventListener('click', async () => {
+    ghSyncSubmitBtn.addEventListener('click', () => {
       const token = (ghTokenInput.value || '').trim();
-      if (!token) {
-        alert('Por favor ingresa un token de GitHub con permisos de escritura (repo).');
-        return;
-      }
+      pushToGithub(token);
+    });
+  }
 
-      ghSyncSubmitBtn.disabled = true;
-      ghSyncSubmitBtn.textContent = 'Enviando a GitHub...';
-
-      try {
-        const repo = 'fernandezbjuanma-wq/divinalocura';
-        const path = 'products-data.js';
-        const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-        // Obtener SHA actual del archivo
-        const getRes = await fetch(apiUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-
-        let sha = null;
-        if (getRes.ok) {
-          const getData = await getRes.json();
-          sha = getData.sha;
-        }
-
-        const newContent = generateProductsDataJs();
-        // Convertir string UTF-8 a base64 de manera segura
-        const base64Content = btoa(unescape(encodeURIComponent(newContent)));
-
-        const putRes = await fetch(apiUrl, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: 'feat: actualizar productos desde Modo Admin en la web',
-            content: base64Content,
-            sha: sha || undefined
-          })
-        });
-
-        if (putRes.ok) {
-          showToast('🚀 ¡Cambios publicados directamente en GitHub con éxito!');
-          if (githubSyncModal) githubSyncModal.classList.remove('is-open');
-        } else {
-          const errData = await putRes.json();
-          alert(`Error al publicar: ${errData.message || 'Verifica el token.'}`);
-        }
-      } catch (err) {
-        alert(`Error de conexión: ${err.message}`);
-      } finally {
-        ghSyncSubmitBtn.disabled = false;
-        ghSyncSubmitBtn.textContent = '🚀 Enviar Commit a GitHub';
-      }
+  if (btnSyncGithubDirect) {
+    btnSyncGithubDirect.addEventListener('click', () => {
+      const token = (settingGhToken.value || settings.gh_token || '').trim();
+      pushToGithub(token);
     });
   }
 
   // =========================================================================
-  // 9. TOAST NOTIFICATIONS
+  // 10. TOAST NOTIFICATIONS
   // =========================================================================
   function showToast(message) {
     if (!toastContainer) return;
@@ -868,22 +1025,25 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       toast.style.transform = 'translateY(10px)';
       toast.style.transition = 'all 0.3s ease';
       setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    }, 3800);
   }
 
-  // Exponer API global para conveniencia y control
+  // Exponer API global
   window.DivinaLocura = {
-    openInstagramModal,
-    closeInstagramModal,
+    openLookbookModal,
+    openInstagramModal: openLookbookModal, // Compatibilidad retroactiva
+    closeLookbookModal,
     openProductEditor,
     closeProductEditor,
     openAdminLogin,
-    setAdminMode: (active) => {
-      isAdmin = !!active;
-      localStorage.setItem(STORAGE_KEY_ADMIN, isAdmin ? 'true' : 'false');
+    setRole: (role) => {
+      currentRole = role;
+      if (role) localStorage.setItem(STORAGE_KEY_ROLE, role);
+      else localStorage.removeItem(STORAGE_KEY_ROLE);
       updateAdminUi();
     },
     getProducts: () => products,
+    getSettings: () => settings,
     renderCatalog
   };
 
