@@ -2029,14 +2029,22 @@ body.role-elena .catalog-item__admin-bar .btn-card-admin--edit {
 .admin-bar__actions {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.admin-bar__actions::-webkit-scrollbar {
+  display: none;
 }
 
 .btn-admin-bar {
   background: rgba(255, 255, 255, 0.12);
   color: #FAF8F4;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 0.45rem 0.85rem;
+  padding: 0.45rem 0.8rem;
   border-radius: var(--radius-sm);
   font-size: 0.76rem;
   font-weight: 600;
@@ -2044,6 +2052,7 @@ body.role-elena .catalog-item__admin-bar .btn-card-admin--edit {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  flex-shrink: 0;
   transition: all var(--transition-fast);
 }
 
@@ -2059,6 +2068,17 @@ body.role-elena .catalog-item__admin-bar .btn-card-admin--edit {
 
 .btn-admin-bar--accent:hover {
   background-color: #A35A43;
+}
+
+.btn-admin-bar--switch {
+  background: rgba(200, 125, 105, 0.22);
+  border-color: rgba(200, 125, 105, 0.45);
+  color: #F8D9CF;
+}
+
+.btn-admin-bar--switch:hover {
+  background: #C87D69;
+  color: #FFFFFF;
 }
 
 .btn-admin-bar--logout {
@@ -4913,8 +4933,8 @@ body.admin-mode-active .catalog-item__admin-bar {
 
 
 /* ==========================================================================
-   DASHBOARD EJECUTIVO FINANZAS-JYC (TALLER DE ELENA)
-   Inspirado en la arquitectura visual de Finanzas-JyC (jbra1990)
+   DASHBOARD DE GESTIÓN & PRODUCCIÓN DE TALLER (DIVINA LOCURA DECO)
+   Diseño propio de alta gama artesanal inspirado en textiles nobles
    ========================================================================== */
 
 .fjc-dashboard {
@@ -4923,14 +4943,14 @@ body.admin-mode-active .catalog-item__admin-bar {
   gap: 1.35rem;
 }
 
-/* Panel Principal (Hero Panel con degradado oscuro ejecutivo) */
+/* Panel Principal (Hero Panel con textura atelier espresso cálida) */
 .fjc-panel {
-  background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  background: linear-gradient(145deg, #2D2421 0%, #3D322E 55%, #241D1A 100%);
+  border: 1px solid rgba(212, 175, 155, 0.28);
+  border-radius: 16px;
   padding: 1.65rem 1.85rem;
-  color: #F8FAFC;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+  color: #FAF8F5;
+  box-shadow: 0 16px 36px rgba(45, 36, 33, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -4940,9 +4960,9 @@ body.admin-mode-active .catalog-item__admin-bar {
   position: absolute;
   top: -50px;
   right: -50px;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(200, 125, 105, 0.18) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -4960,7 +4980,7 @@ body.admin-mode-active .catalog-item__admin-bar {
 .fjc-panel-title-box {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .fjc-tagline {
@@ -4968,14 +4988,14 @@ body.admin-mode-active .catalog-item__admin-bar {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #38BDF8;
+  color: #E2A796;
 }
 
 .fjc-title {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #FAF8F5;
   margin: 0;
 }
 
@@ -4987,8 +5007,8 @@ body.admin-mode-active .catalog-item__admin-bar {
 
 .fjc-month-select {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #FFFFFF;
+  border: 1px solid rgba(226, 167, 150, 0.35);
+  color: #FAF8F5;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -4999,14 +5019,14 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-month-select option {
-  background: #1e293b;
-  color: #FFFFFF;
+  background: #3D322E;
+  color: #FAF8F5;
 }
 
 .fjc-month-select:hover,
 .fjc-month-select:focus {
   background: rgba(255, 255, 255, 0.14);
-  border-color: #38BDF8;
+  border-color: #E2A796;
 }
 
 /* Cifra Principal y Chips de Contexto */
@@ -5022,13 +5042,14 @@ body.admin-mode-active .catalog-item__admin-bar {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #94A3B8;
+  color: #D6CBC4;
 }
 
 .fjc-cifra {
+  font-family: var(--font-serif);
   font-size: 2.75rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
   display: flex;
@@ -5037,13 +5058,13 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-cifra.bien {
-  color: #34D399;
-  text-shadow: 0 0 24px rgba(52, 211, 153, 0.25);
+  color: #60B888;
+  text-shadow: 0 0 24px rgba(96, 184, 136, 0.25);
 }
 
 .fjc-cifra.mal {
-  color: #F87171;
-  text-shadow: 0 0 24px rgba(248, 113, 113, 0.25);
+  color: #E06D53;
+  text-shadow: 0 0 24px rgba(224, 109, 83, 0.25);
 }
 
 .fjc-chips-row {
@@ -5057,34 +5078,34 @@ body.admin-mode-active .catalog-item__admin-bar {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(226, 167, 150, 0.25);
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #E2E8F0;
+  color: #FAF8F5;
 }
 
 .fjc-chip--success {
-  background: rgba(52, 211, 153, 0.12);
-  border-color: rgba(52, 211, 153, 0.35);
-  color: #A7F3D0;
+  background: rgba(96, 184, 136, 0.16);
+  border-color: rgba(96, 184, 136, 0.4);
+  color: #C2F0D8;
 }
 
 .fjc-chip--warning {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.35);
-  color: #FDE68A;
+  background: rgba(217, 155, 75, 0.16);
+  border-color: rgba(217, 155, 75, 0.4);
+  color: #FDE8C7;
 }
 
 .fjc-chip--info {
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.35);
-  color: #BAE6FD;
+  background: rgba(200, 125, 105, 0.16);
+  border-color: rgba(200, 125, 105, 0.4);
+  color: #F5D3CA;
 }
 
-/* Rejilla de KPIs (4 Tarjetas estilo Finanzas-JyC) */
+/* Rejilla de KPIs del Taller */
 .fjc-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -5105,9 +5126,9 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-kpi-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
   padding: 1.15rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -5116,7 +5137,7 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-kpi-card:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateY(-2px);
 }
 
@@ -5132,7 +5153,7 @@ body.admin-mode-active .catalog-item__admin-bar {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #94A3B8;
+  color: #D6CBC4;
 }
 
 .fjc-kpi-icon {
@@ -5140,16 +5161,17 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-kpi-val {
-  font-size: 1.55rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #FAF8F5;
   margin-bottom: 0.3rem;
   font-variant-numeric: tabular-nums;
 }
 
 .fjc-kpi-sub {
   font-size: 0.72rem;
-  color: #94A3B8;
+  color: #C2B8B1;
   line-height: 1.35;
 }
 
@@ -5157,9 +5179,9 @@ body.admin-mode-active .catalog-item__admin-bar {
 .fjc-section-card {
   background: #FFFFFF;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 1.35rem 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 3px 12px rgba(44, 37, 35, 0.04);
 }
 
 .fjc-section-header {
@@ -5181,9 +5203,9 @@ body.admin-mode-active .catalog-item__admin-bar {
   gap: 0.45rem;
 }
 
-/* Límites de Consumo & Presupuesto (Finanzas-JyC) */
+/* Presupuesto de Producción & Límites de Taller */
 .fjc-budget-card {
-  border-left: 4px solid #38BDF8;
+  border-left: 4px solid var(--accent-terracotta);
 }
 
 .fjc-budget-info-row {
@@ -5199,7 +5221,7 @@ body.admin-mode-active .catalog-item__admin-bar {
 .fjc-progress-track {
   width: 100%;
   height: 14px;
-  background: #E2E8F0;
+  background: #EFE9E4;
   border-radius: 999px;
   overflow: hidden;
   position: relative;
@@ -5213,15 +5235,15 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-progress-fill--ok {
-  background: linear-gradient(90deg, #10B981, #059669);
+  background: linear-gradient(90deg, #5B8A6E, #72A285);
 }
 
 .fjc-progress-fill--warning {
-  background: linear-gradient(90deg, #F59E0B, #D97706);
+  background: linear-gradient(90deg, #D99B4B, #E8B068);
 }
 
 .fjc-progress-fill--danger {
-  background: linear-gradient(90deg, #EF4444, #DC2626);
+  background: linear-gradient(90deg, #C85A48, #DF6E5C);
 }
 
 .fjc-budget-foot {
@@ -5234,11 +5256,11 @@ body.admin-mode-active .catalog-item__admin-bar {
   color: var(--text-secondary);
 }
 
-/* Reparto de Gastos por Categoría (Barra Segmentada Finanzas-JyC) */
+/* Distribución de Costos de Confección (Barra Segmentada) */
 .fjc-segmented-bar {
   width: 100%;
   height: 16px;
-  background: #E2E8F0;
+  background: #EFE9E4;
   border-radius: 999px;
   display: flex;
   overflow: hidden;
@@ -5257,9 +5279,9 @@ body.admin-mode-active .catalog-item__admin-bar {
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0F172A;
-  color: #FFFFFF;
-  padding: 0.25rem 0.5rem;
+  background: #2D2421;
+  color: #FAF8F5;
+  padding: 0.25rem 0.55rem;
   border-radius: 4px;
   font-size: 0.7rem;
   white-space: nowrap;
@@ -5297,7 +5319,7 @@ body.admin-mode-active .catalog-item__admin-bar {
   display: inline-block;
 }
 
-/* Control de Consumo de Telas & Producción */
+/* Trazabilidad de Telas & Producción */
 .fjc-fabrics-summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -5307,7 +5329,7 @@ body.admin-mode-active .catalog-item__admin-bar {
 .fjc-fabric-card {
   background: #FAF8F5;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -5322,17 +5344,18 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-fabric-card__meters {
-  font-size: 1.25rem;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--accent-terracotta);
   margin-bottom: 0.25rem;
 }
 
-/* Tabla de Movimientos / Gastos (Finanzas-JyC) */
+/* Libro de Movimientos & Gastos de Taller */
 .fjc-table-container {
   overflow-x: auto;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 10px;
   background: #FFFFFF;
 }
 
@@ -5343,7 +5366,7 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-table th {
-  background: #F8FAFC;
+  background: #FAF8F5;
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 700;
@@ -5361,16 +5384,16 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .fjc-table tr:hover {
-  background: #FAF8F5;
+  background: #FDFBF8;
 }
 
-/* Barra de Respaldo y Exportación de Datos (Idéntica a Finanzas-JyC) */
+/* Barra de Respaldo y Seguridad de Divina Locura */
 .fjc-backup-banner {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: linear-gradient(135deg, #382F2B 0%, #241D1A 100%);
+  border: 1px solid rgba(212, 175, 155, 0.22);
+  border-radius: 14px;
   padding: 1.25rem 1.5rem;
-  color: #FFFFFF;
+  color: #FAF8F5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -5390,12 +5413,13 @@ body.admin-mode-active .catalog-item__admin-bar {
   font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  color: #FAF8F5;
 }
 
 .fjc-backup-banner__desc {
   font-size: 0.75rem;
-  color: #94A3B8;
+  color: #C2B8B1;
 }
 
 .fjc-backup-actions {
@@ -5406,8 +5430,8 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .btn-fjc-backup {
-  background: #38BDF8;
-  color: #0F172A;
+  background: var(--accent-terracotta);
+  color: #FFFFFF;
   font-weight: 700;
   font-size: 0.82rem;
   padding: 0.55rem 1.15rem;
@@ -5421,18 +5445,18 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .btn-fjc-backup:hover {
-  background: #7DD3FC;
+  background: #A35A43;
   transform: translateY(-1px);
 }
 
 .btn-fjc-restore {
   background: rgba(255, 255, 255, 0.1);
-  color: #FFFFFF;
+  color: #FAF8F5;
   font-weight: 600;
   font-size: 0.82rem;
   padding: 0.55rem 1rem;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -5443,3 +5467,4 @@ body.admin-mode-active .catalog-item__admin-bar {
 .btn-fjc-restore:hover {
   background: rgba(255, 255, 255, 0.18);
 }
+

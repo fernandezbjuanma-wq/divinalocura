@@ -610,35 +610,50 @@
     </div>
   </footer>
 
-  <!-- Barra Flotante de Modo Administrador (Elena vs Juanma) -->
+  <!-- Barra Flotante de Modo Administrador (Elena vs Juanma - AMBOS CON LAS MISMAS OPCIONES) -->
   <aside class="admin-bar is-hidden" id="admin-bar" aria-label="Herramientas de Administración">
     <!-- Vista para Elena (Taller) -->
     <div class="admin-bar__inner" id="admin-bar-elena" style="display:none; width:100%; align-items:center; justify-content:space-between;">
       <div class="admin-bar__status">
         <span class="admin-dot-live admin-dot-live--elena"></span>
-        <span class="role-badge-text">🌸 ¡Hola Elena! &middot; Modo Taller de Creaciones</span>
+        <span class="role-badge-text">🌸 Elena &middot; Taller de Creaciones</span>
       </div>
       <div class="admin-bar__actions">
         <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-elena-tutorial-btn" title="Ver guía paso a paso para Elena">
-          <span>📖 Guía del Taller</span>
+          <span>📖 Guía</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-elena-orders-btn" title="Ver base de datos de clientas y pedidos">
-          <span>📋 Pedidos &amp; Clientas (<strong id="admin-elena-orders-count">0</strong>)</span>
+          <span>📋 Pedidos (<strong id="admin-elena-orders-count">0</strong>)</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-elena-chat-btn" title="Chat directo con clientas">
-          <span>💬 Chat Clientas (<strong id="admin-elena-chat-count">2</strong>)</span>
+          <span>💬 Chat (<strong id="admin-elena-chat-count">0</strong>)</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas e inventario">
+        <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas e insumos textiles">
           <span>🧵 Stock &amp; Telas</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-finances-btn" title="Dashboard de Producción &amp; Finanzas JyC">
-          <span>📊 Finanzas JyC</span>
+        <button type="button" class="btn-admin-bar" id="admin-elena-finances-btn" title="Balance de Confección &amp; Taller">
+          <span>📊 Balance &amp; Taller</span>
         </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-elena-btn">
+        <button type="button" class="btn-admin-bar" id="admin-elena-settings-btn" title="Configuración de frases, títulos, WhatsApp y anuncios">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>⚙️ Configuración</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-backup-btn" title="Descargar copia de seguridad en JSON">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-github-btn" title="Publicar cambios a GitHub">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          <span>🐙 GitHub</span>
+        </button>
+        <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-elena-btn" title="Publicar nueva creación artesanal">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          <span>📸 Publicar Nueva Pieza</span>
+          <span>📸 + Creación</span>
         </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--logout" id="admin-logout-elena-btn">
+        <button type="button" class="btn-admin-bar btn-admin-bar--switch" id="admin-elena-switch-role-btn" title="Cambiar rápidamente a la vista de Juanma">
+          <span>🔄 Juanma</span>
+        </button>
+        <button type="button" class="btn-admin-bar btn-admin-bar--logout" id="admin-logout-elena-btn" title="Cerrar sesión de administración">
           <span>Salir</span>
         </button>
       </div>
@@ -648,26 +663,44 @@
     <div class="admin-bar__inner" id="admin-bar-juanma" style="display:none; width:100%; align-items:center; justify-content:space-between;">
       <div class="admin-bar__status">
         <span class="admin-dot-live admin-dot-live--juanma"></span>
-        <span class="role-badge-text">💻 Juanma &middot; Modo Programador &amp; Sistema</span>
+        <span class="role-badge-text">💻 Juanma &middot; Programador &amp; Sistema</span>
       </div>
       <div class="admin-bar__actions">
-        <button type="button" class="btn-admin-bar" id="admin-dev-settings-btn" title="Configurar WhatsApp, Anuncios y Token">
+        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-juanma-tutorial-btn" title="Ver guía paso a paso del taller">
+          <span>📖 Guía</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-orders-btn" title="Ver base de datos de clientas y pedidos">
+          <span>📋 Pedidos (<strong id="admin-juanma-orders-count">0</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-chat-btn" title="Chat directo con clientas">
+          <span>💬 Chat (<strong id="admin-juanma-chat-count">0</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-stock-btn" title="Control de stock de piezas e insumos textiles">
+          <span>🧵 Stock &amp; Telas</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-finances-btn" title="Balance de Confección &amp; Taller">
+          <span>📊 Balance &amp; Taller</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-dev-settings-btn" title="Configuración de frases, títulos, WhatsApp y anuncios">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <span>Configuración Web</span>
+          <span>⚙️ Configuración</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-export-btn" title="Descargar copia de seguridad en JSON">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>💾 Respaldo</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-github-btn" title="Publicar cambios a GitHub">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-          <span>GitHub</span>
+          <span>🐙 GitHub</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-export-btn" title="Descargar archivo products-data.js">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>Backup</span>
-        </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-juanma-btn">
+        <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-juanma-btn" title="Publicar nueva creación artesanal">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          <span>+ Producto</span>
+          <span>📸 + Creación</span>
         </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--logout" id="admin-logout-juanma-btn">
+        <button type="button" class="btn-admin-bar btn-admin-bar--switch" id="admin-juanma-switch-role-btn" title="Cambiar rápidamente a la vista de Elena">
+          <span>🔄 Elena</span>
+        </button>
+        <button type="button" class="btn-admin-bar btn-admin-bar--logout" id="admin-logout-juanma-btn" title="Cerrar sesión de administración">
           <span>Salir</span>
         </button>
       </div>
@@ -1190,7 +1223,7 @@
           <span>🧵 Stock &amp; Telas</span>
         </button>
         <button type="button" class="workshop-tab-btn" data-wtab="finances">
-          <span>📊 Finanzas JyC</span>
+          <span>📊 Balance &amp; Taller</span>
         </button>
       </nav>
 
@@ -1310,7 +1343,7 @@
         </div>
       </div>
 
-      <!-- PANE 5: GASTOS & FINANZAS DEL TALLER (DASHBOARD FINANZAS-JYC) -->
+      <!-- PANE 5: GASTOS & ECONOMÍA DEL TALLER (BALANCE DE CONFECCIÓN PROPIO) -->
       <div class="workshop-tab-pane" id="wpane-finances">
         <div class="fjc-dashboard">
 
@@ -1318,8 +1351,8 @@
           <div class="fjc-panel">
             <div class="fjc-panel-top">
               <div class="fjc-panel-title-box">
-                <span class="fjc-tagline">Panel de Control &middot; Taller de Elena</span>
-                <h3 class="fjc-title">Dashboard de Producción &amp; Finanzas JyC</h3>
+                <span class="fjc-tagline">Economía de Taller &middot; Divina Locura Deco</span>
+                <h3 class="fjc-title">Balance de Confección &amp; Taller</h3>
               </div>
               <div class="fjc-period-control">
                 <label for="fjc-select-month" style="font-size:0.78rem; color:#94A3B8; font-weight:600;">Período:</label>
@@ -1350,7 +1383,7 @@
               </div>
             </div>
 
-            <!-- Rejilla de 4 KPIs Estilo Finanzas-JyC -->
+            <!-- Rejilla de 4 KPIs Propios del Taller -->
             <div class="fjc-kpi-grid">
               <!-- KPI 1: Ingresos de Pedidos -->
               <div class="fjc-kpi-card">
@@ -1394,11 +1427,11 @@
             </div>
           </div>
 
-          <!-- LÍMITES DE CONSUMO & PRESUPUESTO MENSUAL (FINANZAS-JYC) -->
+          <!-- LÍMITES DE CONSUMO & PRESUPUESTO MENSUAL DE CONFECCIÓN -->
           <div class="fjc-section-card fjc-budget-card">
             <div class="fjc-section-header">
               <h4 class="fjc-section-title">
-                <span>🛡️ Límites de Consumo &amp; Presupuesto Mensual</span>
+                <span>🛡️ Presupuesto de Producción &amp; Límites del Taller</span>
               </h4>
               <div style="display:flex; align-items:center; gap:0.5rem;">
                 <span style="font-size:0.85rem; color:var(--text-secondary);">Tope actual: <strong id="fjc-budget-display">$ 120.000 ARS</strong></span>
@@ -1427,11 +1460,11 @@
             </div>
           </div>
 
-          <!-- REPARTO DE GASTOS POR CATEGORÍA (BARRA SEGMENTADA FINANZAS-JYC) -->
+          <!-- REPARTO DE GASTOS POR CATEGORÍA DE TALLER -->
           <div class="fjc-section-card">
             <div class="fjc-section-header">
               <h4 class="fjc-section-title">
-                <span>📊 Reparto de Gastos por Categoría</span>
+                <span>📊 Distribución de Costos de Confección</span>
               </h4>
               <span style="font-size:0.78rem; color:var(--text-muted);" id="fjc-reparto-subtitle">Distribución porcentual de los costos</span>
             </div>
@@ -1501,7 +1534,7 @@
           <div class="fjc-section-card">
             <div class="fjc-section-header">
               <h4 class="fjc-section-title">
-                <span>📋 Movimientos &amp; Historial de Gastos</span>
+                <span>📋 Libro Diario de Taller &amp; Movimientos</span>
               </h4>
               <span style="font-size:0.8rem; color:var(--text-secondary);" id="fjc-expenses-count-badge">0 gastos</span>
             </div>
@@ -1521,14 +1554,14 @@
             </div>
           </div>
 
-          <!-- BANNER DE RESPALDO JSON INMEDIATO (COMO EN FINANZAS-JYC) -->
+          <!-- BANNER DE RESPALDO INTEGRAL DE SEGURIDAD (JSON) -->
           <div class="fjc-backup-banner">
             <div class="fjc-backup-banner__info">
               <span class="fjc-backup-banner__title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>Respaldo &amp; Seguridad de Datos del Taller (JSON)</span>
+                <span>Respaldo de Seguridad Divina Locura (JSON)</span>
               </span>
-              <span class="fjc-backup-banner__desc">Descargá una copia íntegra con todas las clientas, pedidos, stock, chats, gastos y límites.</span>
+              <span class="fjc-backup-banner__desc">Copia de seguridad en un clic: resguarda clientas, pedidos, inventario textil, chats y balance.</span>
             </div>
             <div class="fjc-backup-actions">
               <button type="button" class="btn-fjc-backup" id="btn-fjc-download-backup" title="Descargar archivo JSON completo">

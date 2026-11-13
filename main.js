@@ -741,6 +741,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnLoginElena = document.getElementById('btn-login-elena');
   const adminNewElenaBtn = document.getElementById('admin-new-elena-btn');
   const adminLogoutElenaBtn = document.getElementById('admin-logout-elena-btn');
+  const adminElenaSettingsBtn = document.getElementById('admin-elena-settings-btn');
+  const adminElenaBackupBtn = document.getElementById('admin-elena-backup-btn');
+  const adminElenaGithubBtn = document.getElementById('admin-elena-github-btn');
+  const adminElenaSwitchRoleBtn = document.getElementById('admin-elena-switch-role-btn');
 
   // Perfil Juanma
   const passJuanmaInput = document.getElementById('pass-juanma');
@@ -750,6 +754,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminExportBtn = document.getElementById('admin-export-btn');
   const adminNewJuanmaBtn = document.getElementById('admin-new-juanma-btn');
   const adminLogoutJuanmaBtn = document.getElementById('admin-logout-juanma-btn');
+  const adminJuanmaTutorialBtn = document.getElementById('admin-juanma-tutorial-btn');
+  const adminJuanmaOrdersBtn = document.getElementById('admin-juanma-orders-btn');
+  const adminJuanmaChatBtn = document.getElementById('admin-juanma-chat-btn');
+  const adminJuanmaStockBtn = document.getElementById('admin-juanma-stock-btn');
+  const adminJuanmaFinancesBtn = document.getElementById('admin-juanma-finances-btn');
+  const adminJuanmaSwitchRoleBtn = document.getElementById('admin-juanma-switch-role-btn');
 
   function updateAdminUi() {
     document.body.classList.remove('admin-mode-active', 'role-elena', 'role-juanma');
@@ -853,6 +863,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (adminLogoutElenaBtn) adminLogoutElenaBtn.addEventListener('click', logoutAdmin);
   if (adminLogoutJuanmaBtn) adminLogoutJuanmaBtn.addEventListener('click', logoutAdmin);
+
+  // Conmutador instantáneo entre perfiles (Elena <-> Juanma)
+  if (adminElenaSwitchRoleBtn) {
+    adminElenaSwitchRoleBtn.addEventListener('click', () => {
+      currentRole = 'juanma';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
+      updateAdminUi();
+      showToast('💻 Conmutado a modo Juanma (Programador & Sistema)');
+    });
+  }
+
+  if (adminJuanmaSwitchRoleBtn) {
+    adminJuanmaSwitchRoleBtn.addEventListener('click', () => {
+      currentRole = 'elena';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
+      updateAdminUi();
+      showToast('🌸 Conmutado a modo Elena (Taller de Creaciones)');
+    });
+  }
 
   // Atajos de teclado: Alt + E o Alt + A para abrir login
   document.addEventListener('keydown', (e) => {
@@ -1182,6 +1211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (adminDevSettingsBtn) adminDevSettingsBtn.addEventListener('click', openDevSettings);
+  if (adminElenaSettingsBtn) adminElenaSettingsBtn.addEventListener('click', openDevSettings);
   if (devSettingsCloseBtn) devSettingsCloseBtn.addEventListener('click', closeDevSettings);
 
   if (devSettingsForm) {
@@ -1267,6 +1297,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   if (adminExportBtn) adminExportBtn.addEventListener('click', downloadProductsFile);
+  if (adminElenaBackupBtn) adminElenaBackupBtn.addEventListener('click', downloadProductsFile);
   if (modalDownloadDataBtn) modalDownloadDataBtn.addEventListener('click', downloadProductsFile);
   if (btnDownloadBackup) btnDownloadBackup.addEventListener('click', downloadProductsFile);
 
@@ -1284,6 +1315,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   if (adminGithubBtn) adminGithubBtn.addEventListener('click', openGithubModal);
+  if (adminElenaGithubBtn) adminElenaGithubBtn.addEventListener('click', openGithubModal);
   if (ghSyncCloseBtn) ghSyncCloseBtn.addEventListener('click', closeGithubModal);
 
   async function pushToGithub(token) {
@@ -2116,9 +2148,10 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const elenaOrdersList = document.getElementById('elena-orders-list');
 
   function updateElenaOrdersBadge() {
-    if (adminElenaOrdersCount) {
-      adminElenaOrdersCount.textContent = orders.length;
-    }
+    const elElena = document.getElementById('admin-elena-orders-count');
+    const elJuanma = document.getElementById('admin-juanma-orders-count');
+    if (elElena) elElena.textContent = orders.length;
+    if (elJuanma) elJuanma.textContent = orders.length;
   }
 
   function openElenaTutorial() {
@@ -2136,6 +2169,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   if (adminElenaTutorialBtn) adminElenaTutorialBtn.addEventListener('click', openElenaTutorial);
+  if (adminJuanmaTutorialBtn) adminJuanmaTutorialBtn.addEventListener('click', openElenaTutorial);
   if (elenaTutorialCloseBtn) elenaTutorialCloseBtn.addEventListener('click', closeElenaTutorial);
 
   // Tabs dentro del Tutorial de Elena
@@ -2167,10 +2201,17 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     const allClients = window.WorkshopDB.getClients();
     const allChats = window.WorkshopDB.getChats();
 
-    // Contadores de barra admin
-    if (adminElenaOrdersCount) adminElenaOrdersCount.textContent = allOrders.length;
+    // Contadores de barra admin (Elena y Juanma)
+    const oCountElena = document.getElementById('admin-elena-orders-count');
+    const oCountJuanma = document.getElementById('admin-juanma-orders-count');
+    if (oCountElena) oCountElena.textContent = allOrders.length;
+    if (oCountJuanma) oCountJuanma.textContent = allOrders.length;
+
     const chatKeys = Object.keys(allChats);
-    if (adminElenaChatCount) adminElenaChatCount.textContent = chatKeys.length;
+    const cCountElena = document.getElementById('admin-elena-chat-count');
+    const cCountJuanma = document.getElementById('admin-juanma-chat-count');
+    if (cCountElena) cCountElena.textContent = chatKeys.length;
+    if (cCountJuanma) cCountJuanma.textContent = chatKeys.length;
 
     // Contadores en las pestañas del modal
     const countOrdersTab = document.getElementById('workshop-orders-count');
@@ -2657,7 +2698,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // TAB 5: GASTOS & FINANZAS DEL TALLER (DASHBOARD FINANZAS-JYC)
+  // TAB 5: BALANCE DE CONFECCIÓN & TALLER (ECONOMÍA ARTESANAL PROPIA)
   let currentSelectedFinancesMonth = 'all';
 
   function renderWorkshopFinances(monthToSelect) {
@@ -2895,7 +2936,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       });
     }
 
-    // 10. Botones de Respaldo JSON Inmediato (Finanzas-JyC)
+    // 10. Botones de Respaldo JSON Integral (Divina Locura Deco)
     const btnDownloadBackup = document.getElementById('btn-fjc-download-backup');
     if (btnDownloadBackup && !btnDownloadBackup.hasAttribute('data-bound')) {
       btnDownloadBackup.setAttribute('data-bound', 'true');
@@ -2956,19 +2997,35 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // Conectar botones de la barra inferior de Elena
+  // Conectar botones de la barra inferior para ambos perfiles (Elena & Juanma)
   if (adminElenaOrdersBtn) {
     adminElenaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
   }
+  if (adminJuanmaOrdersBtn) {
+    adminJuanmaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
+  }
+
   if (adminElenaChatBtn) {
     adminElenaChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
   }
+  if (adminJuanmaChatBtn) {
+    adminJuanmaChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
+  }
+
   if (adminElenaStockBtn) {
     adminElenaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
   }
+  if (adminJuanmaStockBtn) {
+    adminJuanmaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
+  }
+
   if (adminElenaFinancesBtn) {
     adminElenaFinancesBtn.addEventListener('click', () => openElenaWorkshopHub('finances'));
   }
+  if (adminJuanmaFinancesBtn) {
+    adminJuanmaFinancesBtn.addEventListener('click', () => openElenaWorkshopHub('finances'));
+  }
+
   if (elenaOrdersCloseBtn) {
     elenaOrdersCloseBtn.addEventListener('click', closeElenaWorkshopHub);
   }

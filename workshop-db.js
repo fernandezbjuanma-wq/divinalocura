@@ -16,12 +16,12 @@
   const KEY_BUDGET = 'divinalocura_workshop_budget';
 
   const CATEGORY_COLORS = {
-    'Telas': '#3B82F6',        // Azul textil
-    'Mercería': '#10B981',     // Verde esmeralda
-    'Packaging': '#8B5CF6',    // Violeta empaque
-    'Envíos': '#F59E0B',       // Ámbar logística
-    'Herramientas': '#EC4899', // Rosa máquinas y tijeras
-    'Varios': '#64748B'        // Pizarra neutra
+    'Telas': '#C87D69',        // Terracota textil artesanal (identitario Divina Locura)
+    'Mercería': '#658572',     // Verde salvia de confección
+    'Packaging': '#C49E68',    // Arena trigo y lino cálido
+    'Envíos': '#B5734C',       // Caramelo rústico
+    'Herramientas': '#7D5B4F', // Arcilla café de máquinas y tijeras
+    'Varios': '#8F8A85'        // Lino crudo neutro
   };
 
   const MONTH_NAMES = {
@@ -472,7 +472,7 @@
     },
 
     // -----------------------------------------------------------------------
-    // PRESUPUESTO & LÍMITES DE CONSUMO (INSPIRACIÓN FINANZAS-JYC)
+    // PRESUPUESTO & LÍMITES DE CONSUMO DEL TALLER
     // -----------------------------------------------------------------------
     getBudget: function () {
       const stored = localStorage.getItem(KEY_BUDGET);
@@ -548,7 +548,7 @@
     },
 
     // -----------------------------------------------------------------------
-    // GASTOS & BALANCE DE PRODUCCIÓN (DASHBOARD FINANZAS-JYC)
+    // GASTOS & BALANCE DE PRODUCCIÓN (TALLER DIVINA LOCURA)
     // -----------------------------------------------------------------------
     getExpenses: function () {
       return getJson(KEY_EXPENSES, SEED_EXPENSES);
@@ -713,14 +713,13 @@
     },
 
     // -----------------------------------------------------------------------
-    // RESPALDO COMPLETO DEL TALLER (JSON BACKUP EXPORT & IMPORT)
-    // Idéntico al botón de respaldo de Finanzas-JyC
+    // RESPALDO INTEGRAL DEL TALLER (JSON BACKUP EXPORT & IMPORT)
     // -----------------------------------------------------------------------
     exportBackupJson: function () {
       const backupData = {
         meta: {
-          app: 'Divina Locura Deco - Taller de Elena & Finanzas JyC',
-          version: '2.0.0',
+          app: 'Divina Locura Deco - Taller de Confección & Gestión Integral',
+          version: '2.5.0',
           exportedAt: new Date().toISOString(),
           readableDate: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')
         },
