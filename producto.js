@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const activeRole = localStorage.getItem('divinalocura_role');
   if (pdpAdminEditBtn && activeRole) {
     pdpAdminEditBtn.style.display = 'inline-flex';
-    pdpAdminEditBtn.textContent = activeRole === 'elena' ? '🌸 Modificar esta Pieza' : '💻 Editar Producto';
+    pdpAdminEditBtn.textContent = '✏️ Modificar esta Creación';
     pdpAdminEditBtn.addEventListener('click', () => {
       if (window.DivinaLocura && window.DivinaLocura.openProductEditor) {
         window.DivinaLocura.openProductEditor(product.id);

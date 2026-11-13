@@ -2006,7 +2006,11 @@ body.admin-mode-active .chatbot-widget {
   50% { opacity: 0.5; transform: scale(0.85); }
 }
 
-/* Reglas de visualización según el rol activo */
+/* Reglas de visualización según el modo admin activo */
+body.admin-mode-active #admin-bar-unified {
+  display: flex !important;
+}
+
 body.role-elena #admin-bar-elena {
   display: flex !important;
 }

@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY_ORDERS = 'divinalocura_orders';
 
   const PASSWORDS = {
-    elena: ['elena', 'elena2026', 'mama'],
-    juanma: ['juanma', 'juanma2026', 'admin']
+    admin: ['admin', 'admin2026', 'juanma', 'juanma2026', 'elena', 'elena2026', 'mama'],
+    elena: ['elena', 'elena2026', 'mama', 'admin', 'juanma'],
+    juanma: ['juanma', 'juanma2026', 'admin', 'elena']
   };
 
   const DEFAULT_SETTINGS = {
@@ -143,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterBtns = document.querySelectorAll('.filter-btn');
   const categoryTiles = document.querySelectorAll('[data-category-target]');
   const adminBar = document.getElementById('admin-bar');
+  const adminBarUnified = document.getElementById('admin-bar-unified');
   const adminBarElena = document.getElementById('admin-bar-elena');
   const adminBarJuanma = document.getElementById('admin-bar-juanma');
   const topAnnouncementText = document.getElementById('top-announcement-text');
@@ -288,21 +290,13 @@ document.addEventListener('DOMContentLoaded', () => {
         </button>
       `).join('');
 
-      // Barra de administración en tarjeta según rol
+      // Barra de administración en tarjeta para administrador
       let adminBarHtml = '';
-      if (currentRole === 'elena') {
+      if (currentRole) {
         adminBarHtml = `
           <div class="catalog-item__admin-bar">
             <button type="button" class="btn-card-admin btn-card-admin--edit" data-edit-id="${product.id}" title="Modificar esta pieza">
-              ✏️ Modificar Creación
-            </button>
-          </div>
-        `;
-      } else if (currentRole === 'juanma') {
-        adminBarHtml = `
-          <div class="catalog-item__admin-bar">
-            <button type="button" class="btn-card-admin btn-card-admin--edit" data-edit-id="${product.id}" title="Editar este producto">
-              ✏️ Editar
+              ✏️ Modificar
             </button>
             <button type="button" class="btn-card-admin btn-card-admin--delete" data-delete-id="${product.id}" title="Eliminar producto">
               🗑️
@@ -733,14 +727,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 6. SISTEMA DE PERFILES DE ADMINISTRACIÓN (ELENA & JUANMA)
+  // 6. SISTEMA DE ADMINISTRACIÓN UNIFICADO (TODAS LAS OPCIONES PARA JUANMA/ADMIN)
   //    ACCESO EXCLUSIVO DESDE EL PIE DE PÁGINA (ABAJO DEL TODO)
   // =========================================================================
   const openAdminBtn = document.getElementById('open-admin-btn');
   const teamAdminModal = document.getElementById('team-admin-modal');
   const teamAdminCancelBtn = document.getElementById('team-admin-cancel-btn');
 
-  // Perfil Elena
+  // Login de Administrador Único
+  const formAdminLogin = document.getElementById('form-admin-login');
+  const passAdminInput = document.getElementById('pass-admin');
+  const btnLoginAdmin = document.getElementById('btn-login-admin');
+
+  // Barra Unificada & Acciones
+  const adminDashboardBtn = document.getElementById('admin-dashboard-btn');
+  const adminOrdersBtn = document.getElementById('admin-orders-btn');
+  const adminProductionBtn = document.getElementById('admin-production-btn');
+  const adminStockBtn = document.getElementById('admin-stock-btn');
+  const adminFinancesBtn = document.getElementById('admin-finances-btn');
+  const adminChatBtn = document.getElementById('admin-chat-btn');
+  const adminTutorialBtn = document.getElementById('admin-tutorial-btn');
+  const adminSettingsBtn = document.getElementById('admin-settings-btn');
+  const adminBackupBtn = document.getElementById('admin-backup-btn');
+  const adminGithubBtn = document.getElementById('admin-github-btn');
+  const adminNewProductBtn = document.getElementById('admin-new-product-btn');
+  const adminLogoutBtn = document.getElementById('admin-logout-btn');
+
+  // Compatibilidad con selectores de versiones previas
   const passElenaInput = document.getElementById('pass-elena');
   const btnLoginElena = document.getElementById('btn-login-elena');
   const adminNewElenaBtn = document.getElementById('admin-new-elena-btn');
@@ -750,11 +763,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminElenaGithubBtn = document.getElementById('admin-elena-github-btn');
   const adminElenaSwitchRoleBtn = document.getElementById('admin-elena-switch-role-btn');
 
-  // Perfil Juanma
   const passJuanmaInput = document.getElementById('pass-juanma');
   const btnLoginJuanma = document.getElementById('btn-login-juanma');
   const adminDevSettingsBtn = document.getElementById('admin-dev-settings-btn');
-  const adminGithubBtn = document.getElementById('admin-github-btn');
   const adminExportBtn = document.getElementById('admin-export-btn');
   const adminNewJuanmaBtn = document.getElementById('admin-new-juanma-btn');
   const adminLogoutJuanmaBtn = document.getElementById('admin-logout-juanma-btn');
@@ -768,18 +779,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateAdminUi() {
     document.body.classList.remove('admin-mode-active', 'role-elena', 'role-juanma');
 
-    if (currentRole === 'elena') {
-      document.body.classList.add('admin-mode-active', 'role-elena');
-      if (adminBar) adminBar.classList.remove('is-hidden');
-      if (adminBarElena) adminBarElena.style.display = 'flex';
-      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
-    } else if (currentRole === 'juanma') {
+    if (currentRole) {
       document.body.classList.add('admin-mode-active', 'role-juanma');
       if (adminBar) adminBar.classList.remove('is-hidden');
+      if (adminBarUnified) adminBarUnified.style.display = 'flex';
       if (adminBarElena) adminBarElena.style.display = 'none';
-      if (adminBarJuanma) adminBarJuanma.style.display = 'flex';
+      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
     } else {
       if (adminBar) adminBar.classList.add('is-hidden');
+      if (adminBarUnified) adminBarUnified.style.display = 'none';
       if (adminBarElena) adminBarElena.style.display = 'none';
       if (adminBarJuanma) adminBarJuanma.style.display = 'none';
     }
@@ -788,11 +796,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateClientUi === 'function') updateClientUi();
     if (typeof updateCartUi === 'function') updateCartUi();
     if (typeof updateElenaOrdersBadge === 'function') updateElenaOrdersBadge();
+    if (typeof updateWorkshopCounters === 'function') updateWorkshopCounters();
   }
 
   function openTeamAdminLogin() {
     if (teamAdminModal) {
       teamAdminModal.classList.add('is-open');
+      if (passAdminInput) {
+        passAdminInput.value = '';
+        setTimeout(() => passAdminInput.focus(), 50);
+      }
       if (passElenaInput) passElenaInput.value = '';
       if (passJuanmaInput) passJuanmaInput.value = '';
     }
@@ -813,51 +826,55 @@ document.addEventListener('DOMContentLoaded', () => {
   if (openAdminBtn) openAdminBtn.addEventListener('click', openTeamAdminLogin);
   if (teamAdminCancelBtn) teamAdminCancelBtn.addEventListener('click', closeTeamAdminLogin);
 
-  // Login Elena
+  // Login de Administrador Unificado
+  function handleAdminLogin() {
+    const pass = (passAdminInput ? passAdminInput.value : '').trim().toLowerCase();
+    const valid = (PASSWORDS.admin && PASSWORDS.admin.includes(pass)) || pass === '' || pass === 'admin' || pass === 'juanma' || pass === 'elena';
+    if (valid) {
+      currentRole = 'admin';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
+      closeTeamAdminLogin();
+      updateAdminUi();
+      showToast('💻 ¡Modo Administrador Activado! Todas las opciones de taller, pedidos, finanzas y sistema habilitadas.');
+    } else {
+      alert('Clave de administrador incorrecta. (Clave por defecto: admin o juanma)');
+    }
+  }
+
+  if (btnLoginAdmin) btnLoginAdmin.addEventListener('click', handleAdminLogin);
+  if (passAdminInput) {
+    passAdminInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleAdminLogin();
+    });
+  }
+  if (formAdminLogin) {
+    formAdminLogin.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleAdminLogin();
+    });
+  }
+
+  // Compatibilidad retroactiva con botones Elena / Juanma
   if (btnLoginElena) {
     btnLoginElena.addEventListener('click', () => {
-      const pass = (passElenaInput.value || '').trim().toLowerCase();
-      if (PASSWORDS.elena.includes(pass) || pass === '') {
-        currentRole = 'elena';
-        localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
-        closeTeamAdminLogin();
-        updateAdminUi();
-        showToast('🌸 ¡Bienvenida Elena! Ya puedes publicar fotos y cambiar precios fácilmente.');
-      } else {
-        alert('Clave de Elena incorrecta. (Clave por defecto: elena)');
-      }
+      currentRole = 'admin';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
+      closeTeamAdminLogin();
+      updateAdminUi();
+      showToast('🌸 ¡Modo Administrador Activado! Todas las herramientas listas.');
     });
   }
-
-  if (passElenaInput) {
-    passElenaInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') btnLoginElena.click();
-    });
-  }
-
-  // Login Juanma
   if (btnLoginJuanma) {
     btnLoginJuanma.addEventListener('click', () => {
-      const pass = (passJuanmaInput.value || '').trim().toLowerCase();
-      if (PASSWORDS.juanma.includes(pass) || pass === '') {
-        currentRole = 'juanma';
-        localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
-        closeTeamAdminLogin();
-        updateAdminUi();
-        showToast('💻 ¡Modo Programador Activado! Acceso total a configuración, GitHub y respaldos.');
-      } else {
-        alert('Clave de Juanma incorrecta. (Clave por defecto: juanma)');
-      }
+      currentRole = 'admin';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
+      closeTeamAdminLogin();
+      updateAdminUi();
+      showToast('💻 ¡Modo Administrador Activado! Todas las herramientas listas.');
     });
   }
 
-  if (passJuanmaInput) {
-    passJuanmaInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') btnLoginJuanma.click();
-    });
-  }
-
-  // Cierre de Sesión para ambos roles
+  // Cierre de Sesión Unificado
   function logoutAdmin() {
     currentRole = null;
     localStorage.removeItem(STORAGE_KEY_ROLE);
@@ -865,27 +882,15 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Sesión de administración cerrada.');
   }
 
+  if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', logoutAdmin);
   if (adminLogoutElenaBtn) adminLogoutElenaBtn.addEventListener('click', logoutAdmin);
   if (adminLogoutJuanmaBtn) adminLogoutJuanmaBtn.addEventListener('click', logoutAdmin);
 
-  // Conmutador instantáneo entre perfiles (Elena <-> Juanma)
-  if (adminElenaSwitchRoleBtn) {
-    adminElenaSwitchRoleBtn.addEventListener('click', () => {
-      currentRole = 'juanma';
-      localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
-      updateAdminUi();
-      showToast('💻 Conmutado a modo Juanma (Programador & Sistema)');
-    });
-  }
-
-  if (adminJuanmaSwitchRoleBtn) {
-    adminJuanmaSwitchRoleBtn.addEventListener('click', () => {
-      currentRole = 'elena';
-      localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
-      updateAdminUi();
-      showToast('🌸 Conmutado a modo Elena (Taller de Creaciones)');
-    });
-  }
+  // Botones de acción directa en la barra unificada
+  if (adminSettingsBtn) adminSettingsBtn.addEventListener('click', openDevSettings);
+  if (adminBackupBtn) adminBackupBtn.addEventListener('click', downloadProductsFile);
+  if (adminNewProductBtn) adminNewProductBtn.addEventListener('click', () => openProductEditor(null));
+  if (adminTutorialBtn) adminTutorialBtn.addEventListener('click', openElenaTutorial);
 
   // Atajos de teclado: Alt + E o Alt + A para abrir login
   document.addEventListener('keydown', (e) => {
@@ -936,24 +941,19 @@ document.addEventListener('DOMContentLoaded', () => {
   function openProductEditor(id = null) {
     if (!productEditModal) return;
 
-    // Adaptar textos y visibilidad según si es Elena o Juanma
-    const isElena = currentRole === 'elena';
-
     if (productModalBadge) {
-      productModalBadge.className = isElena ? 'profile-badge-inline' : 'profile-badge-inline profile-badge--juanma';
-      productModalBadge.textContent = isElena ? '🌸 Modo Taller de Elena' : '💻 Modo Programador';
+      productModalBadge.className = 'profile-badge-inline profile-badge--juanma';
+      productModalBadge.textContent = '💻 Administrador \u00B7 Taller & Sistema';
     }
 
-    if (devFieldsRow) devFieldsRow.style.display = isElena ? 'none' : 'grid';
+    if (devFieldsRow) devFieldsRow.style.display = 'grid';
 
     if (id) {
       const product = products.find(p => p.id === id);
       if (!product) return;
 
-      if (productModalTitle) productModalTitle.textContent = isElena ? `Modificar Creación: ${product.title}` : `Editar Producto (${product.id})`;
-      if (productModalDesc) productModalDesc.textContent = isElena
-        ? 'Cambiá la información o agregá fotos de tu pieza. Al guardar se verá de inmediato en la tienda.'
-        : 'Actualiza metadatos, fotos multivista y posteo editorial.';
+      if (productModalTitle) productModalTitle.textContent = `Modificar Creación: ${product.title}`;
+      if (productModalDesc) productModalDesc.textContent = 'Cambiá la información, fotos o precios de tu pieza. Al guardar se actualizará en la tienda de inmediato.';
 
       if (editProductId) editProductId.value = product.id;
       if (editTitle) editTitle.value = product.title || '';
@@ -969,10 +969,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderImageRows(product.images || []);
     } else {
-      if (productModalTitle) productModalTitle.textContent = isElena ? '🌸 Publicar Nueva Creación' : 'Crear Nuevo Producto';
-      if (productModalDesc) productModalDesc.textContent = isElena
-        ? 'Elegí las fotos de tu pieza y escribí cómo se llama y cuánto cuesta.'
-        : 'Crea un nuevo ítem en la base de datos de productos.';
+      if (productModalTitle) productModalTitle.textContent = 'Nueva Creación Artesanal';
+      if (productModalDesc) productModalDesc.textContent = 'Completá los datos de la pieza y agregá fotos para publicarla en el catálogo.';
 
       if (editProductId) editProductId.value = '';
       if (editTitle) editTitle.value = '';
@@ -990,7 +988,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (editSaveBtn) {
-      editSaveBtn.textContent = isElena ? '✨ Guardar y Publicar en la Tienda' : 'Guardar Producto';
+      editSaveBtn.textContent = '✨ Guardar y Publicar en la Tienda';
     }
 
     productEditModal.classList.add('is-open');
@@ -1001,6 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (editCancelBtn) editCancelBtn.addEventListener('click', closeProductEditor);
+  if (adminNewProductBtn) adminNewProductBtn.addEventListener('click', () => openProductEditor(null));
   if (adminNewElenaBtn) adminNewElenaBtn.addEventListener('click', () => openProductEditor(null));
   if (adminNewJuanmaBtn) adminNewJuanmaBtn.addEventListener('click', () => openProductEditor(null));
 
@@ -2211,20 +2210,26 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     const allProduction = window.WorkshopDB.getProductionQueue ? window.WorkshopDB.getProductionQueue() : [];
     const activeProduction = allProduction.filter(p => p.phase !== 'completado');
 
-    // Contadores de barra admin (Elena y Juanma)
+    // Contadores de barra admin unificada (y retrocompatibilidad)
+    const oCountUnified = document.getElementById('admin-orders-count');
     const oCountElena = document.getElementById('admin-elena-orders-count');
     const oCountJuanma = document.getElementById('admin-juanma-orders-count');
+    if (oCountUnified) oCountUnified.textContent = allOrders.length;
     if (oCountElena) oCountElena.textContent = allOrders.length;
     if (oCountJuanma) oCountJuanma.textContent = allOrders.length;
 
+    const pCountUnified = document.getElementById('admin-production-count');
     const pCountElena = document.getElementById('admin-elena-production-count');
     const pCountJuanma = document.getElementById('admin-juanma-production-count');
+    if (pCountUnified) pCountUnified.textContent = activeProduction.length;
     if (pCountElena) pCountElena.textContent = activeProduction.length;
     if (pCountJuanma) pCountJuanma.textContent = activeProduction.length;
 
     const chatKeys = Object.keys(allChats);
+    const cCountUnified = document.getElementById('admin-chat-count');
     const cCountElena = document.getElementById('admin-elena-chat-count');
     const cCountJuanma = document.getElementById('admin-juanma-chat-count');
+    if (cCountUnified) cCountUnified.textContent = chatKeys.length;
     if (cCountElena) cCountElena.textContent = chatKeys.length;
     if (cCountJuanma) cCountJuanma.textContent = chatKeys.length;
 
@@ -3358,7 +3363,10 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // Conectar botones de la barra inferior para ambos perfiles (Elena & Juanma)
+  // Conectar botones de la barra de administración (unificada y compatibilidad)
+  if (adminDashboardBtn) {
+    adminDashboardBtn.addEventListener('click', () => openElenaWorkshopHub('dashboard'));
+  }
   if (adminElenaDashboardBtn) {
     adminElenaDashboardBtn.addEventListener('click', () => openElenaWorkshopHub('dashboard'));
   }
@@ -3366,6 +3374,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     adminJuanmaDashboardBtn.addEventListener('click', () => openElenaWorkshopHub('dashboard'));
   }
 
+  if (adminOrdersBtn) {
+    adminOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
+  }
   if (adminElenaOrdersBtn) {
     adminElenaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
   }
@@ -3373,6 +3384,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     adminJuanmaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
   }
 
+  if (adminProductionBtn) {
+    adminProductionBtn.addEventListener('click', () => openElenaWorkshopHub('production'));
+  }
   if (adminElenaProductionBtn) {
     adminElenaProductionBtn.addEventListener('click', () => openElenaWorkshopHub('production'));
   }
@@ -3380,6 +3394,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     adminJuanmaProductionBtn.addEventListener('click', () => openElenaWorkshopHub('production'));
   }
 
+  if (adminChatBtn) {
+    adminChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
+  }
   if (adminElenaChatBtn) {
     adminElenaChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
   }
@@ -3387,6 +3404,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     adminJuanmaChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
   }
 
+  if (adminStockBtn) {
+    adminStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
+  }
   if (adminElenaStockBtn) {
     adminElenaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
   }
@@ -3394,6 +3414,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     adminJuanmaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
   }
 
+  if (adminFinancesBtn) {
+    adminFinancesBtn.addEventListener('click', () => openElenaWorkshopHub('finances'));
+  }
   if (adminElenaFinancesBtn) {
     adminElenaFinancesBtn.addEventListener('click', () => openElenaWorkshopHub('finances'));
   }
