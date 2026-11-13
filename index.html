@@ -49,6 +49,7 @@
           <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
+          <li style="margin-top:0.5rem; border-top:1px dashed rgba(43,38,37,0.15); padding-top:0.5rem;"><a href="admin.html" class="side-drawer__link" style="color:var(--accent-terracotta); font-weight:700;">💻 Panel de Control de Administración</a></li>
         </ul>
       </nav>
       <div class="side-drawer__footer">
@@ -84,6 +85,9 @@
 
       <!-- Derecha: Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos, Ayuda y WhatsApp -->
       <div class="site-header__right">
+        <a href="admin.html" class="header-text-btn header-admin-link" id="header-admin-link" style="color:var(--accent-terracotta); font-weight:700;">
+          <span>💻 PANEL DE CONTROL</span>
+        </a>
         <button type="button" class="header-text-btn" id="header-login-btn">
           <span id="header-user-label">MI CUENTA</span>
         </button>
@@ -598,10 +602,10 @@
           <a href="#catalogo">Catálogo</a>
           <a href="#espacios">Espacios &amp; Estilismo</a>
           <a href="#sobre-elena">El Taller</a>
-          <button type="button" class="btn-admin-access" id="open-admin-btn" aria-label="Abrir panel de administración">
+          <a href="admin.html" class="btn-admin-access" id="open-admin-link" aria-label="Abrir panel de administración dedicado">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>Modo Admin</span>
-          </button>
+            <span>💻 Panel de Control</span>
+          </a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -610,58 +614,9 @@
     </div>
   </footer>
 
-  <!-- Barra Flotante de Modo Administrador (Elena vs Juanma - AMBOS CON LAS MISMAS OPCIONES) -->
-  <!-- Barra Flotante de Modo Administrador (Todas las Opciones para el Administrador) -->
-  <aside class="admin-bar is-hidden" id="admin-bar" aria-label="Herramientas de Administración">
-    <div class="admin-bar__inner" id="admin-bar-unified" style="width:100%; align-items:center; justify-content:space-between;">
-      <div class="admin-bar__status">
-        <span class="admin-dot-live admin-dot-live--juanma"></span>
-        <span class="role-badge-text">💻 Administrador &middot; Taller &amp; Sistema</span>
-      </div>
-      <div class="admin-bar__actions">
-        <button type="button" class="btn-admin-bar btn-admin-bar--dashboard" id="admin-dashboard-btn" title="Panel de Control Ejecutivo &amp; Gestión del Negocio">
-          <span>📊 Panel de Control</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-orders-btn" title="Ver base de datos de clientas y pedidos">
-          <span>📋 Pedidos (<strong id="admin-orders-count">0</strong>)</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-production-btn" title="Control de Producción &amp; Confección Textil">
-          <span>✂️ Producción (<strong id="admin-production-count">4</strong>)</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-stock-btn" title="Control de stock de piezas e insumos textiles">
-          <span>🧵 Stock &amp; Telas</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-finances-btn" title="Economía de Taller &amp; Ganancias">
-          <span>💰 Ganancias</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-chat-btn" title="Chat directo con clientas">
-          <span>💬 Chat (<strong id="admin-chat-count">0</strong>)</span>
-        </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-tutorial-btn" title="Ver guía paso a paso del taller">
-          <span>📖 Guía</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-settings-btn" title="Configuración de frases, títulos, WhatsApp y anuncios">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          <span>⚙️ Configuración</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-backup-btn" title="Descargar copia de seguridad en JSON">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>💾 Respaldo</span>
-        </button>
-        <button type="button" class="btn-admin-bar" id="admin-github-btn" title="Publicar cambios a GitHub">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-          <span>🐙 GitHub</span>
-        </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-product-btn" title="Publicar nueva creación artesanal">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          <span>📸 + Creación</span>
-        </button>
-        <button type="button" class="btn-admin-bar btn-admin-bar--logout" id="admin-logout-btn" title="Cerrar sesión de administración">
-          <span>Salir</span>
-        </button>
-      </div>
-    </div>
-  </aside>
+  <!-- El Panel de Control vive en su propia sección apartada e independiente: admin.html -->
+  <div id="admin-bar" class="is-hidden" style="display:none;" aria-hidden="true"></div>
+
 
   <!-- MODAL EDITORIAL: Lookbook & Ficha de Creación (Inspiración Anthropologie) -->
   <div class="lookbook-modal" id="lookbook-modal" role="dialog" aria-modal="true" aria-hidden="true">

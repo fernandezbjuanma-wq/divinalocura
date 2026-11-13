@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración de Tienda | Divina Locura Deco</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body" data-admin-page="configuracion">
+
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="admin.html" class="admin-brand-wrap">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-badge">
+          <span class="admin-dot-pulse"></span>
+          <span>Panel de Control</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link is-active">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- LOGIN GUARD -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 💻</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO CONFIGURACIÓN -->
+    <div class="admin-content-area" id="admin-content-area">
+      
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Personalización &middot; Textos de la Web</span>
+          <h1 class="admin-page-title">Configuración de la Tienda</h1>
+          <p class="admin-page-desc">
+            Modificá los textos y frases inspiradoras de la portada, canales de contacto por WhatsApp, usuario de Instagram y sincronización con GitHub.
+          </p>
+        </div>
+      </section>
+
+      <form id="form-admin-settings">
+        
+        <!-- Bloque 1: Mensajes Destacados & Hero -->
+        <section class="admin-card">
+          <div class="admin-card__header">
+            <div>
+              <h3 class="admin-card__title">Portada &amp; Frases Principales (Hero)</h3>
+              <div class="admin-card__subtitle">Ajustá la primera impresión visual inspirada en marcas de lujo como Anthropologie</div>
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label">Cinta Superior de Anuncios</label>
+            <input type="text" id="cfg-announcement" class="admin-input" placeholder="Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena" />
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+            <div class="admin-form-group">
+              <label class="admin-label">Ceja del Hero (Kicker)</label>
+              <input type="text" id="cfg-hero-eyebrow" class="admin-input" placeholder="CONFECCIÓN ARTESANAL · BUENOS AIRES" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">Texto del Botón Principal (CTA)</label>
+              <input type="text" id="cfg-hero-cta" class="admin-input" placeholder="Explorar la Colección" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label">Título Principal de Portada</label>
+            <textarea id="cfg-hero-title" class="admin-textarea" rows="2" placeholder="El arte del detalle. Diseño hecho a mano para abrazar tu hogar."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label">Bajada / Eslogan Inspirador</label>
+            <textarea id="cfg-hero-tagline" class="admin-textarea" rows="2" placeholder="Textiles con alma. Organización y calidez para tu día a día."></textarea>
+          </div>
+        </section>
+
+        <!-- Bloque 2: Contacto & Redes -->
+        <section class="admin-card">
+          <div class="admin-card__header">
+            <div>
+              <h3 class="admin-card__title">Canales de Contacto &amp; Redes</h3>
+              <div class="admin-card__subtitle">Coordinación de encargos directos</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+            <div class="admin-form-group">
+              <label class="admin-label">Número de WhatsApp (con código de país)</label>
+              <input type="text" id="cfg-whatsapp" class="admin-input" placeholder="5491100000000" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">Usuario de Instagram</label>
+              <input type="text" id="cfg-instagram" class="admin-input" placeholder="divina.locura.deco" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label">Token Personal de GitHub (PAT opcional)</label>
+            <input type="password" id="cfg-github-token" class="admin-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+          </div>
+
+          <div style="margin-top:1.5rem;">
+            <button type="submit" class="btn-admin-cta" style="padding:0.85rem 1.75rem;">
+              <span>💾 Guardar Todos los Cambios</span>
+            </button>
+          </div>
+        </section>
+
+      </form>
+
+      <!-- Bloque 3: Respaldo y Restauración -->
+      <section class="admin-card">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Copia de Seguridad &amp; Restauración</h3>
+            <div class="admin-card__subtitle">Guarda una copia completa de toda la información del taller en un archivo JSON</div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <button type="button" class="btn-admin-cta" onclick="window.DivinaLocuraAdmin.downloadBackup()">
+            <span>📥 Descargar Copia de Seguridad JSON</span>
+          </button>
+
+          <label class="btn-admin-outline" style="cursor:pointer; margin:0;">
+            <span>📤 Restaurar desde Archivo JSON</span>
+            <input type="file" id="restore-file-input" accept=".json" style="display:none;" />
+          </label>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="products-data.js"></script>
+  <script src="workshop-db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

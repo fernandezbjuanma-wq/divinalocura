@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock & Telas Nobles | Divina Locura Deco</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body" data-admin-page="stock">
+
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="admin.html" class="admin-brand-wrap">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-badge">
+          <span class="admin-dot-pulse"></span>
+          <span>Panel de Control</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link is-active">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- LOGIN GUARD -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 💻</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO STOCK -->
+    <div class="admin-content-area" id="admin-content-area">
+      
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Inventario &middot; Trazabilidad de Telas &amp; Avíos</span>
+          <h1 class="admin-page-title">Control de Stock &amp; Telas Nobles</h1>
+          <p class="admin-page-desc">
+            Administración de metros disponibles de satén, lino, lienzo rústico, gasa de algodón y nido de abeja waffle. Ajuste rápido de cortes y reposición.
+          </p>
+        </div>
+      </section>
+
+      <!-- FORMULARIO: REGISTRAR NUEVO ROLLO DE TELA -->
+      <section class="admin-card" style="margin-bottom:2rem;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Ingresar Nuevo Rollo de Tela o Insumo</h3>
+            <div class="admin-card__subtitle">Suma metros adquiridos para confección de nuevas piezas artesanales</div>
+          </div>
+        </div>
+
+        <form id="form-add-material" style="display:grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 60px auto; gap:0.85rem; align-items:flex-end;">
+          <div>
+            <label class="admin-label">Nombre del Rollo / Insumo</label>
+            <input type="text" id="mat-name" class="admin-input" placeholder="Ej: Lino Orgánico Arena" required />
+          </div>
+
+          <div>
+            <label class="admin-label">Tipo de Tela</label>
+            <input type="text" id="mat-type" class="admin-input" placeholder="Ej: Lino / Satén / Gasa" />
+          </div>
+
+          <div>
+            <label class="admin-label">Metros Iniciales</label>
+            <input type="number" id="mat-stock" class="admin-input" placeholder="15" step="0.5" required />
+          </div>
+
+          <div>
+            <label class="admin-label">Mínimo Alerta (m)</label>
+            <input type="number" id="mat-min" class="admin-input" placeholder="5" step="0.5" />
+          </div>
+
+          <div>
+            <label class="admin-label">Costo x Metro ($)</label>
+            <input type="number" id="mat-cost" class="admin-input" placeholder="4200" />
+          </div>
+
+          <div>
+            <label class="admin-label">Color</label>
+            <input type="color" id="mat-color" value="#C87D69" style="width:100%; height:42px; border:none; border-radius:6px; cursor:pointer;" />
+          </div>
+
+          <div>
+            <button type="submit" class="btn-admin-cta" style="white-space:nowrap;">
+              <span>+ Sumar Rollo</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- TABLA DE ROLLOS DE TELAS ACTIVOS -->
+      <section class="admin-card">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Rollos e Insumos en el Taller de Elena</h3>
+            <div class="admin-card__subtitle">Podés sumar o restar metros con un clic luego de cada corte de confección</div>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Rollo / Material</th>
+                <th>Tipo</th>
+                <th>Stock Actual</th>
+                <th>Mínimo Alerta</th>
+                <th>Costo x Unidad</th>
+                <th>Estado</th>
+                <th>Ajuste de Corte</th>
+              </tr>
+            </thead>
+            <tbody id="materials-table-tbody">
+              <!-- Inyectado por admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="products-data.js"></script>
+  <script src="workshop-db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

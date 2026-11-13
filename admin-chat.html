@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Interno con Clientas | Divina Locura Deco</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body" data-admin-page="chat">
+
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="admin.html" class="admin-brand-wrap">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-badge">
+          <span class="admin-dot-pulse"></span>
+          <span>Panel de Control</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link is-active">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- LOGIN GUARD -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 💻</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO CHAT -->
+    <div class="admin-content-area" id="admin-content-area">
+      
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Mensajería &middot; Relación con Clientas</span>
+          <h1 class="admin-page-title">Chat Directo con Clientas</h1>
+          <p class="admin-page-desc">
+            Canal de comunicación directo e integrado para coordinar entregas, detalles de confección, opciones de telas y consultas personalizadas.
+          </p>
+        </div>
+      </section>
+
+      <!-- LAYOUT DEL CHAT EN 2 COLUMNAS -->
+      <section class="admin-chat-layout">
+        
+        <!-- Lista de Conversaciones (Izquierda) -->
+        <div class="admin-chat-sidebar">
+          <div style="padding:1rem 1.15rem; background:#F3EFE8; border-bottom:1px solid rgba(43,38,37,0.1); font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.06em; color:#5F5852;">
+            Clientas en Conversación
+          </div>
+          <div id="chat-contacts-list">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Hilo de Mensajes Activo (Derecha) -->
+        <div class="admin-chat-window">
+          
+          <div class="admin-chat-header">
+            <div>
+              <h4 style="margin:0; font-size:1.05rem; color:#2B2625;" id="chat-client-name-header">Seleccioná una conversación</h4>
+              <span style="font-size:0.75rem; color:#658572; font-weight:600;">● Conectada al taller</span>
+            </div>
+            <div>
+              <span class="admin-badge admin-badge--ready">Taller Oficial</span>
+            </div>
+          </div>
+
+          <!-- Contenedor de Mensajes -->
+          <div class="admin-chat-messages" id="chat-messages-container">
+            <!-- Inyectado por JS -->
+          </div>
+
+          <!-- Plantillas de Respuesta Rápida -->
+          <div style="padding:0.6rem 1.5rem; background:#FAF8F4; border-top:1px solid rgba(43,38,37,0.06); display:flex; gap:0.5rem; overflow-x:auto;">
+            <button type="button" class="btn-admin-outline btn-quick-reply" style="padding:0.35rem 0.75rem; font-size:0.76rem; white-space:nowrap;">
+              🌸 ¡Hola! Tu pedido ya está en costura.
+            </button>
+            <button type="button" class="btn-admin-outline btn-quick-reply" style="padding:0.35rem 0.75rem; font-size:0.76rem; white-space:nowrap;">
+              ✨ ¡Tu pieza superó el control de calidad y está lista!
+            </button>
+            <button type="button" class="btn-admin-outline btn-quick-reply" style="padding:0.35rem 0.75rem; font-size:0.76rem; white-space:nowrap;">
+              📦 Tu paquete ya fue despachado. ¡Que lo disfrutes!
+            </button>
+          </div>
+
+          <!-- Entrada de Texto -->
+          <div class="admin-chat-input-bar">
+            <input type="text" id="chat-input-text" class="admin-input" placeholder="Escribí una respuesta a la clienta..." style="flex:1;" />
+            <button type="button" id="chat-send-btn" class="btn-admin-cta" style="padding:0.75rem 1.4rem;">
+              <span>Enviar 💬</span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="products-data.js"></script>
+  <script src="workshop-db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

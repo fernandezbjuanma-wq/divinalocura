@@ -1,0 +1,724 @@
+/* ==========================================================================
+   DIVINA LOCURA DECO - PORTAL DE ADMINISTRACIÓN EJECUTIVO & TALLER
+   Diseño de Panel de Control Exclusivo (Páginas Independientes)
+   ========================================================================== */
+
+/* Layout Principal de Administración */
+body.admin-body {
+  background-color: #F8F6F1;
+  color: #2B2625;
+  font-family: var(--font-sans, 'Montserrat', -apple-system, sans-serif);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. BARRA DE NAVEGACIÓN SUPERIOR (TOP ADMIN NAV) */
+.admin-top-nav {
+  background: #231F1E;
+  color: #FAF8F5;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-top-nav__inner {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.admin-brand-title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #FAF8F5;
+  letter-spacing: 0.02em;
+}
+
+.admin-brand-badge {
+  background: rgba(164, 90, 68, 0.25);
+  color: #E29578;
+  border: 1px solid rgba(164, 90, 68, 0.45);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.admin-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ADE80;
+  box-shadow: 0 0 6px #4ADE80;
+  animation: adminPulse 2s infinite;
+}
+
+@keyframes adminPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Enlaces de Páginas del Panel */
+.admin-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  padding: 0.2rem 0;
+}
+
+.admin-nav-links::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-nav-link {
+  color: #C7BEB7;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.admin-nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FAF8F5;
+}
+
+.admin-nav-link.is-active {
+  background: #A45A44;
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.4);
+}
+
+.admin-badge-count {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* Acciones en la Cabecera Derecha */
+.admin-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.btn-admin-nav {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FAF8F5;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-admin-nav:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btn-admin-nav--store {
+  background: #658572;
+  border-color: #658572;
+  color: #FFFFFF;
+}
+
+.btn-admin-nav--store:hover {
+  background: #526f5e;
+}
+
+.btn-admin-nav--logout {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #FCA5A5;
+}
+
+.btn-admin-nav--logout:hover {
+  background: #DC2626;
+  color: #FFFFFF;
+}
+
+/* 2. CONTENEDOR GENERAL DE PÁGINA */
+.admin-shell {
+  flex: 1;
+  max-width: 1500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Encabezado de Página */
+.admin-page-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-page-hero__info {
+  max-width: 800px;
+}
+
+.admin-page-kicker {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #A45A44;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.admin-page-title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #2B2625;
+  line-height: 1.2;
+}
+
+.admin-page-desc {
+  margin: 0;
+  color: #5F5852;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.admin-page-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Botones Estándar del Panel */
+.btn-admin-cta {
+  background: #A45A44;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.7rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(164, 90, 68, 0.25);
+  font-family: inherit;
+}
+
+.btn-admin-cta:hover {
+  background: #8C4733;
+  transform: translateY(-1px);
+}
+
+.btn-admin-outline {
+  background: #FFFFFF;
+  color: #2B2625;
+  border: 1px solid rgba(43, 38, 37, 0.2);
+  padding: 0.7rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-admin-outline:hover {
+  background: #F3EFE8;
+  border-color: #2B2625;
+}
+
+/* 3. TARJETAS & CONTENEDORES */
+.admin-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 6px 20px rgba(43, 38, 37, 0.04);
+  margin-bottom: 1.75rem;
+}
+
+.admin-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
+}
+
+.admin-card__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.25rem;
+  margin: 0;
+  color: #2B2625;
+}
+
+.admin-card__subtitle {
+  font-size: 0.82rem;
+  color: #8A837A;
+  margin-top: 0.2rem;
+}
+
+/* Grillas de Contenido */
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.admin-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.admin-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+/* 4. TARJETAS DE KPIS */
+.admin-stat-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.04);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(43, 38, 37, 0.08);
+}
+
+.admin-stat-card--accent {
+  background: linear-gradient(135deg, #2D2725 0%, #3B3330 100%);
+  color: #FAF8F5;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-stat-card--accent .admin-stat-label {
+  color: #C7BEB7;
+}
+
+.admin-stat-card--accent .admin-stat-val {
+  color: #FAF8F5;
+}
+
+.admin-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.admin-stat-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8A837A;
+}
+
+.admin-stat-icon {
+  font-size: 1.25rem;
+}
+
+.admin-stat-val {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem 0;
+  color: #2B2625;
+  line-height: 1.15;
+}
+
+.admin-stat-sub {
+  font-size: 0.8rem;
+  color: #5F5852;
+  margin: 0;
+}
+
+/* 5. TABLAS DE ADMINISTRACIÓN */
+.admin-table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(43, 38, 37, 0.08);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.admin-table th {
+  background: #F3EFE8;
+  color: #5F5852;
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.12);
+}
+
+.admin-table td {
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.06);
+  vertical-align: middle;
+  color: #2B2625;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(243, 239, 232, 0.45);
+}
+
+/* Badges de Estado */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-badge--pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.admin-badge--production {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.admin-badge--ready {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.admin-badge--delivered {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.admin-badge--alert {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* 6. PIPELINE KANBAN DE PRODUCCIÓN */
+.admin-kanban {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.admin-kanban-col {
+  background: #F3EFE8;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(43, 38, 37, 0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+}
+
+.admin-kanban-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid rgba(43, 38, 37, 0.12);
+}
+
+.admin-kanban-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+  color: #2B2625;
+}
+
+.admin-kanban-count {
+  background: #FFFFFF;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5F5852;
+}
+
+.admin-kanban-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.admin-kanban-card {
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 0.95rem;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  box-shadow: 0 2px 8px rgba(43, 38, 37, 0.04);
+  transition: all 0.2s;
+}
+
+.admin-kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.08);
+}
+
+.admin-kanban-card__title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin: 0 0 0.35rem 0;
+  color: #2B2625;
+}
+
+.admin-kanban-card__meta {
+  font-size: 0.76rem;
+  color: #5F5852;
+  margin-bottom: 0.6rem;
+}
+
+/* 7. CHAT SPLIT-VIEW */
+.admin-chat-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  min-height: 580px;
+}
+
+.admin-chat-sidebar {
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  overflow-y: auto;
+  max-height: 650px;
+}
+
+.admin-chat-contact {
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.06);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-chat-contact:hover {
+  background: #F3EFE8;
+}
+
+.admin-chat-contact.is-active {
+  background: rgba(164, 90, 68, 0.1);
+  border-left: 3px solid #A45A44;
+}
+
+.admin-chat-window {
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-chat-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-chat-messages {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: #FAF8F4;
+  max-height: 440px;
+}
+
+.admin-chat-bubble {
+  max-width: 70%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.admin-chat-bubble--client {
+  align-self: flex-start;
+  background: #FFFFFF;
+  border: 1px solid rgba(43, 38, 37, 0.1);
+  color: #2B2625;
+}
+
+.admin-chat-bubble--workshop {
+  align-self: flex-end;
+  background: #A45A44;
+  color: #FFFFFF;
+}
+
+.admin-chat-input-bar {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(43, 38, 37, 0.08);
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* 8. FORMULARIOS & CONTROLES */
+.admin-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.admin-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #5F5852;
+  margin-bottom: 0.45rem;
+}
+
+.admin-input, .admin-select, .admin-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(43, 38, 37, 0.18);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #FFFFFF;
+  color: #2B2625;
+  transition: border-color 0.2s;
+}
+
+.admin-input:focus, .admin-select:focus, .admin-textarea:focus {
+  outline: none;
+  border-color: #A45A44;
+  box-shadow: 0 0 0 3px rgba(164, 90, 68, 0.15);
+}
+
+/* 9. LOGIN GUARD CARD (PARA VISITANTES NO AUTORIZADOS) */
+.admin-login-guard {
+  max-width: 440px;
+  margin: 4rem auto;
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 16px 40px rgba(43, 38, 37, 0.12);
+  border: 1px solid rgba(43, 38, 37, 0.12);
+  text-align: center;
+}
+
+.admin-login-guard__icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.admin-login-guard__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.6rem;
+  margin: 0 0 0.5rem 0;
+  color: #2B2625;
+}
+
+.admin-login-guard__desc {
+  color: #5F5852;
+  font-size: 0.88rem;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .admin-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .admin-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .admin-kanban { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .admin-grid-2, .admin-grid-3, .admin-grid-4 { grid-template-columns: 1fr; }
+  .admin-chat-layout { grid-template-columns: 1fr; }
+  .admin-kanban { grid-template-columns: 1fr; }
+  .admin-top-nav__inner { flex-direction: column; align-items: stretch; gap: 0.85rem; }
+  .admin-top-actions { justify-content: space-between; }
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía & Tutorial de Taller | Divina Locura Deco</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body" data-admin-page="guia">
+
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="admin.html" class="admin-brand-wrap">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-badge">
+          <span class="admin-dot-pulse"></span>
+          <span>Panel de Control</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link is-active">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- LOGIN GUARD -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 💻</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO GUÍA -->
+    <div class="admin-content-area" id="admin-content-area">
+      
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Tutorial &middot; Consejos de Taller</span>
+          <h1 class="admin-page-title">Guía Paso a Paso para Elena</h1>
+          <p class="admin-page-desc">
+            Manual práctico para gestionar el taller con calidez: fotografía lookbook con luz natural, subida de nuevas piezas, confección y atención personalizada.
+          </p>
+        </div>
+      </section>
+
+      <!-- PESTAÑAS DE LA GUÍA -->
+      <section class="admin-card" style="padding:0.75rem 1.25rem; margin-bottom:1.5rem;">
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button type="button" class="btn-admin-nav guide-tab-btn is-active" data-guide-target="guide-step-1" style="color:#2B2625;">
+            📸 1. Fotografía Lookbook
+          </button>
+          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-2" style="color:#2B2625;">
+            ✨ 2. Subir una Nueva Creación
+          </button>
+          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-3" style="color:#2B2625;">
+            ✂️ 3. Gestionar Producción
+          </button>
+          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-4" style="color:#2B2625;">
+            📦 4. Empaque &amp; Entrega
+          </button>
+        </div>
+      </section>
+
+      <!-- PASO 1: FOTOGRAFÍA LOOKBOOK -->
+      <section class="admin-card guide-step-card" id="guide-step-1">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">1. Secretos de Fotografía Lookbook (Inspiración Anthropologie &amp; Zara Home)</h3>
+            <div class="admin-card__subtitle">Cómo transmitir la textura y calidez de cada tejido artesanal con tu propio celular</div>
+          </div>
+        </div>
+
+        <div class="admin-grid-3" style="margin-top:1.25rem;">
+          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
+            <div style="font-size:1.75rem; margin-bottom:0.5rem;">☀️</div>
+            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Luz Natural Indirecta</h4>
+            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
+              Ubicá la pieza cerca de una ventana luminosa por la mañana o al atardecer. Nunca uses flash ni luz de foco artificial directo, la luz suave resalta las fibras del satén y el lino.
+            </p>
+          </div>
+
+          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
+            <div style="font-size:1.75rem; margin-bottom:0.5rem;">🔍</div>
+            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Plano Detalle de Costuras</h4>
+            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
+              Tomá una foto bien de cerca mostrando las terminaciones: el dobladillo impecable, el bordado a mano, el cierre invisible o el botón de madera. El detalle enamora a la clienta.
+            </p>
+          </div>
+
+          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
+            <div style="font-size:1.75rem; margin-bottom:0.5rem;">🌿</div>
+            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Ambientación Orgánica</h4>
+            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
+              Acompañá la pieza con un elemento natural sencillo: una ramita de eucalipto seco, una tabla de madera rústica o una vela de cera de soja sobre una mesa de madera clara.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO 2: SUBIR CREACIÓN -->
+      <section class="admin-card guide-step-card" id="guide-step-2" style="display:none;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">2. Cómo Cargar o Modificar una Creación</h3>
+            <div class="admin-card__subtitle">Publicación inmediata en el catálogo sin conocimientos de programación</div>
+          </div>
+        </div>
+
+        <ol style="color:#5F5852; line-height:1.8; font-size:0.92rem; padding-left:1.5rem; margin:1rem 0;">
+          <li>Andá a la sección <strong><a href="admin-productos.html" style="color:#A45A44;">📸 Creaciones</a></strong> en la barra superior.</li>
+          <li>Hacé clic en el botón <strong>+ Nueva Creación Artesanal</strong>.</li>
+          <li>Completá el nombre (ej. <em>Cofia de Satén Champán</em>) y el precio en pesos.</li>
+          <li>Elegí la categoría adecuada (Cuidado Personal, Organización o Infantil).</li>
+          <li>Escribí una frase breve sobre la tela utilizada (ej. <em>Satén de seda suave al tacto</em>).</li>
+          <li>Hacé clic en <strong>✨ Guardar y Publicar</strong>. ¡Listo! Ya aparece en la boutique web.</li>
+        </ol>
+      </section>
+
+      <!-- PASO 3: GESTIONAR PRODUCCIÓN -->
+      <section class="admin-card guide-step-card" id="guide-step-3" style="display:none;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">3. Control del Pipeline de Confección</h3>
+            <div class="admin-card__subtitle">Acompaña cada encargo a través de las 5 fases de confección</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.9rem; color:#5F5852; line-height:1.6;">
+          En la página de <strong><a href="admin-produccion.html" style="color:#A45A44;">✂️ Producción</a></strong> podés ver todas las piezas en orden. A medida que vayas avanzando en el taller, cambiá la fase desde el selector:
+        </p>
+        <ul style="color:#5F5852; line-height:1.8; font-size:0.88rem; padding-left:1.5rem;">
+          <li><strong>Corte:</strong> Telas ya medidas y cortadas según moldes.</li>
+          <li><strong>Costura:</strong> Ensamblado en máquina y costura de elásticos/fuelles.</li>
+          <li><strong>Bordado:</strong> Nombres personalizados, puntadas decorativas o flores.</li>
+          <li><strong>Calidad:</strong> Revisión minuciosa de hilos sobrantes y planchado al vapor.</li>
+          <li><strong>Empaque:</strong> Perfumado con esencia textil, envuelto en papel de seda y listo para entrega.</li>
+        </ul>
+      </section>
+
+      <!-- PASO 4: EMPAQUE & ENTREGA -->
+      <section class="admin-card guide-step-card" id="guide-step-4" style="display:none;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">4. El Toque de Amor en el Empaque</h3>
+            <div class="admin-card__subtitle">La experiencia que convierte a una compradora en clienta fiel</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.9rem; color:#5F5852; line-height:1.6;">
+          Cada entrega de Divina Locura Deco es un regalo artesanal. Recuerda siempre:
+        </p>
+        <ul style="color:#5F5852; line-height:1.8; font-size:0.88rem; padding-left:1.5rem;">
+          <li>Perfumar el papel de seda con unas gotitas de aroma a vainilla o flores blancas.</li>
+          <li>Incluir la tarjetita escrita a mano con el nombre de la clienta (ej: <em>"Hecho a mano con amor para Mariana"</em>).</li>
+          <li>Cerrar la bolsita de tela o caja kraft con hilo de yute natural o cinta de lino.</li>
+        </ul>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="products-data.js"></script>
+  <script src="workshop-db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

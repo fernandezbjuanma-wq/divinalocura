@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Producción & Confección | Divina Locura Deco</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body" data-admin-page="produccion">
+
+  <!-- CABECERA SUPERIOR -->
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="admin.html" class="admin-brand-wrap">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-badge">
+          <span class="admin-dot-pulse"></span>
+          <span>Panel de Control</span>
+        </span>
+      </a>
+
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link is-active">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- LOGIN GUARD -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 💻</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- CONTENIDO PRODUCCIÓN -->
+    <div class="admin-content-area" id="admin-content-area">
+      
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Línea de Confección &middot; Taller Textil de Elena</span>
+          <h1 class="admin-page-title">Control de Producción Textil</h1>
+          <p class="admin-page-desc">
+            Pipeline artesanal en 5 fases continuas: desde el corte de los rollos de lino y satén hasta el control de costuras y empaque en cajas aromáticas.
+          </p>
+        </div>
+      </section>
+
+      <!-- FORMULARIO: INGRESAR NUEVA PIEZA A CONFECCIÓN -->
+      <section class="admin-card" style="margin-bottom:2rem;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Ingresar Nueva Pieza a Producción</h3>
+            <div class="admin-card__subtitle">Inicia el proceso de confección para un encargo especial o reposición de taller</div>
+          </div>
+        </div>
+
+        <form id="form-add-production" style="display:grid; grid-template-columns: repeat(4, 1fr) auto; gap:1rem; align-items:flex-end;">
+          <div>
+            <label class="admin-label">Clienta o Destino</label>
+            <input type="text" id="prod-input-client" class="admin-input" placeholder="Ej: Mariana Gómez / Stock Taller" required />
+          </div>
+
+          <div>
+            <label class="admin-label">Pieza a Confeccionar</label>
+            <input type="text" id="prod-input-product" class="admin-input" placeholder="Ej: Cofia de Satén Champán" required />
+          </div>
+
+          <div>
+            <label class="admin-label">Tela / Material Seleccionado</label>
+            <input type="text" id="prod-input-fabric" class="admin-input" placeholder="Ej: Satén Seda Champán (Rollo #1)" />
+          </div>
+
+          <div>
+            <label class="admin-label">Prioridad</label>
+            <select id="prod-input-priority" class="admin-select">
+              <option value="normal">Normal</option>
+              <option value="media">Media</option>
+              <option value="urgente">🔥 Urgente / Entrega Pronta</option>
+            </select>
+          </div>
+
+          <div>
+            <button type="submit" class="btn-admin-cta" style="white-space:nowrap;">
+              <span>+ Sumar a Corte</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PIPELINE KANBAN DE 5 FASES -->
+      <section class="admin-kanban">
+        
+        <!-- Fase 1: Corte -->
+        <div class="admin-kanban-col">
+          <div class="admin-kanban-header">
+            <h4 class="admin-kanban-title">✂️ 1. Corte de Telas</h4>
+            <span class="admin-kanban-count" id="kanban-count-corte">0</span>
+          </div>
+          <div class="admin-kanban-list" id="kanban-list-corte">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Fase 2: Costura -->
+        <div class="admin-kanban-col">
+          <div class="admin-kanban-header">
+            <h4 class="admin-kanban-title">🪡 2. Costura &amp; Ensamble</h4>
+            <span class="admin-kanban-count" id="kanban-count-costura">0</span>
+          </div>
+          <div class="admin-kanban-list" id="kanban-list-costura">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Fase 3: Bordado -->
+        <div class="admin-kanban-col">
+          <div class="admin-kanban-header">
+            <h4 class="admin-kanban-title">🧵 3. Bordado &amp; Detalle</h4>
+            <span class="admin-kanban-count" id="kanban-count-bordado">0</span>
+          </div>
+          <div class="admin-kanban-list" id="kanban-list-bordado">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Fase 4: Calidad -->
+        <div class="admin-kanban-col">
+          <div class="admin-kanban-header">
+            <h4 class="admin-kanban-title">🔍 4. Control Calidad</h4>
+            <span class="admin-kanban-count" id="kanban-count-calidad">0</span>
+          </div>
+          <div class="admin-kanban-list" id="kanban-list-calidad">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Fase 5: Empaque -->
+        <div class="admin-kanban-col">
+          <div class="admin-kanban-header">
+            <h4 class="admin-kanban-title">📦 5. Empaque &amp; Envío</h4>
+            <span class="admin-kanban-count" id="kanban-count-empaque">0</span>
+          </div>
+          <div class="admin-kanban-list" id="kanban-list-empaque">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="products-data.js"></script>
+  <script src="workshop-db.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

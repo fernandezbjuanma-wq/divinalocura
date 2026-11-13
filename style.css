@@ -1943,34 +1943,20 @@ ul, ol {
    3. BARRA FLOTANTE DE MODO ADMINISTRADOR (ANCLADA ABAJO)
    ========================================================================== */
 .admin-bar {
-  position: fixed;
-  bottom: 0;
-  top: auto;
-  left: 0;
-  right: 0;
-  height: 52px;
-  background: #231F1E;
-  color: #FAF8F4;
-  z-index: 10001;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.25rem;
-  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
-  font-family: var(--font-sans);
+  display: none !important;
 }
 
 .admin-bar.is-hidden {
-  display: none;
+  display: none !important;
 }
 
 body.admin-mode-active {
-  padding-bottom: 56px;
+  padding-bottom: 0;
   padding-top: 0;
 }
 
 body.admin-mode-active .chatbot-widget {
-  bottom: 4.5rem;
+  bottom: 1.5rem;
 }
 
 .admin-bar__status {
