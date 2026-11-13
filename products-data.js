@@ -18,7 +18,7 @@ const INITIAL_PRODUCTS = [
       { label: 'Con Modelo', src: 'assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg' },
       { label: 'Set Completo', src: 'assets/images/catalog/sleep-bonnet-and-mask-on.jpg' },
       { label: 'En Cama', src: 'assets/images/models/model-satin-skincare.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-satin-skincare-set.jpg' }
+      { label: 'Detalle Satén', src: 'assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg' }
     ],
     instagram: {
       date: 'Hace 3 días',
@@ -45,7 +45,7 @@ const INITIAL_PRODUCTS = [
       { label: 'En Banco', src: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg' },
       { label: 'En Cocina', src: 'assets/images/models/model-waffle-kitchen.jpg' },
       { label: 'Pila Waffle', src: 'assets/images/cat-waffle.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-waffle-dishcloth.jpg' }
+      { label: 'Mesa & Textura', src: 'assets/images/cat-table.jpg' }
     ],
     instagram: {
       date: 'Hace 4 días',
@@ -71,7 +71,7 @@ const INITIAL_PRODUCTS = [
       { label: 'En Habitación', src: 'assets/images/catalog/hanging-wall-organizer-in-room.jpg' },
       { label: 'En Pared', src: 'assets/images/catalog/fabric-wall-organizers-on-wall.jpg' },
       { label: 'En Mesa', src: 'assets/images/catalog/fabric-organizer-pockets-on-tabl.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-pvc-organizer.jpg' }
+      { label: 'Diseño Colgante', src: 'assets/images/catalog/fabric-wall-organizer-hanging-on.jpg' }
     ],
     instagram: {
       date: 'Hace 5 días',
@@ -98,7 +98,7 @@ const INITIAL_PRODUCTS = [
       { label: 'En Repisa', src: 'assets/images/catalog/plush-dolls-on-wooden-shelf.jpg' },
       { label: 'Con Bebé', src: 'assets/images/models/model-baby-nursery.jpg' },
       { label: 'Nursery', src: 'assets/images/catalog/nursery-products-displayed-on-shelf.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-baby-rabbit-doll.jpg' }
+      { label: 'Ajuar & Cuna', src: 'assets/images/cat-bedding.jpg' }
     ],
     instagram: {
       date: 'Hace 6 días',
@@ -125,7 +125,7 @@ const INITIAL_PRODUCTS = [
       { label: 'En Mármol', src: 'assets/images/catalog/satin-sleep-mask-on-marble.jpg' },
       { label: 'Con Modelo', src: 'assets/images/catalog/woman-touching-satin-sleep-mask.jpg' },
       { label: 'En Madera', src: 'assets/images/catalog/sleep-mask-on-wooden-surface.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-sleep-mask.jpg' }
+      { label: 'En Pedestal', src: 'assets/images/catalog/satin-sleep-mask-on-block.jpg' }
     ],
     instagram: {
       date: 'Hace 1 semana',
@@ -151,7 +151,7 @@ const INITIAL_PRODUCTS = [
       { label: 'En Pedestal', src: 'assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg' },
       { label: 'Con Modelo', src: 'assets/images/catalog/woman-opening-cosmetic-bag.jpg' },
       { label: 'En Lino', src: 'assets/images/catalog/cosmetic-bag-on-linen-surface.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-linen-pouch.jpg' }
+      { label: 'Portasani & Bolso', src: 'assets/images/models/model-bag-sanitizer.jpg' }
     ],
     instagram: {
       date: 'Hace 1 semana',
@@ -176,7 +176,8 @@ const INITIAL_PRODUCTS = [
     images: [
       { label: 'Conejito Ajuar', src: 'assets/images/catalog/embroidered-bunny-fabric-organiz.jpg' },
       { label: 'Con Bebé', src: 'assets/images/models/model-towel-baby.jpg' },
-      { label: 'Bordado Taller', src: 'assets/images/real-custom-embroidery.jpg' }
+      { label: 'Rincón Nursery', src: 'assets/images/catalog/nursery-products-displayed-on-shelf.jpg' },
+      { label: 'Cesto Algodón', src: 'assets/images/cat-baskets.jpg' }
     ],
     instagram: {
       date: 'Hace 2 semanas',
@@ -201,7 +202,8 @@ const INITIAL_PRODUCTS = [
     images: [
       { label: 'En Baño', src: 'assets/images/models/model-bath-roll.jpg' },
       { label: 'Cesto Textil', src: 'assets/images/catalog/handcrafted-cosmetic-bag-fabric-.jpg' },
-      { label: 'Detalle Taller', src: 'assets/images/real-roll-dispenser.jpg' }
+      { label: 'Tocador Spa', src: 'assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg' },
+      { label: 'Blanquería Algodón', src: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg' }
     ],
     instagram: {
       date: 'Hace 2 semanas',

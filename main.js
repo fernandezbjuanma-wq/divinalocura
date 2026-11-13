@@ -54,6 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       products = [];
     }
+  } else if (typeof INITIAL_PRODUCTS !== 'undefined') {
+    // Migración automática: si el navegador tenía en caché fotos antiguas de baja calidad, actualizar a la nueva fotografía editorial de alta gama
+    const hasLegacyImages = products.some(p =>
+      (p.images || []).some(img => (img.src || '').includes('real-') || (img.src || '').includes('/instagram/'))
+    );
+    if (hasLegacyImages) {
+      products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+      try {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      } catch (e) {}
+    }
   }
 
   let currentCategory = 'todos';
