@@ -83,11 +83,17 @@
         </div>
       </div>
 
-      <!-- Derecha: Iniciar Sesión, Ayuda y WhatsApp/Pedidos -->
+      <!-- Derecha: Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos, Ayuda y WhatsApp -->
       <div class="site-header__right">
-        <button type="button" class="header-text-btn" id="header-login-btn">INICIAR SESIÓN</button>
-        <a href="#contacto" class="header-text-btn">AYUDA</a>
-        <button type="button" class="header-text-btn btn--whatsapp" data-product-name="Consulta general desde cabecera">WHATSAPP</button>
+        <button type="button" class="header-text-btn" id="header-login-btn">
+          <span id="header-user-label">MI CUENTA</span>
+        </button>
+        <button type="button" class="header-text-btn header-cart-btn" id="header-cart-btn" aria-label="Abrir bolsa de pedidos">
+          <span>BOLSA</span>
+          <span class="header-cart-badge" id="header-cart-count">0</span>
+        </button>
+        <a href="#contacto" class="header-text-btn header-help-link">AYUDA</a>
+        <button type="button" class="header-text-btn btn--whatsapp header-wa-btn" data-product-name="Consulta general desde cabecera">WHATSAPP</button>
       </div>
     </div>
   </header>
@@ -614,6 +620,12 @@
         <span class="role-badge-text">🌸 ¡Hola Elena! &middot; Modo Taller de Creaciones</span>
       </div>
       <div class="admin-bar__actions">
+        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-elena-tutorial-btn" title="Ver guía paso a paso para Elena">
+          <span>📖 Guía del Taller</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-orders-btn" title="Ver pedidos recibidos de clientas">
+          <span>📋 Pedidos (<strong id="admin-elena-orders-count">0</strong>)</span>
+        </button>
         <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-elena-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span>📸 Publicar Nueva Pieza</span>
@@ -724,12 +736,27 @@
           </div>
         </div>
 
-        <!-- Acciones: Pedido por WhatsApp & Garantía de Confección -->
+        <!-- Acciones: Personalización, Agregar a la Bolsa & Pedido por WhatsApp -->
         <div class="lookbook-actions">
-          <button type="button" class="btn btn--whatsapp-order" id="lookbook-whatsapp-cta">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            <span>Pedir o Consultar a Elena por WhatsApp</span>
-          </button>
+          <div class="lookbook-custom-box">
+            <label for="lookbook-custom-note" class="lookbook-custom-label">
+              <span>✨ Personalización de esta pieza (opcional):</span>
+              <small>Nombre a bordar, tono de tela o medida especial</small>
+            </label>
+            <input type="text" id="lookbook-custom-note" class="lookbook-custom-input" placeholder="Ej: Bordar con nombre 'Emma' / Satén Champán" />
+          </div>
+
+          <div class="lookbook-actions__buttons">
+            <button type="button" class="btn btn--add-to-bag" id="lookbook-add-bag-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+              <span>Agregar a mi Bolsa de Pedidos</span>
+            </button>
+            <button type="button" class="btn btn--whatsapp-order" id="lookbook-whatsapp-cta">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>Consultar a Elena por WhatsApp</span>
+            </button>
+          </div>
+
           <div class="lookbook-guarantee" id="lookbook-guarantee">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             <span>Confección artesanal individual por Elena en su taller &middot; Buenos Aires</span>
@@ -739,52 +766,388 @@
     </div>
   </div>
 
-  <!-- MODAL: Acceso y Selección de Perfil de Administración -->
+  <!-- MODAL UNIFICADO: Mi Cuenta (Clientas) & Acceso Equipo (Elena / Juanma) -->
   <div class="admin-modal" id="admin-login-modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="admin-modal__card admin-modal__card--profiles">
-      <div class="admin-modal__header" style="text-align:center; margin-bottom:1.5rem;">
-        <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración</span>
-        <h3 class="admin-modal__title" style="margin-top:0.25rem;">¿Quién ingresa hoy?</h3>
-        <p class="admin-modal__desc" style="margin-bottom:0;">Selecciona el perfil según lo que desees realizar en la web:</p>
+      
+      <!-- Pestañas de Cambio de Modo (Clienta vs Equipo) -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab is-active" id="tab-btn-client" role="tab" aria-selected="true">
+          <span>👤 Soy Clienta (Mi Cuenta &amp; Pedidos)</span>
+        </button>
+        <button type="button" class="auth-tab" id="tab-btn-team" role="tab" aria-selected="false">
+          <span>🔑 Acceso Equipo (Elena &amp; Juanma)</span>
+        </button>
       </div>
 
-      <!-- Selector de 2 Perfiles: Elena vs Juanma -->
-      <div class="profile-cards-grid">
-        <!-- PERFIL 1: ELENA (TALLER & CREACIONES) -->
-        <div class="profile-card profile-card--elena" id="profile-card-elena">
-          <div class="profile-card__badge">🌸 Perfil de Mamá</div>
-          <div class="profile-card__icon">🧵</div>
-          <h4 class="profile-card__name">Elena</h4>
-          <span class="profile-card__role">Taller &amp; Creaciones</span>
-          <p class="profile-card__desc">Subir fotos de nuevos productos, cambiar precios y descripciones de forma fácil y directa.</p>
-          
-          <div class="profile-card__form" id="form-role-elena">
-            <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (elena)" autocomplete="current-password" />
-            <button type="button" class="btn btn--profile btn--profile-elena" id="btn-login-elena">
-              <span>Entrar al Taller de Elena 🌸</span>
+      <!-- VISTA 1: ÁREA DE CLIENTAS (REGISTRO / MI CUENTA) -->
+      <div class="auth-panel auth-panel--client" id="auth-panel-client">
+        
+        <!-- Estado NO Logueado: Registro / Inicio Rápido -->
+        <div id="client-view-logged-out" class="client-auth-box">
+          <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+            <span class="section-eyebrow" style="color:var(--accent-terracotta);">Bienvenida al Taller</span>
+            <h3 class="admin-modal__title" style="margin-top:0.25rem;">Mi Cuenta de Clienta</h3>
+            <p class="admin-modal__desc">Completá tus datos para agilizar tus pedidos de confección y recibir el seguimiento directo de Elena por WhatsApp o email.</p>
+          </div>
+
+          <form id="client-register-form" class="client-form" onsubmit="return false;">
+            <div class="client-form-grid">
+              <div class="admin-form-group">
+                <label for="reg-client-name" class="admin-label">Nombre y Apellido *</label>
+                <input type="text" id="reg-client-name" class="admin-input" placeholder="Ej: Mariana Gómez" required />
+              </div>
+
+              <div class="admin-form-group">
+                <label for="reg-client-phone" class="admin-label">WhatsApp / Teléfono *</label>
+                <input type="tel" id="reg-client-phone" class="admin-input" placeholder="Ej: 11 5555 5555" required />
+              </div>
+
+              <div class="admin-form-group">
+                <label for="reg-client-email" class="admin-label">Correo Electrónico (opcional)</label>
+                <input type="email" id="reg-client-email" class="admin-input" placeholder="ejemplo@correo.com" />
+              </div>
+
+              <div class="admin-form-group">
+                <label for="reg-client-address" class="admin-label">Dirección o Localidad de Entrega</label>
+                <input type="text" id="reg-client-address" class="admin-input" placeholder="Ej: Palermo, CABA / Rosario, Santa Fe" />
+              </div>
+            </div>
+
+            <div class="client-form-footer">
+              <button type="button" class="btn btn--profile btn--profile-elena" id="btn-save-client-account" style="width:100%;">
+                <span>🌸 Guardar mis datos e Ingresar</span>
+              </button>
+              <p class="client-privacy-note">Tus datos se guardan de forma segura en tu navegador para autocompletar tus futuras compras con Elena.</p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Estado LOGUEADO: Perfil y Pedidos Anteriores -->
+        <div id="client-view-logged-in" class="client-auth-box" style="display:none;">
+          <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+            <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
+            <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
+            <p class="admin-modal__desc">Estos son tus datos para pedidos y el historial de tus creaciones encargadas a Elena.</p>
+          </div>
+
+          <div class="client-profile-card">
+            <div class="client-profile-row">
+              <span class="client-profile-label">WhatsApp:</span>
+              <strong class="client-profile-val" id="logged-client-phone">-</strong>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Email:</span>
+              <span class="client-profile-val" id="logged-client-email">-</span>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Entrega:</span>
+              <span class="client-profile-val" id="logged-client-address">-</span>
+            </div>
+          </div>
+
+          <div class="client-orders-history">
+            <h4 class="client-orders-title">Mis Pedidos Realizados</h4>
+            <div id="client-orders-list" class="client-orders-list">
+              <p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>
+            </div>
+          </div>
+
+          <div class="client-logged-actions">
+            <button type="button" class="btn btn--secondary" id="btn-open-cart-from-profile">
+              <span>🛍️ Ver mi Bolsa de Pedidos</span>
+            </button>
+            <button type="button" class="btn btn--admin-logout" id="btn-logout-client">
+              <span>Cerrar Sesión</span>
             </button>
           </div>
         </div>
 
-        <!-- PERFIL 2: JUANMA (PROGRAMADOR & WEB) -->
-        <div class="profile-card profile-card--juanma" id="profile-card-juanma">
-          <div class="profile-card__badge">💻 Perfil Técnico</div>
-          <div class="profile-card__icon">⚙️</div>
-          <h4 class="profile-card__name">Juanma</h4>
-          <span class="profile-card__role">Programación &amp; Web</span>
-          <p class="profile-card__desc">Sincronización con GitHub, configuración de WhatsApp, anuncios, copias de seguridad y código.</p>
-          
-          <div class="profile-card__form" id="form-role-juanma">
-            <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (juanma)" autocomplete="current-password" />
-            <button type="button" class="btn btn--profile btn--profile-juanma" id="btn-login-juanma">
-              <span>Entrar como Programador 💻</span>
-            </button>
+      </div>
+
+      <!-- VISTA 2: ACCESO EQUIPO (ELENA & JUANMA) -->
+      <div class="auth-panel auth-panel--team" id="auth-panel-team" style="display:none;">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.5rem;">
+          <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración</span>
+          <h3 class="admin-modal__title" style="margin-top:0.25rem;">¿Quién ingresa hoy?</h3>
+          <p class="admin-modal__desc" style="margin-bottom:0;">Selecciona el perfil según lo que desees realizar en la web:</p>
+        </div>
+
+        <div class="profile-cards-grid">
+          <!-- PERFIL 1: ELENA (TALLER & CREACIONES) -->
+          <div class="profile-card profile-card--elena" id="profile-card-elena">
+            <div class="profile-card__badge">🌸 Perfil de Mamá</div>
+            <div class="profile-card__icon">🧵</div>
+            <h4 class="profile-card__name">Elena</h4>
+            <span class="profile-card__role">Taller &amp; Creaciones</span>
+            <p class="profile-card__desc">Subir fotos de nuevos productos, cambiar precios y descripciones de forma fácil y directa.</p>
+            
+            <div class="profile-card__form" id="form-role-elena">
+              <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (elena)" autocomplete="current-password" />
+              <button type="button" class="btn btn--profile btn--profile-elena" id="btn-login-elena">
+                <span>Entrar al Taller de Elena 🌸</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PERFIL 2: JUANMA (PROGRAMADOR & WEB) -->
+          <div class="profile-card profile-card--juanma" id="profile-card-juanma">
+            <div class="profile-card__badge">💻 Perfil Técnico</div>
+            <div class="profile-card__icon">⚙️</div>
+            <h4 class="profile-card__name">Juanma</h4>
+            <span class="profile-card__role">Programación &amp; Web</span>
+            <p class="profile-card__desc">Sincronización con GitHub, configuración de WhatsApp, anuncios, copias de seguridad y código.</p>
+            
+            <div class="profile-card__form" id="form-role-juanma">
+              <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (juanma)" autocomplete="current-password" />
+              <button type="button" class="btn btn--profile btn--profile-juanma" id="btn-login-juanma">
+                <span>Entrar como Programador 💻</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
         <button type="button" class="btn btn--secondary" id="admin-login-cancel-btn">Volver a la Tienda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER LATERAL: BOLSA DE PEDIDOS (INSPIRACIÓN ZARA HOME & ANTHROPOLOGIE) -->
+  <aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
+    <div class="cart-drawer__backdrop" id="cart-drawer-backdrop"></div>
+    <div class="cart-drawer__panel">
+      
+      <div class="cart-drawer__header">
+        <div class="cart-drawer__title-wrap">
+          <span class="cart-drawer__eyebrow">CONFECCIÓN ARTESANAL</span>
+          <h3 class="cart-drawer__title">Bolsa de Pedidos</h3>
+        </div>
+        <button type="button" class="cart-drawer__close" id="cart-drawer-close" aria-label="Cerrar bolsa">✕</button>
+      </div>
+
+      <!-- Cuerpo del Carrito -->
+      <div class="cart-drawer__body" id="cart-drawer-body">
+        
+        <!-- Estado Vacío -->
+        <div class="cart-empty-state" id="cart-empty-state">
+          <div class="cart-empty-icon">🛍️</div>
+          <p class="cart-empty-title">Tu bolsa de pedidos está vacía</p>
+          <p class="cart-empty-desc">Elegí las piezas textiles confeccionadas a mano por Elena que desees encargar y sumalas aquí.</p>
+          <a href="#catalogo" class="btn btn--secondary" id="cart-empty-cta">Explorar la Colección &rarr;</a>
+        </div>
+
+        <!-- Lista Dinámica de Ítems -->
+        <div class="cart-items-list" id="cart-items-list" style="display:none;"></div>
+      </div>
+
+      <!-- Pie del Carrito: Datos de Envío & Botones de Finalización -->
+      <div class="cart-drawer__footer" id="cart-drawer-footer" style="display:none;">
+        <div class="cart-customer-box">
+          <div class="cart-customer-title-row">
+            <span class="cart-customer-heading">👤 Datos de la Clienta para Entrega</span>
+            <span class="cart-customer-badge" id="cart-customer-badge"></span>
+          </div>
+
+          <div class="cart-form-grid">
+            <input type="text" id="cart-input-name" class="cart-input" placeholder="Tu Nombre completo *" required />
+            <input type="tel" id="cart-input-phone" class="cart-input" placeholder="WhatsApp / Teléfono *" required />
+            <input type="email" id="cart-input-email" class="cart-input" placeholder="Correo electrónico (opcional)" />
+            <input type="text" id="cart-input-address" class="cart-input" placeholder="Dirección / Localidad de entrega" />
+          </div>
+        </div>
+
+        <div class="cart-taller-notice">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Cada pieza se corta y confecciona a mano por Elena a fuego lento.</span>
+        </div>
+
+        <div class="cart-actions-grid">
+          <button type="button" class="btn btn--checkout-whatsapp" id="cart-btn-whatsapp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Enviar Pedido a Elena por WhatsApp</span>
+          </button>
+          <button type="button" class="btn btn--checkout-email" id="cart-btn-email">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Enviar Pedido por Email</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- CHATBOT CONCIERGE FLOTANTE: "ELENA ASISTENTE DEL TALLER" -->
+  <div class="boutique-chatbot" id="boutique-chatbot">
+    <!-- Botón Flotante Disparador -->
+    <button type="button" class="chatbot-trigger" id="chatbot-trigger-btn" aria-label="Abrir asistente de Divina Locura Deco">
+      <span class="chatbot-trigger__badge">🌸 Asistente</span>
+      <span class="chatbot-trigger__icon">💬</span>
+    </button>
+
+    <!-- Ventana de Chat Desplegable -->
+    <div class="chatbot-window" id="chatbot-window" aria-hidden="true">
+      <div class="chatbot-window__header">
+        <div class="chatbot-avatar-wrap">
+          <div class="chatbot-avatar">🌸</div>
+          <div class="chatbot-header-info">
+            <h4 class="chatbot-header-name">Elena &middot; Asistente del Taller</h4>
+            <span class="chatbot-status-online">
+              <span class="chatbot-status-dot"></span> En línea &middot; Divina Locura
+            </span>
+          </div>
+        </div>
+        <button type="button" class="chatbot-close-btn" id="chatbot-close-btn" aria-label="Minimizar chat">✕</button>
+      </div>
+
+      <!-- Área de Mensajes de Conversación -->
+      <div class="chatbot-messages" id="chatbot-messages">
+        <!-- Mensaje de bienvenida inicial -->
+        <div class="chat-msg chat-msg--bot">
+          <div class="chat-bubble">
+            ¡Hola! 🌸 Te doy la bienvenida al taller de <strong>Divina Locura Deco</strong>. Soy el asistente virtual para ayudarte a elegir tus piezas textiles, telas y pedidos personalizados. ¿En qué te puedo asesorar hoy?
+          </div>
+        </div>
+      </div>
+
+      <!-- Sugerencias Rápidas de Consulta (Chips) -->
+      <div class="chatbot-suggestions" id="chatbot-suggestions">
+        <button type="button" class="chat-suggestion-chip" data-query="personalizado">🧵 ¿Cómo encargar con nombre bordado?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="saten">🌸 ¿Beneficios del satén antifrizz?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="waffle">🧺 ¿Cómo lavar waffle y lino?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="envios">📦 ¿Tiempos de entrega y envíos?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="pedido">🛍️ ¿Cómo hacer mi pedido por la web?</button>
+        <button type="button" class="chat-suggestion-chip chat-suggestion-chip--wa" data-query="whatsapp">💬 Hablar directo con Elena por WhatsApp</button>
+      </div>
+
+      <!-- Barra de Input para Escribir Preguntas -->
+      <form class="chatbot-input-bar" id="chatbot-form" onsubmit="return false;">
+        <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Escribí tu consulta aquí..." autocomplete="off" />
+        <button type="submit" class="chatbot-send-btn" id="chatbot-send-btn" aria-label="Enviar mensaje">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: TUTORIAL INTERACTIVO PASO A PASO PARA ELENA -->
+  <div class="admin-modal" id="elena-tutorial-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--wide elena-tutorial-card">
+      <div class="admin-modal__header" style="text-align:center;">
+        <div class="profile-badge-inline">🌸 Guía Fácil para Elena</div>
+        <h3 class="admin-modal__title" style="margin-top:0.35rem;">Cómo usar tu taller web paso a paso</h3>
+        <p class="admin-modal__desc">Una guía simple y sin complicaciones para subir tus creaciones, cambiar precios y recibir pedidos.</p>
+      </div>
+
+      <!-- Pestañas del Tutorial -->
+      <div class="tutorial-tabs" role="tablist">
+        <button type="button" class="tutorial-tab is-active" data-tut-target="tut-step-1">1. 📸 Subir una Pieza Nueva</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-2">2. ✏️ Modificar Precios o Fotos</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-3">3. 📋 Cómo te llegan los Pedidos</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-4">4. 🆘 Pedir Ayuda a Juanma</button>
+      </div>
+
+      <!-- Paso 1 -->
+      <div class="tutorial-step is-active" id="tut-step-1">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo publicar una nueva creación en la tienda?</h4>
+            <ol class="tutorial-step__list">
+              <li>Tocá el botón rosa <strong>"📸 Publicar Nueva Pieza"</strong> en tu barra inferior.</li>
+              <li>Escribí cómo se llama la pieza (por ejemplo: <em>Cofia de Satén Champán</em>) y cuánto cuesta.</li>
+              <li>Elegí la categoría: <em>Cuidado Personal</em>, <em>Hogar &amp; Cocina</em>, <em>Organización</em> o <em>Bebés</em>.</li>
+              <li>Tocá <strong>"Subir Foto desde mi Teléfono o Computadora"</strong> para elegir hasta 4 fotos (foto principal, en uso o de cerca).</li>
+              <li>Tocá el botón <strong>"✨ Guardar y Publicar en la Tienda"</strong>. ¡Listo! Ya aparece en la web para todas tus clientas.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">💡</span>
+            <p><strong>Consejo de Elena:</strong> Las fotos quedan más lindas con luz natural cerca de una ventana y mostrando los detalles de la costura.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="tutorial-step" id="tut-step-2" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo cambiar el precio o las fotos de una pieza ya publicada?</h4>
+            <ol class="tutorial-step__list">
+              <li>Cuando estás en tu <strong>Modo Taller 🌸</strong>, recorré el catálogo en la página.</li>
+              <li>En la parte de arriba de cada producto verás un botón rosa con un lápiz: <strong>"Editar esta pieza"</strong>.</li>
+              <li>Hacé clic en él: se abrirá la ventanita para cambiar el precio, agregar fotos nuevas o corregir el texto.</li>
+              <li>Tocá <strong>"Guardar"</strong> y los cambios se aplican al instante.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">🏷️</span>
+            <p>Si aún no tenés precio fijo porque la pieza es personalizada, podés poner <em>"Consultar / con nombre bordado"</em>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 3 -->
+      <div class="tutorial-step" id="tut-step-3" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo te llegan los pedidos de tus clientas?</h4>
+            <ol class="tutorial-step__list">
+              <li>Tus clientas arman su <strong>Bolsa de Pedidos</strong> en la página eligiendo las piezas y escribiendo si quieren bordado con nombre.</li>
+              <li>Al confirmar, <strong>te llegará un mensaje a tu WhatsApp</strong> con el nombre de la clienta, su teléfono y la lista completa de lo que encargó.</li>
+              <li>También te llegará una copia por <strong>correo electrónico</strong> si la clienta eligió esa opción.</li>
+              <li>Además, podés tocar el botón <strong>"📋 Pedidos"</strong> en tu barra para ver la lista de todos los pedidos recibidos en la web con fecha y hora.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">💬</span>
+            <p>Desde la lista de pedidos podés tocar un botón verde para abrir el chat de WhatsApp con la clienta con un solo toque.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 4 -->
+      <div class="tutorial-step" id="tut-step-4" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Tenés alguna duda o necesitás una mano técnica?</h4>
+            <p>Juanma preparó este botón para que puedas escribirle directo a su WhatsApp cuando necesites ayuda con la página o con alguna función nueva.</p>
+            <div style="margin-top:1.5rem;">
+              <a href="https://api.whatsapp.com/send?text=Hola%20Juanma!%20Te%20escribo%20desde%20el%20taller%20de%20Divina%20Locura,%20necesito%20una%20mano%20con%20la%20p%C3%A1gina%20web%20🌸" target="_blank" rel="noopener noreferrer" class="btn btn--profile btn--profile-juanma" style="display:inline-flex; width:auto; padding:0.85rem 1.75rem;">
+                <span>💬 Escribirle a Juanma por WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
+        <button type="button" class="btn btn--profile btn--profile-elena" id="elena-tutorial-close-btn">
+          <span>🌸 Entendido, volver a mi Taller</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PEDIDOS DE CLIENTAS RECIBIDOS (VISTA DE ELENA) -->
+  <div class="admin-modal" id="elena-orders-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--wide">
+      <div class="admin-modal__header">
+        <div class="profile-badge-inline">🌸 Taller de Elena &middot; Pedidos</div>
+        <h3 class="admin-modal__title">Pedidos Recibidos de Clientas</h3>
+        <p class="admin-modal__desc">Aquí podés ver todas las órdenes que las clientas armaron desde la página web para coordinar confección y entrega.</p>
+      </div>
+
+      <!-- Lista de Pedidos -->
+      <div class="elena-orders-container" id="elena-orders-container">
+        <div class="elena-orders-empty" id="elena-orders-empty">
+          <p>Aún no hay pedidos registrados desde la tienda web.</p>
+        </div>
+        <div class="elena-orders-list" id="elena-orders-list" style="display:none;"></div>
+      </div>
+
+      <div class="admin-modal__buttons">
+        <button type="button" class="btn btn--secondary" id="elena-orders-close-btn">Cerrar</button>
       </div>
     </div>
   </div>

@@ -8,11 +8,14 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
-  // 1. ESTADO DE DATOS (PRODUCTOS, ROLES & CONFIGURACIÓN)
+  // 1. ESTADO DE DATOS (PRODUCTOS, ROLES, CLIENTAS, CARRITO & PEDIDOS)
   // =========================================================================
   const STORAGE_KEY_PRODUCTS = 'divinalocura_products';
   const STORAGE_KEY_ROLE = 'divinalocura_role'; // 'elena' | 'juanma' | null
   const STORAGE_KEY_SETTINGS = 'divinalocura_settings';
+  const STORAGE_KEY_CUSTOMER = 'divinalocura_customer';
+  const STORAGE_KEY_CART = 'divinalocura_cart';
+  const STORAGE_KEY_ORDERS = 'divinalocura_orders';
 
   const PASSWORDS = {
     elena: ['elena', 'elena2026', 'mama'],
@@ -35,6 +38,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } catch (e) {
     console.warn('Error leyendo ajustes:', e);
+  }
+
+  // Cargar Clienta
+  let currentCustomer = null;
+  try {
+    const savedCustomer = localStorage.getItem(STORAGE_KEY_CUSTOMER);
+    if (savedCustomer) currentCustomer = JSON.parse(savedCustomer);
+  } catch (e) {
+    console.warn('Error leyendo clienta:', e);
+  }
+
+  // Cargar Carrito / Bolsa
+  let cart = [];
+  try {
+    const savedCart = localStorage.getItem(STORAGE_KEY_CART);
+    if (savedCart) cart = JSON.parse(savedCart);
+  } catch (e) {
+    console.warn('Error leyendo carrito:', e);
+  }
+
+  // Cargar Pedidos Recibidos
+  let orders = [];
+  try {
+    const savedOrders = localStorage.getItem(STORAGE_KEY_ORDERS);
+    if (savedOrders) orders = JSON.parse(savedOrders);
+  } catch (e) {
+    console.warn('Error leyendo pedidos:', e);
   }
 
   // Cargar Productos
@@ -218,9 +248,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="catalog-item__footer">
             <span class="catalog-item__price">${product.price || 'Consultar'}</span>
             <div class="catalog-item__actions">
+              <button type="button" class="btn--add-bag" data-add-bag="${product.id}" title="Agregar a mi bolsa de pedidos">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                <span>+ Bolsa</span>
+              </button>
               <button class="btn btn--whatsapp" data-product-name="${product.title}" aria-label="Pedir por WhatsApp">
-                <span>Pedir por WhatsApp</span>
-                <svg class="btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <span>Pedir</span>
+                <svg class="btn__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
               </button>
@@ -280,6 +314,16 @@ document.addEventListener('DOMContentLoaded', () => {
           mainImg.onload = () => { mainImg.style.opacity = '1'; };
           setTimeout(() => { mainImg.style.opacity = '1'; }, 80);
         }, 120);
+      });
+    });
+
+    // Botón Agregar a la Bolsa (+ Bolsa)
+    document.querySelectorAll('[data-add-bag]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const productId = btn.getAttribute('data-add-bag');
+        addToCart(productId);
       });
     });
 
@@ -445,13 +489,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (drawerAdminBtn) {
     drawerAdminBtn.addEventListener('click', () => {
       closeSideDrawer();
-      openAdminLogin();
+      openAdminLogin('team');
     });
   }
 
   if (headerLoginBtn) {
     headerLoginBtn.addEventListener('click', () => {
-      openAdminLogin();
+      openAdminLogin('client');
     });
   }
 
@@ -647,17 +691,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderCatalog();
+    if (typeof updateClientUi === 'function') updateClientUi();
+    if (typeof updateCartUi === 'function') updateCartUi();
+    if (typeof updateElenaOrdersBadge === 'function') updateElenaOrdersBadge();
   }
 
-  function openAdminLogin() {
-    if (currentRole) {
-      showToast(`Ya estás conectado como ${currentRole === 'elena' ? 'Elena' : 'Juanma'}.`);
-      return;
-    }
+  function openAdminLogin(defaultTab = 'client') {
     if (adminLoginModal) {
       adminLoginModal.classList.add('is-open');
       if (passElenaInput) passElenaInput.value = '';
       if (passJuanmaInput) passJuanmaInput.value = '';
+
+      if (defaultTab === 'team' && tabBtnTeam) {
+        tabBtnTeam.click();
+      } else if (tabBtnClient) {
+        tabBtnClient.click();
+      }
     }
   }
 
@@ -1181,6 +1230,748 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }, 3800);
   }
 
+  // =========================================================================
+  // 11. SISTEMA DE CLIENTAS & AUTENTICACIÓN UNIFICADA
+  // =========================================================================
+  const headerUserLabel = document.getElementById('header-user-label');
+  const tabBtnClient = document.getElementById('tab-btn-client');
+  const tabBtnTeam = document.getElementById('tab-btn-team');
+  const authPanelClient = document.getElementById('auth-panel-client');
+  const authPanelTeam = document.getElementById('auth-panel-team');
+
+  const clientViewLoggedOut = document.getElementById('client-view-logged-out');
+  const clientViewLoggedIn = document.getElementById('client-view-logged-in');
+
+  const regClientName = document.getElementById('reg-client-name');
+  const regClientPhone = document.getElementById('reg-client-phone');
+  const regClientEmail = document.getElementById('reg-client-email');
+  const regClientAddress = document.getElementById('reg-client-address');
+  const btnSaveClientAccount = document.getElementById('btn-save-client-account');
+
+  const loggedClientName = document.getElementById('logged-client-name');
+  const loggedClientPhone = document.getElementById('logged-client-phone');
+  const loggedClientEmail = document.getElementById('logged-client-email');
+  const loggedClientAddress = document.getElementById('logged-client-address');
+  const clientOrdersList = document.getElementById('client-orders-list');
+  const btnLogoutClient = document.getElementById('btn-logout-client');
+  const btnOpenCartFromProfile = document.getElementById('btn-open-cart-from-profile');
+
+  function updateClientUi() {
+    if (headerUserLabel) {
+      if (currentCustomer && currentCustomer.name) {
+        const firstName = currentCustomer.name.trim().split(' ')[0];
+        headerUserLabel.textContent = `HOLA, ${firstName.toUpperCase()} 🌸`;
+      } else {
+        headerUserLabel.textContent = 'MI CUENTA';
+      }
+    }
+
+    if (currentCustomer && currentCustomer.name) {
+      if (clientViewLoggedOut) clientViewLoggedOut.style.display = 'none';
+      if (clientViewLoggedIn) clientViewLoggedIn.style.display = 'block';
+
+      if (loggedClientName) loggedClientName.textContent = `¡Hola, ${currentCustomer.name}!`;
+      if (loggedClientPhone) loggedClientPhone.textContent = currentCustomer.phone || '-';
+      if (loggedClientEmail) loggedClientEmail.textContent = currentCustomer.email || 'No especificado';
+      if (loggedClientAddress) loggedClientAddress.textContent = currentCustomer.address || 'A convenir';
+
+      // Renderizar pedidos de la clienta
+      if (clientOrdersList) {
+        const clientOrders = orders.filter(o => 
+          (o.customer && (o.customer.phone === currentCustomer.phone || o.customer.email === currentCustomer.email || o.customer.name === currentCustomer.name))
+        );
+        if (clientOrders.length === 0) {
+          clientOrdersList.innerHTML = '<p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>';
+        } else {
+          clientOrdersList.innerHTML = clientOrders.map(ord => `
+            <div class="client-order-item">
+              <div class="client-order-header">
+                <span>Pedido #${ord.id}</span>
+                <span class="client-order-badge">${ord.status || 'En preparación'}</span>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">${ord.date} a las ${ord.time}</div>
+              <div>${(ord.items || []).map(i => `${i.qty}x ${i.title}${i.note ? ` (<em>${i.note}</em>)` : ''}`).join(', ')}</div>
+            </div>
+          `).join('');
+        }
+      }
+
+      // Prellenar inputs de la bolsa
+      const cartName = document.getElementById('cart-input-name');
+      const cartPhone = document.getElementById('cart-input-phone');
+      const cartEmail = document.getElementById('cart-input-email');
+      const cartAddress = document.getElementById('cart-input-address');
+      const cartBadge = document.getElementById('cart-customer-badge');
+
+      if (cartName && !cartName.value) cartName.value = currentCustomer.name;
+      if (cartPhone && !cartPhone.value) cartPhone.value = currentCustomer.phone;
+      if (cartEmail && !cartEmail.value) cartEmail.value = currentCustomer.email || '';
+      if (cartAddress && !cartAddress.value) cartAddress.value = currentCustomer.address || '';
+      if (cartBadge) cartBadge.textContent = '🌸 Datos de clienta cargados';
+    } else {
+      if (clientViewLoggedOut) clientViewLoggedOut.style.display = 'block';
+      if (clientViewLoggedIn) clientViewLoggedIn.style.display = 'none';
+      const cartBadge = document.getElementById('cart-customer-badge');
+      if (cartBadge) cartBadge.textContent = '';
+    }
+  }
+
+  // Pestañas del Modal de Autenticación (Clientas vs Equipo)
+  if (tabBtnClient) {
+    tabBtnClient.addEventListener('click', () => {
+      tabBtnClient.classList.add('is-active');
+      tabBtnClient.setAttribute('aria-selected', 'true');
+      if (tabBtnTeam) {
+        tabBtnTeam.classList.remove('is-active');
+        tabBtnTeam.setAttribute('aria-selected', 'false');
+      }
+      if (authPanelClient) authPanelClient.style.display = 'block';
+      if (authPanelTeam) authPanelTeam.style.display = 'none';
+    });
+  }
+
+  if (tabBtnTeam) {
+    tabBtnTeam.addEventListener('click', () => {
+      tabBtnTeam.classList.add('is-active');
+      tabBtnTeam.setAttribute('aria-selected', 'true');
+      if (tabBtnClient) {
+        tabBtnClient.classList.remove('is-active');
+        tabBtnClient.setAttribute('aria-selected', 'false');
+      }
+      if (authPanelTeam) authPanelTeam.style.display = 'block';
+      if (authPanelClient) authPanelClient.style.display = 'none';
+    });
+  }
+
+  // Guardar Registro de Clienta
+  if (btnSaveClientAccount) {
+    btnSaveClientAccount.addEventListener('click', () => {
+      const name = (regClientName ? regClientName.value : '').trim();
+      const phone = (regClientPhone ? regClientPhone.value : '').trim();
+      const email = (regClientEmail ? regClientEmail.value : '').trim();
+      const address = (regClientAddress ? regClientAddress.value : '').trim();
+
+      if (!name || !phone) {
+        alert('Por favor ingresá tu nombre y un teléfono/WhatsApp de contacto.');
+        return;
+      }
+
+      currentCustomer = { name, phone, email, address };
+      try {
+        localStorage.setItem(STORAGE_KEY_CUSTOMER, JSON.stringify(currentCustomer));
+      } catch (e) {}
+
+      updateClientUi();
+      showToast(`🌸 ¡Bienvenida ${name}! Tus datos quedaron guardados.`);
+    });
+  }
+
+  // Cerrar Sesión de Clienta
+  if (btnLogoutClient) {
+    btnLogoutClient.addEventListener('click', () => {
+      currentCustomer = null;
+      localStorage.removeItem(STORAGE_KEY_CUSTOMER);
+      updateClientUi();
+      showToast('Sesión de clienta cerrada.');
+    });
+  }
+
+  // Abrir Carrito desde el perfil
+  if (btnOpenCartFromProfile) {
+    btnOpenCartFromProfile.addEventListener('click', () => {
+      closeAdminLogin();
+      openCartDrawer();
+    });
+  }
+
+  // =========================================================================
+  // 12. BOLSA DE PEDIDOS (CARRITO) & ENLACE CON ELENA (WHATSAPP + EMAIL)
+  // =========================================================================
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartDrawerClose = document.getElementById('cart-drawer-close');
+  const cartDrawerBackdrop = document.getElementById('cart-drawer-backdrop');
+  const headerCartBtn = document.getElementById('header-cart-btn');
+  const headerCartCount = document.getElementById('header-cart-count');
+  const cartDrawerCount = document.getElementById('cart-drawer-count');
+  const cartEmptyState = document.getElementById('cart-empty-state');
+  const cartItemsList = document.getElementById('cart-items-list');
+  const cartDrawerFooter = document.getElementById('cart-drawer-footer');
+  const cartEmptyCta = document.getElementById('cart-empty-cta');
+
+  const cartInputName = document.getElementById('cart-input-name');
+  const cartInputPhone = document.getElementById('cart-input-phone');
+  const cartInputEmail = document.getElementById('cart-input-email');
+  const cartInputAddress = document.getElementById('cart-input-address');
+
+  const cartBtnWhatsapp = document.getElementById('cart-btn-whatsapp');
+  const cartBtnEmail = document.getElementById('cart-btn-email');
+
+  function openCartDrawer() {
+    if (!cartDrawer) return;
+    cartDrawer.classList.add('is-open');
+    cartDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    updateCartUi();
+  }
+
+  function closeCartDrawer() {
+    if (!cartDrawer) return;
+    cartDrawer.classList.remove('is-open');
+    cartDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (headerCartBtn) headerCartBtn.addEventListener('click', openCartDrawer);
+  if (cartDrawerClose) cartDrawerClose.addEventListener('click', closeCartDrawer);
+  if (cartDrawerBackdrop) cartDrawerBackdrop.addEventListener('click', closeCartDrawer);
+  if (cartEmptyCta) {
+    cartEmptyCta.addEventListener('click', () => {
+      closeCartDrawer();
+    });
+  }
+
+  function saveCartToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+    } catch (e) {}
+  }
+
+  function addToCart(productId, customNote = '') {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const defaultImg = (product.images && product.images[0]) ? product.images[0].src : 'assets/images/hero-textile.jpg';
+
+    // Verificar si el mismo producto con la misma nota ya existe
+    const existingIndex = cart.findIndex(item => item.id === productId && (item.note || '') === (customNote || ''));
+    if (existingIndex > -1) {
+      cart[existingIndex].qty += 1;
+    } else {
+      cart.push({
+        id: product.id,
+        title: product.title,
+        price: product.price || 'Confección a Mano',
+        categoryName: product.categoryName || getCategoryLabel(product.category),
+        img: defaultImg,
+        note: customNote,
+        qty: 1
+      });
+    }
+
+    saveCartToStorage();
+    updateCartUi();
+    openCartDrawer();
+    showToast(`✨ Sumado a tu bolsa: "${product.title}"`);
+  }
+
+  function updateCartUi() {
+    const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+    if (headerCartCount) {
+      headerCartCount.textContent = totalCount;
+      headerCartCount.classList.toggle('has-items', totalCount > 0);
+    }
+    if (cartDrawerCount) {
+      cartDrawerCount.textContent = `(${totalCount} ${totalCount === 1 ? 'pieza' : 'piezas'})`;
+    }
+
+    if (cart.length === 0) {
+      if (cartEmptyState) cartEmptyState.style.display = 'block';
+      if (cartItemsList) cartItemsList.style.display = 'none';
+      if (cartDrawerFooter) cartDrawerFooter.style.display = 'none';
+      return;
+    }
+
+    if (cartEmptyState) cartEmptyState.style.display = 'none';
+    if (cartItemsList) cartItemsList.style.display = 'flex';
+    if (cartDrawerFooter) cartDrawerFooter.style.display = 'block';
+
+    cartItemsList.innerHTML = cart.map((item, idx) => `
+      <div class="cart-item-row" data-item-idx="${idx}">
+        <img src="${item.img}" alt="${item.title}" class="cart-item__thumb" />
+        <div class="cart-item__info">
+          <h4 class="cart-item__title">${item.title}</h4>
+          <span class="cart-item__category">${item.categoryName}</span>
+          <span class="cart-item__price">${item.price}</span>
+          
+          <input 
+            type="text" 
+            class="cart-item__note-input" 
+            data-cart-idx="${idx}" 
+            placeholder="Personalización (ej: Nombre bordado, tono)" 
+            value="${item.note || ''}" 
+            title="Escribí si querés un nombre bordado o detalle especial"
+          />
+
+          <div class="cart-item__controls">
+            <div class="cart-qty-stepper">
+              <button type="button" class="cart-qty-btn btn-cart-dec" data-cart-idx="${idx}" aria-label="Restar una unidad">-</button>
+              <span class="cart-qty-num">${item.qty}</span>
+              <button type="button" class="cart-qty-btn btn-cart-inc" data-cart-idx="${idx}" aria-label="Sumar una unidad">+</button>
+            </div>
+            <button type="button" class="cart-item-remove" data-cart-del="${idx}">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Eventos de controles de cantidad y notas
+    cartItemsList.querySelectorAll('.btn-cart-dec').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-cart-idx'), 10);
+        if (cart[idx].qty > 1) {
+          cart[idx].qty -= 1;
+        } else {
+          cart.splice(idx, 1);
+        }
+        saveCartToStorage();
+        updateCartUi();
+      });
+    });
+
+    cartItemsList.querySelectorAll('.btn-cart-inc').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-cart-idx'), 10);
+        cart[idx].qty += 1;
+        saveCartToStorage();
+        updateCartUi();
+      });
+    });
+
+    cartItemsList.querySelectorAll('[data-cart-del]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-cart-del'), 10);
+        cart.splice(idx, 1);
+        saveCartToStorage();
+        updateCartUi();
+      });
+    });
+
+    cartItemsList.querySelectorAll('.cart-item__note-input').forEach(inp => {
+      inp.addEventListener('input', (e) => {
+        const idx = parseInt(inp.getAttribute('data-cart-idx'), 10);
+        if (cart[idx]) {
+          cart[idx].note = e.target.value;
+          saveCartToStorage();
+        }
+      });
+    });
+
+    // Sincronizar datos de clienta si está logueada
+    if (currentCustomer) {
+      if (cartInputName && !cartInputName.value) cartInputName.value = currentCustomer.name;
+      if (cartInputPhone && !cartInputPhone.value) cartInputPhone.value = currentCustomer.phone;
+      if (cartInputEmail && !cartInputEmail.value) cartInputEmail.value = currentCustomer.email || '';
+      if (cartInputAddress && !cartInputAddress.value) cartInputAddress.value = currentCustomer.address || '';
+    }
+  }
+
+  // Hook del botón del Lookbook Modal para agregar a la bolsa
+  const lookbookAddBagBtn = document.getElementById('lookbook-add-bag-btn');
+  const lookbookCustomNote = document.getElementById('lookbook-custom-note');
+
+  if (lookbookAddBagBtn) {
+    lookbookAddBagBtn.addEventListener('click', () => {
+      if (!currentLookbookProduct) return;
+      const note = lookbookCustomNote ? lookbookCustomNote.value.trim() : '';
+      addToCart(currentLookbookProduct.id, note);
+      closeLookbookModal();
+    });
+  }
+
+  // Función para procesar y registrar el pedido
+  function createAndSaveOrder(name, phone, email, address) {
+    const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+    const newOrder = {
+      id: orderId,
+      date: new Date().toLocaleDateString('es-AR'),
+      time: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+      customer: { name, phone, email, address },
+      items: JSON.parse(JSON.stringify(cart)),
+      totalCount: cart.reduce((sum, item) => sum + item.qty, 0),
+      status: 'Pendiente'
+    };
+
+    orders.unshift(newOrder);
+    try {
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+    } catch (e) {}
+
+    // Si la clienta no estaba guardada, guardarla
+    if (!currentCustomer) {
+      currentCustomer = { name, phone, email, address };
+      try {
+        localStorage.setItem(STORAGE_KEY_CUSTOMER, JSON.stringify(currentCustomer));
+      } catch (e) {}
+    }
+
+    updateClientUi();
+    updateElenaOrdersBadge();
+
+    return newOrder;
+  }
+
+  function getCartCustomerData() {
+    const name = (cartInputName ? cartInputName.value : '').trim();
+    const phone = (cartInputPhone ? cartInputPhone.value : '').trim();
+    const email = (cartInputEmail ? cartInputEmail.value : '').trim();
+    const address = (cartInputAddress ? cartInputAddress.value : '').trim();
+
+    if (!name || !phone) {
+      alert('Por favor ingresá tu nombre y WhatsApp para que Elena pueda coordinar tu pedido.');
+      return null;
+    }
+
+    return { name, phone, email, address };
+  }
+
+  // Checkout por WhatsApp
+  if (cartBtnWhatsapp) {
+    cartBtnWhatsapp.addEventListener('click', () => {
+      if (cart.length === 0) return;
+      const cust = getCartCustomerData();
+      if (!cust) return;
+
+      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address);
+
+      let msg = `🌸 *NUEVO PEDIDO DESDE LA TIENDA WEB*\n`;
+      msg += `--------------------------------------\n`;
+      msg += `*Cliente:* ${cust.name}\n`;
+      msg += `*WhatsApp:* ${cust.phone}\n`;
+      if (cust.email) msg += `*Email:* ${cust.email}\n`;
+      if (cust.address) msg += `*Dirección/Entrega:* ${cust.address}\n`;
+      msg += `\n*PIEZAS ENCARGADAS (${order.totalCount}):*\n`;
+      order.items.forEach((item, i) => {
+        msg += `${i + 1}. *${item.qty}x ${item.title}* (${item.price})\n`;
+        if (item.note) msg += `   └ Nota: ${item.note}\n`;
+      });
+      msg += `--------------------------------------\n`;
+      msg += `Hola Elena! Te envío mi pedido desde la web de Divina Locura Deco para coordinar disponibilidad y confección. ¡Muchas gracias! ✨`;
+
+      const cleanPhone = (settings.whatsapp_phone || '').replace(/[^0-9]/g, '');
+      let waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+      if (cleanPhone && cleanPhone !== '5491100000000') {
+        waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+      }
+
+      // Vaciar carrito
+      cart = [];
+      saveCartToStorage();
+      updateCartUi();
+      closeCartDrawer();
+
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      showToast('🌸 ¡Pedido enviado por WhatsApp a Elena! Te responderá en breve.');
+    });
+  }
+
+  // Checkout por Email
+  if (cartBtnEmail) {
+    cartBtnEmail.addEventListener('click', () => {
+      if (cart.length === 0) return;
+      const cust = getCartCustomerData();
+      if (!cust) return;
+
+      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address);
+
+      const subject = `Nuevo Pedido en Tienda Web (#${order.id}) - ${cust.name}`;
+      let body = `NUEVO PEDIDO DESDE LA TIENDA WEB - DIVINA LOCURA DECO\n\n`;
+      body += `Cliente: ${cust.name}\n`;
+      body += `WhatsApp / Teléfono: ${cust.phone}\n`;
+      if (cust.email) body += `Email de Contacto: ${cust.email}\n`;
+      if (cust.address) body += `Dirección / Localidad: ${cust.address}\n\n`;
+      body += `PIEZAS ENCARGADAS (${order.totalCount}):\n`;
+      order.items.forEach((item, i) => {
+        body += `${i + 1}. ${item.qty}x ${item.title} (${item.price})\n`;
+        if (item.note) body += `   - Personalización / Nota: ${item.note}\n`;
+      });
+      body += `\nFecha del pedido: ${order.date} a las ${order.time}\n`;
+      body += `\nEnviado a través de la tienda web oficial de Divina Locura Deco.`;
+
+      const targetEmail = 'divinalocuradeco@gmail.com';
+      const mailtoUrl = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      cart = [];
+      saveCartToStorage();
+      updateCartUi();
+      closeCartDrawer();
+
+      window.location.href = mailtoUrl;
+      showToast('✉️ Pedido generado para envío por correo electrónico a Elena.');
+    });
+  }
+
+  // =========================================================================
+  // 13. CHATBOT CONCIERGE ("ELENA ASISTENTE DEL TALLER")
+  // =========================================================================
+  const chatbotTriggerBtn = document.getElementById('chatbot-trigger-btn');
+  const chatbotWindow = document.getElementById('chatbot-window');
+  const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+  const chatbotMessages = document.getElementById('chatbot-messages');
+  const chatbotForm = document.getElementById('chatbot-form');
+  const chatbotInput = document.getElementById('chatbot-input');
+  const chatbotSuggestions = document.getElementById('chatbot-suggestions');
+
+  function openChatbot() {
+    if (chatbotWindow) {
+      chatbotWindow.classList.add('is-open');
+      chatbotWindow.setAttribute('aria-hidden', 'false');
+      if (chatbotInput) chatbotInput.focus();
+    }
+  }
+
+  function closeChatbot() {
+    if (chatbotWindow) {
+      chatbotWindow.classList.remove('is-open');
+      chatbotWindow.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (chatbotTriggerBtn) {
+    chatbotTriggerBtn.addEventListener('click', () => {
+      const isOpen = chatbotWindow && chatbotWindow.classList.contains('is-open');
+      if (isOpen) closeChatbot();
+      else openChatbot();
+    });
+  }
+
+  if (chatbotCloseBtn) chatbotCloseBtn.addEventListener('click', closeChatbot);
+
+  function appendChatMessage(text, sender = 'bot', actionButton = null) {
+    if (!chatbotMessages) return;
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-msg chat-msg--${sender}`;
+    let contentHtml = `<div class="chat-bubble">${text}</div>`;
+    if (actionButton) {
+      contentHtml += `<div style="margin-top:0.4rem;">${actionButton}</div>`;
+    }
+    msgDiv.innerHTML = contentHtml;
+    chatbotMessages.appendChild(msgDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  const BOT_KNOWLEDGE = {
+    personalizado: '¡Nos encanta crear piezas únicas con historia! 🐰🤍 Para las conejitas de apego, babitas o toallitas infantiles, Elena borda a mano el nombre que elijas. Simplemente sumá la pieza a tu <strong>Bolsa de Pedidos</strong> y escribí el nombre en la nota de personalización, o contactanos por WhatsApp para ver tipografías.',
+    saten: 'El <strong>satén de seda premium</strong> que usa Elena cuida tu piel y cabello durante el descanso. A diferencia del algodón común, no genera fricción (evitando el quiebre y el frizz matutino) y no absorbe las cremas nocturnas de tu rostro. ¡Es uno de los clásicos más pedidos del taller!',
+    waffle: 'Nuestras piezas de <strong>nido de abeja (waffle) 100% puro algodón</strong> y lino están prelavadas para que no encojan. Te recomendamos lavarlas con agua fría en programa delicado o a mano, sin retorcer fuerte, y secarlas tendidas a la sombra para que conserven su esponjosidad.',
+    envios: 'Elena confecciona cada pieza artesanalmente a fuego lento. Los pedidos habituales se despachan en <strong>3 a 5 días hábiles</strong>, y los bordados con nombre en <strong>5 a 7 días</strong>. Hacemos envíos seguros a todo el país y coordinamos entregas en Buenos Aires.',
+    pedido: '¡Hacer tu pedido es muy sencillo! 🌸 Podés recorrer la colección, tocar el botón <strong>"+ Bolsa"</strong> en los artículos que te gusten, indicar si querés algún bordado o color especial, y tocar <strong>"Enviar Pedido a Elena por WhatsApp"</strong>. Elena lo recibe al instante y te responde personalmente.',
+    whatsapp: '¡Qué lindo que quieras hablar con Elena! Hacé clic abajo para abrir una conversación directa en su WhatsApp:'
+  };
+
+  function processChatbotQuery(query) {
+    const q = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    if (q.includes('personaliz') || q.includes('nombre') || q.includes('bordad') || q.includes('bebe') || q.includes('conejit') || q.includes('ajuar')) {
+      return { text: BOT_KNOWLEDGE.personalizado };
+    }
+    if (q.includes('saten') || q.includes('frizz') || q.includes('cofia') || q.includes('almohada') || q.includes('pelo') || q.includes('skincare')) {
+      return { text: BOT_KNOWLEDGE.saten };
+    }
+    if (q.includes('waffle') || q.includes('lavar') || q.includes('cuid') || q.includes('repasador') || q.includes('lino') || q.includes('cocina')) {
+      return { text: BOT_KNOWLEDGE.waffle };
+    }
+    if (q.includes('envi') || q.includes('demor') || q.includes('tiempo') || q.includes('capital') || q.includes('llega') || q.includes('pais')) {
+      return { text: BOT_KNOWLEDGE.envios };
+    }
+    if (q.includes('pedid') || q.includes('compr') || q.includes('bolsa') || q.includes('como') || q.includes('encarg')) {
+      return { text: BOT_KNOWLEDGE.pedido };
+    }
+    if (q.includes('whatsapp') || q.includes('elena') || q.includes('telefono') || q.includes('hablar') || q.includes('contacto')) {
+      const waUrl = buildWhatsAppUrl();
+      const btnHtml = `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--checkout-whatsapp" style="padding:0.4rem 0.8rem; font-size:0.75rem; text-decoration:none; display:inline-flex;">💬 Abrir WhatsApp con Elena</a>`;
+      return { text: BOT_KNOWLEDGE.whatsapp, btn: btnHtml };
+    }
+
+    // Respuesta inteligente general con opción a WhatsApp
+    const waUrl = buildWhatsAppUrl(`Consulta desde la web: "${query}"`);
+    const btnHtml = `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--checkout-whatsapp" style="padding:0.4rem 0.8rem; font-size:0.75rem; text-decoration:none; display:inline-flex;">💬 Consultar a Elena por WhatsApp</a>`;
+    return {
+      text: `¡Qué linda consulta! Para darte el mejor asesoramiento a medida sobre esa pieza o confección, podés consultar directamente a Elena por WhatsApp:`,
+      btn: btnHtml
+    };
+  }
+
+  if (chatbotForm && chatbotInput) {
+    chatbotForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatbotInput.value.trim();
+      if (!text) return;
+
+      appendChatMessage(text, 'user');
+      chatbotInput.value = '';
+
+      setTimeout(() => {
+        const response = processChatbotQuery(text);
+        appendChatMessage(response.text, 'bot', response.btn);
+      }, 350);
+    });
+  }
+
+  if (chatbotSuggestions) {
+    chatbotSuggestions.querySelectorAll('.chat-suggestion-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const queryKey = chip.getAttribute('data-query');
+        const questionText = chip.textContent;
+        appendChatMessage(questionText, 'user');
+
+        setTimeout(() => {
+          let response;
+          if (queryKey === 'whatsapp') {
+            const waUrl = buildWhatsAppUrl();
+            const btnHtml = `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--checkout-whatsapp" style="padding:0.4rem 0.8rem; font-size:0.75rem; text-decoration:none; display:inline-flex;">💬 Abrir WhatsApp con Elena</a>`;
+            response = { text: BOT_KNOWLEDGE.whatsapp, btn: btnHtml };
+          } else {
+            response = { text: BOT_KNOWLEDGE[queryKey] || BOT_KNOWLEDGE.pedido };
+          }
+          appendChatMessage(response.text, 'bot', response.btn);
+        }, 300);
+      });
+    });
+  }
+
+  // =========================================================================
+  // 14. TUTORIAL INTERACTIVO & GESTIÓN DE PEDIDOS PARA ELENA (MODO TALLER)
+  // =========================================================================
+  const adminElenaTutorialBtn = document.getElementById('admin-elena-tutorial-btn');
+  const elenaTutorialModal = document.getElementById('elena-tutorial-modal');
+  const elenaTutorialCloseBtn = document.getElementById('elena-tutorial-close-btn');
+
+  const adminElenaOrdersBtn = document.getElementById('admin-elena-orders-btn');
+  const adminElenaOrdersCount = document.getElementById('admin-elena-orders-count');
+  const elenaOrdersModal = document.getElementById('elena-orders-modal');
+  const elenaOrdersCloseBtn = document.getElementById('elena-orders-close-btn');
+  const elenaOrdersEmpty = document.getElementById('elena-orders-empty');
+  const elenaOrdersList = document.getElementById('elena-orders-list');
+
+  function updateElenaOrdersBadge() {
+    if (adminElenaOrdersCount) {
+      adminElenaOrdersCount.textContent = orders.length;
+    }
+  }
+
+  function openElenaTutorial() {
+    if (elenaTutorialModal) {
+      elenaTutorialModal.classList.add('is-open');
+      elenaTutorialModal.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  function closeElenaTutorial() {
+    if (elenaTutorialModal) {
+      elenaTutorialModal.classList.remove('is-open');
+      elenaTutorialModal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (adminElenaTutorialBtn) adminElenaTutorialBtn.addEventListener('click', openElenaTutorial);
+  if (elenaTutorialCloseBtn) elenaTutorialCloseBtn.addEventListener('click', closeElenaTutorial);
+
+  // Tabs dentro del Tutorial de Elena
+  document.querySelectorAll('.tutorial-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tutorial-tab').forEach(t => t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+
+      const targetId = tab.getAttribute('data-tut-target');
+      document.querySelectorAll('.tutorial-step').forEach(step => {
+        step.style.display = step.id === targetId ? 'block' : 'none';
+        step.classList.toggle('is-active', step.id === targetId);
+      });
+    });
+  });
+
+  // Modal de Pedidos Recibidos de Elena
+  function renderElenaOrdersList() {
+    if (!elenaOrdersList || !elenaOrdersEmpty) return;
+
+    if (orders.length === 0) {
+      elenaOrdersEmpty.style.display = 'block';
+      elenaOrdersList.style.display = 'none';
+      return;
+    }
+
+    elenaOrdersEmpty.style.display = 'none';
+    elenaOrdersList.style.display = 'flex';
+
+    elenaOrdersList.innerHTML = orders.map((ord, idx) => {
+      const cleanPhone = (ord.customer.phone || '').replace(/[^0-9]/g, '');
+      const replyMsg = `¡Hola ${ord.customer.name}! Te escribo del taller de Divina Locura Deco por tu pedido de confección en la web 🌸`;
+      const waReplyUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(replyMsg)}`;
+
+      return `
+        <div class="elena-order-card" data-order-idx="${idx}">
+          <div class="elena-order-header">
+            <div>
+              <span class="elena-order-customer">👤 ${ord.customer.name}</span>
+              <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.15rem;">
+                📱 WhatsApp: <strong>${ord.customer.phone}</strong> ${ord.customer.email ? `&middot; ✉️ ${ord.customer.email}` : ''}
+              </div>
+              ${ord.customer.address ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.1rem;">📍 Entrega: ${ord.customer.address}</div>` : ''}
+            </div>
+            <div style="text-align:right;">
+              <span class="client-order-badge">${ord.status || 'Pendiente'}</span>
+              <div class="elena-order-date">${ord.date} &middot; ${ord.time}</div>
+            </div>
+          </div>
+
+          <div class="elena-order-items">
+            <strong>Piezas encargadas (${ord.totalCount}):</strong>
+            <ul>
+              ${(ord.items || []).map(i => `
+                <li><strong>${i.qty}x ${i.title}</strong> (${i.price})${i.note ? ` — <em>Nota: "${i.note}"</em>` : ''}</li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <div class="elena-order-actions">
+            <a href="${waReplyUrl}" target="_blank" rel="noopener noreferrer" class="btn-contact-client-wa">
+              <span>💬 Responder a la Clienta por WhatsApp</span>
+            </a>
+            <button type="button" class="btn btn--admin-logout" data-order-delete="${idx}" style="padding:0.4rem 0.75rem; font-size:0.75rem;">
+              Archivar
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Botones para archivar/eliminar pedidos
+    elenaOrdersList.querySelectorAll('[data-order-delete]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.getAttribute('data-order-delete'), 10);
+        if (confirm('¿Querés archivar este pedido?')) {
+          orders.splice(idx, 1);
+          try {
+            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+          } catch (e) {}
+          updateElenaOrdersBadge();
+          renderElenaOrdersList();
+          updateClientUi();
+          showToast('Pedido archivado.');
+        }
+      });
+    });
+  }
+
+  function openElenaOrders() {
+    if (elenaOrdersModal) {
+      renderElenaOrdersList();
+      elenaOrdersModal.classList.add('is-open');
+      elenaOrdersModal.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  function closeElenaOrders() {
+    if (elenaOrdersModal) {
+      elenaOrdersModal.classList.remove('is-open');
+      elenaOrdersModal.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (adminElenaOrdersBtn) adminElenaOrdersBtn.addEventListener('click', openElenaOrders);
+  if (elenaOrdersCloseBtn) elenaOrdersCloseBtn.addEventListener('click', closeElenaOrders);
+
   // Exponer API global
   window.DivinaLocura = {
     openLookbookModal,
@@ -1189,6 +1980,13 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     openProductEditor,
     closeProductEditor,
     openAdminLogin,
+    openCartDrawer,
+    closeCartDrawer,
+    addToCart,
+    openChatbot,
+    closeChatbot,
+    openElenaTutorial,
+    openElenaOrders,
     setRole: (role) => {
       currentRole = role;
       if (role) localStorage.setItem(STORAGE_KEY_ROLE, role);
@@ -1197,9 +1995,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     },
     getProducts: () => products,
     getSettings: () => settings,
+    getCart: () => cart,
+    getOrders: () => orders,
     renderCatalog
   };
 
   // Inicializar Interfaz
   updateAdminUi();
+  updateClientUi();
+  updateCartUi();
+  updateElenaOrdersBadge();
 });
