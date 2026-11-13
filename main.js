@@ -1397,6 +1397,11 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const btnOpenCartFromProfile = document.getElementById('btn-open-cart-from-profile');
 
   function openClientLogin() {
+    try {
+      const savedCustomer = localStorage.getItem(STORAGE_KEY_CUSTOMER);
+      if (savedCustomer) currentCustomer = JSON.parse(savedCustomer);
+    } catch (e) {}
+    updateClientUi();
     if (clientLoginModal) clientLoginModal.classList.add('is-open');
   }
 
@@ -1427,11 +1432,20 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       if (loggedClientEmail) loggedClientEmail.textContent = currentCustomer.email || 'No especificado';
       if (loggedClientAddress) loggedClientAddress.textContent = currentCustomer.address || 'A convenir';
 
-      // Renderizar pedidos de la clienta
+      // Renderizar pedidos de la clienta con fechas y notas de Elena
       if (clientOrdersList) {
-        const clientOrders = orders.filter(o => 
-          (o.customer && (o.customer.phone === currentCustomer.phone || o.customer.email === currentCustomer.email || o.customer.name === currentCustomer.name))
+        const allOrders = (window.WorkshopDB && typeof window.WorkshopDB.getOrders === 'function') 
+          ? window.WorkshopDB.getOrders() 
+          : orders;
+
+        const clientOrders = allOrders.filter(o => 
+          (o.customer && (
+            (o.customer.phone && currentCustomer.phone && o.customer.phone.replace(/[^0-9]/g, '') === currentCustomer.phone.replace(/[^0-9]/g, '')) ||
+            (o.customer.email && currentCustomer.email && o.customer.email.toLowerCase() === currentCustomer.email.toLowerCase()) ||
+            (o.customer.name && currentCustomer.name && o.customer.name.toLowerCase() === currentCustomer.name.toLowerCase())
+          ))
         );
+
         if (clientOrders.length === 0) {
           clientOrdersList.innerHTML = '<p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>';
         } else {
@@ -1441,12 +1455,41 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
                 <span>Pedido #${ord.id}</span>
                 <span class="client-order-badge">${ord.status || 'En preparación'}</span>
               </div>
-              <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.25rem;">${ord.date} a las ${ord.time}</div>
-              <div>${(ord.items || []).map(i => `${i.qty}x ${i.title}${i.note ? ` (<em>${i.note}</em>)` : ''}`).join(', ')}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.35rem;">${ord.date} a las ${ord.time}</div>
+              <div style="margin-bottom:0.35rem;">${(ord.items || []).map(i => `<strong>${i.qty}x</strong> ${i.title}${i.note ? ` (<em>${i.note}</em>)` : ''}`).join(', ')}</div>
+              ${ord.estimatedDelivery ? `
+                <div class="client-delivery-date-badge">
+                  <span>📅 Entrega prevista:</span> <strong>${ord.estimatedDelivery}</strong>
+                </div>
+              ` : ''}
+              ${ord.workshopNote ? `
+                <div class="client-workshop-note-bubble">
+                  <strong>🌸 Mensaje de Elena:</strong> "${ord.workshopNote}"
+                </div>
+              ` : ''}
+              <button type="button" class="btn btn--secondary btn-client-order-chat" data-ord-id="${ord.id}" style="margin-top:0.5rem; padding:0.3rem 0.65rem; font-size:0.75rem; display:inline-flex; align-items:center; gap:0.3rem;">
+                <span>💬 Escribirle a Elena sobre este pedido</span>
+              </button>
             </div>
           `).join('');
+
+          // Botones para saltar directo al chat desde un pedido
+          clientOrdersList.querySelectorAll('.btn-client-order-chat').forEach(b => {
+            b.addEventListener('click', () => {
+              const chatTabBtn = document.getElementById('btn-client-tab-chat');
+              if (chatTabBtn) chatTabBtn.click();
+              const chatInput = document.getElementById('client-chat-input');
+              if (chatInput) {
+                chatInput.value = `Hola Elena! Te consulto por mi pedido #${b.getAttribute('data-ord-id')}: `;
+                chatInput.focus();
+              }
+            });
+          });
         }
       }
+
+      // Renderizar Chat Directo de la Clienta
+      renderClientDirectChat();
 
       // Prellenar inputs de la bolsa
       const cartName = document.getElementById('cart-input-name');
@@ -1468,6 +1511,75 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
+  // Renderizar Mensajes de Chat Directo con Elena
+  function renderClientDirectChat() {
+    const chatContainer = document.getElementById('client-chat-history');
+    if (!chatContainer || !currentCustomer || !currentCustomer.phone) return;
+
+    if (!window.WorkshopDB) return;
+    const msgs = window.WorkshopDB.getMessagesForPhone(currentCustomer.phone);
+
+    if (msgs.length === 0) {
+      chatContainer.innerHTML = '<p style="color:var(--text-muted); font-size:0.8rem; text-align:center; margin:auto;">Iniciá una conversación directa con Elena sobre tus pedidos o telas.</p>';
+      return;
+    }
+
+    chatContainer.innerHTML = msgs.map(m => {
+      const isClient = m.sender === 'client';
+      return `
+        <div class="chat-bubble-item ${isClient ? 'chat-bubble-item--client' : 'chat-bubble-item--elena'}" style="max-width:85%;">
+          <div style="font-weight:700; font-size:0.75rem; margin-bottom:0.15rem;">
+            ${isClient ? 'Tú' : '🌸 Elena (Taller)'}
+          </div>
+          <div>${m.text}</div>
+          <div class="chat-bubble-meta">${m.timestamp}</div>
+        </div>
+      `;
+    }).join('');
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  // Enviar mensaje en Chat Directo Clienta -> Elena
+  const clientChatForm = document.getElementById('client-direct-chat-form');
+  const clientChatInput = document.getElementById('client-chat-input');
+  if (clientChatForm && clientChatInput) {
+    clientChatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = clientChatInput.value.trim();
+      if (!text || !currentCustomer || !currentCustomer.phone) return;
+
+      if (window.WorkshopDB) {
+        window.WorkshopDB.sendMessage(currentCustomer.phone, text, 'client', currentCustomer.name);
+      }
+      clientChatInput.value = '';
+      renderClientDirectChat();
+      updateWorkshopCounters();
+      if (typeof renderWorkshopChat === 'function') renderWorkshopChat();
+      showToast('Mensaje enviado a Elena 🌸');
+    });
+  }
+
+  // Pestañas internas en Mi Cuenta
+  document.querySelectorAll('.client-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+
+      const targetTab = btn.getAttribute('data-ctab');
+      const paneOrders = document.getElementById('cpane-orders');
+      const paneChat = document.getElementById('cpane-chat');
+      const paneProfile = document.getElementById('cpane-profile');
+
+      if (paneOrders) paneOrders.style.display = targetTab === 'orders' ? 'block' : 'none';
+      if (paneChat) {
+        paneChat.style.display = targetTab === 'chat' ? 'block' : 'none';
+        if (targetTab === 'chat') renderClientDirectChat();
+      }
+      if (paneProfile) paneProfile.style.display = targetTab === 'profile' ? 'block' : 'none';
+    });
+  });
+
   // Guardar Registro de Clienta
   if (btnSaveClientAccount) {
     btnSaveClientAccount.addEventListener('click', () => {
@@ -1486,8 +1598,13 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         localStorage.setItem(STORAGE_KEY_CUSTOMER, JSON.stringify(currentCustomer));
       } catch (e) {}
 
+      if (window.WorkshopDB) {
+        window.WorkshopDB.saveClient({ name, phone, email, address });
+      }
+
       updateClientUi();
       closeClientLogin();
+      updateWorkshopCounters();
       showToast(`🌸 ¡Bienvenida ${name}! Tus datos quedaron guardados.`);
     });
   }
@@ -1709,6 +1826,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   // Función para procesar y registrar el pedido
   function createAndSaveOrder(name, phone, email, address) {
     const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+    
+    // Calcular monto total estimado
+    const totalAmount = cart.reduce((sum, item) => {
+      const rawNum = String(item.price || '').replace(/[^0-9]/g, '');
+      const priceNum = rawNum ? parseFloat(rawNum) : 0;
+      return sum + (priceNum * (item.qty || 1));
+    }, 0);
+
     const newOrder = {
       id: orderId,
       date: new Date().toLocaleDateString('es-AR'),
@@ -1716,13 +1841,31 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       customer: { name, phone, email, address },
       items: JSON.parse(JSON.stringify(cart)),
       totalCount: cart.reduce((sum, item) => sum + item.qty, 0),
-      status: 'Pendiente'
+      totalAmount: totalAmount,
+      status: 'Pendiente de Confirmación',
+      estimatedDelivery: '5 a 7 días hábiles',
+      workshopNote: 'Pedido recibido en el taller. Elena revisará las telas y confirmará el inicio de la confección.'
     };
 
     orders.unshift(newOrder);
     try {
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
     } catch (e) {}
+
+    // Sincronizar con WorkshopDB
+    if (window.WorkshopDB) {
+      window.WorkshopDB.addOrder(newOrder);
+      // Mensaje de inicio de hilo automático si no había
+      const existingMsgs = window.WorkshopDB.getMessagesForPhone(phone);
+      if (existingMsgs.length === 0) {
+        window.WorkshopDB.sendMessage(
+          phone, 
+          `🌸 ¡Hola Elena! Acabo de enviar un pedido desde la web (#${orderId}) con ${newOrder.totalCount} pieza(s).`,
+          'client',
+          name
+        );
+      }
+    }
 
     // Si la clienta no estaba guardada, guardarla
     if (!currentCustomer) {
@@ -1734,6 +1877,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
 
     updateClientUi();
     updateElenaOrdersBadge();
+    updateWorkshopCounters();
 
     return newOrder;
   }
@@ -2008,54 +2152,157 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
   });
 
-  // Modal de Pedidos Recibidos de Elena
-  function renderElenaOrdersList() {
-    if (!elenaOrdersList || !elenaOrdersEmpty) return;
+  // =========================================================================
+  // 15. CENTRO DE GESTIÓN DEL TALLER DE ELENA (PEDIDOS, CLIENTAS, CHAT, STOCK & GASTOS)
+  // =========================================================================
+  const adminElenaChatBtn = document.getElementById('admin-elena-chat-btn');
+  const adminElenaChatCount = document.getElementById('admin-elena-chat-count');
+  const adminElenaStockBtn = document.getElementById('admin-elena-stock-btn');
+  let activeChatPhone = null;
 
-    if (orders.length === 0) {
-      elenaOrdersEmpty.style.display = 'block';
-      elenaOrdersList.style.display = 'none';
+  function updateWorkshopCounters() {
+    if (!window.WorkshopDB) return;
+    const allOrders = window.WorkshopDB.getOrders();
+    const allClients = window.WorkshopDB.getClients();
+    const allChats = window.WorkshopDB.getChats();
+
+    // Contadores de barra admin
+    if (adminElenaOrdersCount) adminElenaOrdersCount.textContent = allOrders.length;
+    const chatKeys = Object.keys(allChats);
+    if (adminElenaChatCount) adminElenaChatCount.textContent = chatKeys.length;
+
+    // Contadores en las pestañas del modal
+    const countOrdersTab = document.getElementById('workshop-orders-count');
+    if (countOrdersTab) countOrdersTab.textContent = allOrders.length;
+
+    const countClientsTab = document.getElementById('workshop-clients-count');
+    if (countClientsTab) countClientsTab.textContent = allClients.length;
+
+    const countChatTab = document.getElementById('workshop-chat-unread-count');
+    if (countChatTab) countChatTab.textContent = chatKeys.length;
+  }
+
+  function switchWorkshopTab(tabKey) {
+    document.querySelectorAll('.workshop-tab-btn').forEach(btn => {
+      btn.classList.toggle('is-active', btn.getAttribute('data-wtab') === tabKey);
+    });
+
+    const panes = {
+      orders: document.getElementById('wpane-orders'),
+      clients: document.getElementById('wpane-clients'),
+      chat: document.getElementById('wpane-chat'),
+      stock: document.getElementById('wpane-stock'),
+      finances: document.getElementById('wpane-finances')
+    };
+
+    Object.keys(panes).forEach(k => {
+      if (panes[k]) {
+        panes[k].style.display = k === tabKey ? 'block' : 'none';
+        panes[k].classList.toggle('is-active', k === tabKey);
+      }
+    });
+
+    if (tabKey === 'orders') renderWorkshopOrders();
+    if (tabKey === 'clients') renderWorkshopClients();
+    if (tabKey === 'chat') renderWorkshopChat(activeChatPhone);
+    if (tabKey === 'stock') renderWorkshopStock();
+    if (tabKey === 'finances') renderWorkshopFinances();
+  }
+
+  // Pestañas del Taller de Elena
+  document.querySelectorAll('.workshop-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-wtab');
+      switchWorkshopTab(tab);
+    });
+  });
+
+  // TAB 1: RENDER DE PEDIDOS & ENTREGAS (FECHA ESTIMADA, ESTADOS Y NOTA PARA LA CLIENTA)
+  function renderWorkshopOrders() {
+    const listContainer = document.getElementById('workshop-orders-list');
+    const emptyMsg = document.getElementById('elena-orders-empty');
+    if (!listContainer || !window.WorkshopDB) return;
+
+    const allOrders = window.WorkshopDB.getOrders();
+    if (allOrders.length === 0) {
+      if (emptyMsg) emptyMsg.style.display = 'block';
+      listContainer.innerHTML = '';
       return;
     }
 
-    elenaOrdersEmpty.style.display = 'none';
-    elenaOrdersList.style.display = 'flex';
+    if (emptyMsg) emptyMsg.style.display = 'none';
 
-    elenaOrdersList.innerHTML = orders.map((ord, idx) => {
+    listContainer.innerHTML = allOrders.map(ord => {
       const cleanPhone = (ord.customer.phone || '').replace(/[^0-9]/g, '');
-      const replyMsg = `¡Hola ${ord.customer.name}! Te escribo del taller de Divina Locura Deco por tu pedido de confección en la web 🌸`;
+      const replyMsg = `¡Hola ${ord.customer.name}! Te escribo del taller de Divina Locura Deco por tu pedido #${ord.id} 🌸`;
       const waReplyUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(replyMsg)}`;
 
       return `
-        <div class="elena-order-card" data-order-idx="${idx}">
-          <div class="elena-order-header">
+        <div class="workshop-order-card" data-order-id="${ord.id}">
+          <div class="workshop-order-top">
             <div>
-              <span class="elena-order-customer">👤 ${ord.customer.name}</span>
-              <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.15rem;">
-                📱 WhatsApp: <strong>${ord.customer.phone}</strong> ${ord.customer.email ? `&middot; ✉️ ${ord.customer.email}` : ''}
+              <div class="workshop-order-cust-name">
+                <span>👤 ${ord.customer.name}</span>
+                <span class="client-order-badge">${ord.status || 'Pendiente de Confirmación'}</span>
               </div>
-              ${ord.customer.address ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.1rem;">📍 Entrega: ${ord.customer.address}</div>` : ''}
+              <div class="workshop-order-meta">
+                📱 WhatsApp: <strong>${ord.customer.phone}</strong> 
+                ${ord.customer.email ? `&middot; ✉️ ${ord.customer.email}` : ''}
+                ${ord.customer.address ? `&middot; 📍 Entrega: <strong>${ord.customer.address}</strong>` : ''}
+              </div>
             </div>
-            <div style="text-align:right;">
-              <span class="client-order-badge">${ord.status || 'Pendiente'}</span>
-              <div class="elena-order-date">${ord.date} &middot; ${ord.time}</div>
+            <div style="text-align:right; font-size:0.8rem; color:var(--text-muted);">
+              <strong>Pedido #${ord.id}</strong><br>
+              ${ord.date} a las ${ord.time}
             </div>
           </div>
 
-          <div class="elena-order-items">
+          <div class="workshop-order-items-box">
             <strong>Piezas encargadas (${ord.totalCount}):</strong>
             <ul>
               ${(ord.items || []).map(i => `
-                <li><strong>${i.qty}x ${i.title}</strong> (${i.price})${i.note ? ` — <em>Nota: "${i.note}"</em>` : ''}</li>
+                <li><strong>${i.qty}x ${i.title}</strong> (${i.price})${i.note ? ` — <em>Nota de personalización: "${i.note}"</em>` : ''}</li>
               `).join('')}
             </ul>
           </div>
 
-          <div class="elena-order-actions">
-            <a href="${waReplyUrl}" target="_blank" rel="noopener noreferrer" class="btn-contact-client-wa">
-              <span>💬 Responder a la Clienta por WhatsApp</span>
-            </a>
-            <button type="button" class="btn btn--admin-logout" data-order-delete="${idx}" style="padding:0.4rem 0.75rem; font-size:0.75rem;">
+          <!-- Panel de Control para Elena: Estado, Fecha y Mensaje a la Clienta -->
+          <div class="workshop-order-ctrl-grid">
+            <div>
+              <label class="workshop-field-label">Estado de Confección:</label>
+              <select class="workshop-select ctrl-order-status" data-ord-id="${ord.id}">
+                <option value="Pendiente de Confirmación" ${ord.status === 'Pendiente de Confirmación' ? 'selected' : ''}>⏳ Pendiente de Confirmación</option>
+                <option value="Cortando Telas" ${ord.status === 'Cortando Telas' ? 'selected' : ''}>✂️ Cortando Telas &amp; Prelavado</option>
+                <option value="En Confección" ${ord.status === 'En Confección' ? 'selected' : ''}>🧵 En Confección a Fuego Lento</option>
+                <option value="Listo para Entrega" ${ord.status === 'Listo para Entrega' ? 'selected' : ''}>📦 Listo para Retirar / Enviar</option>
+                <option value="Entregado" ${ord.status === 'Entregado' ? 'selected' : ''}>✅ Entregado / Finalizado</option>
+              </select>
+
+              <label class="workshop-field-label" style="margin-top:0.65rem;">Fecha Estimada de Entrega / Despacho:</label>
+              <input type="text" class="workshop-input ctrl-order-date" data-ord-id="${ord.id}" value="${ord.estimatedDelivery || ''}" placeholder="Ej: 18 de Noviembre / En 4 días" />
+            </div>
+
+            <div>
+              <label class="workshop-field-label">Aviso / Mensaje de Elena para la Clienta:</label>
+              <textarea class="workshop-textarea ctrl-order-note" data-ord-id="${ord.id}" placeholder="Escribile un aviso (ej: Telas cortadas, te aviso cuando esté empaquetado)...">${ord.workshopNote || ''}</textarea>
+            </div>
+          </div>
+
+          <div class="workshop-order-foot">
+            <div class="workshop-actions-left">
+              <button type="button" class="btn-workshop-save btn-save-order-changes" data-ord-id="${ord.id}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Guardar Cambios del Pedido</span>
+              </button>
+              <button type="button" class="btn-workshop-chat btn-open-order-chat" data-phone="${cleanPhone}">
+                <span>💬 Abrir Chat con Clienta</span>
+              </button>
+              <a href="${waReplyUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--secondary" style="font-size:0.8rem; padding:0.5rem 0.85rem; display:inline-flex; align-items:center; gap:0.35rem;">
+                <span>📱 WhatsApp</span>
+              </a>
+            </div>
+
+            <button type="button" class="btn btn--admin-logout btn-delete-order" data-ord-id="${ord.id}" style="padding:0.4rem 0.75rem; font-size:0.75rem;">
               Archivar
             </button>
           </div>
@@ -2063,41 +2310,455 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       `;
     }).join('');
 
-    // Botones para archivar/eliminar pedidos
-    elenaOrdersList.querySelectorAll('[data-order-delete]').forEach(btn => {
+    // Listener Guardar Cambios de Pedido
+    listContainer.querySelectorAll('.btn-save-order-changes').forEach(btn => {
       btn.addEventListener('click', () => {
-        const idx = parseInt(btn.getAttribute('data-order-delete'), 10);
-        if (confirm('¿Querés archivar este pedido?')) {
-          orders.splice(idx, 1);
-          try {
-            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
-          } catch (e) {}
-          updateElenaOrdersBadge();
-          renderElenaOrdersList();
+        const orderId = btn.getAttribute('data-ord-id');
+        const card = listContainer.querySelector(`[data-order-id="${orderId}"]`);
+        if (!card) return;
+
+        const newStatus = card.querySelector('.ctrl-order-status').value;
+        const newDelivery = card.querySelector('.ctrl-order-date').value.trim();
+        const newNote = card.querySelector('.ctrl-order-note').value.trim();
+
+        window.WorkshopDB.updateOrder(orderId, {
+          status: newStatus,
+          estimatedDelivery: newDelivery,
+          workshopNote: newNote
+        });
+
+        // Actualizar pedidos locales y clienta
+        orders = window.WorkshopDB.getOrders();
+        updateClientUi();
+        updateWorkshopCounters();
+        renderWorkshopOrders();
+        showToast(`Pedido #${orderId} actualizado con éxito.`);
+      });
+    });
+
+    // Listener Abrir Chat desde Pedido
+    listContainer.querySelectorAll('.btn-open-order-chat').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const phone = btn.getAttribute('data-phone');
+        activeChatPhone = phone;
+        switchWorkshopTab('chat');
+      });
+    });
+
+    // Listener Archivar Pedido
+    listContainer.querySelectorAll('.btn-delete-order').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const orderId = btn.getAttribute('data-ord-id');
+        if (confirm(`¿Querés archivar el pedido #${orderId}?`)) {
+          window.WorkshopDB.deleteOrder(orderId);
+          orders = window.WorkshopDB.getOrders();
           updateClientUi();
+          updateWorkshopCounters();
+          renderWorkshopOrders();
           showToast('Pedido archivado.');
         }
       });
     });
   }
 
-  function openElenaOrders() {
+  // TAB 2: DIRECTORIO DE CLIENTAS
+  function renderWorkshopClients() {
+    const clientsContainer = document.getElementById('workshop-clients-list');
+    if (!clientsContainer || !window.WorkshopDB) return;
+
+    const clients = window.WorkshopDB.getClients();
+    if (clients.length === 0) {
+      clientsContainer.innerHTML = '<p style="color:var(--text-muted); font-style:italic;">No hay clientas registradas todavía.</p>';
+      return;
+    }
+
+    clientsContainer.innerHTML = clients.map(c => {
+      const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`¡Hola ${c.name}! Te escribo de Divina Locura Deco 🌸`)}`;
+
+      return `
+        <div class="workshop-client-card">
+          <div>
+            <div class="workshop-client-card__name">👤 ${c.name}</div>
+            <span class="workshop-client-card__orders-count">🧺 ${c.totalOrders || 1} pedido(s) realizados</span>
+            <div class="workshop-client-card__info">
+              <div>📱 <strong>${c.phone}</strong></div>
+              <div>✉️ ${c.email || 'No registrado'}</div>
+              <div>📍 ${c.address || 'Entrega a convenir'}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); margin-top:0.35rem;">Registrada: ${c.registeredAt}</div>
+              ${c.notes ? `<div style="font-size:0.75rem; background:#FAF8F5; padding:0.4rem; border-radius:4px; margin-top:0.35rem;"><em>Nota: "${c.notes}"</em></div>` : ''}
+            </div>
+          </div>
+
+          <div class="workshop-client-actions">
+            <button type="button" class="btn-workshop-chat btn-client-chat-link" data-phone="${cleanPhone}" style="flex:1; justify-content:center; font-size:0.78rem;">
+              <span>💬 Chat Interno</span>
+            </button>
+            <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn--secondary" style="flex:1; text-align:center; font-size:0.78rem; padding:0.5rem;">
+              <span>📱 WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Salto al chat desde el directorio
+    clientsContainer.querySelectorAll('.btn-client-chat-link').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeChatPhone = btn.getAttribute('data-phone');
+        switchWorkshopTab('chat');
+      });
+    });
+  }
+
+  // TAB 3: CHAT INTERNO ENTRE CLIENTAS Y ELENA
+  function renderWorkshopChat(preferredPhone = null) {
+    const convsList = document.getElementById('workshop-chat-conversations-list');
+    const messagesArea = document.getElementById('workshop-chat-messages');
+    const activeNameEl = document.getElementById('workshop-chat-active-name');
+    const activePhoneEl = document.getElementById('workshop-chat-active-phone');
+    const waShortcut = document.getElementById('workshop-chat-wa-shortcut');
+    const chatForm = document.getElementById('workshop-chat-form');
+    const quickReplies = document.getElementById('workshop-quick-replies');
+
+    if (!convsList || !messagesArea || !window.WorkshopDB) return;
+
+    const chats = window.WorkshopDB.getChats();
+    const clients = window.WorkshopDB.getClients();
+
+    // Reunir teléfonos con mensajes o de clientas conocidas
+    const allPhones = Array.from(new Set([
+      ...Object.keys(chats),
+      ...clients.map(c => c.phone.replace(/[^0-9]/g, ''))
+    ])).filter(Boolean);
+
+    if (allPhones.length === 0) {
+      convsList.innerHTML = '<div style="padding:1rem; font-size:0.8rem; color:var(--text-muted);">No hay conversaciones aún.</div>';
+      return;
+    }
+
+    if (!activeChatPhone || !allPhones.includes(activeChatPhone)) {
+      activeChatPhone = preferredPhone && allPhones.includes(preferredPhone) ? preferredPhone : allPhones[0];
+    }
+
+    // Render lista lateral de conversaciones
+    convsList.innerHTML = allPhones.map(phone => {
+      const clientObj = clients.find(c => c.phone.replace(/[^0-9]/g, '') === phone);
+      const name = clientObj ? clientObj.name : `Clienta (${phone})`;
+      const msgs = chats[phone] || [];
+      const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
+      const isSelected = phone === activeChatPhone;
+
+      return `
+        <div class="workshop-chat-user-item ${isSelected ? 'is-active' : ''}" data-chat-phone="${phone}">
+          <div class="workshop-chat-user-item__name">
+            <span>🌸 ${name}</span>
+            <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">${lastMsg ? lastMsg.timestamp.split(' ')[1] || '' : ''}</span>
+          </div>
+          <div class="workshop-chat-user-item__snippet">
+            ${lastMsg ? `${lastMsg.sender === 'elena' ? 'Tú: ' : ''}${lastMsg.text}` : 'Sin mensajes'}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Listener para cambiar de conversación
+    convsList.querySelectorAll('.workshop-chat-user-item').forEach(item => {
+      item.addEventListener('click', () => {
+        activeChatPhone = item.getAttribute('data-chat-phone');
+        renderWorkshopChat(activeChatPhone);
+      });
+    });
+
+    // Render mensajes de la conversación activa
+    const activeClient = clients.find(c => c.phone.replace(/[^0-9]/g, '') === activeChatPhone);
+    const activeClientName = activeClient ? activeClient.name : `Clienta (${activeChatPhone})`;
+
+    if (activeNameEl) activeNameEl.textContent = `🌸 ${activeClientName}`;
+    if (activePhoneEl) activePhoneEl.textContent = `WhatsApp: ${activeChatPhone}`;
+    if (waShortcut) {
+      waShortcut.style.display = 'inline-flex';
+      waShortcut.href = `https://api.whatsapp.com/send?phone=${activeChatPhone}&text=${encodeURIComponent(`Hola ${activeClientName}! Te escribo desde el taller de Divina Locura 🌸`)}`;
+    }
+    if (chatForm) chatForm.style.display = 'flex';
+    if (quickReplies) quickReplies.style.display = 'flex';
+
+    const activeMsgs = chats[activeChatPhone] || [];
+    if (activeMsgs.length === 0) {
+      messagesArea.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:auto;">Iniciá la conversación con esta clienta.</p>';
+    } else {
+      messagesArea.innerHTML = activeMsgs.map(m => {
+        const isElena = m.sender === 'elena';
+        return `
+          <div class="chat-bubble-item ${isElena ? 'chat-bubble-item--elena' : 'chat-bubble-item--client'}">
+            <div style="font-weight:700; font-size:0.75rem; margin-bottom:0.15rem;">
+              ${isElena ? '🌸 Elena (Taller)' : `👤 ${m.senderName || activeClientName}`}
+            </div>
+            <div>${m.text}</div>
+            <div class="chat-bubble-meta">${m.timestamp}</div>
+          </div>
+        `;
+      }).join('');
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+
+    // Input enviar mensaje
+    const chatInput = document.getElementById('workshop-chat-input');
+    if (chatForm && !chatForm.hasAttribute('data-bound')) {
+      chatForm.setAttribute('data-bound', 'true');
+      chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (!text || !activeChatPhone) return;
+
+        window.WorkshopDB.sendMessage(activeChatPhone, text, 'elena', 'Elena (Taller)');
+        chatInput.value = '';
+        renderWorkshopChat(activeChatPhone);
+        updateClientUi();
+        updateWorkshopCounters();
+      });
+    }
+
+    // Respuestas rápidas para Elena
+    if (quickReplies && !quickReplies.hasAttribute('data-bound')) {
+      quickReplies.setAttribute('data-bound', 'true');
+      quickReplies.querySelectorAll('.btn-quick-reply').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const quickText = btn.getAttribute('data-quick');
+          if (chatInput) {
+            chatInput.value = quickText;
+            chatInput.focus();
+          }
+        });
+      });
+    }
+  }
+
+  // TAB 4: CONTROL DE STOCK & TELAS
+  function renderWorkshopStock() {
+    const productsContainer = document.getElementById('workshop-products-stock-list');
+    const materialsContainer = document.getElementById('workshop-materials-list');
+    if (!productsContainer || !materialsContainer || !window.WorkshopDB) return;
+
+    // 1. Stock de Piezas Terminadas
+    const pStock = window.WorkshopDB.getProductStock();
+    productsContainer.innerHTML = pStock.map(p => {
+      const pData = products.find(prod => prod.id === p.id) || { title: p.title };
+      const imgSrc = (pData.images && pData.images[0]) ? pData.images[0].src : 'assets/images/hero-textile.jpg';
+
+      return `
+        <div class="workshop-stock-card" data-prod-id="${p.id}">
+          <div style="display:flex; gap:0.75rem; align-items:center;">
+            <img src="${imgSrc}" alt="${p.title}" style="width:48px; height:48px; border-radius:4px; object-fit:cover; border:1px solid var(--border-light);" />
+            <div>
+              <div class="workshop-stock-card__title">${p.title}</div>
+              <span class="client-order-badge" style="font-size:0.65rem;">${p.status || 'Entrega Inmediata'}</span>
+            </div>
+          </div>
+
+          <div class="workshop-stock-card__controls">
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Stock listo:</span>
+            <div class="workshop-qty-pill">
+              <button type="button" class="workshop-qty-btn btn-stock-dec" data-prod-id="${p.id}">-</button>
+              <span class="workshop-qty-val" id="stock-val-${p.id}">${p.inStock}</span>
+              <button type="button" class="workshop-qty-btn btn-stock-inc" data-prod-id="${p.id}">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Listeners sumar/restar stock productos
+    productsContainer.querySelectorAll('.btn-stock-dec').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pId = btn.getAttribute('data-prod-id');
+        const item = pStock.find(s => s.id === pId);
+        if (item) {
+          const newQty = Math.max(0, (item.inStock || 0) - 1);
+          window.WorkshopDB.updateProductStock(pId, newQty);
+          const valEl = document.getElementById(`stock-val-${pId}`);
+          if (valEl) valEl.textContent = newQty;
+          showToast(`Stock de "${item.title}": ${newQty} un.`);
+        }
+      });
+    });
+
+    productsContainer.querySelectorAll('.btn-stock-inc').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pId = btn.getAttribute('data-prod-id');
+        const item = pStock.find(s => s.id === pId);
+        if (item) {
+          const newQty = (item.inStock || 0) + 1;
+          window.WorkshopDB.updateProductStock(pId, newQty);
+          const valEl = document.getElementById(`stock-val-${pId}`);
+          if (valEl) valEl.textContent = newQty;
+          showToast(`Stock de "${item.title}": ${newQty} un.`);
+        }
+      });
+    });
+
+    // 2. Stock de Telas & Insumos
+    const materials = window.WorkshopDB.getMaterials();
+    materialsContainer.innerHTML = materials.map(m => `
+      <tr data-mat-id="${m.id}">
+        <td><strong>${m.name}</strong></td>
+        <td><span class="client-order-badge" style="background:#FAF8F5; color:var(--text-secondary);">${m.category}</span></td>
+        <td><strong style="font-size:0.95rem;">${m.qty}</strong> ${m.unit}</td>
+        <td>
+          <div style="display:flex; gap:0.35rem;">
+            <button type="button" class="btn btn--secondary btn-mat-adjust" data-mat-id="${m.id}" data-delta="-1" style="padding:0.25rem 0.5rem; font-size:0.75rem;">-1</button>
+            <button type="button" class="btn btn--secondary btn-mat-adjust" data-mat-id="${m.id}" data-delta="1" style="padding:0.25rem 0.5rem; font-size:0.75rem;">+1</button>
+            <button type="button" class="btn btn--secondary btn-mat-adjust" data-mat-id="${m.id}" data-delta="5" style="padding:0.25rem 0.5rem; font-size:0.75rem;">+5</button>
+          </div>
+        </td>
+        <td>
+          <button type="button" class="btn btn--admin-logout btn-mat-del" data-mat-id="${m.id}" style="padding:0.25rem 0.6rem; font-size:0.72rem;">Eliminar</button>
+        </td>
+      </tr>
+    `).join('');
+
+    materialsContainer.querySelectorAll('.btn-mat-adjust').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const matId = btn.getAttribute('data-mat-id');
+        const delta = parseFloat(btn.getAttribute('data-delta'));
+        window.WorkshopDB.updateMaterialQty(matId, delta, true);
+        renderWorkshopStock();
+      });
+    });
+
+    materialsContainer.querySelectorAll('.btn-mat-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const matId = btn.getAttribute('data-mat-id');
+        if (confirm('¿Eliminar este insumo del taller?')) {
+          window.WorkshopDB.deleteMaterial(matId);
+          renderWorkshopStock();
+          showToast('Insumo eliminado.');
+        }
+      });
+    });
+
+    // Form Agregar Insumo
+    const formAddMat = document.getElementById('workshop-add-material-form');
+    if (formAddMat && !formAddMat.hasAttribute('data-bound')) {
+      formAddMat.setAttribute('data-bound', 'true');
+      formAddMat.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('mat-add-name').value.trim();
+        const category = document.getElementById('mat-add-category').value;
+        const qty = parseFloat(document.getElementById('mat-add-qty').value) || 0;
+        const unit = document.getElementById('mat-add-unit').value;
+
+        window.WorkshopDB.addMaterial({ name, category, qty, unit });
+        formAddMat.reset();
+        renderWorkshopStock();
+        showToast(`Insumo "${name}" guardado.`);
+      });
+    }
+  }
+
+  // TAB 5: GASTOS & FINANZAS DEL TALLER
+  function renderWorkshopFinances() {
+    const statIncome = document.getElementById('fin-stat-income');
+    const statExpenses = document.getElementById('fin-stat-expenses');
+    const statProfit = document.getElementById('fin-stat-profit');
+    const statMargin = document.getElementById('fin-stat-margin');
+    const expensesContainer = document.getElementById('workshop-expenses-list');
+
+    if (!statIncome || !window.WorkshopDB) return;
+
+    const summary = window.WorkshopDB.getFinancialSummary();
+    statIncome.textContent = `$ ${summary.totalIncome.toLocaleString('es-AR')}`;
+    statExpenses.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')}`;
+    statProfit.textContent = `$ ${summary.netProfit.toLocaleString('es-AR')}`;
+    if (statMargin) {
+      statMargin.textContent = `Margen estimado: ${summary.profitMargin}% sobre ventas`;
+    }
+
+    // Tabla de gastos
+    const expenses = window.WorkshopDB.getExpenses();
+    if (expensesContainer) {
+      if (expenses.length === 0) {
+        expensesContainer.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay gastos registrados.</td></tr>';
+      } else {
+        expensesContainer.innerHTML = expenses.map(exp => `
+          <tr data-exp-id="${exp.id}">
+            <td>${exp.date}</td>
+            <td><strong>${exp.concept}</strong></td>
+            <td><span class="client-order-badge" style="background:#FAF8F5; color:var(--text-secondary);">${exp.category}</span></td>
+            <td><strong style="color:#C62828;">$ ${exp.amount.toLocaleString('es-AR')}</strong></td>
+            <td>
+              <button type="button" class="btn btn--admin-logout btn-exp-del" data-exp-id="${exp.id}" style="padding:0.25rem 0.6rem; font-size:0.72rem;">Borrar</button>
+            </td>
+          </tr>
+        `).join('');
+
+        expensesContainer.querySelectorAll('.btn-exp-del').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const expId = btn.getAttribute('data-exp-id');
+            if (confirm('¿Borrar este gasto?')) {
+              window.WorkshopDB.deleteExpense(expId);
+              renderWorkshopFinances();
+              showToast('Gasto eliminado.');
+            }
+          });
+        });
+      }
+    }
+
+    // Form Agregar Gasto
+    const formAddExp = document.getElementById('workshop-add-expense-form');
+    if (formAddExp && !formAddExp.hasAttribute('data-bound')) {
+      formAddExp.setAttribute('data-bound', 'true');
+      // Prellenar fecha de hoy
+      const expDateInput = document.getElementById('exp-add-date');
+      if (expDateInput) expDateInput.value = new Date().toISOString().split('T')[0];
+
+      formAddExp.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const date = document.getElementById('exp-add-date').value;
+        const concept = document.getElementById('exp-add-concept').value.trim();
+        const category = document.getElementById('exp-add-category').value;
+        const amount = parseFloat(document.getElementById('exp-add-amount').value) || 0;
+
+        window.WorkshopDB.addExpense({ date, concept, category, amount });
+        formAddExp.reset();
+        if (expDateInput) expDateInput.value = new Date().toISOString().split('T')[0];
+        renderWorkshopFinances();
+        showToast('Gasto registrado con éxito.');
+      });
+    }
+  }
+
+  // Apertura y Cierre del Centro de Gestión de Elena
+  function openElenaWorkshopHub(targetTab = 'orders') {
     if (elenaOrdersModal) {
-      renderElenaOrdersList();
+      updateWorkshopCounters();
+      switchWorkshopTab(targetTab);
       elenaOrdersModal.classList.add('is-open');
       elenaOrdersModal.setAttribute('aria-hidden', 'false');
     }
   }
 
-  function closeElenaOrders() {
+  function closeElenaWorkshopHub() {
     if (elenaOrdersModal) {
       elenaOrdersModal.classList.remove('is-open');
       elenaOrdersModal.setAttribute('aria-hidden', 'true');
     }
   }
 
-  if (adminElenaOrdersBtn) adminElenaOrdersBtn.addEventListener('click', openElenaOrders);
-  if (elenaOrdersCloseBtn) elenaOrdersCloseBtn.addEventListener('click', closeElenaOrders);
+  // Conectar botones de la barra inferior de Elena
+  if (adminElenaOrdersBtn) {
+    adminElenaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
+  }
+  if (adminElenaChatBtn) {
+    adminElenaChatBtn.addEventListener('click', () => openElenaWorkshopHub('chat'));
+  }
+  if (adminElenaStockBtn) {
+    adminElenaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
+  }
+  if (elenaOrdersCloseBtn) {
+    elenaOrdersCloseBtn.addEventListener('click', closeElenaWorkshopHub);
+  }
 
   // Exponer API global
   window.DivinaLocura = {
@@ -2115,7 +2776,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     openChatbot,
     closeChatbot,
     openElenaTutorial,
-    openElenaOrders,
+    openElenaOrders: () => openElenaWorkshopHub('orders'),
+    openElenaWorkshopHub,
+    closeElenaWorkshopHub,
     openProductEditor,
     buildWhatsAppUrl,
     showToast,
@@ -2128,7 +2791,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     getProducts: () => products,
     getSettings: () => settings,
     getCart: () => cart,
-    getOrders: () => orders,
+    getOrders: () => (window.WorkshopDB ? window.WorkshopDB.getOrders() : orders),
     renderCatalog
   };
 
@@ -2137,4 +2800,5 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   updateClientUi();
   updateCartUi();
   updateElenaOrdersBadge();
+  updateWorkshopCounters();
 });

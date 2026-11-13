@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="style.css">
 
   <!-- Scripts de Datos e Interactividad (Vanilla JS) -->
+  <script src="workshop-db.js" defer></script>
   <script src="products-data.js" defer></script>
   <script src="main.js" defer></script>
 </head>
@@ -621,8 +622,14 @@
         <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-elena-tutorial-btn" title="Ver guía paso a paso para Elena">
           <span>📖 Guía del Taller</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-orders-btn" title="Ver pedidos recibidos de clientas">
-          <span>📋 Pedidos (<strong id="admin-elena-orders-count">0</strong>)</span>
+        <button type="button" class="btn-admin-bar" id="admin-elena-orders-btn" title="Ver base de datos de clientas y pedidos">
+          <span>📋 Pedidos &amp; Clientas (<strong id="admin-elena-orders-count">0</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-chat-btn" title="Chat directo con clientas">
+          <span>💬 Chat Clientas (<strong id="admin-elena-chat-count">2</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas, telas y gastos">
+          <span>🧵 Stock &amp; Finanzas</span>
         </button>
         <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-elena-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -808,33 +815,68 @@
         </form>
       </div>
 
-      <!-- Estado LOGUEADO: Perfil y Pedidos Anteriores -->
+      <!-- Estado LOGUEADO: Perfil, Pedidos Anteriores y Chat Directo con Elena -->
       <div id="client-view-logged-in" class="client-auth-box" style="display:none;">
-        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1rem;">
           <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
           <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
-          <p class="admin-modal__desc">Estos son tus datos para pedidos y el historial de tus creaciones encargadas a Elena.</p>
+          <p class="admin-modal__desc">Seguí el estado de tus piezas a medida, chateá directo con Elena y gestioná tus entregas.</p>
         </div>
 
-        <div class="client-profile-card">
-          <div class="client-profile-row">
-            <span class="client-profile-label">WhatsApp:</span>
-            <strong class="client-profile-val" id="logged-client-phone">-</strong>
-          </div>
-          <div class="client-profile-row">
-            <span class="client-profile-label">Email:</span>
-            <span class="client-profile-val" id="logged-client-email">-</span>
-          </div>
-          <div class="client-profile-row">
-            <span class="client-profile-label">Entrega:</span>
-            <span class="client-profile-val" id="logged-client-address">-</span>
-          </div>
-        </div>
+        <!-- Pestañas internas para la clienta -->
+        <nav class="client-tabs-nav" aria-label="Secciones de Mi Cuenta">
+          <button type="button" class="client-tab-btn is-active" id="btn-client-tab-orders" data-ctab="orders">
+            <span>📋 Mis Pedidos</span>
+          </button>
+          <button type="button" class="client-tab-btn" id="btn-client-tab-chat" data-ctab="chat">
+            <span>💬 Chat con Elena</span>
+          </button>
+          <button type="button" class="client-tab-btn" id="btn-client-tab-profile" data-ctab="profile">
+            <span>📍 Mis Datos</span>
+          </button>
+        </nav>
 
-        <div class="client-orders-history">
-          <h4 class="client-orders-title">Mis Pedidos Realizados</h4>
-          <div id="client-orders-list" class="client-orders-list">
+        <!-- PANE 1: Mis Pedidos con Fecha Estimada y Mensaje de Elena -->
+        <div class="client-tab-pane" id="cpane-orders" style="display:block;">
+          <div id="client-orders-list" class="client-orders-list" style="max-height:260px;">
             <p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>
+          </div>
+        </div>
+
+        <!-- PANE 2: Chat Directo con el Taller de Elena -->
+        <div class="client-tab-pane" id="cpane-chat" style="display:none;">
+          <div class="client-direct-chat-box">
+            <div style="font-size:0.78rem; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
+              <span>🌸 Conversación con el taller</span>
+              <span style="color:#2E7D32; font-weight:600;">• Taller Activo</span>
+            </div>
+            <div class="client-chat-history" id="client-chat-history">
+              <p style="color:var(--text-muted); font-size:0.8rem; text-align:center; margin:auto;">Iniciá una conversación directa con Elena sobre tus pedidos o telas.</p>
+            </div>
+            <form id="client-direct-chat-form" style="display:flex; gap:0.4rem;">
+              <input type="text" id="client-chat-input" class="workshop-input" placeholder="Escribile tu consulta o mensaje a Elena..." required autocomplete="off" style="font-size:0.82rem; padding:0.5rem 0.75rem;" />
+              <button type="submit" class="btn-workshop-save" style="padding:0.5rem 0.9rem; font-size:0.8rem;">
+                <span>Enviar</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANE 3: Mis Datos de Envío -->
+        <div class="client-tab-pane" id="cpane-profile" style="display:none;">
+          <div class="client-profile-card">
+            <div class="client-profile-row">
+              <span class="client-profile-label">WhatsApp:</span>
+              <strong class="client-profile-val" id="logged-client-phone">-</strong>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Email:</span>
+              <span class="client-profile-val" id="logged-client-email">-</span>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Dirección / Entrega:</span>
+              <span class="client-profile-val" id="logged-client-address">-</span>
+            </div>
           </div>
         </div>
 
@@ -1118,25 +1160,227 @@
     </div>
   </div>
 
-  <!-- MODAL: PEDIDOS DE CLIENTAS RECIBIDOS (VISTA DE ELENA) -->
+  <!-- MODAL: CENTRO DE GESTIÓN DEL TALLER DE ELENA (PEDIDOS, CLIENTAS, CHAT, STOCK & GASTOS) -->
   <div class="admin-modal" id="elena-orders-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal__card admin-modal__card--wide">
-      <div class="admin-modal__header">
-        <div class="profile-badge-inline">🌸 Taller de Elena &middot; Pedidos</div>
-        <h3 class="admin-modal__title">Pedidos Recibidos de Clientas</h3>
-        <p class="admin-modal__desc">Aquí podés ver todas las órdenes que las clientas armaron desde la página web para coordinar confección y entrega.</p>
+    <div class="admin-modal__card admin-modal__card--workshop">
+      <div class="admin-modal__header" style="margin-bottom:0.75rem;">
+        <div class="workshop-header-badge">🌸 Taller de Elena &middot; Gestión &amp; Producción</div>
+        <h3 class="admin-modal__title" style="font-size:1.45rem;">Mi Taller de Creaciones</h3>
+        <p class="admin-modal__desc">Base de datos de tus clientas, estado de pedidos, chat directo, stock de telas e insumos, y balance de producción.</p>
       </div>
 
-      <!-- Lista de Pedidos -->
-      <div class="elena-orders-container" id="elena-orders-container">
-        <div class="elena-orders-empty" id="elena-orders-empty">
+      <!-- Barra de pestañas (Tabs) intuitivas para Elena -->
+      <nav class="workshop-nav-tabs" aria-label="Secciones del taller">
+        <button type="button" class="workshop-tab-btn is-active" data-wtab="orders">
+          <span>📋 Pedidos &amp; Entregas</span>
+          <span class="workshop-tab-badge" id="workshop-orders-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="clients">
+          <span>👥 Mis Clientas</span>
+          <span class="workshop-tab-badge" id="workshop-clients-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="chat">
+          <span>💬 Chat con Clientas</span>
+          <span class="workshop-tab-badge" id="workshop-chat-unread-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="stock">
+          <span>🧵 Stock &amp; Telas</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="finances">
+          <span>💰 Gastos &amp; Finanzas</span>
+        </button>
+      </nav>
+
+      <!-- PANE 1: PEDIDOS & ENTREGAS (ACTUALIZAR ESTADO, FECHA ESTIMADA Y NOTAS DE TALLER) -->
+      <div class="workshop-tab-pane is-active" id="wpane-orders">
+        <div class="elena-orders-empty" id="elena-orders-empty" style="display:none;">
           <p>Aún no hay pedidos registrados desde la tienda web.</p>
         </div>
-        <div class="elena-orders-list" id="elena-orders-list" style="display:none;"></div>
+        <div class="workshop-orders-grid" id="workshop-orders-list"></div>
       </div>
 
-      <div class="admin-modal__buttons">
-        <button type="button" class="btn btn--secondary" id="elena-orders-close-btn">Cerrar</button>
+      <!-- PANE 2: DIRECTORIO DE CLIENTAS -->
+      <div class="workshop-tab-pane" id="wpane-clients">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Clientas registradas y que han realizado encargos desde la web:</p>
+        </div>
+        <div class="workshop-clients-grid" id="workshop-clients-list"></div>
+      </div>
+
+      <!-- PANE 3: CHAT INTERNO ENTRE CLIENTAS Y ELENA -->
+      <div class="workshop-tab-pane" id="wpane-chat">
+        <div class="workshop-chat-layout">
+          <!-- Lista lateral de clientas -->
+          <div class="workshop-chat-sidebar">
+            <div class="workshop-chat-sidebar-header">Conversaciones</div>
+            <div id="workshop-chat-conversations-list"></div>
+          </div>
+          <!-- Ventana de mensajes -->
+          <div class="workshop-chat-main">
+            <div class="workshop-chat-main-header">
+              <div>
+                <strong id="workshop-chat-active-name" style="font-size:0.95rem;">Seleccioná una clienta</strong>
+                <div id="workshop-chat-active-phone" style="font-size:0.75rem; color:var(--text-secondary);">-</div>
+              </div>
+              <a href="#" id="workshop-chat-wa-shortcut" target="_blank" rel="noopener noreferrer" class="btn btn--secondary" style="font-size:0.75rem; padding:0.35rem 0.65rem; display:none;">
+                📱 Abrir en WhatsApp
+              </a>
+            </div>
+            <div class="workshop-chat-messages-area" id="workshop-chat-messages">
+              <p style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:auto;">Seleccioná una conversación a la izquierda para ver los mensajes.</p>
+            </div>
+            <!-- Respuestas rápidas para facilitarle la vida a Elena -->
+            <div class="workshop-chat-quick-replies" id="workshop-quick-replies" style="display:none;">
+              <button type="button" class="btn-quick-reply" data-quick="¡Hola hermosa! Tu pedido ya está en confección a fuego lento 🌸">🌸 "Ya está en confección"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Telas listas! Ya están cortadas y prelavadas ✨">✨ "Telas cortadas"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Tu paquete artesanal ya está listo para retirar/despachar! 📦">📦 "Paquete listo"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Muchísimas gracias por valorar el trabajo artesanal! 🤍">🤍 "Muchas gracias"</button>
+            </div>
+            <form class="workshop-chat-input-bar" id="workshop-chat-form" style="display:none;">
+              <input type="text" class="workshop-chat-input" id="workshop-chat-input" placeholder="Escribile un mensaje a la clienta..." required autocomplete="off" />
+              <button type="submit" class="btn-workshop-save">
+                <span>Enviar</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: CONTROL DE STOCK & TELAS -->
+      <div class="workshop-tab-pane" id="wpane-stock">
+        <!-- Stock de Piezas Confeccionadas -->
+        <h4 class="workshop-stock-section-title">📦 Piezas Terminadas Listas para Entrega</h4>
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Podés sumar o restar unidades a medida que vas terminando de coser en el taller:</p>
+        <div class="workshop-products-stock-grid" id="workshop-products-stock-list"></div>
+
+        <!-- Insumos & Telas -->
+        <h4 class="workshop-stock-section-title" style="margin-top:2rem;">🧵 Stock de Telas &amp; Mercería del Taller</h4>
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Controlá cuántos metros de tela y accesorios tenés disponibles para tus próximas confecciones:</p>
+        <div style="overflow-x:auto;">
+          <table class="workshop-materials-table">
+            <thead>
+              <tr>
+                <th>Material / Insumo</th>
+                <th>Categoría</th>
+                <th>Cantidad Disponible</th>
+                <th>Ajuste Rápido</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="workshop-materials-list"></tbody>
+          </table>
+        </div>
+
+        <!-- Formulario para sumar nuevo material -->
+        <div class="workshop-add-material-box">
+          <strong style="font-size:0.88rem; display:block; margin-bottom:0.75rem;">+ Agregar Nueva Tela o Insumo al Taller</strong>
+          <form id="workshop-add-material-form" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:0.65rem; align-items:flex-end;">
+            <div>
+              <label class="workshop-field-label">Nombre del Material</label>
+              <input type="text" id="mat-add-name" class="workshop-input" placeholder="Ej: Lino Verde Salvia" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Categoría</label>
+              <select id="mat-add-category" class="workshop-select">
+                <option value="Telas">Telas</option>
+                <option value="Mercería">Mercería</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Herramientas">Herramientas</option>
+              </select>
+            </div>
+            <div>
+              <label class="workshop-field-label">Cantidad</label>
+              <input type="number" id="mat-add-qty" class="workshop-input" min="0" step="0.5" value="10" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Unidad</label>
+              <select id="mat-add-unit" class="workshop-select">
+                <option value="metros">Metros</option>
+                <option value="unidades">Unidades</option>
+                <option value="rollos">Rollos</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-workshop-save" style="height:38px;">
+              <span>+ Guardar Insumo</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PANE 5: GASTOS & FINANZAS DEL TALLER -->
+      <div class="workshop-tab-pane" id="wpane-finances">
+        <!-- Tarjetas de Resumen Financiero -->
+        <div class="workshop-finances-cards">
+          <div class="workshop-stat-card">
+            <div class="workshop-stat-label">Ingresos por Pedidos</div>
+            <div class="workshop-stat-value" id="fin-stat-income">$ 0</div>
+            <div class="workshop-stat-desc">Ventas totales registradas</div>
+          </div>
+          <div class="workshop-stat-card">
+            <div class="workshop-stat-label">Gastos Registrados</div>
+            <div class="workshop-stat-value workshop-stat-value--expense" id="fin-stat-expenses">$ 0</div>
+            <div class="workshop-stat-desc">Telas, hilos, packaging y envíos</div>
+          </div>
+          <div class="workshop-stat-card">
+            <div class="workshop-stat-label">Ganancia Neta del Taller</div>
+            <div class="workshop-stat-value workshop-stat-value--profit" id="fin-stat-profit">$ 0</div>
+            <div class="workshop-stat-desc" id="fin-stat-margin">Rendimiento positivo</div>
+          </div>
+        </div>
+
+        <!-- Formulario para Registrar Nuevo Gasto -->
+        <div class="workshop-add-expense-form">
+          <strong style="font-size:0.92rem; display:block; margin-bottom:0.75rem; color:var(--text-primary);">📝 Anotar un Gasto de Producción</strong>
+          <form id="workshop-add-expense-form" style="display:grid; grid-template-columns:1fr 2fr 1.5fr 1.5fr auto; gap:0.65rem; align-items:flex-end;">
+            <div>
+              <label class="workshop-field-label">Fecha</label>
+              <input type="date" id="exp-add-date" class="workshop-input" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Concepto / Detalle</label>
+              <input type="text" id="exp-add-concept" class="workshop-input" placeholder="Ej: Compra de 10m Lino en Once" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Categoría</label>
+              <select id="exp-add-category" class="workshop-select">
+                <option value="Telas">Telas</option>
+                <option value="Mercería">Mercería e Hilos</option>
+                <option value="Packaging">Cajas &amp; Bolsas</option>
+                <option value="Envíos">Fletes &amp; Envíos</option>
+                <option value="Herramientas">Máquinas &amp; Tijeras</option>
+                <option value="Varios">Otros gastos</option>
+              </select>
+            </div>
+            <div>
+              <label class="workshop-field-label">Monto ($ ARS)</label>
+              <input type="number" id="exp-add-amount" class="workshop-input" placeholder="Ej: 25000" min="1" required />
+            </div>
+            <button type="submit" class="btn-workshop-save" style="height:38px;">
+              <span>+ Anotar Gasto</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Historial de Gastos -->
+        <h4 style="font-family:var(--font-serif); font-size:1.05rem; margin-bottom:0.65rem;">Historial de Gastos del Taller</h4>
+        <div style="overflow-x:auto;">
+          <table class="workshop-expenses-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Concepto</th>
+                <th>Categoría</th>
+                <th>Monto</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="workshop-expenses-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="margin-top:1.75rem;">
+        <button type="button" class="btn btn--secondary" id="elena-orders-close-btn">Cerrar Taller</button>
       </div>
     </div>
   </div>
