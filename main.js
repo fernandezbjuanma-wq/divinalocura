@@ -84,13 +84,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Alternar vista en móviles y desktop con click (foto de modelo editorial / foto de detalle en taller)
-  const mediaContainers = document.querySelectorAll('.catalog-item__media');
-  mediaContainers.forEach(container => {
-    container.addEventListener('click', (e) => {
-      // No activar si hace clic en el botón de WhatsApp
-      if (e.target.closest('.btn--whatsapp')) return;
-      container.classList.toggle('is-flipped');
+  // 3. Selector de Vistas de Producto (Multi-View: Con Modelo, Producto Solo, Detalle Taller)
+  const viewPills = document.querySelectorAll('.view-pill');
+  viewPills.forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newSrc = pill.getAttribute('data-view-src');
+      const mediaBox = pill.closest('.catalog-item__media');
+      if (!mediaBox) return;
+
+      const mainImg = mediaBox.querySelector('.catalog-item__img');
+      if (!mainImg || mainImg.getAttribute('src') === newSrc) return;
+
+      // Actualizar botón activo en este producto
+      mediaBox.querySelectorAll('.view-pill').forEach(btn => btn.classList.remove('is-active'));
+      pill.classList.add('is-active');
+
+      // Transición suave de cambio de imagen
+      mainImg.style.opacity = '0';
+      setTimeout(() => {
+        mainImg.src = newSrc;
+        mainImg.onload = () => {
+          mainImg.style.opacity = '1';
+        };
+        setTimeout(() => {
+          mainImg.style.opacity = '1';
+        }, 80);
+      }, 120);
     });
   });
 });
