@@ -83,4 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
       window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     });
   });
+
+  // 3. Alternar vista en móviles y desktop con click (foto de modelo editorial / foto de detalle en taller)
+  const mediaContainers = document.querySelectorAll('.catalog-item__media');
+  mediaContainers.forEach(container => {
+    container.addEventListener('click', (e) => {
+      // No activar si hace clic en el botón de WhatsApp
+      if (e.target.closest('.btn--whatsapp')) return;
+      container.classList.toggle('is-flipped');
+    });
+  });
 });
