@@ -1940,11 +1940,12 @@ ul, ol {
 }
 
 /* ==========================================================================
-   3. BARRA FLOTANTE DE MODO ADMINISTRADOR
+   3. BARRA FLOTANTE DE MODO ADMINISTRADOR (ANCLADA ABAJO)
    ========================================================================== */
 .admin-bar {
   position: fixed;
-  top: 0;
+  bottom: 0;
+  top: auto;
   left: 0;
   right: 0;
   height: 52px;
@@ -1955,7 +1956,7 @@ ul, ol {
   align-items: center;
   justify-content: space-between;
   padding: 0 1.25rem;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
   font-family: var(--font-sans);
 }
 
@@ -1964,7 +1965,12 @@ ul, ol {
 }
 
 body.admin-mode-active {
-  padding-top: 52px;
+  padding-bottom: 56px;
+  padding-top: 0;
+}
+
+body.admin-mode-active .chatbot-widget {
+  bottom: 4.5rem;
 }
 
 .admin-bar__status {
@@ -3636,4 +3642,519 @@ body.admin-mode-active .catalog-item__admin-bar {
   color: var(--text-secondary);
   line-height: 1.45;
   margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   9. PÁGINA INDIVIDUAL DE PRODUCTO (PDP - INSPIRACIÓN ZARA HOME & ANTHROPOLOGIE)
+   ========================================================================== */
+.pdp-page {
+  padding-top: 1.5rem;
+  padding-bottom: 5rem;
+  background-color: var(--bg-primary);
+}
+
+.pdp-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2rem;
+}
+
+.pdp-breadcrumbs a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.pdp-breadcrumbs a:hover {
+  color: var(--accent-terracotta);
+}
+
+.pdp-breadcrumbs span.separator {
+  color: var(--border-medium);
+}
+
+.pdp-breadcrumbs span.current {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Grilla Principal del Producto */
+.pdp-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* Columna Izquierda: Galería Lookbook */
+.pdp-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: sticky;
+  top: 90px;
+}
+
+.pdp-main-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 4.8;
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.pdp-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.25s ease, transform 0.4s ease;
+}
+
+.pdp-main-image:hover {
+  transform: scale(1.02);
+}
+
+.pdp-gallery-badge {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: rgba(250, 248, 244, 0.95);
+  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-light);
+}
+
+.pdp-thumbs-strip {
+  display: flex;
+  gap: 0.85rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.pdp-thumb-btn {
+  flex: 0 0 85px;
+  height: 95px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  background: var(--bg-surface);
+  padding: 0;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.pdp-thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdp-thumb-btn.is-active {
+  border-color: var(--accent-terracotta);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(184, 107, 82, 0.25);
+}
+
+.pdp-thumb-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(35, 31, 30, 0.75);
+  color: #FFFFFF;
+  font-size: 0.58rem;
+  text-align: center;
+  padding: 0.15rem 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Columna Derecha: Información & Compra */
+.pdp-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.pdp-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-terracotta);
+}
+
+.pdp-title {
+  font-family: var(--font-serif);
+  font-size: 2.35rem;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-top: -0.4rem;
+}
+
+.pdp-rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pdp-stars {
+  color: #E29578;
+  letter-spacing: 0.1em;
+  font-size: 0.95rem;
+}
+
+.pdp-rating-count {
+  text-decoration: underline;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.pdp-rating-count:hover {
+  color: var(--accent-terracotta);
+}
+
+/* Caja de Precio */
+.pdp-price-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.pdp-price-amount {
+  font-family: var(--font-serif);
+  font-size: 1.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pdp-price-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Píldora de Textura & Material */
+.pdp-texture-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(184, 107, 82, 0.08);
+  border: 1px solid rgba(184, 107, 82, 0.2);
+  color: #8F4F3D;
+  padding: 0.55rem 1rem;
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+/* Descripción & Historia */
+.pdp-story-box {
+  line-height: 1.7;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  border-left: 2px solid var(--accent-terracotta);
+  font-style: italic;
+  background: rgba(250, 248, 244, 0.7);
+  padding: 0.85rem 1.25rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.pdp-description-text {
+  line-height: 1.65;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* Acciones de Compra */
+.pdp-purchase-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.pdp-qty-and-cart {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.pdp-qty-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  background: #FFFFFF;
+  overflow: hidden;
+  height: 48px;
+}
+
+.pdp-qty-btn {
+  width: 40px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.pdp-qty-btn:hover {
+  background: var(--bg-surface);
+}
+
+.pdp-qty-input {
+  width: 42px;
+  height: 100%;
+  border: none;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+.btn--pdp-add-bag {
+  flex: 1;
+  height: 48px;
+  background: var(--text-primary);
+  color: #FFFFFF;
+  border: 1px solid var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn--pdp-add-bag:hover {
+  background: #000000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.btn--pdp-wa {
+  height: 46px;
+  background: #25D366;
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.btn--pdp-wa:hover {
+  background: #1EBE5D;
+}
+
+/* Garantías del Taller */
+.pdp-guarantees {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  border-top: 1px solid var(--border-medium);
+  padding-top: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.pdp-guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* SECCIÓN DE RESEÑAS & COMENTARIOS */
+.pdp-comments-section {
+  margin-top: 5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--border-medium);
+}
+
+.pdp-comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.pdp-reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* Formulario para Dejar Comentario */
+.pdp-comment-form-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+}
+
+.pdp-form-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+
+.pdp-form-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  line-height: 1.45;
+}
+
+.star-rating-picker {
+  display: flex;
+  gap: 0.35rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.star-rating-picker span {
+  color: #D3CECA;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star-rating-picker span.is-active,
+.star-rating-picker span:hover,
+.star-rating-picker span.is-hovered {
+  color: #E29578;
+  transform: scale(1.15);
+}
+
+/* Lista de Comentarios */
+.pdp-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.pdp-comment-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform var(--transition-fast);
+}
+
+.pdp-comment-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-terracotta);
+}
+
+.pdp-comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.pdp-comment-user {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pdp-verified-badge {
+  font-size: 0.65rem;
+  background: rgba(76, 175, 80, 0.12);
+  color: #2E7D32;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pdp-comment-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.pdp-comment-stars {
+  color: #E29578;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.pdp-comment-text {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* Sección de Piezas Relacionadas */
+.pdp-related-section {
+  margin-top: 5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--border-medium);
+}
+
+@media (max-width: 900px) {
+  .pdp-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .pdp-gallery {
+    position: static;
+  }
+  .pdp-reviews-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 }

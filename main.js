@@ -122,11 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
       products = [];
     }
   } else if (typeof INITIAL_PRODUCTS !== 'undefined') {
-    // Migración automática: si el navegador tenía en caché fotos antiguas de baja calidad, actualizar a la nueva fotografía editorial de alta gama
+    // Migración automática: si el navegador tenía en caché fotos antiguas o precios sin formato numérico, actualizar a los valores estándar de taller
     const hasLegacyImages = products.some(p =>
       (p.images || []).some(img => (img.src || '').includes('real-') || (img.src || '').includes('/instagram/'))
     );
-    if (hasLegacyImages) {
+    const hasLegacyPrices = products.some(p => !p.price || !p.price.includes('$'));
+    if (hasLegacyImages || hasLegacyPrices) {
       products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
       try {
         localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
@@ -313,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         ${adminBarHtml}
 
-        <div class="catalog-item__media" data-open-lookbook="${product.id}" title="Click para ver ficha editorial y detalles">
+        <div class="catalog-item__media" data-open-lookbook="${product.id}" style="cursor:pointer;" title="Click para ver la pieza, precio y opiniones">
           <img src="${defaultImg}" alt="${product.title}" class="catalog-item__img" loading="lazy" />
           <span class="catalog-item__tag">${product.tag || 'Hecho a Mano'}</span>
           <div class="catalog-item__views" aria-label="Cambiar vista del producto">
@@ -326,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="catalog-item__category">${product.categoryName || getCategoryLabel(product.category)}</span>
             <span class="catalog-item__texture">${product.texture || 'Confección artesanal'}</span>
           </div>
-          <h3 class="catalog-item__title">${product.title}</h3>
+          <h3 class="catalog-item__title"><a href="producto.html?id=${product.id}">${product.title}</a></h3>
           <p class="catalog-item__desc">${product.desc || ''}</p>
           <div class="catalog-item__footer">
             <span class="catalog-item__price">${product.price || 'Consultar'}</span>
@@ -341,9 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
               </button>
-              <button type="button" class="btn--lookbook-view" data-open-lookbook="${product.id}" title="Vista Rápida de la Creación">
-                <span>Vista Rápida</span>
-              </button>
+              <a href="producto.html?id=${product.id}" class="btn--lookbook-view" title="Ver página de la creación y comentarios">
+                <span>Ver Pieza</span>
+              </a>
             </div>
           </div>
         </div>
@@ -421,12 +422,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Abrir Modal Lookbook / Ficha Editorial
+    // Navegar a la Página Individual del Producto
     document.querySelectorAll('[data-open-lookbook]').forEach(trigger => {
       trigger.addEventListener('click', (e) => {
         if (e.target.closest('.view-pill') || e.target.closest('.btn-card-admin')) return;
         const productId = trigger.getAttribute('data-open-lookbook');
-        openLookbookModal(productId);
+        if (productId) {
+          window.location.href = `producto.html?id=${productId}`;
+        }
       });
     });
 
@@ -1559,16 +1562,17 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     } catch (e) {}
   }
 
-  function addToCart(productId, customNote = '') {
+  function addToCart(productId, customNote = '', qtyToAdd = 1) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
     const defaultImg = (product.images && product.images[0]) ? product.images[0].src : 'assets/images/hero-textile.jpg';
+    const addCount = Math.max(1, parseInt(qtyToAdd, 10) || 1);
 
     // Verificar si el mismo producto con la misma nota ya existe
     const existingIndex = cart.findIndex(item => item.id === productId && (item.note || '') === (customNote || ''));
     if (existingIndex > -1) {
-      cart[existingIndex].qty += 1;
+      cart[existingIndex].qty += addCount;
     } else {
       cart.push({
         id: product.id,
@@ -1577,14 +1581,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         categoryName: product.categoryName || getCategoryLabel(product.category),
         img: defaultImg,
         note: customNote,
-        qty: 1
+        qty: addCount
       });
     }
 
     saveCartToStorage();
     updateCartUi();
     openCartDrawer();
-    showToast(`✨ Sumado a tu bolsa: "${product.title}"`);
+    showToast(`✨ Sumado a tu bolsa: "${product.title}" (${addCount})`);
   }
 
   function updateCartUi() {
@@ -2112,6 +2116,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     closeChatbot,
     openElenaTutorial,
     openElenaOrders,
+    openProductEditor,
+    buildWhatsAppUrl,
+    showToast,
     setRole: (role) => {
       currentRole = role;
       if (role) localStorage.setItem(STORAGE_KEY_ROLE, role);

@@ -46,7 +46,7 @@ const INITIAL_PRODUCTS = [
     size: 'large',
     tag: 'Favorito Skincare · Satén',
     texture: 'Satén de seda premium anti-frizz',
-    price: 'Consultar Colores / kit completo',
+    price: '$ 28.500 ARS · Kit Completo',
     desc: 'Cuidado integral para tu piel y cabello. Incluye funda de almohada de satén sedoso para evitar el quiebre y las marcas al dormir, cofia doble faz regulable, scrunchies y bolsita de lino artesanal.',
     images: [
       { label: 'Con Modelo', src: 'assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg' },
@@ -73,7 +73,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Clásico del Taller',
     texture: 'Nido de abeja 100% puro algodón',
-    price: 'Confección a Mano',
+    price: '$ 9.800 ARS · Puro Algodón',
     desc: 'Tejido nido de abeja súper absorbente con detalle en cuadrillé mostaza, verde o chocolate y etiqueta artesanal de Divina Locura Deco.',
     images: [
       { label: 'En Banco', src: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg' },
@@ -99,7 +99,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Diseño Práctico',
     texture: 'Tela tramada, madera & bolsillos',
-    price: 'A Medida',
+    price: '$ 18.500 ARS · A Medida',
     desc: 'Ideal para colgar en cuna, dormitorio, baño o taller. Cuenta con bolsillos reforzados para tener libros, accesorios o artículos diarios ordenados.',
     images: [
       { label: 'En Habitación', src: 'assets/images/catalog/hanging-wall-organizer-in-room.jpg' },
@@ -126,7 +126,7 @@ const INITIAL_PRODUCTS = [
     size: 'large',
     tag: 'Bordado Personalizado',
     texture: 'Algodón suave & bordado artesanal',
-    price: 'Personalizado / con nombre',
+    price: '$ 22.000 ARS · Con Nombre Bordado',
     desc: 'Compañeras de sueños únicas para los más pequeños. Confeccionadas en suave liencillo de algodón con vestidos en rayas o flores, y el nombre de la niña o bebé bordado a mano con dedicación.',
     images: [
       { label: 'En Repisa', src: 'assets/images/catalog/plush-dolls-on-wooden-shelf.jpg' },
@@ -153,7 +153,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Descanso Sereno · Satén',
     texture: 'Satén premium, felpa suave & elástico forrado',
-    price: 'Varios Tonos / hecho a mano',
+    price: '$ 11.500 ARS · Satén Anti-frizz',
     desc: 'Bloquean completamente la luz para un sueño profundo y reparador. Su elástico forrado en satén cuida el cabello y no deja marcas en el rostro.',
     images: [
       { label: 'En Mármol', src: 'assets/images/catalog/satin-sleep-mask-on-marble.jpg' },
@@ -179,7 +179,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Básico Esencial · Lino',
     texture: 'Lino rústico, forro impermeable & cierre reforzado',
-    price: 'Personalizado / varios tamaños',
+    price: '$ 13.200 ARS · Lino Rústico',
     desc: 'Confeccionados en telas tramadas con forro interior lavable para maquillaje, elementos de aseo o papelería. Incluye opción con mosquetón metálico para enganchar en el bolso.',
     images: [
       { label: 'En Pedestal', src: 'assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg' },
@@ -205,7 +205,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Ajuar de Nacimiento',
     texture: 'Toalla doble felpa, algodón puro & bordado',
-    price: 'Bordado a Elección',
+    price: '$ 24.500 ARS · Ajuar Doble Felpa',
     desc: 'Piezas hipoalergénicas ultra suaves para la piel del bebé, organizadores bordados con orejitas de conejito y toallitas con nombre personalizado hecho a mano.',
     images: [
       { label: 'Conejito Ajuar', src: 'assets/images/catalog/embroidered-bunny-fabric-organiz.jpg' },
@@ -231,7 +231,7 @@ const INITIAL_PRODUCTS = [
     size: 'medium',
     tag: 'Detalle de Baño · Exclusivo',
     texture: 'Lino jaspeado, cierre y puntilla',
-    price: 'Diseño Exclusivo',
+    price: '$ 15.800 ARS · Lino & Puntilla',
     desc: 'Dispenser de papel higiénico o pañuelos confeccionado en tela con cierre reforzado y aplique de pasamanería bordada dorada.',
     images: [
       { label: 'En Baño', src: 'assets/images/models/model-bath-roll.jpg' },
