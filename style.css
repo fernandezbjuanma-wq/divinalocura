@@ -172,94 +172,314 @@ ul, ol {
 }
 
 /* --------------------------------------------------------------------------
-   5. COMPONENTES BASE DE ESTRUCTURA (Header & Barra de Anuncio)
+   5. CABECERA & BUSCADOR ESTILO ZARA HOME
    -------------------------------------------------------------------------- */
+.container-fluid {
+  width: 100%;
+  padding-left: clamp(1.25rem, 3.5vw, 3rem);
+  padding-right: clamp(1.25rem, 3.5vw, 3rem);
+}
+
 .announcement-bar {
   background-color: var(--bg-surface-warm);
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   text-align: center;
-  padding: 0.6rem var(--space-sm);
+  padding: 0.55rem var(--space-sm);
   border-bottom: 1px solid var(--border-subtle);
   font-weight: 500;
 }
 
-.site-header {
+.site-header--zarahome {
   position: sticky;
   top: 0;
-  z-index: 100;
-  background-color: var(--bg-overlay);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-subtle);
+  z-index: 1000;
+  background-color: rgba(247, 245, 240, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
   transition: all var(--transition-smooth);
 }
 
-.site-header__inner {
+.site-header--zarahome .site-header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-md);
-  padding-bottom: var(--space-md);
+  padding: 0.95rem 0;
+  gap: 1.5rem;
 }
 
-.site-header__brand .brand-link {
+.site-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.btn-hamburger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.btn-hamburger:hover {
+  opacity: 0.65;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background-color: var(--text-primary);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.site-header__left .brand-link {
   display: flex;
   align-items: baseline;
-  gap: var(--space-2xs);
+  gap: 0.45rem;
 }
 
-.brand-name {
+.site-header__left .brand-name {
   font-family: var(--font-serif);
-  font-size: 1.65rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: clamp(1.4rem, 2.2vw, 1.95rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-primary);
+  line-height: 1;
 }
 
-.brand-tag {
+.site-header__left .brand-tag {
   font-family: var(--font-sans);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: var(--tracking-widest);
+  letter-spacing: 0.22em;
   color: var(--accent-terracotta);
 }
 
-.nav-list {
+/* Centro: Buscador Minimalista Subrayado (Inspiración Zara Home) */
+.site-header__center {
+  flex: 1;
   display: flex;
-  gap: var(--space-lg);
+  justify-content: center;
+}
+
+.header-search {
+  display: flex;
   align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--text-primary);
+  padding: 0.2rem 0.25rem;
+  width: 220px;
+  max-width: 100%;
+  transition: width var(--transition-smooth), border-color var(--transition-fast);
 }
 
-.nav-link {
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: var(--tracking-wide);
+.header-search:focus-within {
+  width: 300px;
+  border-color: var(--accent-terracotta);
+}
+
+.header-search__label {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--text-secondary);
-  position: relative;
-  padding-bottom: 4px;
+  color: var(--text-primary);
+  pointer-events: none;
 }
 
-.nav-link::after {
-  content: '';
+.header-search__input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.header-search__clear {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 0 0.2rem;
+}
+
+/* Derecha: Iniciar sesión, Ayuda, WhatsApp */
+.site-header__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.25rem;
+  flex: 1;
+}
+
+.header-text-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  padding: 0.35rem 0;
+  text-decoration: none;
+  position: relative;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.header-text-btn:hover {
+  color: var(--accent-terracotta);
+}
+
+/* --------------------------------------------------------------------------
+   DRAWER DE NAVEGACIÓN LATERAL (ESTILO ZARA HOME)
+   -------------------------------------------------------------------------- */
+.side-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0.4s ease;
+}
+
+.side-drawer.is-open {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.side-drawer__backdrop {
   position: absolute;
+  inset: 0;
+  background: rgba(35, 31, 30, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.side-drawer.is-open .side-drawer__backdrop {
+  opacity: 1;
+}
+
+.side-drawer__panel {
+  position: absolute;
+  top: 0;
   left: 0;
   bottom: 0;
-  width: 0;
-  height: 1px;
-  background-color: var(--accent-terracotta);
-  transition: width var(--transition-smooth);
+  width: 380px;
+  max-width: 88vw;
+  background-color: #FAF8F4;
+  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 2rem;
+  overflow-y: auto;
 }
 
-.nav-link:hover {
+.side-drawer.is-open .side-drawer__panel {
+  transform: translateX(0);
+}
+
+.side-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-medium);
+  padding-bottom: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.side-drawer__brand {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   color: var(--text-primary);
 }
 
-.nav-link:hover::after {
+.side-drawer__close {
+  background: transparent;
+  border: none;
+  font-size: 1.35rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: 0.25rem 0.5rem;
+  transition: transform var(--transition-fast);
+}
+
+.side-drawer__close:hover {
+  transform: rotate(90deg);
+}
+
+.side-drawer__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.side-drawer__link {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  text-decoration: none;
+  display: block;
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.side-drawer__link:hover {
+  color: var(--accent-terracotta);
+  transform: translateX(6px);
+}
+
+.side-drawer__footer {
+  border-top: 1px solid var(--border-medium);
+  padding-top: 1.5rem;
+  margin-top: 2rem;
+}
+
+.btn-drawer-admin {
   width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.btn-drawer-admin:hover {
+  background: #231F1E;
+  color: #FFFFFF;
+  border-color: #231F1E;
 }
 
 /* --------------------------------------------------------------------------
@@ -283,15 +503,13 @@ ul, ol {
   text-decoration: none;
 }
 
-.btn--hero,
 .btn--primary {
   background-color: var(--accent-terracotta);
-  color: var(--bg-primary); /* Tono tiza */
+  color: var(--bg-primary);
   border-color: var(--accent-terracotta);
   box-shadow: 0 4px 16px rgba(164, 99, 78, 0.18);
 }
 
-.btn--hero:hover,
 .btn--primary:hover {
   background-color: var(--accent-terracotta-hover);
   border-color: var(--accent-terracotta-hover);
@@ -300,133 +518,162 @@ ul, ol {
   box-shadow: 0 8px 24px rgba(164, 99, 78, 0.28);
 }
 
-.btn .btn__icon {
-  transition: transform var(--transition-fast);
-}
-
-.btn:hover .btn__icon {
-  transform: translateX(4px);
-}
-
 /* --------------------------------------------------------------------------
-   7. SECCIÓN HERO (Fase 2)
+   7. SECCIÓN HERO CINEMÁTICA (INSPIRACIÓN ZARA HOME)
    -------------------------------------------------------------------------- */
-.hero {
-  min-height: clamp(520px, 75vh, 720px);
-  display: flex;
-  align-items: center;
-  padding-top: var(--space-xl);
-  padding-bottom: var(--space-xl);
+.hero--zarahome {
   position: relative;
-  overflow: hidden;
-}
-
-.hero__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 50% texto / 50% imagen */
-  gap: var(--space-2xl);
-  align-items: center;
-  width: 100%;
-}
-
-.hero__content {
+  min-height: clamp(580px, 86vh, 840px);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding-right: var(--space-lg);
-}
-
-.hero__eyebrow {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: var(--tracking-widest);
-  text-transform: uppercase;
-  color: var(--accent-terracotta);
-  margin-bottom: var(--space-sm);
-}
-
-.hero__title {
-  font-family: var(--font-serif);
-  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
-  line-height: 1.2;
-  margin-bottom: var(--space-md);
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.hero__tagline {
-  font-family: var(--font-sans);
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  max-width: 500px;
-  margin-bottom: var(--space-xl);
-  font-weight: 300;
-}
-
-.hero__actions {
-  display: flex;
-  align-items: center;
-}
-
-/* Bloque Visual y Placeholder de Imagen en Alta Calidad */
-.hero__visual {
-  width: 100%;
-}
-
-.hero-image-placeholder {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-sm);
+  justify-content: space-between;
   overflow: hidden;
-  box-shadow: var(--shadow-medium);
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  padding: 0;
 }
 
-.hero__img {
+.hero__background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero__bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-sm);
-  display: block;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  object-position: center 40%;
+  transform: scale(1.02);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-image-placeholder:hover .hero__img {
-  transform: scale(1.03);
+.hero--zarahome:hover .hero__bg-img {
+  transform: scale(1.05);
 }
 
-.hero__badge {
+.hero__overlay {
   position: absolute;
-  bottom: var(--space-md);
-  left: var(--space-md);
-  background-color: rgba(249, 248, 246, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-soft);
+  inset: 0;
+  background: linear-gradient(180deg, rgba(30, 26, 25, 0.35) 0%, rgba(30, 26, 25, 0.22) 50%, rgba(20, 18, 17, 0.72) 100%);
 }
 
-.hero__badge-label {
-  font-size: 0.65rem;
+.hero__editorial-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 820px;
+  margin: auto;
+  padding: 4.5rem 1.5rem 2rem;
+  color: #FFFFFF;
+}
+
+.hero__eyebrow-zh {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  letter-spacing: var(--tracking-widest);
-  color: var(--accent-terracotta);
-  font-weight: 600;
+  color: #E2DDD5;
+  margin-bottom: 1rem;
 }
 
-.hero__badge-title {
+.hero__title-zh {
   font-family: var(--font-serif);
-  font-size: 0.92rem;
-  color: var(--text-primary);
+  font-size: clamp(2.3rem, 4.5vw, 3.8rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.hero__tagline-zh {
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0 auto 2rem;
+  max-width: 580px;
+  line-height: 1.6;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn--hero-zh {
+  background-color: rgba(255, 255, 255, 0.94);
+  color: #231F1E;
+  padding: 0.85rem 2.2rem;
+  font-size: 0.76rem;
   font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+}
+
+.btn--hero-zh:hover {
+  background-color: #FFFFFF;
+  color: var(--accent-terracotta);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Barra de Categorías Inferior (Overlaid exacta a Zara Home) */
+.hero__bottom-nav {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.75rem);
+  padding: 1.25rem 1rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 13, 12, 0.82) 100%);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+
+.hero__bottom-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-nav-pill {
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--font-sans);
+  font-size: clamp(0.7rem, 0.95vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.2rem;
+  position: relative;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.hero-nav-pill::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background-color: #FFFFFF;
+  transform: scaleX(0);
+  transition: transform var(--transition-fast);
+}
+
+.hero-nav-pill:hover,
+.hero-nav-pill.is-active {
+  color: #FFFFFF;
+}
+
+.hero-nav-pill:hover::after,
+.hero-nav-pill.is-active::after {
+  transform: scaleX(1);
 }
 
 /* --------------------------------------------------------------------------
@@ -1162,8 +1409,40 @@ ul, ol {
     --space-3xl: 4rem;
   }
 
-  .nav-list {
-    display: none; /* Simplificado para móviles boutique */
+  .site-header--zarahome .site-header__inner {
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+  }
+
+  .site-header__left {
+    gap: 0.65rem;
+  }
+
+  .site-header__center {
+    display: none;
+  }
+
+  .site-header__right {
+    gap: 0.75rem;
+  }
+
+  .header-text-btn {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .hero--zarahome {
+    min-height: 520px;
+  }
+
+  .hero__editorial-content {
+    padding: 3rem 1rem 1.5rem;
+  }
+
+  .hero__bottom-nav {
+    justify-content: flex-start;
+    padding: 1rem 1rem;
+    gap: 1.5rem;
   }
 
   .previews-grid {

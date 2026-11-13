@@ -101,13 +101,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 2. RENDERIZADO DEL CATÁLOGO (ESTILO ANTHROPOLOGIE)
+  // 2. RENDERIZADO DEL CATÁLOGO (ESTILO ANTHROPOLOGIE & ZARA HOME)
   // =========================================================================
+  let searchQuery = '';
+
   function renderCatalog() {
     if (!productsGrid) return;
     productsGrid.innerHTML = '';
 
-    const filtered = products.filter(p => currentCategory === 'todos' || p.category === currentCategory);
+    const query = (searchQuery || '').toLowerCase().trim();
+    const filtered = products.filter(p => {
+      const matchCat = currentCategory === 'todos' || p.category === currentCategory;
+      if (!matchCat) return false;
+      if (!query) return true;
+      return (
+        (p.title && p.title.toLowerCase().includes(query)) ||
+        (p.desc && p.desc.toLowerCase().includes(query)) ||
+        (p.texture && p.texture.toLowerCase().includes(query)) ||
+        (p.categoryName && p.categoryName.toLowerCase().includes(query))
+      );
+    });
+
+    if (filtered.length === 0) {
+      productsGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1.5rem; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-sm); border: 1px dashed var(--border-medium);">
+          <p style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.5rem;">No encontramos piezas para "${searchQuery}"</p>
+          <p style="font-size: 0.88rem; max-width: 480px; margin: 0 auto 1.25rem;">Intenta con palabras como satén, lino, waffle, o selecciona otra categoría.</p>
+          <button type="button" class="btn btn--secondary" id="btn-reset-search">Ver Todo el Catálogo</button>
+        </div>
+      `;
+      const btnReset = document.getElementById('btn-reset-search');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          searchQuery = '';
+          const searchInp = document.getElementById('header-search-input');
+          const searchClear = document.getElementById('header-search-clear');
+          if (searchInp) searchInp.value = '';
+          if (searchClear) searchClear.style.display = 'none';
+          applyFilter('todos');
+        });
+      }
+      return;
+    }
 
     filtered.forEach(product => {
       const card = document.createElement('article');
@@ -276,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 4. FILTROS DE CATEGORÍAS
+  // 4. FILTROS DE CATEGORÍAS & NAVEGACIÓN ZARA HOME
   // =========================================================================
   function applyFilter(category) {
     currentCategory = category;
@@ -287,12 +322,34 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.classList.remove('is-active');
       }
     });
+
+    document.querySelectorAll('.hero-nav-pill').forEach(pill => {
+      if (pill.getAttribute('data-hero-filter') === category) {
+        pill.classList.add('is-active');
+      } else {
+        pill.classList.remove('is-active');
+      }
+    });
+
     renderCatalog();
   }
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       applyFilter(btn.getAttribute('data-filter'));
+    });
+  });
+
+  // Pills de navegación inferior del Hero (Exactas a Zara Home)
+  document.querySelectorAll('[data-hero-filter]').forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.preventDefault();
+      const cat = pill.getAttribute('data-hero-filter');
+      applyFilter(cat);
+      const catalogSection = document.getElementById('catalogo');
+      if (catalogSection) {
+        catalogSection.scrollIntoView({ behavior: 'smooth' });
+      }
     });
   });
 
@@ -307,6 +364,85 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Buscador Minimalista en Cabecera (Inspiración Zara Home)
+  const headerSearchInput = document.getElementById('header-search-input');
+  const headerSearchClear = document.getElementById('header-search-clear');
+
+  if (headerSearchInput) {
+    headerSearchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      if (headerSearchClear) {
+        headerSearchClear.style.display = searchQuery.trim() ? 'inline-block' : 'none';
+      }
+      renderCatalog();
+    });
+
+    headerSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const catalogSection = document.getElementById('catalogo');
+        if (catalogSection) catalogSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  if (headerSearchClear) {
+    headerSearchClear.addEventListener('click', () => {
+      searchQuery = '';
+      if (headerSearchInput) headerSearchInput.value = '';
+      headerSearchClear.style.display = 'none';
+      renderCatalog();
+    });
+  }
+
+  // Menú Lateral Desplegable (Drawer Estilo Zara Home)
+  const sideDrawer = document.getElementById('side-drawer');
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const drawerCloseBtn = document.getElementById('drawer-close-btn');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  const drawerAdminBtn = document.getElementById('drawer-admin-btn');
+  const headerLoginBtn = document.getElementById('header-login-btn');
+
+  function openSideDrawer() {
+    if (!sideDrawer) return;
+    sideDrawer.classList.add('is-open');
+    sideDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSideDrawer() {
+    if (!sideDrawer) return;
+    sideDrawer.classList.remove('is-open');
+    sideDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSideDrawer);
+  if (drawerCloseBtn) drawerCloseBtn.addEventListener('click', closeSideDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeSideDrawer);
+
+  document.querySelectorAll('[data-close-drawer]').forEach(item => {
+    item.addEventListener('click', () => {
+      closeSideDrawer();
+      const cat = item.getAttribute('data-filter');
+      if (cat) {
+        applyFilter(cat);
+      }
+    });
+  });
+
+  if (drawerAdminBtn) {
+    drawerAdminBtn.addEventListener('click', () => {
+      closeSideDrawer();
+      openAdminLogin();
+    });
+  }
+
+  if (headerLoginBtn) {
+    headerLoginBtn.addEventListener('click', () => {
+      openAdminLogin();
+    });
+  }
 
   // =========================================================================
   // 5. MODAL EDITORIAL LOOKBOOK & FICHA DE CREACIÓN (INSPIRACIÓN ANTHROPOLOGIE)

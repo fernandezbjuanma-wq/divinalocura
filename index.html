@@ -29,70 +29,103 @@
     </div>
   </aside>
 
-  <!-- Navegación de Marca / Header Base -->
-  <header class="site-header" id="header">
-    <div class="container site-header__inner">
-      <div class="site-header__brand">
-        <a href="#inicio" class="brand-link">
-          <span class="brand-name">Divina Locura</span>
+  <!-- MENÚ LATERAL DESPLEGABLE (DRAWER ESTILO ZARA HOME) -->
+  <aside class="side-drawer" id="side-drawer" aria-hidden="true">
+    <div class="side-drawer__backdrop" id="drawer-backdrop"></div>
+    <div class="side-drawer__panel">
+      <div class="side-drawer__header">
+        <div class="side-drawer__brand">DIVINA LOCURA <span class="brand-tag">DECO</span></div>
+        <button type="button" class="side-drawer__close" id="drawer-close-btn" aria-label="Cerrar menú">✕</button>
+      </div>
+      <nav class="side-drawer__nav">
+        <ul class="side-drawer__list">
+          <li><a href="#hero" class="side-drawer__link" data-close-drawer>Inicio</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="todos">Colección Completa</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="cuidado-personal">Dormitorio &amp; Satén</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
+          <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
+          <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
+          <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
+        </ul>
+      </nav>
+      <div class="side-drawer__footer">
+        <button type="button" class="btn-drawer-admin" id="drawer-admin-btn">
+          <span>🌸 Acceso Modo Admin (Elena / Juanma)</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Navegación de Marca / Header Estilo Zara Home -->
+  <header class="site-header site-header--zarahome" id="header">
+    <div class="container-fluid site-header__inner">
+      <!-- Izquierda: Menú Hamburguesa + Logotipo Didone -->
+      <div class="site-header__left">
+        <button type="button" class="btn-hamburger" id="hamburger-btn" aria-label="Abrir menú de navegación">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <a href="#hero" class="brand-link">
+          <span class="brand-name">DIVINA LOCURA</span>
           <span class="brand-tag">DECO</span>
         </a>
       </div>
-      <nav class="site-nav" aria-label="Navegación principal">
-        <ul class="nav-list">
-          <li><a href="#hero" class="nav-link">Inicio</a></li>
-          <li><a href="#catalogo" class="nav-link">Colección</a></li>
-          <li><a href="#sobre-elena" class="nav-link">El Taller</a></li>
-          <li><a href="#espacios" class="nav-link">Estilismo</a></li>
-          <li><a href="#contacto" class="nav-link">Contacto</a></li>
-        </ul>
-      </nav>
+
+      <!-- Centro: Buscador Minimalista Subrayado (Inspiración Zara Home) -->
+      <div class="site-header__center">
+        <div class="header-search">
+          <label for="header-search-input" class="header-search__label">BUSCAR</label>
+          <input type="text" id="header-search-input" class="header-search__input" placeholder="" autocomplete="off" aria-label="Buscar en catálogo" />
+          <button type="button" class="header-search__clear" id="header-search-clear" style="display:none;" aria-label="Limpiar búsqueda">✕</button>
+        </div>
+      </div>
+
+      <!-- Derecha: Iniciar Sesión, Ayuda y WhatsApp/Pedidos -->
+      <div class="site-header__right">
+        <button type="button" class="header-text-btn" id="header-login-btn">INICIAR SESIÓN</button>
+        <a href="#contacto" class="header-text-btn">AYUDA</a>
+        <button type="button" class="header-text-btn btn--whatsapp" data-product-name="Consulta general desde cabecera">WHATSAPP</button>
+      </div>
     </div>
   </header>
 
   <!-- Contenedor Principal -->
   <main id="main-content">
-    <!-- FASE 2: SECCIÓN HERO EDITORIAL (50% TEXTO / 50% IMAGEN) -->
-    <section class="hero" id="hero">
-      <div class="container hero__inner">
-        
-        <!-- Bloque de Texto (50%) -->
-        <div class="hero__content">
-          <span class="hero__eyebrow">Confección Artesanal &middot; Por Elena</span>
-          <h1 class="hero__title">
-            El arte del detalle. Diseño hecho a mano para abrazar tu hogar.
-          </h1>
-          <p class="hero__tagline">
-            Textiles con alma. Organización y calidez para tu día a día.
-          </p>
-          <div class="hero__actions">
-            <a href="#catalogo" class="btn btn--hero">
-              <span>Ver Catálogo</span>
-              <svg class="btn__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Bloque de Imagen Destacada (50%) -->
-        <div class="hero__visual">
-          <div class="hero-image-placeholder">
-            <img 
-              src="assets/images/hero-textile.jpg" 
-              alt="Textiles con alma de Divina Locura Deco confeccionados por Elena" 
-              class="hero__img"
-              loading="eager"
-            />
-            <div class="hero__badge">
-              <span class="hero__badge-label">@divina.locura.deco</span>
-              <strong class="hero__badge-title">Texturas &amp; Piezas Únicas</strong>
-            </div>
-          </div>
-        </div>
-
+    <!-- SECCIÓN HERO CINEMÁTICA (INSPIRACIÓN ZARA HOME) -->
+    <section class="hero hero--zarahome" id="hero">
+      <div class="hero__background">
+        <img 
+          src="assets/images/hero-textile.jpg" 
+          alt="Atmósfera artesanal y serena de Divina Locura Deco por Elena" 
+          class="hero__bg-img"
+          loading="eager"
+        />
+        <div class="hero__overlay"></div>
       </div>
+
+      <!-- Contenido Editorial Central -->
+      <div class="hero__editorial-content">
+        <span class="hero__eyebrow-zh">CONFECCIÓN ARTESANAL &middot; BUENOS AIRES</span>
+        <h1 class="hero__title-zh">El arte del detalle. Diseño hecho a mano para abrazar tu hogar.</h1>
+        <p class="hero__tagline-zh">Textiles con alma. Organización y calidez para tu día a día.</p>
+        <a href="#catalogo" class="btn btn--hero-zh">
+          <span>Explorar la Colección</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </a>
+      </div>
+
+      <!-- Barra de Navegación de Categorías Inferior (Exacta a Zara Home) -->
+      <nav class="hero__bottom-nav" aria-label="Categorías principales">
+        <a href="#catalogo" class="hero-nav-pill is-active" data-hero-filter="todos">COLECCIÓN TALLER</a>
+        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="cuidado-personal">DORMITORIO &amp; SATÉN</a>
+        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="hogar">COCINA &amp; WAFFLE</a>
+        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="organizacion">ORGANIZACIÓN</a>
+        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="infantil">BEBÉS &amp; INFANTIL</a>
+        <a href="#espacios" class="hero-nav-pill">ATMÓSFERAS</a>
+      </nav>
     </section>
 
     <!-- FASE 3 (PARTE A): CUADROS DE VISTA PREVIA POR CATEGORÍA (Inspiración directa Anthropologie) -->
