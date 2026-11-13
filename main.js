@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
               </button>
-              <button type="button" class="btn--lookbook-view" data-open-lookbook="${product.id}" title="Ver ficha editorial completa">
-                <span>✨ Ficha Lookbook</span>
+              <button type="button" class="btn--lookbook-view" data-open-lookbook="${product.id}" title="Vista Rápida de la Creación">
+                <span>Vista Rápida</span>
               </button>
             </div>
           </div>
@@ -379,16 +379,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lookbookPrice) lookbookPrice.textContent = product.price || 'Consultar Confección';
     if (lookbookTexturePill) lookbookTexturePill.textContent = product.texture || 'Fibras Nobles & Hecho a Mano';
 
-    const igData = product.instagram || {};
+    const storyText = product.story || (product.instagram && product.instagram.caption) || 'Cada una de nuestras piezas es cortada, confeccionada y cuidada de forma individual en nuestro taller por Elena, respetando el tiempo natural de la costura artesanal.';
     if (lookbookStory) {
-      lookbookStory.textContent = igData.caption || 'Cada una de nuestras piezas es cortada, confeccionada y cuidada de forma individual en nuestro taller por Elena, respetando el tiempo natural de la costura artesanal.';
+      lookbookStory.textContent = storyText;
     }
     if (lookbookDesc) {
       lookbookDesc.textContent = product.desc || 'Confección a mano con telas seleccionadas de primera calidad.';
-    }
-
-    if (lookbookInstagramLink) {
-      lookbookInstagramLink.href = `https://www.instagram.com/${(settings.instagram_user || 'divina.locura.deco').replace(/^@/, '')}`;
     }
 
     lookbookModal.classList.add('is-open');
@@ -700,18 +696,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderImageRows(images) {
     if (!editImagesList) return;
     editImagesList.innerHTML = '';
-    images.forEach((img, idx) => {
+    const limitedImages = (images || []).slice(0, 4);
+    limitedImages.forEach((img, idx) => {
       addImageRow(img.label || `Foto ${idx + 1}`, img.src);
     });
   }
 
   function addImageRow(label = 'Foto', src = '') {
     if (!editImagesList) return;
+    const currentCount = editImagesList.querySelectorAll('.admin-image-row').length;
+    if (currentCount >= 4) {
+      showToast('⚠️ Máximo 4 fotos por producto (Inspiración Zara Home & Anthropologie).');
+      return;
+    }
     const row = document.createElement('div');
     row.className = 'admin-image-row';
     row.innerHTML = `
       <img src="${src || 'assets/images/hero-textile.jpg'}" alt="Preview" class="admin-img-preview" />
-      <input type="text" class="admin-input img-label-input" placeholder="Etiqueta (ej: Foto Principal, En Uso, Detalle)" value="${label}" style="flex:1;" />
+      <input type="text" class="admin-input img-label-input" placeholder="Etiqueta (ej: Foto 1, Ambiente, Detalle)" value="${label}" style="flex:1;" />
       <input type="text" class="admin-input img-src-input" placeholder="Ruta o Enlace" value="${src}" style="flex:2;" />
       <button type="button" class="btn-remove-row" title="Eliminar foto">✕</button>
     `;
@@ -781,6 +783,9 @@ document.addEventListener('DOMContentLoaded', () => {
         images.push({ label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' });
       }
 
+      // Máximo 4 fotos por producto (Inspiración Zara Home & Anthropologie)
+      const finalImages = images.slice(0, 4);
+
       const existingIndex = products.findIndex(p => p.id === id);
       const productPayload = {
         id,
@@ -792,13 +797,14 @@ document.addEventListener('DOMContentLoaded', () => {
         texture,
         price,
         desc,
-        images,
+        images: finalImages,
+        story: igCaption || desc || 'Pieza única elaborada con amor en el taller de Divina Locura Deco.',
         instagram: {
-          date: 'Actualizado recientemente',
-          likes: existingIndex >= 0 && products[existingIndex].instagram ? products[existingIndex].instagram.likes : 150,
+          date: 'Edición Artesanal',
+          likes: 0,
           caption: igCaption || desc || 'Pieza única elaborada con amor en el taller de Divina Locura Deco.',
-          hashtags: igHashtags || '#divinalocura #hechoamano #decoartesanal',
-          comments: existingIndex >= 0 && products[existingIndex].instagram ? products[existingIndex].instagram.comments : []
+          hashtags: '',
+          comments: []
         }
       };
 
@@ -863,10 +869,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (devSettingsForm) {
     devSettingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      settings.whatsapp_phone = (settingWhatsapp.value || '').trim();
-      settings.instagram_user = (settingInstagram.value || '').trim();
-      settings.announcement = (settingAnnouncement.value || '').trim();
-      settings.gh_token = (settingGhToken.value || '').trim();
+      if (settingWhatsapp) settings.whatsapp_phone = (settingWhatsapp.value || '').trim();
+      if (settingInstagram) settings.instagram_user = (settingInstagram.value || '').trim();
+      if (settingAnnouncement) settings.announcement = (settingAnnouncement.value || '').trim();
+      if (settingGhToken) settings.gh_token = (settingGhToken.value || '').trim();
 
       localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
       applySystemSettings();

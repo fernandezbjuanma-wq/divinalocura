@@ -913,85 +913,81 @@ ul, ol {
 }
 
 /* --------------------------------------------------------------------------
-   12. SECCIÓN: FEED DE INSTAGRAM DE ELENA
+   12. SECCIÓN: ESPACIOS & ATMÓSFERAS (INSPIRACIÓN ZARA HOME & ANTHROPOLOGIE)
    -------------------------------------------------------------------------- */
-.instagram-feed {
+.spaces-section {
   padding: var(--space-4xl) 0;
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-subtle);
 }
 
-.instagram-grid {
+.spaces-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: var(--space-md);
   margin-bottom: var(--space-2xl);
 }
 
-.instagram-post {
+.space-card {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   display: block;
   border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
 }
 
-.instagram-post__img {
+.space-card__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
 }
 
-.instagram-post__overlay {
+.space-card__overlay {
   position: absolute;
   inset: 0;
-  background-color: rgba(44, 42, 41, 0.45);
+  background: linear-gradient(180deg, rgba(35, 31, 30, 0) 45%, rgba(35, 31, 30, 0.85) 100%);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem 0.85rem;
   color: #FFFFFF;
-  opacity: 0;
+  opacity: 0.92;
   transition: opacity var(--transition-fast);
 }
 
-.instagram-post:hover .instagram-post__overlay {
+.space-card:hover .space-card__overlay {
   opacity: 1;
 }
 
-.instagram-post:hover .instagram-post__img {
-  transform: scale(1.06);
+.space-card:hover .space-card__img {
+  transform: scale(1.05);
 }
 
-.instagram-cta {
-  text-align: center;
-}
-
-.btn--instagram {
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-medium);
-  padding: 0.95rem 2.25rem;
+.space-card__tag {
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all var(--transition-smooth);
+  color: var(--accent-sand);
+  margin-bottom: 0.2rem;
 }
 
-.btn--instagram:hover {
-  background-color: #E1306C;
-  border-color: #E1306C;
+.space-card__title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.25;
   color: #FFFFFF;
-  box-shadow: 0 4px 20px rgba(225, 48, 108, 0.28);
-  transform: translateY(-2px);
+  margin: 0;
+}
+
+.spaces-cta {
+  text-align: center;
 }
 
 /* --------------------------------------------------------------------------
@@ -1131,7 +1127,7 @@ ul, ol {
     grid-column: span 6;
   }
 
-  .instagram-grid {
+  .spaces-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
@@ -1197,7 +1193,7 @@ ul, ol {
     white-space: nowrap;
   }
 
-  .instagram-grid {
+  .spaces-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-xs);
   }
@@ -1632,19 +1628,24 @@ ul, ol {
   transform: translateY(-1px);
 }
 
-.lookbook-social-link {
-  display: block;
-  text-align: center;
-  font-size: 0.78rem;
+.lookbook-guarantee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
   color: var(--text-secondary);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color var(--transition-fast);
+  line-height: 1.35;
+  text-align: center;
 }
 
-.lookbook-social-link:hover {
+.lookbook-guarantee svg {
   color: var(--accent-terracotta);
-  text-decoration: underline;
+  flex-shrink: 0;
 }
 
 /* Botón Ficha Lookbook en cada tarjeta del catálogo */
