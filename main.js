@@ -826,47 +826,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (devFieldsRow) devFieldsRow.style.display = isElena ? 'none' : 'grid';
-    if (devHashtagsField) devHashtagsField.style.display = isElena ? 'none' : 'block';
 
     if (id) {
       const product = products.find(p => p.id === id);
       if (!product) return;
 
-      productModalTitle.textContent = isElena ? `Modificar Creación: ${product.title}` : `Editar Producto (${product.id})`;
-      productModalDesc.textContent = isElena
+      if (productModalTitle) productModalTitle.textContent = isElena ? `Modificar Creación: ${product.title}` : `Editar Producto (${product.id})`;
+      if (productModalDesc) productModalDesc.textContent = isElena
         ? 'Cambiá la información o agregá fotos de tu pieza. Al guardar se verá de inmediato en la tienda.'
         : 'Actualiza metadatos, fotos multivista y posteo editorial.';
 
-      editProductId.value = product.id;
-      editTitle.value = product.title || '';
-      editCategory.value = product.category || 'cuidado-personal';
-      editPrice.value = product.price || '';
-      editTexture.value = product.texture || '';
-      editTag.value = product.tag || '';
-      editSize.value = product.size || 'medium';
-      editDesc.value = product.desc || '';
+      if (editProductId) editProductId.value = product.id;
+      if (editTitle) editTitle.value = product.title || '';
+      if (editCategory) editCategory.value = product.category || 'cuidado-personal';
+      if (editPrice) editPrice.value = product.price || '';
+      if (editTexture) editTexture.value = product.texture || '';
+      if (editTag) editTag.value = product.tag || '';
+      if (editSize) editSize.value = product.size || 'medium';
+      if (editDesc) editDesc.value = product.desc || '';
 
       const ig = product.instagram || {};
-      editIgCaption.value = ig.caption || '';
-      editIgHashtags.value = ig.hashtags || '';
+      if (editIgCaption) editIgCaption.value = ig.caption || product.story || '';
 
       renderImageRows(product.images || []);
     } else {
-      productModalTitle.textContent = isElena ? '🌸 Publicar Nueva Creación' : 'Crear Nuevo Producto';
-      productModalDesc.textContent = isElena
+      if (productModalTitle) productModalTitle.textContent = isElena ? '🌸 Publicar Nueva Creación' : 'Crear Nuevo Producto';
+      if (productModalDesc) productModalDesc.textContent = isElena
         ? 'Elegí las fotos de tu pieza y escribí cómo se llama y cuánto cuesta.'
         : 'Crea un nuevo ítem en la base de datos de productos.';
 
-      editProductId.value = '';
-      editTitle.value = '';
-      editCategory.value = 'cuidado-personal';
-      editPrice.value = '';
-      editTexture.value = 'Confección a mano con fibras nobles';
-      editTag.value = 'Novedad de Taller';
-      editSize.value = 'medium';
-      editDesc.value = '';
-      editIgCaption.value = '';
-      editIgHashtags.value = '#divinalocura #hechoamano #decoartesanal';
+      if (editProductId) editProductId.value = '';
+      if (editTitle) editTitle.value = '';
+      if (editCategory) editCategory.value = 'cuidado-personal';
+      if (editPrice) editPrice.value = '';
+      if (editTexture) editTexture.value = 'Confección a mano con fibras nobles';
+      if (editTag) editTag.value = 'Novedad de Taller';
+      if (editSize) editSize.value = 'medium';
+      if (editDesc) editDesc.value = '';
+      if (editIgCaption) editIgCaption.value = '';
 
       renderImageRows([
         { label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' }
@@ -954,16 +951,19 @@ document.addEventListener('DOMContentLoaded', () => {
     productEditForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const id = editProductId.value || `prod_${Date.now()}`;
-      const title = editTitle.value.trim();
-      const category = editCategory.value;
-      const price = editPrice.value.trim() || 'Consultar';
-      const texture = editTexture.value.trim() || 'Confección artesanal';
-      const tag = editTag.value.trim() || 'Hecho a Mano';
-      const size = editSize.value || 'medium';
-      const desc = editDesc.value.trim();
-      const igCaption = editIgCaption.value.trim();
-      const igHashtags = editIgHashtags.value.trim();
+      const id = (editProductId && editProductId.value) ? editProductId.value : `prod_${Date.now()}`;
+      const title = editTitle ? editTitle.value.trim() : '';
+      if (!title) {
+        alert('Por favor ingresá un título o nombre para la creación.');
+        return;
+      }
+      const category = editCategory ? editCategory.value : 'cuidado-personal';
+      const price = (editPrice && editPrice.value.trim()) ? editPrice.value.trim() : 'Consultar';
+      const texture = (editTexture && editTexture.value.trim()) ? editTexture.value.trim() : 'Confección artesanal';
+      const tag = (editTag && editTag.value.trim()) ? editTag.value.trim() : 'Hecho a Mano';
+      const size = (editSize && editSize.value) ? editSize.value : 'medium';
+      const desc = editDesc ? editDesc.value.trim() : '';
+      const igCaption = editIgCaption ? editIgCaption.value.trim() : '';
 
       const images = [];
       editImagesList.querySelectorAll('.admin-image-row').forEach(row => {
