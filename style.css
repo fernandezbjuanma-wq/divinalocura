@@ -262,7 +262,7 @@ ul, ol {
   align-items: center;
   justify-content: center;
   gap: var(--space-2xs);
-  padding: 0.85rem 1.85rem;
+  padding: 0.95rem 2.25rem;
   font-family: var(--font-sans);
   font-size: 0.82rem;
   font-weight: 500;
@@ -275,65 +275,57 @@ ul, ol {
   text-decoration: none;
 }
 
+.btn--hero,
 .btn--primary {
   background-color: var(--accent-terracotta);
-  color: #FFFFFF;
+  color: var(--bg-primary); /* Tono tiza */
   border-color: var(--accent-terracotta);
-  box-shadow: 0 4px 14px rgba(164, 99, 78, 0.2);
+  box-shadow: 0 4px 16px rgba(164, 99, 78, 0.18);
 }
 
+.btn--hero:hover,
 .btn--primary:hover {
   background-color: var(--accent-terracotta-hover);
   border-color: var(--accent-terracotta-hover);
-  color: #FFFFFF;
+  color: var(--bg-primary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(164, 99, 78, 0.3);
+  box-shadow: 0 8px 24px rgba(164, 99, 78, 0.28);
 }
 
-.btn--primary .btn__icon {
+.btn .btn__icon {
   transition: transform var(--transition-fast);
 }
 
-.btn--primary:hover .btn__icon {
+.btn:hover .btn__icon {
   transform: translateX(4px);
-}
-
-.btn--text {
-  background: transparent;
-  color: var(--text-primary);
-  padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid var(--border-medium);
-  border-radius: 0;
-}
-
-.btn--text:hover {
-  color: var(--accent-terracotta);
-  border-bottom-color: var(--accent-terracotta);
-  transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------
    7. SECCIÓN HERO (Fase 2)
    -------------------------------------------------------------------------- */
 .hero {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
   padding-top: var(--space-2xl);
-  padding-bottom: var(--space-3xl);
+  padding-bottom: var(--space-2xl);
   position: relative;
   overflow: hidden;
 }
 
 .hero__inner {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1fr; /* 50% texto / 50% imagen */
   gap: var(--space-2xl);
   align-items: center;
+  width: 100%;
 }
 
 .hero__content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-right: var(--space-md);
+  padding-right: var(--space-lg);
 }
 
 .hero__eyebrow {
@@ -343,90 +335,59 @@ ul, ol {
   letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
   color: var(--accent-terracotta);
-  margin-bottom: var(--space-xs);
-  position: relative;
+  margin-bottom: var(--space-sm);
 }
 
 .hero__title {
-  font-size: clamp(2.75rem, 5vw, 4.25rem);
-  line-height: 1.12;
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  line-height: 1.2;
   margin-bottom: var(--space-md);
   color: var(--text-primary);
-}
-
-.hero__title-italic {
-  font-style: italic;
-  font-weight: 400;
-  color: var(--accent-clay);
+  font-weight: 500;
 }
 
 .hero__tagline {
+  font-family: var(--font-sans);
   font-size: 1.05rem;
   line-height: 1.8;
   color: var(--text-secondary);
-  max-width: 530px;
+  max-width: 500px;
   margin-bottom: var(--space-xl);
   font-weight: 300;
 }
 
 .hero__actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
   align-items: center;
-  margin-bottom: var(--space-xl);
 }
 
-.hero__features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-subtle);
+/* Bloque Visual y Placeholder de Imagen en Alta Calidad */
+.hero__visual {
   width: 100%;
 }
 
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  letter-spacing: var(--tracking-wide);
-}
-
-.feature-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--accent-clay);
-  display: inline-block;
-}
-
-/* Visual e Imagen Hero */
-.hero__visual {
+.hero-image-placeholder {
   position: relative;
-}
-
-.hero__image-wrapper {
-  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow: var(--shadow-medium);
   background-color: var(--bg-surface);
-  aspect-ratio: 4 / 3;
+  border: 1px solid var(--border-subtle);
 }
 
-.hero__image {
+.hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-sm);
+  display: block;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero__image-wrapper:hover .hero__image {
+.hero-image-placeholder:hover .hero__img {
   transform: scale(1.03);
 }
 
@@ -434,7 +395,7 @@ ul, ol {
   position: absolute;
   bottom: var(--space-md);
   left: var(--space-md);
-  background-color: rgba(249, 248, 246, 0.92);
+  background-color: rgba(249, 248, 246, 0.94);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: var(--space-xs) var(--space-md);
@@ -455,9 +416,10 @@ ul, ol {
 
 .hero__badge-title {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--text-primary);
   font-weight: 600;
+}
 }
 
 /* --------------------------------------------------------------------------
@@ -481,8 +443,14 @@ ul, ol {
    9. RESPONSIVE BREAKPOINTS
    -------------------------------------------------------------------------- */
 @media (max-width: 992px) {
+  .hero {
+    min-height: auto;
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-2xl);
+  }
+
   .hero__inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 1 Columna: texto arriba, imagen abajo */
     gap: var(--space-xl);
   }
 
@@ -490,7 +458,7 @@ ul, ol {
     padding-right: 0;
   }
 
-  .hero__image-wrapper {
+  .hero-image-placeholder {
     aspect-ratio: 16 / 10;
   }
 }
@@ -517,30 +485,28 @@ ul, ol {
 
   .hero {
     padding-top: var(--space-lg);
-    padding-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
   }
 
   .hero__title {
-    font-size: 2.5rem;
+    font-size: 2.1rem;
+    line-height: 1.25;
   }
 
   .hero__tagline {
-    font-size: 0.95rem;
+    font-size: 0.98rem;
   }
 
   .hero__actions {
     width: 100%;
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .btn {
     width: 100%;
   }
 
-  .hero__features {
-    flex-direction: column;
-    gap: var(--space-xs);
+  .hero-image-placeholder {
+    aspect-ratio: 4 / 3;
   }
 }
 
