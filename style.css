@@ -304,8 +304,7 @@ ul, ol {
    7. SECCIÓN HERO (Fase 2)
    -------------------------------------------------------------------------- */
 .hero {
-  min-height: 75vh;
-  max-height: 760px;
+  min-height: clamp(520px, 75vh, 720px);
   display: flex;
   align-items: center;
   padding-top: var(--space-xl);
@@ -420,7 +419,6 @@ ul, ol {
   font-size: 0.92rem;
   color: var(--text-primary);
   font-weight: 600;
-}
 }
 
 /* --------------------------------------------------------------------------
