@@ -2158,6 +2158,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const adminElenaChatBtn = document.getElementById('admin-elena-chat-btn');
   const adminElenaChatCount = document.getElementById('admin-elena-chat-count');
   const adminElenaStockBtn = document.getElementById('admin-elena-stock-btn');
+  const adminElenaFinancesBtn = document.getElementById('admin-elena-finances-btn');
   let activeChatPhone = null;
 
   function updateWorkshopCounters() {
@@ -2656,36 +2657,203 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // TAB 5: GASTOS & FINANZAS DEL TALLER
-  function renderWorkshopFinances() {
-    const statIncome = document.getElementById('fin-stat-income');
-    const statExpenses = document.getElementById('fin-stat-expenses');
-    const statProfit = document.getElementById('fin-stat-profit');
-    const statMargin = document.getElementById('fin-stat-margin');
-    const expensesContainer = document.getElementById('workshop-expenses-list');
+  // TAB 5: GASTOS & FINANZAS DEL TALLER (DASHBOARD FINANZAS-JYC)
+  let currentSelectedFinancesMonth = 'all';
 
-    if (!statIncome || !window.WorkshopDB) return;
+  function renderWorkshopFinances(monthToSelect) {
+    if (!window.WorkshopDB) return;
 
-    const summary = window.WorkshopDB.getFinancialSummary();
-    statIncome.textContent = `$ ${summary.totalIncome.toLocaleString('es-AR')}`;
-    statExpenses.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')}`;
-    statProfit.textContent = `$ ${summary.netProfit.toLocaleString('es-AR')}`;
-    if (statMargin) {
-      statMargin.textContent = `Margen estimado: ${summary.profitMargin}% sobre ventas`;
+    if (monthToSelect) {
+      currentSelectedFinancesMonth = monthToSelect;
     }
 
-    // Tabla de gastos
-    const expenses = window.WorkshopDB.getExpenses();
-    if (expensesContainer) {
-      if (expenses.length === 0) {
-        expensesContainer.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1rem;">No hay gastos registrados.</td></tr>';
+    // 1. Selector de Meses
+    const monthSelectEl = document.getElementById('fjc-select-month');
+    if (monthSelectEl) {
+      const availableMonths = window.WorkshopDB.getAvailableMonths();
+      const currentVal = currentSelectedFinancesMonth;
+      monthSelectEl.innerHTML = availableMonths.map(m => `
+        <option value="${m.value}" ${m.value === currentVal ? 'selected' : ''}>${m.label}</option>
+      `).join('');
+
+      if (!monthSelectEl.hasAttribute('data-bound')) {
+        monthSelectEl.setAttribute('data-bound', 'true');
+        monthSelectEl.addEventListener('change', () => {
+          currentSelectedFinancesMonth = monthSelectEl.value;
+          renderWorkshopFinances(currentSelectedFinancesMonth);
+        });
+      }
+    }
+
+    // 2. Obtener Resumen Financiero Filtrado
+    const summary = window.WorkshopDB.getFinancialSummary(currentSelectedFinancesMonth);
+
+    // 3. Hero Panel: Balance Neto Real
+    const netBalanceEl = document.getElementById('fjc-net-balance');
+    const netAmountEl = document.getElementById('fjc-net-amount');
+    const netSymbolEl = document.getElementById('fjc-net-symbol');
+    const marginValEl = document.getElementById('fjc-margin-val');
+    const ordersCountValEl = document.getElementById('fjc-orders-count-val');
+    const budgetStatusChipText = document.getElementById('fjc-budget-status-chip-text');
+
+    if (netBalanceEl && netAmountEl) {
+      const isPositive = summary.netProfit >= 0;
+      netBalanceEl.classList.toggle('bien', isPositive);
+      netBalanceEl.classList.toggle('mal', !isPositive);
+      if (netSymbolEl) netSymbolEl.textContent = isPositive ? '$' : '-$';
+      netAmountEl.textContent = Math.abs(summary.netProfit).toLocaleString('es-AR');
+    }
+
+    if (marginValEl) marginValEl.textContent = `${summary.profitMargin}%`;
+    if (ordersCountValEl) ordersCountValEl.textContent = summary.totalOrdersCount;
+    if (budgetStatusChipText) {
+      if (summary.budgetStatus === 'danger') {
+        budgetStatusChipText.innerHTML = '🚨 Presupuesto: <strong>Excedido</strong>';
+      } else if (summary.budgetStatus === 'warning') {
+        budgetStatusChipText.innerHTML = '⚠️ Presupuesto: <strong>Cerca del Límite</strong>';
       } else {
-        expensesContainer.innerHTML = expenses.map(exp => `
+        budgetStatusChipText.innerHTML = '🌿 Presupuesto: <strong>Controlado</strong>';
+      }
+    }
+
+    // 4. Rejilla de 4 KPIs
+    const kpiIncome = document.getElementById('fjc-kpi-income');
+    const kpiIncomeSub = document.getElementById('fjc-kpi-income-sub');
+    const kpiFabric = document.getElementById('fjc-kpi-fabric');
+    const kpiFabricSub = document.getElementById('fjc-kpi-fabric-sub');
+    const kpiExpenses = document.getElementById('fjc-kpi-expenses');
+    const kpiExpensesSub = document.getElementById('fjc-kpi-expenses-sub');
+    const kpiProfitRatio = document.getElementById('fjc-kpi-profit-ratio');
+    const kpiProfitSub = document.getElementById('fjc-kpi-profit-sub');
+
+    if (kpiIncome) kpiIncome.textContent = `$ ${summary.totalIncome.toLocaleString('es-AR')}`;
+    if (kpiIncomeSub) kpiIncomeSub.textContent = `${summary.totalOrdersCount} pedido${summary.totalOrdersCount === 1 ? '' : 's'} confeccionado${summary.totalOrdersCount === 1 ? '' : 's'}`;
+
+    if (kpiFabric) kpiFabric.textContent = `${summary.fabricConsumption.totalMeters} m`;
+    if (kpiFabricSub) kpiFabricSub.textContent = `${summary.fabricConsumption.piecesFinished} pieza${summary.fabricConsumption.piecesFinished === 1 ? '' : 's'} confeccionada${summary.fabricConsumption.piecesFinished === 1 ? '' : 's'}`;
+
+    if (kpiExpenses) kpiExpenses.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')}`;
+    if (kpiExpensesSub) kpiExpensesSub.textContent = `${summary.totalExpensesCount} gasto${summary.totalExpensesCount === 1 ? '' : 's'} registrado${summary.totalExpensesCount === 1 ? '' : 's'}`;
+
+    if (kpiProfitRatio) kpiProfitRatio.textContent = `${summary.profitMargin}%`;
+    if (kpiProfitSub) kpiProfitSub.textContent = `Utilidad neta sobre ventas`;
+
+    // 5. Límites de Consumo & Presupuesto
+    const budgetDisplayEl = document.getElementById('fjc-budget-display');
+    const budgetUsedEl = document.getElementById('fjc-budget-used');
+    const budgetTotalEl = document.getElementById('fjc-budget-total');
+    const budgetPercentageEl = document.getElementById('fjc-budget-percentage');
+    const budgetBarEl = document.getElementById('fjc-budget-bar');
+    const budgetStatusTextEl = document.getElementById('fjc-budget-status-text');
+
+    if (budgetDisplayEl) budgetDisplayEl.textContent = `$ ${summary.budgetLimit.toLocaleString('es-AR')} ARS`;
+    if (budgetUsedEl) budgetUsedEl.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')}`;
+    if (budgetTotalEl) budgetTotalEl.textContent = `$ ${summary.budgetLimit.toLocaleString('es-AR')}`;
+    if (budgetPercentageEl) budgetPercentageEl.textContent = `${summary.budgetPercent}%`;
+
+    if (budgetBarEl) {
+      budgetBarEl.style.width = `${Math.min(100, summary.budgetPercent)}%`;
+      budgetBarEl.className = 'fjc-progress-fill';
+      if (summary.budgetStatus === 'danger') {
+        budgetBarEl.classList.add('fjc-progress-fill--danger');
+      } else if (summary.budgetStatus === 'warning') {
+        budgetBarEl.classList.add('fjc-progress-fill--warning');
+      } else {
+        budgetBarEl.classList.add('fjc-progress-fill--ok');
+      }
+    }
+
+    if (budgetStatusTextEl) {
+      budgetStatusTextEl.textContent = `${summary.budgetBadgeText} (Tope: $ ${summary.budgetLimit.toLocaleString('es-AR')} ARS)`;
+    }
+
+    // Botón Ajustar Presupuesto
+    const btnEditBudget = document.getElementById('btn-fjc-edit-budget');
+    if (btnEditBudget && !btnEditBudget.hasAttribute('data-bound')) {
+      btnEditBudget.setAttribute('data-bound', 'true');
+      btnEditBudget.addEventListener('click', () => {
+        const current = window.WorkshopDB.getBudget();
+        const input = prompt('Definir nuevo tope de consumo mensual ($ ARS):', current);
+        if (input !== null) {
+          const val = parseFloat(input);
+          if (!isNaN(val) && val >= 0) {
+            window.WorkshopDB.setBudget(val);
+            renderWorkshopFinances(currentSelectedFinancesMonth);
+            showToast(`Tope mensual actualizado a $ ${val.toLocaleString('es-AR')} ARS.`);
+          }
+        }
+      });
+    }
+
+    // 6. Reparto de Gastos por Categoría (Barra Segmentada)
+    const repartoBarEl = document.getElementById('fjc-reparto-bar');
+    const categoriesListEl = document.getElementById('fjc-categories-list');
+
+    if (repartoBarEl && categoriesListEl) {
+      if (summary.categoryPercentages.length === 0) {
+        repartoBarEl.innerHTML = '<div style="width:100%; height:100%; background:#E2E8F0;"></div>';
+        categoriesListEl.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); grid-column:1/-1;">Sin gastos registrados en este período.</div>';
+      } else {
+        repartoBarEl.innerHTML = summary.categoryPercentages.map(cat => `
+          <div class="fjc-bar-segment" style="width:${cat.percent}%; background:${cat.color};" data-tooltip="${cat.category}: $${cat.amount.toLocaleString('es-AR')} (${cat.percent}%)" title="${cat.category}: $${cat.amount.toLocaleString('es-AR')} (${cat.percent}%)"></div>
+        `).join('');
+
+        categoriesListEl.innerHTML = summary.categoryPercentages.map(cat => `
+          <div class="fjc-cat-chip">
+            <div class="fjc-cat-chip-left">
+              <span class="fjc-cat-dot" style="background:${cat.color};"></span>
+              <strong>${cat.category}</strong>
+            </div>
+            <div>
+              <span style="font-weight:700;">$ ${cat.amount.toLocaleString('es-AR')}</span>
+              <small style="color:var(--text-muted); font-size:0.7rem; margin-left:0.25rem;">(${cat.percent}%)</small>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // 7. Consumo de Insumos & Trazabilidad Textil
+    const fabricsGridEl = document.getElementById('fjc-fabrics-breakdown');
+    if (fabricsGridEl) {
+      const fc = summary.fabricConsumption;
+      fabricsGridEl.innerHTML = `
+        <div class="fjc-fabric-card">
+          <div class="fjc-fabric-card__title">🌸 Satén Anti-frizz de Seda</div>
+          <div class="fjc-fabric-card__meters">${fc.satinMeters} metros</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Consumo en cofias regulables, scrunchies y fundas.</div>
+        </div>
+        <div class="fjc-fabric-card">
+          <div class="fjc-fabric-card__title">🌾 Lino Puro Lavado Crudo</div>
+          <div class="fjc-fabric-card__meters">${fc.linenMeters} metros</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Consumo en cestos reversibles, neceseres y portarrollos.</div>
+        </div>
+        <div class="fjc-fabric-card">
+          <div class="fjc-fabric-card__title">🧇 Nido de Abeja (Waffle)</div>
+          <div class="fjc-fabric-card__meters">${fc.waffleMeters} metros</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Consumo en repasadores rústicos de alta absorción.</div>
+        </div>
+      `;
+    }
+
+    // 8. Tabla de Movimientos / Gastos Filtrada
+    const expensesContainer = document.getElementById('workshop-expenses-list');
+    const expensesCountBadge = document.getElementById('fjc-expenses-count-badge');
+
+    if (expensesCountBadge) {
+      expensesCountBadge.textContent = `${summary.totalExpensesCount} gasto${summary.totalExpensesCount === 1 ? '' : 's'} en este período`;
+    }
+
+    if (expensesContainer) {
+      if (summary.filteredExpenses.length === 0) {
+        expensesContainer.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:1.25rem;">No hay gastos registrados en este período.</td></tr>';
+      } else {
+        expensesContainer.innerHTML = summary.filteredExpenses.map(exp => `
           <tr data-exp-id="${exp.id}">
-            <td>${exp.date}</td>
+            <td><strong style="color:var(--text-secondary);">${exp.date}</strong></td>
             <td><strong>${exp.concept}</strong></td>
-            <td><span class="client-order-badge" style="background:#FAF8F5; color:var(--text-secondary);">${exp.category}</span></td>
-            <td><strong style="color:#C62828;">$ ${exp.amount.toLocaleString('es-AR')}</strong></td>
+            <td><span class="client-order-badge" style="background:#FAF8F5; color:var(--text-secondary); border:1px solid var(--border-light);">${exp.category}</span></td>
+            <td><strong style="color:#C62828; font-size:0.95rem;">$ ${exp.amount.toLocaleString('es-AR')}</strong></td>
             <td>
               <button type="button" class="btn btn--admin-logout btn-exp-del" data-exp-id="${exp.id}" style="padding:0.25rem 0.6rem; font-size:0.72rem;">Borrar</button>
             </td>
@@ -2695,9 +2863,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         expensesContainer.querySelectorAll('.btn-exp-del').forEach(btn => {
           btn.addEventListener('click', () => {
             const expId = btn.getAttribute('data-exp-id');
-            if (confirm('¿Borrar este gasto?')) {
+            if (confirm('¿Borrar este gasto del taller?')) {
               window.WorkshopDB.deleteExpense(expId);
-              renderWorkshopFinances();
+              renderWorkshopFinances(currentSelectedFinancesMonth);
               showToast('Gasto eliminado.');
             }
           });
@@ -2705,11 +2873,10 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       }
     }
 
-    // Form Agregar Gasto
+    // 9. Formulario para Registrar Nuevo Gasto
     const formAddExp = document.getElementById('workshop-add-expense-form');
     if (formAddExp && !formAddExp.hasAttribute('data-bound')) {
       formAddExp.setAttribute('data-bound', 'true');
-      // Prellenar fecha de hoy
       const expDateInput = document.getElementById('exp-add-date');
       if (expDateInput) expDateInput.value = new Date().toISOString().split('T')[0];
 
@@ -2723,8 +2890,51 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         window.WorkshopDB.addExpense({ date, concept, category, amount });
         formAddExp.reset();
         if (expDateInput) expDateInput.value = new Date().toISOString().split('T')[0];
-        renderWorkshopFinances();
+        renderWorkshopFinances(currentSelectedFinancesMonth);
         showToast('Gasto registrado con éxito.');
+      });
+    }
+
+    // 10. Botones de Respaldo JSON Inmediato (Finanzas-JyC)
+    const btnDownloadBackup = document.getElementById('btn-fjc-download-backup');
+    if (btnDownloadBackup && !btnDownloadBackup.hasAttribute('data-bound')) {
+      btnDownloadBackup.setAttribute('data-bound', 'true');
+      btnDownloadBackup.addEventListener('click', () => {
+        const jsonStr = window.WorkshopDB.exportBackupJson();
+        const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `respaldo_taller_divina_locura_${nowStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Respaldo del taller descargado con éxito.');
+      });
+    }
+
+    const restoreInput = document.getElementById('fjc-restore-file-input');
+    if (restoreInput && !restoreInput.hasAttribute('data-bound')) {
+      restoreInput.setAttribute('data-bound', 'true');
+      restoreInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const res = window.WorkshopDB.importBackupJson(event.target.result);
+          if (res.success) {
+            orders = window.WorkshopDB.getOrders();
+            updateClientUi();
+            updateWorkshopCounters();
+            renderWorkshopFinances(currentSelectedFinancesMonth);
+            showToast('¡Respaldo restaurado correctamente!');
+          } else {
+            alert('Error al restaurar respaldo: ' + (res.error || 'Formato no reconocido'));
+          }
+        };
+        reader.readAsText(file);
       });
     }
   }
@@ -2755,6 +2965,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
   if (adminElenaStockBtn) {
     adminElenaStockBtn.addEventListener('click', () => openElenaWorkshopHub('stock'));
+  }
+  if (adminElenaFinancesBtn) {
+    adminElenaFinancesBtn.addEventListener('click', () => openElenaWorkshopHub('finances'));
   }
   if (elenaOrdersCloseBtn) {
     elenaOrdersCloseBtn.addEventListener('click', closeElenaWorkshopHub);

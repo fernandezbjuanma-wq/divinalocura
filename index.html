@@ -628,8 +628,11 @@
         <button type="button" class="btn-admin-bar" id="admin-elena-chat-btn" title="Chat directo con clientas">
           <span>💬 Chat Clientas (<strong id="admin-elena-chat-count">2</strong>)</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas, telas y gastos">
-          <span>🧵 Stock &amp; Finanzas</span>
+        <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas e inventario">
+          <span>🧵 Stock &amp; Telas</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-finances-btn" title="Dashboard de Producción &amp; Finanzas JyC">
+          <span>📊 Finanzas JyC</span>
         </button>
         <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-elena-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -1187,7 +1190,7 @@
           <span>🧵 Stock &amp; Telas</span>
         </button>
         <button type="button" class="workshop-tab-btn" data-wtab="finances">
-          <span>💰 Gastos &amp; Finanzas</span>
+          <span>📊 Finanzas JyC</span>
         </button>
       </nav>
 
@@ -1307,75 +1310,239 @@
         </div>
       </div>
 
-      <!-- PANE 5: GASTOS & FINANZAS DEL TALLER -->
+      <!-- PANE 5: GASTOS & FINANZAS DEL TALLER (DASHBOARD FINANZAS-JYC) -->
       <div class="workshop-tab-pane" id="wpane-finances">
-        <!-- Tarjetas de Resumen Financiero -->
-        <div class="workshop-finances-cards">
-          <div class="workshop-stat-card">
-            <div class="workshop-stat-label">Ingresos por Pedidos</div>
-            <div class="workshop-stat-value" id="fin-stat-income">$ 0</div>
-            <div class="workshop-stat-desc">Ventas totales registradas</div>
-          </div>
-          <div class="workshop-stat-card">
-            <div class="workshop-stat-label">Gastos Registrados</div>
-            <div class="workshop-stat-value workshop-stat-value--expense" id="fin-stat-expenses">$ 0</div>
-            <div class="workshop-stat-desc">Telas, hilos, packaging y envíos</div>
-          </div>
-          <div class="workshop-stat-card">
-            <div class="workshop-stat-label">Ganancia Neta del Taller</div>
-            <div class="workshop-stat-value workshop-stat-value--profit" id="fin-stat-profit">$ 0</div>
-            <div class="workshop-stat-desc" id="fin-stat-margin">Rendimiento positivo</div>
-          </div>
-        </div>
+        <div class="fjc-dashboard">
 
-        <!-- Formulario para Registrar Nuevo Gasto -->
-        <div class="workshop-add-expense-form">
-          <strong style="font-size:0.92rem; display:block; margin-bottom:0.75rem; color:var(--text-primary);">📝 Anotar un Gasto de Producción</strong>
-          <form id="workshop-add-expense-form" style="display:grid; grid-template-columns:1fr 2fr 1.5fr 1.5fr auto; gap:0.65rem; align-items:flex-end;">
-            <div>
-              <label class="workshop-field-label">Fecha</label>
-              <input type="date" id="exp-add-date" class="workshop-input" required />
+          <!-- HERO PANEL EJECUTIVO CON SELECTOR DE MES Y BALANCE NETO -->
+          <div class="fjc-panel">
+            <div class="fjc-panel-top">
+              <div class="fjc-panel-title-box">
+                <span class="fjc-tagline">Panel de Control &middot; Taller de Elena</span>
+                <h3 class="fjc-title">Dashboard de Producción &amp; Finanzas JyC</h3>
+              </div>
+              <div class="fjc-period-control">
+                <label for="fjc-select-month" style="font-size:0.78rem; color:#94A3B8; font-weight:600;">Período:</label>
+                <select id="fjc-select-month" class="fjc-month-select" aria-label="Seleccionar mes de análisis">
+                  <!-- Opciones inyectadas por JS -->
+                </select>
+              </div>
             </div>
-            <div>
-              <label class="workshop-field-label">Concepto / Detalle</label>
-              <input type="text" id="exp-add-concept" class="workshop-input" placeholder="Ej: Compra de 10m Lino en Once" required />
-            </div>
-            <div>
-              <label class="workshop-field-label">Categoría</label>
-              <select id="exp-add-category" class="workshop-select">
-                <option value="Telas">Telas</option>
-                <option value="Mercería">Mercería e Hilos</option>
-                <option value="Packaging">Cajas &amp; Bolsas</option>
-                <option value="Envíos">Fletes &amp; Envíos</option>
-                <option value="Herramientas">Máquinas &amp; Tijeras</option>
-                <option value="Varios">Otros gastos</option>
-              </select>
-            </div>
-            <div>
-              <label class="workshop-field-label">Monto ($ ARS)</label>
-              <input type="number" id="exp-add-amount" class="workshop-input" placeholder="Ej: 25000" min="1" required />
-            </div>
-            <button type="submit" class="btn-workshop-save" style="height:38px;">
-              <span>+ Anotar Gasto</span>
-            </button>
-          </form>
-        </div>
 
-        <!-- Historial de Gastos -->
-        <h4 style="font-family:var(--font-serif); font-size:1.05rem; margin-bottom:0.65rem;">Historial de Gastos del Taller</h4>
-        <div style="overflow-x:auto;">
-          <table class="workshop-expenses-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Concepto</th>
-                <th>Categoría</th>
-                <th>Monto</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody id="workshop-expenses-list"></tbody>
-          </table>
+            <!-- Cifra Principal: Balance Neto Real (Ingresos - Gastos) -->
+            <div class="fjc-balance-box">
+              <span class="fjc-balance-lbl">Balance Neto Real del Período</span>
+              <div class="fjc-cifra bien" id="fjc-net-balance">
+                <span id="fjc-net-symbol">$</span>
+                <span id="fjc-net-amount">0</span>
+                <span style="font-size:1.15rem; font-weight:600; opacity:0.85;">ARS</span>
+              </div>
+              <div class="fjc-chips-row">
+                <div class="fjc-chip fjc-chip--success" id="fjc-chip-margin">
+                  <span>📈 Margen Neto: <strong id="fjc-margin-val">0%</strong></span>
+                </div>
+                <div class="fjc-chip fjc-chip--info" id="fjc-chip-orders">
+                  <span>📋 <strong id="fjc-orders-count-val">0</strong> pedidos confeccionados</span>
+                </div>
+                <div class="fjc-chip fjc-chip--warning" id="fjc-chip-budget-status">
+                  <span id="fjc-budget-status-chip-text">🌿 Presupuesto: <strong>Controlado</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rejilla de 4 KPIs Estilo Finanzas-JyC -->
+            <div class="fjc-kpi-grid">
+              <!-- KPI 1: Ingresos de Pedidos -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Ingresos / Ventas</span>
+                  <span class="fjc-kpi-icon">🧺</span>
+                </div>
+                <div class="fjc-kpi-val" id="fjc-kpi-income">$ 0</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-income-sub">0 pedidos cobrados</div>
+              </div>
+
+              <!-- KPI 2: Consumo de Telas & Insumos -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Consumo de Telas</span>
+                  <span class="fjc-kpi-icon">✂️</span>
+                </div>
+                <div class="fjc-kpi-val" id="fjc-kpi-fabric">0 metros</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-fabric-sub">En piezas confeccionadas</div>
+              </div>
+
+              <!-- KPI 3: Gastos Registrados -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Gastos de Taller</span>
+                  <span class="fjc-kpi-icon">📉</span>
+                </div>
+                <div class="fjc-kpi-val" style="color:#FCA5A5;" id="fjc-kpi-expenses">$ 0</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-expenses-sub">Telas, hilos y fletes</div>
+              </div>
+
+              <!-- KPI 4: Rendimiento / Margen Operativo -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Rendimiento Operativo</span>
+                  <span class="fjc-kpi-icon">🌿</span>
+                </div>
+                <div class="fjc-kpi-val" style="color:#6EE7B7;" id="fjc-kpi-profit-ratio">0%</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-profit-sub">Razón ingreso / gasto</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LÍMITES DE CONSUMO & PRESUPUESTO MENSUAL (FINANZAS-JYC) -->
+          <div class="fjc-section-card fjc-budget-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>🛡️ Límites de Consumo &amp; Presupuesto Mensual</span>
+              </h4>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:0.85rem; color:var(--text-secondary);">Tope actual: <strong id="fjc-budget-display">$ 120.000 ARS</strong></span>
+                <button type="button" class="btn btn--secondary" id="btn-fjc-edit-budget" style="padding:0.25rem 0.65rem; font-size:0.75rem;">
+                  ✏️ Ajustar Tope
+                </button>
+              </div>
+            </div>
+
+            <div class="fjc-budget-info-row">
+              <div>
+                <span>Consumido: <strong id="fjc-budget-used">$ 0</strong> de <strong id="fjc-budget-total">$ 120.000</strong></span>
+              </div>
+              <div>
+                <strong id="fjc-budget-percentage" style="font-size:0.95rem;">0%</strong>
+              </div>
+            </div>
+
+            <div class="fjc-progress-track">
+              <div class="fjc-progress-fill fjc-progress-fill--ok" id="fjc-budget-bar" style="width:0%;"></div>
+            </div>
+
+            <div class="fjc-budget-foot">
+              <span id="fjc-budget-status-text">🌿 Consumo controlado &amp; saludable</span>
+              <span style="color:var(--text-muted); font-size:0.74rem;">Se emite alerta visual al superar el 80% y 100% del presupuesto</span>
+            </div>
+          </div>
+
+          <!-- REPARTO DE GASTOS POR CATEGORÍA (BARRA SEGMENTADA FINANZAS-JYC) -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📊 Reparto de Gastos por Categoría</span>
+              </h4>
+              <span style="font-size:0.78rem; color:var(--text-muted);" id="fjc-reparto-subtitle">Distribución porcentual de los costos</span>
+            </div>
+
+            <!-- Barra Segmentada Multicolor -->
+            <div class="fjc-segmented-bar" id="fjc-reparto-bar">
+              <!-- Segmentos inyectados por JS -->
+            </div>
+
+            <!-- Cuadrícula de Categorías con Montos y Porcentajes -->
+            <div class="fjc-categories-grid" id="fjc-categories-list">
+              <!-- Chips inyectados por JS -->
+            </div>
+          </div>
+
+          <!-- CONSUMO DE INSUMOS & TRAZABILIDAD TEXTIL -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>✂️ Trazabilidad de Telas &amp; Consumo en Pedidos</span>
+              </h4>
+              <span style="font-size:0.78rem; color:var(--text-muted);">Estimación de metraje utilizado por confección</span>
+            </div>
+            <div class="fjc-fabrics-summary-grid" id="fjc-fabrics-breakdown">
+              <!-- Tarjetas inyectadas por JS -->
+            </div>
+          </div>
+
+          <!-- REGISTRO RÁPIDO DE GASTOS / CONSUMOS -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📝 Anotar Nuevo Gasto o Consumo de Taller</span>
+              </h4>
+            </div>
+            <form id="workshop-add-expense-form" style="display:grid; grid-template-columns:1fr 2fr 1.5fr 1.5fr auto; gap:0.65rem; align-items:flex-end;">
+              <div>
+                <label class="workshop-field-label">Fecha</label>
+                <input type="date" id="exp-add-date" class="workshop-input" required />
+              </div>
+              <div>
+                <label class="workshop-field-label">Concepto / Detalle</label>
+                <input type="text" id="exp-add-concept" class="workshop-input" placeholder="Ej: Compra de 10m Lino en Once" required />
+              </div>
+              <div>
+                <label class="workshop-field-label">Categoría</label>
+                <select id="exp-add-category" class="workshop-select">
+                  <option value="Telas">Telas</option>
+                  <option value="Mercería">Mercería e Hilos</option>
+                  <option value="Packaging">Cajas &amp; Bolsas</option>
+                  <option value="Envíos">Fletes &amp; Envíos</option>
+                  <option value="Herramientas">Máquinas &amp; Tijeras</option>
+                  <option value="Varios">Otros gastos</option>
+                </select>
+              </div>
+              <div>
+                <label class="workshop-field-label">Monto ($ ARS)</label>
+                <input type="number" id="exp-add-amount" class="workshop-input" placeholder="Ej: 25000" min="1" required />
+              </div>
+              <button type="submit" class="btn-workshop-save" style="height:38px;">
+                <span>+ Anotar</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- HISTORIAL DE GASTOS Y MOVIMIENTOS -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📋 Movimientos &amp; Historial de Gastos</span>
+              </h4>
+              <span style="font-size:0.8rem; color:var(--text-secondary);" id="fjc-expenses-count-badge">0 gastos</span>
+            </div>
+            <div class="fjc-table-container">
+              <table class="fjc-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Concepto</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="workshop-expenses-list"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- BANNER DE RESPALDO JSON INMEDIATO (COMO EN FINANZAS-JYC) -->
+          <div class="fjc-backup-banner">
+            <div class="fjc-backup-banner__info">
+              <span class="fjc-backup-banner__title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Respaldo &amp; Seguridad de Datos del Taller (JSON)</span>
+              </span>
+              <span class="fjc-backup-banner__desc">Descargá una copia íntegra con todas las clientas, pedidos, stock, chats, gastos y límites.</span>
+            </div>
+            <div class="fjc-backup-actions">
+              <button type="button" class="btn-fjc-backup" id="btn-fjc-download-backup" title="Descargar archivo JSON completo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>📥 Descargar Respaldo JSON</span>
+              </button>
+              <label class="btn-fjc-restore" title="Restaurar base de datos desde un archivo JSON previo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <span>📤 Restaurar</span>
+                <input type="file" id="fjc-restore-file-input" accept=".json" style="display:none;" />
+              </label>
+            </div>
+          </div>
+
         </div>
       </div>
 

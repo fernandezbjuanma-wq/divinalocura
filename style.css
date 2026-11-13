@@ -4910,3 +4910,536 @@ body.admin-mode-active .catalog-item__admin-bar {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-light);
 }
+
+
+/* ==========================================================================
+   DASHBOARD EJECUTIVO FINANZAS-JYC (TALLER DE ELENA)
+   Inspirado en la arquitectura visual de Finanzas-JyC (jbra1990)
+   ========================================================================== */
+
+.fjc-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+/* Panel Principal (Hero Panel con degradado oscuro ejecutivo) */
+.fjc-panel {
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1.65rem 1.85rem;
+  color: #F8FAFC;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.fjc-panel::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.fjc-panel-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.15rem;
+}
+
+.fjc-panel-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fjc-tagline {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38BDF8;
+}
+
+.fjc-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.fjc-period-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fjc-month-select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.fjc-month-select option {
+  background: #1e293b;
+  color: #FFFFFF;
+}
+
+.fjc-month-select:hover,
+.fjc-month-select:focus {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #38BDF8;
+}
+
+/* Cifra Principal y Chips de Contexto */
+.fjc-balance-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.35rem;
+}
+
+.fjc-balance-lbl {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94A3B8;
+}
+
+.fjc-cifra {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.fjc-cifra.bien {
+  color: #34D399;
+  text-shadow: 0 0 24px rgba(52, 211, 153, 0.25);
+}
+
+.fjc-cifra.mal {
+  color: #F87171;
+  text-shadow: 0 0 24px rgba(248, 113, 113, 0.25);
+}
+
+.fjc-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.fjc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+.fjc-chip--success {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: rgba(52, 211, 153, 0.35);
+  color: #A7F3D0;
+}
+
+.fjc-chip--warning {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #FDE68A;
+}
+
+.fjc-chip--info {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #BAE6FD;
+}
+
+/* Rejilla de KPIs (4 Tarjetas estilo Finanzas-JyC) */
+.fjc-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 992px) {
+  .fjc-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .fjc-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fjc-kpi-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.fjc-kpi-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+}
+
+.fjc-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.fjc-kpi-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94A3B8;
+}
+
+.fjc-kpi-icon {
+  font-size: 1.15rem;
+}
+
+.fjc-kpi-val {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 0.3rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.fjc-kpi-sub {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  line-height: 1.35;
+}
+
+/* Tarjetas Blancas Funcionales de Apoyo */
+.fjc-section-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.fjc-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fjc-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Límites de Consumo & Presupuesto (Finanzas-JyC) */
+.fjc-budget-card {
+  border-left: 4px solid #38BDF8;
+}
+
+.fjc-budget-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.85rem;
+}
+
+.fjc-progress-track {
+  width: 100%;
+  height: 14px;
+  background: #E2E8F0;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.fjc-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fjc-progress-fill--ok {
+  background: linear-gradient(90deg, #10B981, #059669);
+}
+
+.fjc-progress-fill--warning {
+  background: linear-gradient(90deg, #F59E0B, #D97706);
+}
+
+.fjc-progress-fill--danger {
+  background: linear-gradient(90deg, #EF4444, #DC2626);
+}
+
+.fjc-budget-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* Reparto de Gastos por Categoría (Barra Segmentada Finanzas-JyC) */
+.fjc-segmented-bar {
+  width: 100%;
+  height: 16px;
+  background: #E2E8F0;
+  border-radius: 999px;
+  display: flex;
+  overflow: hidden;
+  margin: 0.85rem 0 1.15rem 0;
+}
+
+.fjc-bar-segment {
+  height: 100%;
+  transition: width 0.4s ease;
+  position: relative;
+}
+
+.fjc-bar-segment:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.fjc-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.65rem;
+}
+
+.fjc-cat-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAF8F5;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.fjc-cat-chip-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.fjc-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Control de Consumo de Telas & Producción */
+.fjc-fabrics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.fjc-fabric-card {
+  background: #FAF8F5;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fjc-fabric-card__title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.fjc-fabric-card__meters {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-terracotta);
+  margin-bottom: 0.25rem;
+}
+
+/* Tabla de Movimientos / Gastos (Finanzas-JyC) */
+.fjc-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #FFFFFF;
+}
+
+.fjc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.fjc-table th {
+  background: #F8FAFC;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fjc-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.fjc-table tr:hover {
+  background: #FAF8F5;
+}
+
+/* Barra de Respaldo y Exportación de Datos (Idéntica a Finanzas-JyC) */
+.fjc-backup-banner {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.fjc-backup-banner__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fjc-backup-banner__title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.fjc-backup-banner__desc {
+  font-size: 0.75rem;
+  color: #94A3B8;
+}
+
+.fjc-backup-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.btn-fjc-backup {
+  background: #38BDF8;
+  color: #0F172A;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-fjc-backup:hover {
+  background: #7DD3FC;
+  transform: translateY(-1px);
+}
+
+.btn-fjc-restore {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-fjc-restore:hover {
+  background: rgba(255, 255, 255, 0.18);
+}

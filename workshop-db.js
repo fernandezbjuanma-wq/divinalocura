@@ -13,6 +13,22 @@
   const KEY_STOCK_PRODUCTS = 'divinalocura_stock_products_db';
   const KEY_STOCK_MATERIALS = 'divinalocura_stock_materials_db';
   const KEY_EXPENSES = 'divinalocura_expenses_db';
+  const KEY_BUDGET = 'divinalocura_workshop_budget';
+
+  const CATEGORY_COLORS = {
+    'Telas': '#3B82F6',        // Azul textil
+    'Mercería': '#10B981',     // Verde esmeralda
+    'Packaging': '#8B5CF6',    // Violeta empaque
+    'Envíos': '#F59E0B',       // Ámbar logística
+    'Herramientas': '#EC4899', // Rosa máquinas y tijeras
+    'Varios': '#64748B'        // Pizarra neutra
+  };
+
+  const MONTH_NAMES = {
+    '01': 'Enero', '02': 'Febrero', '03': 'Marzo', '04': 'Abril',
+    '05': 'Mayo', '06': 'Junio', '07': 'Julio', '08': 'Agosto',
+    '09': 'Septiembre', '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
+  };
 
   // =========================================================================
   // SEED DATA INICIAL
@@ -456,7 +472,83 @@
     },
 
     // -----------------------------------------------------------------------
-    // GASTOS & BALANCE DE PRODUCCIÓN
+    // PRESUPUESTO & LÍMITES DE CONSUMO (INSPIRACIÓN FINANZAS-JYC)
+    // -----------------------------------------------------------------------
+    getBudget: function () {
+      const stored = localStorage.getItem(KEY_BUDGET);
+      return stored ? parseFloat(stored) : 120000; // $120.000 ARS por defecto
+    },
+
+    setBudget: function (amount) {
+      const num = Math.max(0, parseFloat(amount) || 0);
+      localStorage.setItem(KEY_BUDGET, num);
+      return num;
+    },
+
+    // Helper para normalizar fechas en formato 'YYYY-MM'
+    normalizeYearMonth: function (dateStr) {
+      if (!dateStr) return '';
+      // Si viene como DD/MM/YYYY
+      if (dateStr.includes('/')) {
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          const y = parts[2].trim().padStart(4, '20');
+          const m = parts[1].trim().padStart(2, '0');
+          return `${y}-${m}`;
+        }
+      }
+      // Si viene como YYYY-MM-DD
+      if (dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length >= 2) {
+          const y = parts[0].trim();
+          const m = parts[1].trim().padStart(2, '0');
+          return `${y}-${m}`;
+        }
+      }
+      return '';
+    },
+
+    // Obtener lista de meses disponibles para el selector 'sel-mes'
+    getAvailableMonths: function () {
+      const orders = this.getOrders();
+      const expenses = this.getExpenses();
+      const monthSet = new Set();
+
+      orders.forEach(o => {
+        const ym = this.normalizeYearMonth(o.date);
+        if (ym) monthSet.add(ym);
+      });
+
+      expenses.forEach(e => {
+        const ym = this.normalizeYearMonth(e.date);
+        if (ym) monthSet.add(ym);
+      });
+
+      // Asegurar que el mes actual siempre esté disponible
+      const now = new Date();
+      const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      monthSet.add(currentYM);
+
+      const sortedMonths = Array.from(monthSet).sort().reverse();
+      const list = [
+        { value: 'all', label: '📊 Todos los períodos (Histórico Total)' }
+      ];
+
+      sortedMonths.forEach(ym => {
+        const [y, m] = ym.split('-');
+        const name = MONTH_NAMES[m] || m;
+        list.push({
+          value: ym,
+          label: `🗓️ ${name} ${y}`
+        });
+      });
+
+      return list;
+    },
+
+    // -----------------------------------------------------------------------
+    // GASTOS & BALANCE DE PRODUCCIÓN (DASHBOARD FINANZAS-JYC)
     // -----------------------------------------------------------------------
     getExpenses: function () {
       return getJson(KEY_EXPENSES, SEED_EXPENSES);
@@ -483,14 +575,25 @@
       return expenses;
     },
 
-    getFinancialSummary: function () {
-      const orders = this.getOrders();
-      const expenses = this.getExpenses();
+    // Resumen financiero filtrado por mes (o 'all' para histórico)
+    getFinancialSummary: function (selectedMonth = 'all') {
+      const allOrders = this.getOrders();
+      const allExpenses = this.getExpenses();
+
+      // Filtrar por período seleccionado
+      const filteredOrders = allOrders.filter(ord => {
+        if (!selectedMonth || selectedMonth === 'all') return true;
+        return this.normalizeYearMonth(ord.date) === selectedMonth;
+      });
+
+      const filteredExpenses = allExpenses.filter(exp => {
+        if (!selectedMonth || selectedMonth === 'all') return true;
+        return this.normalizeYearMonth(exp.date) === selectedMonth;
+      });
 
       // Sumar ingresos de pedidos no cancelados
-      const totalIncome = orders.reduce((sum, ord) => {
+      const totalIncome = filteredOrders.reduce((sum, ord) => {
         if (ord.totalAmount) return sum + ord.totalAmount;
-        // Parse de items si no tiene totalAmount
         const itemsTotal = (ord.items || []).reduce((sub, item) => {
           const rawNum = String(item.price || '').replace(/[^0-9]/g, '');
           const priceNum = rawNum ? parseFloat(rawNum) : 0;
@@ -500,19 +603,157 @@
       }, 0);
 
       // Sumar gastos
-      const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+      const totalExpenses = filteredExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
 
       const netProfit = totalIncome - totalExpenses;
       const profitMargin = totalIncome > 0 ? Math.round((netProfit / totalIncome) * 100) : 0;
 
+      // Desglose por categoría para el componente de "Reparto del Mes"
+      const categoryTotals = {};
+      Object.keys(CATEGORY_COLORS).forEach(cat => {
+        categoryTotals[cat] = 0;
+      });
+
+      filteredExpenses.forEach(exp => {
+        const cat = exp.category || 'Varios';
+        if (!categoryTotals[cat]) categoryTotals[cat] = 0;
+        categoryTotals[cat] += (exp.amount || 0);
+      });
+
+      // Calcular porcentajes de reparto
+      const categoryPercentages = Object.keys(categoryTotals)
+        .map(cat => {
+          const amount = categoryTotals[cat];
+          const pct = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : '0.0';
+          return {
+            category: cat,
+            amount: amount,
+            percent: parseFloat(pct),
+            color: CATEGORY_COLORS[cat] || '#94A3B8'
+          };
+        })
+        .filter(item => item.amount > 0)
+        .sort((a, b) => b.amount - a.amount);
+
+      // Límites de consumo y presupuesto mensual
+      const budgetLimit = this.getBudget();
+      const budgetPercent = budgetLimit > 0 ? Math.min(100, Math.round((totalExpenses / budgetLimit) * 100)) : 0;
+      let budgetStatus = 'ok';
+      let budgetBadgeText = 'Dentro del límite presupuestario';
+
+      if (totalExpenses > budgetLimit) {
+        budgetStatus = 'danger';
+        budgetBadgeText = '🚨 Límite de consumo superado';
+      } else if (totalExpenses >= budgetLimit * 0.8) {
+        budgetStatus = 'warning';
+        budgetBadgeText = '⚠️ Advertencia (Cerca del tope)';
+      } else {
+        budgetStatus = 'ok';
+        budgetBadgeText = '🌿 Consumo controlado & saludable';
+      }
+
+      // Consumo estimado de insumos y telas en el período
+      const fabricConsumption = this.getFabricConsumption(selectedMonth);
+
       return {
+        selectedMonth,
         totalIncome,
         totalExpenses,
         netProfit,
         profitMargin,
-        totalOrdersCount: orders.length,
-        totalExpensesCount: expenses.length
+        totalOrdersCount: filteredOrders.length,
+        totalExpensesCount: filteredExpenses.length,
+        filteredOrders,
+        filteredExpenses,
+        categoryPercentages,
+        budgetLimit,
+        budgetPercent,
+        budgetStatus,
+        budgetBadgeText,
+        fabricConsumption
       };
+    },
+
+    // Consumo de telas e insumos basado en pedidos confeccionados
+    getFabricConsumption: function (selectedMonth = 'all') {
+      const orders = this.getOrders().filter(ord => {
+        if (!selectedMonth || selectedMonth === 'all') return true;
+        return this.normalizeYearMonth(ord.date) === selectedMonth;
+      });
+
+      let satinMeters = 0;
+      let linenMeters = 0;
+      let waffleMeters = 0;
+      let piecesFinished = 0;
+
+      orders.forEach(ord => {
+        (ord.items || []).forEach(item => {
+          const qty = item.qty || 1;
+          piecesFinished += qty;
+          const id = item.id || '';
+          if (id === 'p1' || id === 'p5') {
+            satinMeters += (2.2 * qty);
+          } else if (id === 'p2') {
+            waffleMeters += (0.9 * qty);
+          } else if (id === 'p3' || id === 'p4' || id === 'p6' || id === 'p8') {
+            linenMeters += (1.4 * qty);
+          } else {
+            linenMeters += (1.0 * qty);
+          }
+        });
+      });
+
+      return {
+        totalMeters: Math.round(satinMeters + linenMeters + waffleMeters),
+        piecesFinished,
+        satinMeters: Math.round(satinMeters),
+        linenMeters: Math.round(linenMeters),
+        waffleMeters: Math.round(waffleMeters)
+      };
+    },
+
+    // -----------------------------------------------------------------------
+    // RESPALDO COMPLETO DEL TALLER (JSON BACKUP EXPORT & IMPORT)
+    // Idéntico al botón de respaldo de Finanzas-JyC
+    // -----------------------------------------------------------------------
+    exportBackupJson: function () {
+      const backupData = {
+        meta: {
+          app: 'Divina Locura Deco - Taller de Elena & Finanzas JyC',
+          version: '2.0.0',
+          exportedAt: new Date().toISOString(),
+          readableDate: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')
+        },
+        clients: this.getClients(),
+        orders: this.getOrders(),
+        chats: this.getChats(),
+        stockProducts: this.getProductStock(),
+        stockMaterials: this.getMaterials(),
+        expenses: this.getExpenses(),
+        budget: this.getBudget()
+      };
+
+      return JSON.stringify(backupData, null, 2);
+    },
+
+    importBackupJson: function (jsonString) {
+      try {
+        const data = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+        if (!data || typeof data !== 'object') throw new Error('Formato JSON inválido');
+
+        if (Array.isArray(data.clients)) setJson(KEY_CLIENTS, data.clients);
+        if (Array.isArray(data.orders)) setJson(KEY_ORDERS, data.orders);
+        if (data.chats && typeof data.chats === 'object') setJson(KEY_CHATS, data.chats);
+        if (Array.isArray(data.stockProducts)) setJson(KEY_STOCK_PRODUCTS, data.stockProducts);
+        if (Array.isArray(data.stockMaterials)) setJson(KEY_STOCK_MATERIALS, data.stockMaterials);
+        if (Array.isArray(data.expenses)) setJson(KEY_EXPENSES, data.expenses);
+        if (typeof data.budget === 'number') localStorage.setItem(KEY_BUDGET, data.budget);
+
+        return { success: true, message: 'Respaldo restaurado con éxito' };
+      } catch (err) {
+        console.error('Error restaurando respaldo:', err);
+        return { success: false, error: err.message };
+      }
     }
   };
 
