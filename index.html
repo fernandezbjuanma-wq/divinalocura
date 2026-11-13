@@ -15,6 +15,9 @@
 
   <!-- Hoja de Estilos Principal -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Script de Interactividad (Vanilla JS) -->
+  <script src="main.js" defer></script>
 </head>
 <body>
 
@@ -89,14 +92,311 @@
 
       </div>
     </section>
-    
-    <!-- Fase 3: Catálogo CSS Grid (Lookbook) se insertará aquí -->
+
+    <!-- FASE 3 (PARTE A): CUADROS DE VISTA PREVIA POR CATEGORÍA (Inspiración directa Anthropologie) -->
+    <section class="category-previews" id="categorias" aria-labelledby="previews-title">
+      <div class="container">
+        
+        <header class="section-header">
+          <span class="section-eyebrow">Explorar por Colección</span>
+          <h2 class="section-title" id="previews-title">Categorías Artesanales</h2>
+          <p class="section-desc">Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.</p>
+        </header>
+
+        <!-- Cuadros con Imágenes de Vista Previa (Grid de 6 Columnas como en Anthropologie) -->
+        <div class="previews-grid">
+          
+          <a href="#catalogo" class="preview-card" data-category-target="hogar">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-cushions.jpg" alt="Almohadones y almohadoncitos de tusor" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver almohadones &amp; tusor</span>
+          </a>
+
+          <a href="#catalogo" class="preview-card" data-category-target="hogar">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-bedding.jpg" alt="Mantas, pie de cama y edredones" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver mantas &amp; edredones</span>
+          </a>
+
+          <a href="#catalogo" class="preview-card" data-category-target="hogar">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-table.jpg" alt="Mantelería, caminos de mesa y servilletas" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver mantelería &amp; cocina</span>
+          </a>
+
+          <a href="#catalogo" class="preview-card" data-category-target="organizacion">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-baskets.jpg" alt="Cestos contenedores en tela y gabardina" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver cestos organizadores</span>
+          </a>
+
+          <a href="#catalogo" class="preview-card" data-category-target="organizacion">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-necessaire.jpg" alt="Portacosméticos y neceseres acolchados" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver portacosméticos</span>
+          </a>
+
+          <a href="#catalogo" class="preview-card" data-category-target="cuidado-personal">
+            <div class="preview-card__image-box">
+              <img src="assets/images/cat-waffle.jpg" alt="Toallas nido de abeja y pads reutilizables" class="preview-card__img" loading="lazy" />
+            </div>
+            <span class="preview-card__link">ver toallas waffle &amp; spa</span>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FASE 3 (PARTE B) & FASE 4: CATÁLOGO CON CSS GRID ASIMÉTRICO (Estilo Lookbook Dribbble & Anthropologie) -->
+    <section class="catalog-section" id="catalogo" aria-labelledby="catalog-title">
+      <div class="container">
+        
+        <div class="catalog-header">
+          <div class="catalog-header__text">
+            <span class="section-eyebrow">Lookbook &middot; Catálogo Exclusivo</span>
+            <h2 class="section-title" id="catalog-title">Nuestras Creaciones</h2>
+            <p class="section-desc">Piezas utilitarias y decorativas pensadas para perdurar en el tiempo.</p>
+          </div>
+
+          <!-- Botonera de Filtros Interactiva (Fase 4) -->
+          <nav class="catalog-filters" aria-label="Filtros del catálogo">
+            <button class="filter-btn is-active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="hogar">Hogar</button>
+            <button class="filter-btn" data-filter="organizacion">Organización</button>
+            <button class="filter-btn" data-filter="cuidado-personal">Cuidado Personal</button>
+          </nav>
+        </div>
+
+        <!-- Grilla Asimétrica CSS Grid Lookbook -->
+        <div class="lookbook-grid" id="products-grid">
+
+          <!-- Producto 1: GRANDE (Ambientado Hogar) -->
+          <article class="catalog-item catalog-item--large" data-category="hogar">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-bedding.jpg" alt="Set Dormitorio Edredón Lino Tusor y Almohadones" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Pieza Central &middot; Hogar</span>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Hogar &amp; Descanso</span>
+                <span class="catalog-item__texture">Tusor pesado prelavado</span>
+              </div>
+              <h3 class="catalog-item__title">Set Dormitorio Lino &amp; Tusor Arena</h3>
+              <p class="catalog-item__desc">
+                Funda de plumón suave al tacto con costuras reforzadas a contratono y juego de dos almohadones terracota con solapa oculta.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 48.500 <small>/ medida standard o custom</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Set Dormitorio Lino & Tusor Arena" aria-label="Consultar por Set Dormitorio por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                  <svg class="btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 2: DETALLE / MEDIANO (Almohadones Hogar) -->
+          <article class="catalog-item catalog-item--medium" data-category="hogar">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-cushions.jpg" alt="Almohadones rústicos tusor desflecados" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Favorito</span>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Hogar</span>
+                <span class="catalog-item__texture">Algodón 100% puro</span>
+              </div>
+              <h3 class="catalog-item__title">Almohadones Tusor Desflecados</h3>
+              <p class="catalog-item__desc">
+                Terminación artesanal desflecada a mano con hilos expuestos y cierre reforzado.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 14.200</span>
+                <button class="btn btn--whatsapp" data-product-name="Almohadones Tusor Desflecados">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 3: DETALLE / PEQUEÑO (Mantelería Hogar) -->
+          <article class="catalog-item catalog-item--medium" data-category="hogar">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-table.jpg" alt="Camino de mesa y servilletas de gasa" class="catalog-item__img" loading="lazy" />
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Hogar &amp; Mesa</span>
+                <span class="catalog-item__texture">Gasa de algodón crudo</span>
+              </div>
+              <h3 class="catalog-item__title">Camino de Mesa con Servilletas</h3>
+              <p class="catalog-item__desc">
+                Caída liviana y etérea. Incluye 4 servilletas dobladas a mano con lazo de yute.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 18.900</span>
+                <button class="btn btn--whatsapp" data-product-name="Camino de Mesa con Servilletas">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 4: MEDIANO (Cestos Organización) -->
+          <article class="catalog-item catalog-item--medium" data-category="organizacion">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-baskets.jpg" alt="Trío de cestos contenedores en tela" class="catalog-item__img" loading="lazy" />
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Organización</span>
+                <span class="catalog-item__texture">Lienzo grueso &amp; gabardina</span>
+              </div>
+              <h3 class="catalog-item__title">Trío de Contenedores de Tela</h3>
+              <p class="catalog-item__desc">
+                Estructura firme y lavable con cuello rebatible para regular la altura.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 16.500 <small>/ set x3</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Trío de Contenedores de Tela">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 5: DETALLE / MEDIANO (Neceser Organización / Cuidado Personal) -->
+          <article class="catalog-item catalog-item--medium" data-category="organizacion">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-necessaire.jpg" alt="Neceser acolchado matelaseado con cierre" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Textil Acolchado</span>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Organización</span>
+                <span class="catalog-item__texture">Lino matelaseado &amp; interior impermeable</span>
+              </div>
+              <h3 class="catalog-item__title">Neceser Acolchado Terracota</h3>
+              <p class="catalog-item__desc">
+                Puntada acolchada con cierre de bronce antiguo y tirador en cuero ecológico.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 12.800</span>
+                <button class="btn btn--whatsapp" data-product-name="Neceser Acolchado Terracota">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 6: GRANDE (Cuidado Personal / Spa) -->
+          <article class="catalog-item catalog-item--large" data-category="cuidado-personal">
+            <div class="catalog-item__media">
+              <img src="assets/images/cat-waffle.jpg" alt="Set Spa Toallas Nido de Abeja y Eco-Pads" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Ritual &middot; Cuidado Personal</span>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Cuidado Personal</span>
+                <span class="catalog-item__texture">Nido de abeja 100% puro algodón</span>
+              </div>
+              <h3 class="catalog-item__title">Set Spa Toallas Waffle &amp; Eco-Pads</h3>
+              <p class="catalog-item__desc">
+                Dúo de toallas de mano tipo panal de absorción inmediata junto a 10 pads desmaquillantes reutilizables confeccionados con doble felpa hipoalergénica.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">$ 15.600 <small>/ kit completo</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Set Spa Toallas Waffle & Eco-Pads">
+                  <span>Pedir por WhatsApp</span>
+                  <svg class="btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN: EL TALLER DE ELENA -->
+    <section class="about-section" id="sobre-elena" aria-labelledby="about-title">
+      <div class="container about__inner">
+        <div class="about__text">
+          <span class="section-eyebrow">Manos Creadoras</span>
+          <h2 class="section-title" id="about-title">Confeccionado por Elena</h2>
+          <p class="about__lead">
+            Detrás de cada dobladillo, cada cierre y cada elección de tela está la pasión de Elena por transformar fibras nobles en objetos que brindan serenidad y calidez.
+          </p>
+          <p class="about__body">
+            En <strong>Divina Locura Deco</strong> no creemos en la producción masiva. Cada pieza se confecciona individualmente en nuestro taller, prelavando las telas para garantizar que mantengan su textura y dimensión original lavado tras lavado.
+          </p>
+          <div class="about__cta">
+            <a href="https://www.instagram.com/divina.locura.deco" target="_blank" rel="noopener noreferrer" class="btn btn--secondary">
+              <span>Seguir en Instagram @divina.locura.deco</span>
+            </a>
+          </div>
+        </div>
+        <div class="about__image-card">
+          <img src="assets/images/hero-textile.jpg" alt="Taller de costura artesanal de Elena" class="about__img" loading="lazy" />
+          <div class="about__quote">
+            <p>&ldquo;Coser es una forma de cuidar a quienes habitan el hogar.&rdquo;</p>
+            <span>&mdash; Elena</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNER DE CONTACTO WHATSAPP DIRECTO -->
+    <section class="whatsapp-banner" id="contacto">
+      <div class="container whatsapp-banner__inner">
+        <div class="whatsapp-banner__content">
+          <span class="whatsapp-banner__eyebrow">¿Tienes una medida especial o consulta?</span>
+          <h2 class="whatsapp-banner__title">Charlemos directamente por WhatsApp</h2>
+          <p class="whatsapp-banner__text">
+            Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio.
+          </p>
+        </div>
+        <div class="whatsapp-banner__action">
+          <button class="btn btn--whatsapp-banner btn--whatsapp" data-product-name="Consulta general sobre productos">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+            <span>Escribir a Elena</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Pie de Página Base -->
+  <!-- Pie de Página -->
   <footer class="site-footer">
     <div class="container site-footer__inner">
-      <p class="footer-copy">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="brand-name">Divina Locura</span>
+          <span class="brand-tag">DECO</span>
+          <p>Textiles artesanales y piezas utilitarias en tela por Elena.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#categorias">Categorías</a>
+          <a href="#catalogo">Catálogo</a>
+          <a href="#sobre-elena">El Taller</a>
+          <a href="https://www.instagram.com/divina.locura.deco" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
+      </div>
     </div>
   </footer>
 
