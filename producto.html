@@ -597,11 +597,24 @@
         <p class="admin-modal__desc">Base de datos de tus clientas, estado de pedidos, chat directo, stock de telas e insumos, y balance de producción.</p>
       </div>
 
-      <!-- Barra de pestañas (Tabs) intuitivas para Elena -->
+      <!-- Barra de pestañas (Tabs) intuitivas para Elena y Juanma -->
       <nav class="workshop-nav-tabs" aria-label="Secciones del taller">
-        <button type="button" class="workshop-tab-btn is-active" data-wtab="orders">
+        <button type="button" class="workshop-tab-btn is-active" data-wtab="dashboard">
+          <span>📊 Panel de Control</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="orders">
           <span>📋 Pedidos &amp; Entregas</span>
           <span class="workshop-tab-badge" id="workshop-orders-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="production">
+          <span>✂️ Producción &amp; Taller</span>
+          <span class="workshop-tab-badge" id="workshop-production-count">4</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="stock">
+          <span>🧵 Stock &amp; Insumos</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="finances">
+          <span>💰 Economía &amp; Ganancias</span>
         </button>
         <button type="button" class="workshop-tab-btn" data-wtab="clients">
           <span>👥 Mis Clientas</span>
@@ -611,20 +624,356 @@
           <span>💬 Chat con Clientas</span>
           <span class="workshop-tab-badge" id="workshop-chat-unread-count">0</span>
         </button>
-        <button type="button" class="workshop-tab-btn" data-wtab="stock">
-          <span>🧵 Stock &amp; Telas</span>
-        </button>
-        <button type="button" class="workshop-tab-btn" data-wtab="finances">
-          <span>📊 Balance &amp; Taller</span>
-        </button>
       </nav>
 
+      <!-- PANE 0: PANEL DE CONTROL CENTRALIZADO & GESTIÓN DEL NEGOCIO (MÉTRICAS, VISITAS, ECONOMÍA Y ACCESOS RÁPIDOS) -->
+      <div class="workshop-tab-pane is-active" id="wpane-dashboard">
+        <!-- Hero Ejecutivo: Métricas Clave del Negocio -->
+        <div class="biz-hero-card">
+          <div class="biz-hero-header">
+            <div class="biz-hero-tag">
+              <span class="biz-pulse-dot"></span>
+              <span>Tablero Ejecutivo &middot; Divina Locura Deco</span>
+            </div>
+            <div class="biz-hero-meta" id="biz-hero-timestamp">Actualizado en vivo</div>
+          </div>
+
+          <!-- 4 KPIs Clave -->
+          <div class="biz-kpi-grid">
+            <!-- KPI 1: Visitas & Tráfico -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Tráfico &amp; Visitas</span>
+                <span class="biz-kpi-icon">👁️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-visits">1.420</div>
+              <div class="biz-kpi-sub">
+                <span class="biz-trend-up">Hoy: <strong id="biz-kpi-today">64</strong></span> &middot; <span id="biz-kpi-uniques">985</span> únicas
+              </div>
+              <div class="biz-kpi-extra">Conversión: <strong id="biz-kpi-conv">0.4%</strong> a pedidos</div>
+            </div>
+
+            <!-- KPI 2: Pedidos & Facturación -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Pedidos &amp; Facturación</span>
+                <span class="biz-kpi-icon">🛍️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-revenue">$93.100</div>
+              <div class="biz-kpi-sub">
+                <strong id="biz-kpi-orders-count">5</strong> encargos registrados
+              </div>
+              <div class="biz-kpi-extra">Ticket promedio: <strong id="biz-kpi-avg-ticket">$18.620</strong></div>
+            </div>
+
+            <!-- KPI 3: Ganancia Neta & Rentabilidad -->
+            <div class="biz-kpi-card biz-kpi-card--highlight">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Ganancia Neta Real</span>
+                <span class="biz-kpi-icon">💰</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-netprofit">+$3.900</div>
+              <div class="biz-kpi-sub">
+                Margen operativo: <strong id="biz-kpi-margin">+4.2%</strong>
+              </div>
+              <div class="biz-kpi-extra" style="color:#A3E635;">✓ Taller con balance positivo</div>
+            </div>
+
+            <!-- KPI 4: Confección & Insumos -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Confección &amp; Taller</span>
+                <span class="biz-kpi-icon">✂️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-production">4 piezas</div>
+              <div class="biz-kpi-sub">
+                En taller activo actualmente
+              </div>
+              <div class="biz-kpi-extra" id="biz-kpi-stock-status">🧵 Stock de telas controlado</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fila de Analíticas: Gráfico Semanal + Canales de Origen -->
+        <div class="biz-analytics-row">
+          <!-- Gráfico Semanal Lun-Dom -->
+          <div class="biz-card-box">
+            <div class="biz-box-header">
+              <div>
+                <h4 class="biz-box-title">Flujo Semanal de Visitas &amp; Interacciones</h4>
+                <p class="biz-box-desc">Distribución de visitas recibidas en el Lookbook durante los últimos 7 días:</p>
+              </div>
+              <span class="biz-badge-soft">Última semana</span>
+            </div>
+            <div class="biz-bars-grid" id="biz-weekly-bars">
+              <!-- Renderizado dinámicamente con barras CSS -->
+            </div>
+          </div>
+
+          <!-- Fuentes de Tráfico -->
+          <div class="biz-card-box">
+            <div class="biz-box-header">
+              <div>
+                <h4 class="biz-box-title">Canales de Llegada de Clientas</h4>
+                <p class="biz-box-desc">Por dónde descubren las creaciones de Elena:</p>
+              </div>
+              <span class="biz-badge-soft">Orígenes</span>
+            </div>
+            <div class="biz-sources-list">
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>📸 Instagram &middot; @divinalocura.deco</span>
+                  <strong id="biz-source-ig-val">64%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--ig" style="width:64%;"></div>
+                </div>
+              </div>
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>💬 WhatsApp &middot; Recomendaciones &amp; Estados</span>
+                  <strong id="biz-source-wa-val">22%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--wa" style="width:22%;"></div>
+                </div>
+              </div>
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>🌐 Navegación Directa &middot; Tienda Web</span>
+                  <strong id="biz-source-direct-val">14%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--direct" style="width:14%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ranking de Piezas Más Vistas en Lookbook -->
+        <div class="biz-card-box" style="margin-top:1.25rem;">
+          <div class="biz-box-header">
+            <div>
+              <h4 class="biz-box-title">Creaciones Más Visitadas &middot; Lookbook Anthropologie</h4>
+              <p class="biz-box-desc">Las piezas textiles que despiertan mayor interés y consultas en la boutique:</p>
+            </div>
+            <span class="biz-badge-soft">Ranking de Interés</span>
+          </div>
+          <div class="biz-top-products-grid" id="biz-top-products-container">
+            <!-- Renderizado dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Lanzador Central de Todas las Opciones de Administrador -->
+        <div class="biz-quick-actions-section">
+          <div class="biz-box-header" style="margin-bottom:1rem;">
+            <div>
+              <h4 class="biz-box-title" style="font-size:1.1rem;">Centro de Operaciones &middot; Todas las Opciones de Administración</h4>
+              <p class="biz-box-desc">Accedé con un solo clic a cualquiera de las herramientas del taller:</p>
+            </div>
+          </div>
+          <div class="biz-quick-actions-grid">
+            <button type="button" class="biz-action-card" id="bact-new-product">
+              <span class="biz-action-icon">📸</span>
+              <div class="biz-action-texts">
+                <strong>+ Publicar Pieza</strong>
+                <span>Cargar nueva creación al catálogo</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-orders">
+              <span class="biz-action-icon">📋</span>
+              <div class="biz-action-texts">
+                <strong>Pedidos &amp; Entregas</strong>
+                <span>Gestionar encargos de clientas</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-production">
+              <span class="biz-action-icon">✂️</span>
+              <div class="biz-action-texts">
+                <strong>Control de Producción</strong>
+                <span>Etapas de corte, costura y empaque</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-stock">
+              <span class="biz-action-icon">🧵</span>
+              <div class="biz-action-texts">
+                <strong>Control de Stock &amp; Telas</strong>
+                <span>Metraje de satén, lino y piezas listas</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-finances">
+              <span class="biz-action-icon">💰</span>
+              <div class="biz-action-texts">
+                <strong>Economía &amp; Ganancias</strong>
+                <span>Gastos, presupuesto y balance limpio</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-clients">
+              <span class="biz-action-icon">👥</span>
+              <div class="biz-action-texts">
+                <strong>Directorio de Clientas</strong>
+                <span>Teléfonos, emails y fichas personales</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-chat">
+              <span class="biz-action-icon">💬</span>
+              <div class="biz-action-texts">
+                <strong>Chat con Clientas</strong>
+                <span>Mensajes directos desde la tienda</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-settings">
+              <span class="biz-action-icon">⚙️</span>
+              <div class="biz-action-texts">
+                <strong>Configuración Web</strong>
+                <span>Modificar títulos, frases y WhatsApp</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-backup">
+              <span class="biz-action-icon">💾</span>
+              <div class="biz-action-texts">
+                <strong>Respaldo Integral JSON</strong>
+                <span>Exportar base de datos del taller</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-github">
+              <span class="biz-action-icon">🐙</span>
+              <div class="biz-action-texts">
+                <strong>Publicar en GitHub</strong>
+                <span>Sincronizar cambios a internet</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-tutorial">
+              <span class="biz-action-icon">📖</span>
+              <div class="biz-action-texts">
+                <strong>Guía del Taller</strong>
+                <span>Tutorial paso a paso para Elena</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-switch-role">
+              <span class="biz-action-icon">🔄</span>
+              <div class="biz-action-texts">
+                <strong>Conmutar Perfil</strong>
+                <span>Alternar entre Elena y Juanma</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- PANE 1: PEDIDOS & ENTREGAS -->
-      <div class="workshop-tab-pane is-active" id="wpane-orders">
+      <div class="workshop-tab-pane" id="wpane-orders">
         <div class="elena-orders-empty" id="elena-orders-empty" style="display:none;">
           <p>Aún no hay pedidos registrados desde la tienda web.</p>
         </div>
         <div class="workshop-orders-grid" id="workshop-orders-list"></div>
+      </div>
+
+      <!-- PANE 1.5: CONTROL DE PRODUCCIÓN & CONFECCIÓN TEXTIL (PIPELINE DE COSTURA POR FASES) -->
+      <div class="workshop-tab-pane" id="wpane-production">
+        <!-- Overview del Pipeline de Confección -->
+        <div class="production-pipeline-card">
+          <div class="biz-box-header">
+            <div>
+              <h4 class="biz-box-title" style="font-size:1.15rem;">Pipeline de Confección Textil Artesanal</h4>
+              <p class="biz-box-desc">Monitoreo de cada pieza desde el corte de patrones hasta el empaque final:</p>
+            </div>
+            <button type="button" class="btn btn--secondary btn--sm" id="btn-toggle-add-production">+ Nueva Pieza a Producción</button>
+          </div>
+
+          <div class="production-phases-overview" id="production-phases-summary">
+            <!-- 5 Fases -->
+            <div class="phase-pill" data-phase="corte">
+              <span class="phase-pill__icon">✂️</span>
+              <div class="phase-pill__info">
+                <strong>1. Corte</strong>
+                <span class="phase-pill__count" id="phase-count-corte">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="costura">
+              <span class="phase-pill__icon">🪡</span>
+              <div class="phase-pill__info">
+                <strong>2. Costura</strong>
+                <span class="phase-pill__count" id="phase-count-costura">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="bordado">
+              <span class="phase-pill__icon">🧵</span>
+              <div class="phase-pill__info">
+                <strong>3. Bordado</strong>
+                <span class="phase-pill__count" id="phase-count-bordado">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="calidad">
+              <span class="phase-pill__icon">🔍</span>
+              <div class="phase-pill__info">
+                <strong>4. Calidad</strong>
+                <span class="phase-pill__count" id="phase-count-calidad">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="empaque">
+              <span class="phase-pill__icon">🎁</span>
+              <div class="phase-pill__info">
+                <strong>5. Empaque</strong>
+                <span class="phase-pill__count" id="phase-count-empaque">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario Ocultable para Ingresar Nueva Pieza a Producción -->
+        <div class="production-add-box" id="production-add-box" style="display:none; margin: 1.25rem 0;">
+          <h4 style="margin-top:0; margin-bottom:0.75rem; font-family:var(--font-serif); font-size:1.1rem; color:var(--text-primary);">Ingresar Pieza a la Cola de Confección</h4>
+          <form id="workshop-add-production-form" class="production-form-grid">
+            <div class="form-group">
+              <label for="prod-in-name">Pieza / Confección</label>
+              <input type="text" id="prod-in-name" class="form-input" placeholder="Ej: Gorro de Satén Champán" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-client">Clienta Destinataria</label>
+              <input type="text" id="prod-in-client" class="form-input" placeholder="Ej: Mariana Gómez" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-fabric">Tela / Insumo Requerido</label>
+              <input type="text" id="prod-in-fabric" class="form-input" placeholder="Ej: Satén Champán (1.2m)" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-phase">Fase Inicial</label>
+              <select id="prod-in-phase" class="form-input">
+                <option value="corte">1. Corte de Patrones</option>
+                <option value="costura">2. Costura &amp; Confección</option>
+                <option value="bordado">3. Bordado / Detalle</option>
+                <option value="calidad">4. Calidad &amp; Planchado</option>
+                <option value="empaque">5. Empaque &amp; Despacho</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-target">Fecha Pactada de Entrega</label>
+              <input type="text" id="prod-in-target" class="form-input" placeholder="Ej: 18 de Noviembre">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label for="prod-in-notes">Notas de Taller / Indicaciones Especiales</label>
+              <input type="text" id="prod-in-notes" class="form-input" placeholder="Ej: Con elástico reforzado suave y moño en lino crudo">
+            </div>
+            <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+              <button type="button" class="btn btn--secondary btn--sm" id="btn-cancel-add-production">Cancelar</button>
+              <button type="submit" class="btn btn--primary btn--sm">+ Agregar a Producción</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Cola de Piezas en Taller -->
+        <div style="margin-top:1.5rem;">
+          <h4 style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:0.75rem; color:var(--text-primary);">Piezas en Confección Activa (<span id="prod-queue-total-count">0</span>)</h4>
+          <div class="production-items-grid" id="workshop-production-list">
+            <!-- Renderizado dinámicamente con cards -->
+          </div>
+        </div>
       </div>
 
       <!-- PANE 2: DIRECTORIO DE CLIENTAS -->
@@ -978,20 +1327,26 @@
         <span class="role-badge-text">🌸 Elena &middot; Taller de Creaciones</span>
       </div>
       <div class="admin-bar__actions">
-        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-elena-tutorial-btn" title="Ver guía paso a paso para Elena">
-          <span>📖 Guía</span>
+        <button type="button" class="btn-admin-bar btn-admin-bar--dashboard" id="admin-elena-dashboard-btn" title="Panel de Control Ejecutivo &amp; Gestión del Negocio">
+          <span>📊 Panel de Control</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-elena-orders-btn" title="Ver base de datos de clientas y pedidos">
           <span>📋 Pedidos (<strong id="admin-elena-orders-count">0</strong>)</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-chat-btn" title="Chat directo con clientas">
-          <span>💬 Chat (<strong id="admin-elena-chat-count">0</strong>)</span>
+        <button type="button" class="btn-admin-bar" id="admin-elena-production-btn" title="Control de Producción &amp; Confección Textil">
+          <span>✂️ Producción (<strong id="admin-elena-production-count">4</strong>)</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-elena-stock-btn" title="Control de stock de piezas e insumos textiles">
           <span>🧵 Stock &amp; Telas</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-elena-finances-btn" title="Balance de Confección &amp; Taller">
-          <span>📊 Balance &amp; Taller</span>
+        <button type="button" class="btn-admin-bar" id="admin-elena-finances-btn" title="Economía de Taller &amp; Ganancias">
+          <span>💰 Ganancias</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-elena-chat-btn" title="Chat directo con clientas">
+          <span>💬 Chat (<strong id="admin-elena-chat-count">0</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-elena-tutorial-btn" title="Ver guía paso a paso para Elena">
+          <span>📖 Guía</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-elena-settings-btn" title="Configuración de frases, títulos, WhatsApp y anuncios">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -1025,20 +1380,26 @@
         <span class="role-badge-text">💻 Juanma &middot; Programador &amp; Sistema</span>
       </div>
       <div class="admin-bar__actions">
-        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-juanma-tutorial-btn" title="Ver guía paso a paso del taller">
-          <span>📖 Guía</span>
+        <button type="button" class="btn-admin-bar btn-admin-bar--dashboard" id="admin-juanma-dashboard-btn" title="Panel de Control Ejecutivo &amp; Gestión del Negocio">
+          <span>📊 Panel de Control</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-juanma-orders-btn" title="Ver base de datos de clientas y pedidos">
           <span>📋 Pedidos (<strong id="admin-juanma-orders-count">0</strong>)</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-juanma-chat-btn" title="Chat directo con clientas">
-          <span>💬 Chat (<strong id="admin-juanma-chat-count">0</strong>)</span>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-production-btn" title="Control de Producción &amp; Confección Textil">
+          <span>✂️ Producción (<strong id="admin-juanma-production-count">4</strong>)</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-juanma-stock-btn" title="Control de stock de piezas e insumos textiles">
           <span>🧵 Stock &amp; Telas</span>
         </button>
-        <button type="button" class="btn-admin-bar" id="admin-juanma-finances-btn" title="Balance de Confección &amp; Taller">
-          <span>📊 Balance &amp; Taller</span>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-finances-btn" title="Economía de Taller &amp; Ganancias">
+          <span>💰 Ganancias</span>
+        </button>
+        <button type="button" class="btn-admin-bar" id="admin-juanma-chat-btn" title="Chat directo con clientas">
+          <span>💬 Chat (<strong id="admin-juanma-chat-count">0</strong>)</span>
+        </button>
+        <button type="button" class="btn-admin-bar btn-admin-bar--tutorial" id="admin-juanma-tutorial-btn" title="Ver guía paso a paso del taller">
+          <span>📖 Guía</span>
         </button>
         <button type="button" class="btn-admin-bar" id="admin-dev-settings-btn" title="Configuración de frases, títulos, WhatsApp y anuncios">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -1053,7 +1414,7 @@
           <span>🐙 GitHub</span>
         </button>
         <button type="button" class="btn-admin-bar btn-admin-bar--accent" id="admin-new-juanma-btn" title="Publicar nueva creación artesanal">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
           <span>📸 + Creación</span>
         </button>
         <button type="button" class="btn-admin-bar btn-admin-bar--switch" id="admin-juanma-switch-role-btn" title="Cambiar rápidamente a la vista de Elena">

@@ -14,6 +14,8 @@
   const KEY_STOCK_MATERIALS = 'divinalocura_stock_materials_db';
   const KEY_EXPENSES = 'divinalocura_expenses_db';
   const KEY_BUDGET = 'divinalocura_workshop_budget';
+  const KEY_ANALYTICS = 'divinalocura_analytics_db';
+  const KEY_PRODUCTION = 'divinalocura_production_db';
 
   const CATEGORY_COLORS = {
     'Telas': '#C87D69',        // Terracota textil artesanal (identitario Divina Locura)
@@ -232,6 +234,91 @@
     { id: 'exp-5', date: '2026-11-12', concept: 'Tijera zig-zag y agujas de bordado para taller', category: 'Herramientas', amount: 12500 }
   ];
 
+  const SEED_ANALYTICS = {
+    totalVisits: 1420,
+    uniqueVisitors: 985,
+    todayVisits: 64,
+    sources: {
+      instagram: 64,
+      whatsapp: 22,
+      direct: 14
+    },
+    productViews: {
+      'p1': 412,
+      'p2': 298,
+      'p3': 245,
+      'p4': 210,
+      'p5': 380,
+      'p6': 195,
+      'p7': 140,
+      'p8': 260
+    },
+    weeklyHistory: [
+      { day: 'Lun', visits: 180, orders: 1, revenue: 23000 },
+      { day: 'Mar', visits: 210, orders: 0, revenue: 0 },
+      { day: 'Mié', visits: 260, orders: 1, revenue: 41600 },
+      { day: 'Jue', visits: 230, orders: 0, revenue: 0 },
+      { day: 'Vie', visits: 290, orders: 1, revenue: 28500 },
+      { day: 'Sáb', visits: 170, orders: 0, revenue: 0 },
+      { day: 'Dom', visits: 80,  orders: 0, revenue: 0 }
+    ]
+  };
+
+  const SEED_PRODUCTION = [
+    {
+      id: 'prod-001',
+      orderId: 'ORD-8421',
+      productName: 'Set Skincare & Antifrizz Completo (Cofia + Scrunchie)',
+      clientName: 'Mariana Gómez',
+      fabric: 'Satén Anti-frizz de Seda (Champán)',
+      metersRequired: 1.5,
+      phase: 'costura',
+      assignedDate: '11/11/2026',
+      targetDate: '18/11/2026',
+      priority: 'normal',
+      notes: 'Color champán sedoso con scrunchie a tono y elástico suave.'
+    },
+    {
+      id: 'prod-002',
+      orderId: 'ORD-7914',
+      productName: 'Conejita de Apego & Babero Bordado a Mano',
+      clientName: 'Valeria Martínez',
+      fabric: 'Lino Puro Crudo & Rayado Terracota',
+      metersRequired: 1.2,
+      phase: 'corte',
+      assignedDate: '09/11/2026',
+      targetDate: '21/11/2026',
+      priority: 'alta',
+      notes: 'Bordar con hilo de seda beige nombre "Emma" en cursiva.'
+    },
+    {
+      id: 'prod-003',
+      orderId: 'ORD-7914',
+      productName: 'Repasador Waffle & Lino Pesado (2 unidades)',
+      clientName: 'Valeria Martínez',
+      fabric: 'Nido de Abeja (Waffle) Puro Algodón',
+      metersRequired: 2.0,
+      phase: 'bordado',
+      assignedDate: '09/11/2026',
+      targetDate: '21/11/2026',
+      priority: 'normal',
+      notes: 'Tirita en cinta hilera de algodón espigada rústica.'
+    },
+    {
+      id: 'prod-004',
+      orderId: 'ORD-6502',
+      productName: 'Cofia Doble Faz Regulable Satén (2 unidades)',
+      clientName: 'Sofía Rodríguez',
+      fabric: 'Satén Perla & Rosa Viejo',
+      metersRequired: 1.8,
+      phase: 'empaque',
+      assignedDate: '04/11/2026',
+      targetDate: '07/11/2026',
+      priority: 'urgente',
+      notes: 'Lista y planchada. Empaquetada con ramita de lavanda.'
+    }
+  ];
+
   // =========================================================================
   // HELPER PARA LOCALSTORAGE CON FALLBACK SEGURO
   // =========================================================================
@@ -291,6 +378,16 @@
     // 6. Gastos
     if (!localStorage.getItem(KEY_EXPENSES)) {
       setJson(KEY_EXPENSES, SEED_EXPENSES);
+    }
+
+    // 7. Analíticas & Tráfico
+    if (!localStorage.getItem(KEY_ANALYTICS)) {
+      setJson(KEY_ANALYTICS, SEED_ANALYTICS);
+    }
+
+    // 8. Cola de Producción Textil
+    if (!localStorage.getItem(KEY_PRODUCTION)) {
+      setJson(KEY_PRODUCTION, SEED_PRODUCTION);
     }
   }
 
@@ -713,13 +810,174 @@
     },
 
     // -----------------------------------------------------------------------
+    // ANALÍTICAS DE TRÁFICO & VISITAS DEL NEGOCIO
+    // -----------------------------------------------------------------------
+    getAnalytics: function () {
+      return getJson(KEY_ANALYTICS, SEED_ANALYTICS);
+    },
+
+    trackVisit: function () {
+      const data = this.getAnalytics();
+      data.totalVisits = (data.totalVisits || 0) + 1;
+      data.todayVisits = (data.todayVisits || 0) + 1;
+      try {
+        if (!sessionStorage.getItem('divinalocura_visited_session')) {
+          data.uniqueVisitors = (data.uniqueVisitors || 0) + 1;
+          sessionStorage.setItem('divinalocura_visited_session', 'true');
+        }
+      } catch (e) {
+        // Fallback silencioso si sessionStorage está restringido
+      }
+      setJson(KEY_ANALYTICS, data);
+      return data;
+    },
+
+    trackProductView: function (productId) {
+      if (!productId) return;
+      const data = this.getAnalytics();
+      if (!data.productViews) data.productViews = {};
+      data.productViews[productId] = (data.productViews[productId] || 0) + 1;
+      setJson(KEY_ANALYTICS, data);
+      return data;
+    },
+
+    // -----------------------------------------------------------------------
+    // CONTROL DE PRODUCCIÓN & TALLER TEXTIL (COLA DE CONFECCIÓN)
+    // -----------------------------------------------------------------------
+    getProductionQueue: function () {
+      return getJson(KEY_PRODUCTION, SEED_PRODUCTION);
+    },
+
+    addProductionItem: function (item) {
+      const queue = this.getProductionQueue();
+      const newItem = {
+        id: 'prod-' + Date.now(),
+        orderId: item.orderId || 'Encargo Directo',
+        productName: item.productName || 'Pieza Textil Artesanal',
+        clientName: item.clientName || 'Clienta',
+        fabric: item.fabric || 'Satén / Lino',
+        metersRequired: parseFloat(item.metersRequired) || 1.0,
+        phase: item.phase || 'corte',
+        assignedDate: item.assignedDate || new Date().toLocaleDateString('es-AR'),
+        targetDate: item.targetDate || 'A coordinar',
+        priority: item.priority || 'normal',
+        notes: item.notes || ''
+      };
+      queue.unshift(newItem);
+      setJson(KEY_PRODUCTION, queue);
+      return newItem;
+    },
+
+    advanceProductionPhase: function (itemId) {
+      const phases = ['corte', 'costura', 'bordado', 'calidad', 'empaque', 'completado'];
+      const queue = this.getProductionQueue();
+      const item = queue.find(p => p.id === itemId);
+      if (item) {
+        const currentIdx = phases.indexOf(item.phase);
+        if (currentIdx >= 0 && currentIdx < phases.length - 1) {
+          item.phase = phases[currentIdx + 1];
+        } else if (currentIdx === phases.length - 1) {
+          item.phase = 'completado';
+        }
+        setJson(KEY_PRODUCTION, queue);
+        return item;
+      }
+      return null;
+    },
+
+    updateProductionPhase: function (itemId, phase) {
+      const queue = this.getProductionQueue();
+      const item = queue.find(p => p.id === itemId);
+      if (item) {
+        item.phase = phase;
+        setJson(KEY_PRODUCTION, queue);
+        return item;
+      }
+      return null;
+    },
+
+    deleteProductionItem: function (itemId) {
+      let queue = this.getProductionQueue();
+      queue = queue.filter(p => p.id !== itemId);
+      setJson(KEY_PRODUCTION, queue);
+      return queue;
+    },
+
+    // -----------------------------------------------------------------------
+    // RESUMEN CONSOLIDADO DEL NEGOCIO & ECONOMÍA
+    // -----------------------------------------------------------------------
+    getBusinessSummary: function () {
+      const analytics = this.getAnalytics();
+      const orders = this.getOrders();
+      const expenses = this.getExpenses();
+      const stock = this.getProductStock();
+      const materials = this.getMaterials();
+      const production = this.getProductionQueue();
+
+      let totalRevenue = 0;
+      let completedOrders = 0;
+      let inProgressOrders = 0;
+
+      orders.forEach(o => {
+        const amt = parseFloat(o.totalAmount) || 0;
+        totalRevenue += amt;
+        if (o.status === 'Entregado') {
+          completedOrders++;
+        } else {
+          inProgressOrders++;
+        }
+      });
+
+      let totalExpenses = 0;
+      expenses.forEach(e => {
+        totalExpenses += (parseFloat(e.amount) || 0);
+      });
+
+      const netProfit = totalRevenue - totalExpenses;
+      const profitMargin = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
+      const avgTicket = orders.length > 0 ? Math.round(totalRevenue / orders.length) : 0;
+      const conversionRate = analytics.totalVisits > 0 ? ((orders.length / analytics.totalVisits) * 100).toFixed(1) : '0.0';
+
+      const lowProductStock = stock.filter(p => p.inStock <= (p.minAlert || 2));
+      const lowMaterialStock = materials.filter(m => m.qty <= (m.minAlert || 5));
+      const totalAlertsCount = lowProductStock.length + lowMaterialStock.length;
+
+      const activeProduction = production.filter(p => p.phase !== 'completado');
+
+      return {
+        analytics,
+        totalVisits: analytics.totalVisits || 1420,
+        uniqueVisitors: analytics.uniqueVisitors || 985,
+        todayVisits: analytics.todayVisits || 64,
+        conversionRate,
+        sources: analytics.sources || { instagram: 64, whatsapp: 22, direct: 14 },
+        totalRevenue,
+        totalExpenses,
+        netProfit,
+        profitMargin,
+        avgTicket,
+        ordersCount: orders.length,
+        completedOrders,
+        inProgressOrders,
+        productionCount: activeProduction.length,
+        productionTotal: production.length,
+        productionQueue: production,
+        lowProductStock,
+        lowMaterialStock,
+        totalAlertsCount,
+        weeklyHistory: analytics.weeklyHistory || [],
+        productViews: analytics.productViews || {}
+      };
+    },
+
+    // -----------------------------------------------------------------------
     // RESPALDO INTEGRAL DEL TALLER (JSON BACKUP EXPORT & IMPORT)
     // -----------------------------------------------------------------------
     exportBackupJson: function () {
       const backupData = {
         meta: {
           app: 'Divina Locura Deco - Taller de Confección & Gestión Integral',
-          version: '2.5.0',
+          version: '3.0.0',
           exportedAt: new Date().toISOString(),
           readableDate: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')
         },
@@ -728,6 +986,8 @@
         chats: this.getChats(),
         stockProducts: this.getProductStock(),
         stockMaterials: this.getMaterials(),
+        production: this.getProductionQueue(),
+        analytics: this.getAnalytics(),
         expenses: this.getExpenses(),
         budget: this.getBudget()
       };
@@ -745,6 +1005,8 @@
         if (data.chats && typeof data.chats === 'object') setJson(KEY_CHATS, data.chats);
         if (Array.isArray(data.stockProducts)) setJson(KEY_STOCK_PRODUCTS, data.stockProducts);
         if (Array.isArray(data.stockMaterials)) setJson(KEY_STOCK_MATERIALS, data.stockMaterials);
+        if (Array.isArray(data.production)) setJson(KEY_PRODUCTION, data.production);
+        if (data.analytics && typeof data.analytics === 'object') setJson(KEY_ANALYTICS, data.analytics);
         if (Array.isArray(data.expenses)) setJson(KEY_EXPENSES, data.expenses);
         if (typeof data.budget === 'number') localStorage.setItem(KEY_BUDGET, data.budget);
 

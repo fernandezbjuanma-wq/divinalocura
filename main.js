@@ -606,6 +606,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const product = products.find(p => p.id === productId);
     if (!product || !lookbookModal) return;
 
+    if (window.WorkshopDB && typeof window.WorkshopDB.trackProductView === 'function') {
+      window.WorkshopDB.trackProductView(productId);
+    }
+
     currentLookbookProduct = product;
     currentSlideIndex = 0;
 
@@ -2189,6 +2193,10 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   // =========================================================================
   // 15. CENTRO DE GESTIÓN DEL TALLER DE ELENA (PEDIDOS, CLIENTAS, CHAT, STOCK & GASTOS)
   // =========================================================================
+  const adminElenaDashboardBtn = document.getElementById('admin-elena-dashboard-btn');
+  const adminJuanmaDashboardBtn = document.getElementById('admin-juanma-dashboard-btn');
+  const adminElenaProductionBtn = document.getElementById('admin-elena-production-btn');
+  const adminJuanmaProductionBtn = document.getElementById('admin-juanma-production-btn');
   const adminElenaChatBtn = document.getElementById('admin-elena-chat-btn');
   const adminElenaChatCount = document.getElementById('admin-elena-chat-count');
   const adminElenaStockBtn = document.getElementById('admin-elena-stock-btn');
@@ -2200,12 +2208,19 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     const allOrders = window.WorkshopDB.getOrders();
     const allClients = window.WorkshopDB.getClients();
     const allChats = window.WorkshopDB.getChats();
+    const allProduction = window.WorkshopDB.getProductionQueue ? window.WorkshopDB.getProductionQueue() : [];
+    const activeProduction = allProduction.filter(p => p.phase !== 'completado');
 
     // Contadores de barra admin (Elena y Juanma)
     const oCountElena = document.getElementById('admin-elena-orders-count');
     const oCountJuanma = document.getElementById('admin-juanma-orders-count');
     if (oCountElena) oCountElena.textContent = allOrders.length;
     if (oCountJuanma) oCountJuanma.textContent = allOrders.length;
+
+    const pCountElena = document.getElementById('admin-elena-production-count');
+    const pCountJuanma = document.getElementById('admin-juanma-production-count');
+    if (pCountElena) pCountElena.textContent = activeProduction.length;
+    if (pCountJuanma) pCountJuanma.textContent = activeProduction.length;
 
     const chatKeys = Object.keys(allChats);
     const cCountElena = document.getElementById('admin-elena-chat-count');
@@ -2216,6 +2231,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     // Contadores en las pestañas del modal
     const countOrdersTab = document.getElementById('workshop-orders-count');
     if (countOrdersTab) countOrdersTab.textContent = allOrders.length;
+
+    const countProductionTab = document.getElementById('workshop-production-count');
+    if (countProductionTab) countProductionTab.textContent = activeProduction.length;
 
     const countClientsTab = document.getElementById('workshop-clients-count');
     if (countClientsTab) countClientsTab.textContent = allClients.length;
@@ -2230,7 +2248,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
 
     const panes = {
+      dashboard: document.getElementById('wpane-dashboard'),
       orders: document.getElementById('wpane-orders'),
+      production: document.getElementById('wpane-production'),
       clients: document.getElementById('wpane-clients'),
       chat: document.getElementById('wpane-chat'),
       stock: document.getElementById('wpane-stock'),
@@ -2244,7 +2264,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       }
     });
 
+    if (tabKey === 'dashboard') renderWorkshopDashboard();
     if (tabKey === 'orders') renderWorkshopOrders();
+    if (tabKey === 'production') renderWorkshopProduction();
     if (tabKey === 'clients') renderWorkshopClients();
     if (tabKey === 'chat') renderWorkshopChat(activeChatPhone);
     if (tabKey === 'stock') renderWorkshopStock();
@@ -2258,6 +2280,345 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       switchWorkshopTab(tab);
     });
   });
+
+  // TAB 0: RENDER DEL PANEL DE CONTROL EJECUTIVO & MÉTRICAS DEL NEGOCIO
+  function renderWorkshopDashboard() {
+    if (!window.WorkshopDB) return;
+    const summary = window.WorkshopDB.getBusinessSummary();
+
+    // 1. Timestamp
+    const timeEl = document.getElementById('biz-hero-timestamp');
+    if (timeEl) {
+      timeEl.textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // 2. KPIs Clave
+    const elVisits = document.getElementById('biz-kpi-visits');
+    if (elVisits) elVisits.textContent = summary.totalVisits.toLocaleString('es-AR');
+
+    const elToday = document.getElementById('biz-kpi-today');
+    if (elToday) elToday.textContent = summary.todayVisits;
+
+    const elUniques = document.getElementById('biz-kpi-uniques');
+    if (elUniques) elUniques.textContent = summary.uniqueVisitors.toLocaleString('es-AR');
+
+    const elConv = document.getElementById('biz-kpi-conv');
+    if (elConv) elConv.textContent = summary.conversionRate + '%';
+
+    const elRev = document.getElementById('biz-kpi-revenue');
+    if (elRev) elRev.textContent = '$' + summary.totalRevenue.toLocaleString('es-AR');
+
+    const elOrdersCount = document.getElementById('biz-kpi-orders-count');
+    if (elOrdersCount) elOrdersCount.textContent = summary.ordersCount;
+
+    const elAvgTicket = document.getElementById('biz-kpi-avg-ticket');
+    if (elAvgTicket) elAvgTicket.textContent = '$' + summary.avgTicket.toLocaleString('es-AR');
+
+    const elNetProfit = document.getElementById('biz-kpi-netprofit');
+    if (elNetProfit) {
+      elNetProfit.textContent = (summary.netProfit >= 0 ? '+$' : '-$') + Math.abs(summary.netProfit).toLocaleString('es-AR');
+      elNetProfit.style.color = summary.netProfit >= 0 ? '#FAF8F5' : '#F87171';
+    }
+
+    const elMargin = document.getElementById('biz-kpi-margin');
+    if (elMargin) elMargin.textContent = (summary.profitMargin >= 0 ? '+' : '') + summary.profitMargin + '%';
+
+    const elProd = document.getElementById('biz-kpi-production');
+    if (elProd) elProd.textContent = summary.productionCount + ' en curso';
+
+    const elStockStatus = document.getElementById('biz-kpi-stock-status');
+    if (elStockStatus) {
+      if (summary.totalAlertsCount > 0) {
+        elStockStatus.textContent = '⚠️ ' + summary.totalAlertsCount + ' insumo(s) con stock bajo';
+        elStockStatus.style.color = '#FBBF24';
+      } else {
+        elStockStatus.textContent = '🧵 Stock de telas controlado';
+        elStockStatus.style.color = '#A99E96';
+      }
+    }
+
+    // 3. Fuentes de Tráfico
+    const s = summary.sources || { instagram: 64, whatsapp: 22, direct: 14 };
+    const igVal = document.getElementById('biz-source-ig-val');
+    if (igVal) igVal.textContent = s.instagram + '%';
+    const waVal = document.getElementById('biz-source-wa-val');
+    if (waVal) waVal.textContent = s.whatsapp + '%';
+    const dirVal = document.getElementById('biz-source-direct-val');
+    if (dirVal) dirVal.textContent = s.direct + '%';
+
+    // 4. Histograma Semanal de Visitas (Lun-Dom)
+    const barsContainer = document.getElementById('biz-weekly-bars');
+    if (barsContainer && Array.isArray(summary.weeklyHistory)) {
+      const maxVal = Math.max(...summary.weeklyHistory.map(h => h.visits), 1);
+      barsContainer.innerHTML = summary.weeklyHistory.map(h => {
+        const pctHeight = Math.max(15, Math.round((h.visits / maxVal) * 100));
+        return `
+          <div class="biz-bar-col" title="${h.day}: ${h.visits} visitas, ${h.orders} pedidos">
+            <span class="biz-bar-val">${h.visits}</span>
+            <div class="biz-bar-track">
+              <div class="biz-bar-fill" style="height:${pctHeight}%;"></div>
+            </div>
+            <span class="biz-bar-day">${h.day}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 5. Ranking de Creaciones Más Vistas en Lookbook
+    const topContainer = document.getElementById('biz-top-products-container');
+    if (topContainer) {
+      const pViews = summary.productViews || {};
+      const sorted = products.slice().sort((a, b) => (pViews[b.id] || 0) - (pViews[a.id] || 0)).slice(0, 4);
+      topContainer.innerHTML = sorted.map(p => {
+        const viewsCount = pViews[p.id] || (Math.floor(p.price / 40) + 120);
+        return `
+          <div class="biz-top-product-card" onclick="window.DivinaLocura.openLookbookModal('${p.id}')" style="cursor:pointer;" title="Ver pieza en el Lookbook">
+            <img src="${p.image}" alt="${p.title}" class="biz-top-product-thumb" loading="lazy">
+            <div class="biz-top-product-info">
+              <span class="biz-top-product-title">${p.title}</span>
+              <span class="biz-top-product-views">👁️ ${viewsCount} visitas &middot; $ ${p.price.toLocaleString('es-AR')}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 6. Conectar los 12 Botones de Lanzador Central
+    wireDashboardLauncher();
+  }
+
+  function wireDashboardLauncher() {
+    const actMap = {
+      'bact-new-product': () => openProductEditor(),
+      'bact-orders': () => switchWorkshopTab('orders'),
+      'bact-production': () => switchWorkshopTab('production'),
+      'bact-stock': () => switchWorkshopTab('stock'),
+      'bact-finances': () => switchWorkshopTab('finances'),
+      'bact-clients': () => switchWorkshopTab('clients'),
+      'bact-chat': () => switchWorkshopTab('chat'),
+      'bact-settings': () => openDevSettingsModal(),
+      'bact-backup': () => {
+        const jsonStr = window.WorkshopDB.exportBackupJson();
+        const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `respaldo_taller_divina_locura_${nowStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Respaldo integral JSON descargado.');
+      },
+      'bact-github': () => openGithubModal(),
+      'bact-tutorial': () => openElenaTutorial(),
+      'bact-switch-role': () => {
+        const newRole = currentRole === 'elena' ? 'juanma' : 'elena';
+        window.DivinaLocura.setRole(newRole);
+        showToast(`Perfil cambiado a: ${newRole === 'elena' ? 'Elena (Taller)' : 'Juanma (Programador)'}`);
+      }
+    };
+
+    Object.keys(actMap).forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn && !btn.hasAttribute('data-bound')) {
+        btn.setAttribute('data-bound', 'true');
+        btn.addEventListener('click', actMap[id]);
+      }
+    });
+  }
+
+  // TAB 1.5: RENDER DE CONTROL DE PRODUCCIÓN & CONFECCIÓN TEXTIL
+  function renderWorkshopProduction() {
+    if (!window.WorkshopDB) return;
+    const queue = window.WorkshopDB.getProductionQueue();
+    const listContainer = document.getElementById('workshop-production-list');
+
+    // Conteo por fases
+    const counts = { corte: 0, costura: 0, bordado: 0, calidad: 0, empaque: 0, completado: 0 };
+    queue.forEach(item => {
+      if (counts[item.phase] !== undefined) counts[item.phase]++;
+    });
+
+    const activeItems = queue.filter(item => item.phase !== 'completado');
+
+    const elCorte = document.getElementById('phase-count-corte');
+    if (elCorte) elCorte.textContent = counts.corte;
+    const elCostura = document.getElementById('phase-count-costura');
+    if (elCostura) elCostura.textContent = counts.costura;
+    const elBordado = document.getElementById('phase-count-bordado');
+    if (elBordado) elBordado.textContent = counts.bordado;
+    const elCalidad = document.getElementById('phase-count-calidad');
+    if (elCalidad) elCalidad.textContent = counts.calidad;
+    const elEmpaque = document.getElementById('phase-count-empaque');
+    if (elEmpaque) elEmpaque.textContent = counts.empaque;
+
+    const elTotal = document.getElementById('prod-queue-total-count');
+    if (elTotal) elTotal.textContent = activeItems.length;
+
+    const elTabCount = document.getElementById('workshop-production-count');
+    if (elTabCount) elTabCount.textContent = activeItems.length;
+
+    if (!listContainer) return;
+
+    if (queue.length === 0) {
+      listContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary); padding:2rem;">No hay piezas en cola de confección. Agregá una con el botón "+ Nueva Pieza a Producción".</p>';
+      return;
+    }
+
+    const phaseLabels = {
+      corte: '1. Corte de Patrones',
+      costura: '2. Costura & Confección',
+      bordado: '3. Bordado / Detalle',
+      calidad: '4. Calidad & Planchado',
+      empaque: '5. Empaque & Despacho',
+      completado: '✓ Confección Finalizada'
+    };
+
+    const phasePct = {
+      corte: 20,
+      costura: 40,
+      bordado: 60,
+      calidad: 80,
+      empaque: 95,
+      completado: 100
+    };
+
+    const nextPhaseName = {
+      corte: 'Avanzar a Costura ➔',
+      costura: 'Avanzar a Bordado ➔',
+      bordado: 'Avanzar a Calidad ➔',
+      calidad: 'Avanzar a Empaque ➔',
+      empaque: 'Finalizar Pieza ✓',
+      completado: 'Completado'
+    };
+
+    listContainer.innerHTML = queue.map(item => {
+      const isDone = item.phase === 'completado';
+      const pct = phasePct[item.phase] || 20;
+      return `
+        <div class="production-item-card" data-prod-id="${item.id}">
+          <div class="prod-card-top">
+            <div>
+              <h4 class="prod-card-title">${item.productName}</h4>
+              <div class="prod-card-client">👤 Clienta: <strong>${item.clientName}</strong> &middot; Ref: ${item.orderId}</div>
+            </div>
+            <span class="prod-phase-badge prod-phase-badge--${item.phase}">${phaseLabels[item.phase] || item.phase}</span>
+          </div>
+
+          <div class="prod-card-details">
+            <div>🧵 <strong>Insumo:</strong> ${item.fabric} (${item.metersRequired}m)</div>
+            <div>📅 <strong>Entrega pactada:</strong> ${item.targetDate} &middot; Inicio: ${item.assignedDate}</div>
+            ${item.notes ? `<div>📝 <em>${item.notes}</em></div>` : ''}
+          </div>
+
+          <div class="prod-card-progress">
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-secondary);">
+              <span>Avance de taller</span>
+              <strong>${pct}%</strong>
+            </div>
+            <div class="prod-progress-bar-bg">
+              <div class="prod-progress-bar-fill" style="width:${pct}%;"></div>
+            </div>
+          </div>
+
+          <div class="prod-card-actions">
+            ${!isDone ? `
+              <button type="button" class="btn-advance-phase" data-prod-id="${item.id}">
+                ${nextPhaseName[item.phase]}
+              </button>
+            ` : `
+              <span style="font-size:0.75rem; color:#065F46; font-weight:700;">✓ Lista para entregar</span>
+            `}
+            <button type="button" class="btn-delete-prod" data-prod-id="${item.id}" title="Eliminar de la cola de confección">
+              🗑️ Quitar
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Event listeners para avanzar fase y eliminar
+    listContainer.querySelectorAll('.btn-advance-phase').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-prod-id');
+        const updated = window.WorkshopDB.advanceProductionPhase(id);
+        if (updated) {
+          showToast(`Pieza avanzada a: ${phaseLabels[updated.phase] || updated.phase}`);
+          renderWorkshopProduction();
+          renderWorkshopDashboard();
+          updateWorkshopCounters();
+        }
+      });
+    });
+
+    listContainer.querySelectorAll('.btn-delete-prod').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-prod-id');
+        if (confirm('¿Quitar esta pieza de la cola de confección?')) {
+          window.WorkshopDB.deleteProductionItem(id);
+          showToast('Pieza quitada de confección.');
+          renderWorkshopProduction();
+          renderWorkshopDashboard();
+          updateWorkshopCounters();
+        }
+      });
+    });
+
+    // Formulario de ingreso a producción
+    wireAddProductionForm();
+  }
+
+  function wireAddProductionForm() {
+    const toggleBtn = document.getElementById('btn-toggle-add-production');
+    const cancelBtn = document.getElementById('btn-cancel-add-production');
+    const box = document.getElementById('production-add-box');
+    const form = document.getElementById('workshop-add-production-form');
+
+    if (toggleBtn && !toggleBtn.hasAttribute('data-bound')) {
+      toggleBtn.setAttribute('data-bound', 'true');
+      toggleBtn.addEventListener('click', () => {
+        if (box) box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      });
+    }
+
+    if (cancelBtn && !cancelBtn.hasAttribute('data-bound')) {
+      cancelBtn.setAttribute('data-bound', 'true');
+      cancelBtn.addEventListener('click', () => {
+        if (box) box.style.display = 'none';
+      });
+    }
+
+    if (form && !form.hasAttribute('data-bound')) {
+      form.setAttribute('data-bound', 'true');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const productName = document.getElementById('prod-in-name').value.trim();
+        const clientName = document.getElementById('prod-in-client').value.trim();
+        const fabric = document.getElementById('prod-in-fabric').value.trim();
+        const phase = document.getElementById('prod-in-phase').value;
+        const targetDate = document.getElementById('prod-in-target').value.trim() || 'A coordinar';
+        const notes = document.getElementById('prod-in-notes').value.trim();
+
+        window.WorkshopDB.addProductionItem({
+          productName,
+          clientName,
+          fabric,
+          phase,
+          targetDate,
+          notes
+        });
+
+        form.reset();
+        if (box) box.style.display = 'none';
+        showToast('Pieza ingresada a la cola de confección.');
+        renderWorkshopProduction();
+        renderWorkshopDashboard();
+        updateWorkshopCounters();
+      });
+    }
+  }
 
   // TAB 1: RENDER DE PEDIDOS & ENTREGAS (FECHA ESTIMADA, ESTADOS Y NOTA PARA LA CLIENTA)
   function renderWorkshopOrders() {
@@ -2981,7 +3342,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   // Apertura y Cierre del Centro de Gestión de Elena
-  function openElenaWorkshopHub(targetTab = 'orders') {
+  function openElenaWorkshopHub(targetTab = 'dashboard') {
     if (elenaOrdersModal) {
       updateWorkshopCounters();
       switchWorkshopTab(targetTab);
@@ -2998,11 +3359,25 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   // Conectar botones de la barra inferior para ambos perfiles (Elena & Juanma)
+  if (adminElenaDashboardBtn) {
+    adminElenaDashboardBtn.addEventListener('click', () => openElenaWorkshopHub('dashboard'));
+  }
+  if (adminJuanmaDashboardBtn) {
+    adminJuanmaDashboardBtn.addEventListener('click', () => openElenaWorkshopHub('dashboard'));
+  }
+
   if (adminElenaOrdersBtn) {
     adminElenaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
   }
   if (adminJuanmaOrdersBtn) {
     adminJuanmaOrdersBtn.addEventListener('click', () => openElenaWorkshopHub('orders'));
+  }
+
+  if (adminElenaProductionBtn) {
+    adminElenaProductionBtn.addEventListener('click', () => openElenaWorkshopHub('production'));
+  }
+  if (adminJuanmaProductionBtn) {
+    adminJuanmaProductionBtn.addEventListener('click', () => openElenaWorkshopHub('production'));
   }
 
   if (adminElenaChatBtn) {
@@ -3046,7 +3421,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     openChatbot,
     closeChatbot,
     openElenaTutorial,
+    openElenaDashboard: () => openElenaWorkshopHub('dashboard'),
     openElenaOrders: () => openElenaWorkshopHub('orders'),
+    openElenaProduction: () => openElenaWorkshopHub('production'),
     openElenaWorkshopHub,
     closeElenaWorkshopHub,
     openProductEditor,
@@ -3066,6 +3443,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   };
 
   // Inicializar Interfaz
+  if (window.WorkshopDB && typeof window.WorkshopDB.trackVisit === 'function') {
+    window.WorkshopDB.trackVisit();
+  }
   updateAdminUi();
   updateClientUi();
   updateCartUi();

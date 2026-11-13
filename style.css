@@ -5468,3 +5468,672 @@ body.admin-mode-active .catalog-item__admin-bar {
   background: rgba(255, 255, 255, 0.18);
 }
 
+/* ==========================================================================
+   16. PANEL DE CONTROL EJECUTIVO & GESTIÓN DEL NEGOCIO (MÉTRICAS, VISITAS, ECONOMÍA)
+   ========================================================================== */
+
+.btn-admin-bar--dashboard {
+  background: rgba(184, 107, 82, 0.18);
+  color: #FAF8F5;
+  border-color: rgba(184, 107, 82, 0.45);
+  font-weight: 700;
+}
+
+.btn-admin-bar--dashboard:hover {
+  background: var(--accent-terracotta);
+  border-color: var(--accent-terracotta);
+  color: #FFFFFF;
+}
+
+/* Hero Ejecutivo con Gradiente Oscuro de Lujo Artesanal */
+.biz-hero-card {
+  background: linear-gradient(135deg, #2A2522 0%, #38322E 100%);
+  color: #FAF8F5;
+  border-radius: var(--radius-md);
+  padding: 1.6rem 1.75rem;
+  margin-bottom: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.biz-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.biz-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #FAF8F5;
+}
+
+.biz-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #4ADE80;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  animation: bizPulse 2s infinite;
+}
+
+@keyframes bizPulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70% { box-shadow: 0 0 0 7px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.biz-hero-meta {
+  font-size: 0.75rem;
+  color: #C7BEB7;
+}
+
+/* Grilla de 4 KPIs Clave */
+.biz-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.biz-kpi-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all var(--transition-fast);
+}
+
+.biz-kpi-card:hover {
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-2px);
+}
+
+.biz-kpi-card--highlight {
+  background: rgba(184, 107, 82, 0.15);
+  border-color: rgba(184, 107, 82, 0.35);
+}
+
+.biz-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.biz-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #C7BEB7;
+}
+
+.biz-kpi-icon {
+  font-size: 1.1rem;
+}
+
+.biz-kpi-val {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #FAF8F5;
+  margin-bottom: 0.35rem;
+  line-height: 1.2;
+}
+
+.biz-kpi-sub {
+  font-size: 0.78rem;
+  color: #E2DBD5;
+  margin-bottom: 0.25rem;
+}
+
+.biz-kpi-extra {
+  font-size: 0.72rem;
+  color: #A99E96;
+}
+
+.biz-trend-up {
+  color: #4ADE80;
+  font-weight: 600;
+}
+
+/* Fila de Analíticas: Gráfico Semanal + Canales */
+.biz-analytics-row {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.25rem;
+}
+
+.biz-card-box {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.biz-box-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.15rem;
+  gap: 0.75rem;
+}
+
+.biz-box-title {
+  margin: 0 0 0.25rem 0;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.biz-box-desc {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.biz-badge-soft {
+  background: #F4EAE4;
+  color: #8E4A38;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Histograma Semanal de Visitas */
+.biz-bars-grid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 140px;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+  border-bottom: 1px dashed var(--border-medium);
+  gap: 0.5rem;
+}
+
+.biz-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.biz-bar-track {
+  width: 100%;
+  max-width: 28px;
+  background: #F4EFEA;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: flex-end;
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.biz-bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent-terracotta) 0%, #D48972 100%);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.biz-bar-day {
+  margin-top: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.biz-bar-val {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+/* Fuentes de Tráfico (Instagram, WhatsApp, Directo) */
+.biz-sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.biz-source-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.biz-source-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.biz-source-progress-bg {
+  width: 100%;
+  height: 8px;
+  background: #EFE9E4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.biz-source-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.biz-source-progress-fill--ig {
+  background: linear-gradient(90deg, #F58529, #DD2A7B, #8134AF);
+}
+
+.biz-source-progress-fill--wa {
+  background: #25D366;
+}
+
+.biz-source-progress-fill--direct {
+  background: #6366F1;
+}
+
+/* Ranking de Creaciones Más Vistas en Lookbook */
+.biz-top-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+.biz-top-product-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: #FAF8F5;
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  transition: all var(--transition-fast);
+}
+
+.biz-top-product-card:hover {
+  border-color: var(--accent-terracotta);
+  background: #FFFFFF;
+}
+
+.biz-top-product-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.biz-top-product-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.biz-top-product-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.biz-top-product-views {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+/* Centro de Operaciones & Accesos Rápidos del Administrador */
+.biz-quick-actions-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--border-medium);
+}
+
+.biz-quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+.biz-action-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.biz-action-card:hover {
+  border-color: var(--accent-terracotta);
+  box-shadow: 0 6px 18px rgba(184, 107, 82, 0.12);
+  transform: translateY(-2px);
+  background: #FFFDFB;
+}
+
+.biz-action-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F8F5F2;
+  border-radius: 8px;
+}
+
+.biz-action-card:hover .biz-action-icon {
+  background: #F4EAE4;
+}
+
+.biz-action-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.biz-action-texts strong {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+}
+
+.biz-action-texts span {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   17. CONTROL DE PRODUCCIÓN & CONFECCIÓN TEXTIL (PIPELINE DE COSTURA POR ETAPAS)
+   ========================================================================== */
+
+.production-pipeline-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.production-phases-overview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.phase-pill {
+  flex: 1;
+  min-width: 120px;
+  background: #FAF8F5;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.phase-pill:hover {
+  border-color: var(--accent-terracotta);
+  background: #FFFFFF;
+}
+
+.phase-pill__icon {
+  font-size: 1.15rem;
+}
+
+.phase-pill__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.phase-pill__info strong {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+.phase-pill__count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-terracotta);
+}
+
+.phase-pill__arrow {
+  color: var(--border-medium);
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Formulario Ocultable para Ingresar a Producción */
+.production-add-box {
+  background: #FFFFFF;
+  border: 1.5px dashed var(--accent-terracotta);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.5rem;
+}
+
+.production-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem 1rem;
+}
+
+/* Grid de Tarjetas de Piezas en Producción */
+.production-items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.production-item-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.85rem;
+  transition: all var(--transition-fast);
+}
+
+.production-item-card:hover {
+  border-color: var(--accent-terracotta);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.prod-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.prod-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.2rem 0;
+}
+
+.prod-card-client {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.prod-phase-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.prod-phase-badge--corte { background: #FEF3C7; color: #92400E; }
+.prod-phase-badge--costura { background: #E0E7FF; color: #3730A3; }
+.prod-phase-badge--bordado { background: #FCE7F3; color: #9D174D; }
+.prod-phase-badge--calidad { background: #E0F2FE; color: #075985; }
+.prod-phase-badge--empaque { background: #DCFCE7; color: #166534; }
+.prod-phase-badge--completado { background: #D1FAE5; color: #065F46; }
+
+.prod-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: #FAF8F5;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+}
+
+.prod-card-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.prod-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #EFE9E4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.prod-progress-bar-fill {
+  height: 100%;
+  background: var(--accent-terracotta);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.prod-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.btn-advance-phase {
+  background: var(--accent-terracotta);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-advance-phase:hover {
+  background: #A35A43;
+}
+
+.btn-delete-prod {
+  background: transparent;
+  color: #B91C1C;
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+}
+
+.btn-delete-prod:hover {
+  background: #FEE2E2;
+}
+
+/* Responsividad para Tablero y Producción */
+@media (max-width: 900px) {
+  .biz-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .biz-analytics-row {
+    grid-template-columns: 1fr;
+  }
+
+  .biz-top-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .biz-quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .production-items-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .biz-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biz-top-products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biz-quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .production-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
