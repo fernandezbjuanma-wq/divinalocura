@@ -2749,6 +2749,131 @@ body.admin-mode-active .catalog-item__admin-bar {
   line-height: 1.5;
 }
 
+/* Pestañas y Formulario de Cambio de Contraseña en Modal Flotante */
+.admin-modal-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  background: rgba(164, 90, 68, 0.08);
+  padding: 0.35rem;
+  border-radius: 999px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-modal-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7A726D;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-modal-tab.is-active {
+  background: #FFFFFF;
+  color: #A45A44;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.admin-active-session-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(164, 90, 68, 0.25);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.admin-active-session-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-active-session-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: #2B2625;
+  margin-bottom: 0.25rem;
+}
+
+.admin-active-session-desc {
+  font-size: 0.85rem;
+  color: #7A726D;
+  margin-bottom: 1.25rem;
+}
+
+.admin-active-session-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.btn-admin-modal-direct {
+  background: #A45A44;
+  color: #FFFFFF !important;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(164, 90, 68, 0.25);
+}
+
+.btn-admin-modal-direct:hover {
+  background: #8B4A37;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(164, 90, 68, 0.35);
+}
+
+.admin-change-pass-form {
+  background: #FFFFFF;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.admin-pass-msg {
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.admin-pass-msg--success {
+  background: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #C8E6C9;
+}
+
+.admin-pass-msg--error {
+  background: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
+}
+
 .admin-form-group {
   margin-bottom: 1.2rem;
 }

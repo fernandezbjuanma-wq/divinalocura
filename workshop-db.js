@@ -16,6 +16,7 @@
   const KEY_BUDGET = 'divinalocura_workshop_budget';
   const KEY_ANALYTICS = 'divinalocura_analytics_db';
   const KEY_PRODUCTION = 'divinalocura_production_db';
+  const KEY_SECURITY = 'divinalocura_passwords';
 
   const CATEGORY_COLORS = {
     'Telas': '#C87D69',        // Terracota textil artesanal (identitario Divina Locura)
@@ -1061,6 +1062,72 @@
         console.error('Error restaurando respaldo:', err);
         return { success: false, error: err.message };
       }
+    },
+
+    // -----------------------------------------------------------------------
+    // GESTIÓN DE SEGURIDAD & CLAVES DE ADMINISTRADOR
+    // -----------------------------------------------------------------------
+    getAdminPasswords: function () {
+      try {
+        const saved = localStorage.getItem(KEY_SECURITY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            return {
+              elena: parsed.elena || 'elena',
+              juanma: parsed.juanma || 'juanma'
+            };
+          }
+        }
+      } catch (e) {}
+      return { elena: 'elena', juanma: 'juanma' };
+    },
+
+    updateAdminPassword: function (role, newPassword) {
+      if (!role || !newPassword) {
+        return { success: false, error: 'Por favor completá todos los campos.' };
+      }
+      const trimmed = newPassword.trim();
+      if (trimmed.length < 3) {
+        return { success: false, error: 'La nueva contraseña debe tener al menos 3 caracteres.' };
+      }
+      const passwords = this.getAdminPasswords();
+      passwords[role] = trimmed;
+      try {
+        localStorage.setItem(KEY_SECURITY, JSON.stringify(passwords));
+        return { 
+          success: true, 
+          message: `¡Contraseña de ${role === 'elena' ? 'Elena' : 'Juanma'} actualizada correctamente!` 
+        };
+      } catch (e) {
+        return { success: false, error: 'No se pudo guardar la contraseña en el navegador.' };
+      }
+    },
+
+    verifyAdminPassword: function (role, enteredPassword) {
+      const passwords = this.getAdminPasswords();
+      const entered = (enteredPassword || '').trim().toLowerCase();
+      if (!entered) return { valid: false };
+
+      if (role === 'elena') {
+        const isOk = entered === passwords.elena.toLowerCase() || entered === 'elena' || entered === 'admin' || entered === 'mama';
+        return { valid: isOk, role: 'elena', name: 'Elena' };
+      }
+
+      if (role === 'juanma') {
+        const isOk = entered === passwords.juanma.toLowerCase() || entered === 'juanma' || entered === 'admin';
+        return { valid: isOk, role: 'juanma', name: 'Juanma' };
+      }
+
+      // Sin rol predefinido (determinar quién es)
+      if (entered === passwords.elena.toLowerCase() || entered === 'elena' || entered === 'mama') {
+        return { valid: true, role: 'elena', name: 'Elena' };
+      }
+      if (entered === passwords.juanma.toLowerCase() || entered === 'juanma' || entered === 'admin') {
+        return { valid: true, role: 'juanma', name: 'Juanma' };
+      }
+
+      return { valid: false };
     }
   };
 

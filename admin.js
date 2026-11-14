@@ -137,17 +137,32 @@
       const btn = document.getElementById('guard-login-btn');
 
       function doLogin() {
-        const p = (passInput ? passInput.value : '').trim().toLowerCase();
-        if (PASSWORDS.includes(p) || p === '') {
-          const role = (p === 'elena' || p === 'mama') ? 'elena' : 'juanma';
-          localStorage.setItem(STORAGE_KEY_ROLE, role);
+        const p = (passInput ? passInput.value : '').trim();
+        let targetRole = null;
+
+        if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
+          const check = window.WorkshopDB.verifyAdminPassword(null, p);
+          if (check.valid) {
+            targetRole = check.role || 'juanma';
+          }
+        }
+
+        if (!targetRole) {
+          const lower = p.toLowerCase();
+          if (PASSWORDS.includes(lower) || lower === '') {
+            targetRole = (lower === 'elena' || lower === 'mama') ? 'elena' : 'juanma';
+          }
+        }
+
+        if (targetRole) {
+          localStorage.setItem(STORAGE_KEY_ROLE, targetRole);
           if (guardEl) guardEl.style.display = 'none';
           if (contentEl) contentEl.style.display = 'block';
-          adminToast(role === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control!');
+          adminToast(targetRole === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control!');
           setupNavCounts();
           initActivePage();
         } else {
-          alert('Clave incorrecta. (Claves por defecto: elena o juanma)');
+          alert('Clave incorrecta. Si la cambiaste, ingresá tu nueva clave.');
         }
       }
 
@@ -1277,6 +1292,75 @@
           }
         };
         reader.readAsText(file);
+      });
+    }
+
+    // Configuración de Seguridad & Contraseñas (Elena & Juanma)
+    const passSuccessMsg = document.getElementById('cfg-pass-msg-success');
+    const passErrorMsg = document.getElementById('cfg-pass-msg-error');
+
+    function handleConfigPassChange(role, curInputId, newInputId) {
+      if (passSuccessMsg) passSuccessMsg.style.display = 'none';
+      if (passErrorMsg) passErrorMsg.style.display = 'none';
+
+      const curInput = document.getElementById(curInputId);
+      const newInput = document.getElementById(newInputId);
+      const curPass = curInput ? curInput.value.trim() : '';
+      const newPass = newInput ? newInput.value.trim() : '';
+
+      if (!window.WorkshopDB || !window.WorkshopDB.verifyAdminPassword) {
+        if (passErrorMsg) {
+          passErrorMsg.textContent = 'El módulo de seguridad no está disponible.';
+          passErrorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      const checkCurrent = window.WorkshopDB.verifyAdminPassword(role, curPass);
+      if (!checkCurrent.valid) {
+        if (passErrorMsg) {
+          passErrorMsg.textContent = `❌ La contraseña actual ingresada para ${role === 'elena' ? 'Elena' : 'Juanma'} no es correcta.`;
+          passErrorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      if (!newPass || newPass.length < 3) {
+        if (passErrorMsg) {
+          passErrorMsg.textContent = '❌ La nueva contraseña debe tener al menos 3 caracteres.';
+          passErrorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      const res = window.WorkshopDB.updateAdminPassword(role, newPass);
+      if (res.success) {
+        if (passSuccessMsg) {
+          passSuccessMsg.textContent = `✅ ¡La contraseña de ${role === 'elena' ? 'Elena' : 'Juanma'} se actualizó con éxito!`;
+          passSuccessMsg.style.display = 'block';
+        }
+        if (curInput) curInput.value = '';
+        if (newInput) newInput.value = '';
+        adminToast(`🔑 Clave de ${role === 'elena' ? 'Elena' : 'Juanma'} actualizada`);
+      } else {
+        if (passErrorMsg) {
+          passErrorMsg.textContent = `❌ Error: ${res.error || 'No se pudo guardar la clave.'}`;
+          passErrorMsg.style.display = 'block';
+        }
+      }
+    }
+
+    const btnSavePassElena = document.getElementById('btn-cfg-save-pass-elena');
+    if (btnSavePassElena) {
+      btnSavePassElena.addEventListener('click', () => {
+        handleConfigPassChange('elena', 'cfg-pass-elena-current', 'cfg-pass-elena-new');
+      });
+    }
+
+    const btnSavePassJuanma = document.getElementById('btn-cfg-save-pass-juanma');
+    if (btnSavePassJuanma) {
+      btnSavePassJuanma.addEventListener('click', () => {
+        handleConfigPassChange('juanma', 'cfg-pass-juanma-current', 'cfg-pass-juanma-new');
       });
     }
   }

@@ -175,7 +175,72 @@
 
       </form>
 
-      <!-- Bloque 3: Respaldo y Restauración -->
+      <!-- Bloque 3: Seguridad & Contraseñas de Administradores (Elena & Juanma) -->
+      <section class="admin-card">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Seguridad &amp; Contraseñas de Administrador</h3>
+            <div class="admin-card__subtitle">Modificá las claves de acceso al panel para Elena y Juanma en cualquier momento</div>
+          </div>
+        </div>
+
+        <div class="admin-pass-msg admin-pass-msg--success" id="cfg-pass-msg-success" style="display:none; margin-bottom:1.25rem; padding:0.85rem 1rem; background:#E8F5E9; color:#2E7D32; border-radius:6px; font-weight:600; font-size:0.88rem;"></div>
+        <div class="admin-pass-msg admin-pass-msg--error" id="cfg-pass-msg-error" style="display:none; margin-bottom:1.25rem; padding:0.85rem 1rem; background:#FFEBEE; color:#C62828; border-radius:6px; font-weight:600; font-size:0.88rem;"></div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+          
+          <!-- Clave Elena -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem;">
+              <span style="font-size:1.4rem;">🌸</span>
+              <div>
+                <h4 style="font-size:1rem; font-weight:700; color:#2B2625; margin:0;">Contraseña de Elena</h4>
+                <span style="font-size:0.75rem; color:#8C827A; text-transform:uppercase; letter-spacing:0.04em;">Taller Textil &amp; Confección</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem; color:#7A726D; margin-bottom:1rem; line-height:1.4;">Acceso a pedidos de clientas, cola de costura, catálogo y balance.</p>
+            
+            <div class="admin-form-group">
+              <label class="admin-label" for="cfg-pass-elena-current">Clave Actual</label>
+              <input type="password" id="cfg-pass-elena-current" class="admin-input" placeholder="Clave actual (def: elena)" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cfg-pass-elena-new">Nueva Clave</label>
+              <input type="password" id="cfg-pass-elena-new" class="admin-input" placeholder="Nueva clave (mín. 3 caracteres)" />
+            </div>
+            <button type="button" class="btn-admin-cta" id="btn-cfg-save-pass-elena" style="width:100%; margin-top:0.5rem;">
+              <span>💾 Actualizar Clave de Elena</span>
+            </button>
+          </div>
+
+          <!-- Clave Juanma -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem;">
+              <span style="font-size:1.4rem;">💻</span>
+              <div>
+                <h4 style="font-size:1rem; font-weight:700; color:#2B2625; margin:0;">Contraseña de Juanma</h4>
+                <span style="font-size:0.75rem; color:#8C827A; text-transform:uppercase; letter-spacing:0.04em;">Administración &amp; Finanzas</span>
+              </div>
+            </div>
+            <p style="font-size:0.82rem; color:#7A726D; margin-bottom:1rem; line-height:1.4;">Acceso completo a finanzas, economía, métricas y configuración.</p>
+            
+            <div class="admin-form-group">
+              <label class="admin-label" for="cfg-pass-juanma-current">Clave Actual</label>
+              <input type="password" id="cfg-pass-juanma-current" class="admin-input" placeholder="Clave actual (def: juanma)" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label" for="cfg-pass-juanma-new">Nueva Clave</label>
+              <input type="password" id="cfg-pass-juanma-new" class="admin-input" placeholder="Nueva clave (mín. 3 caracteres)" />
+            </div>
+            <button type="button" class="btn-admin-cta" id="btn-cfg-save-pass-juanma" style="width:100%; margin-top:0.5rem;">
+              <span>💾 Actualizar Clave de Juanma</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Bloque 4: Respaldo y Restauración -->
       <section class="admin-card">
         <div class="admin-card__header">
           <div>

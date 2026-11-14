@@ -1086,16 +1086,98 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
   }
 
+  // Pestañas del Modal de Administradores (Login vs Cambiar Contraseña)
+  function switchAdminModalTab(tabName) {
+    const tabLogin = document.getElementById('btn-tab-login');
+    const tabPass = document.getElementById('btn-tab-changepass');
+    const viewLogin = document.getElementById('auth-view-login');
+    const viewPass = document.getElementById('auth-view-changepass');
+    const successMsg = document.getElementById('pass-change-msg-success');
+    const errorMsg = document.getElementById('pass-change-msg-error');
+
+    if (successMsg) successMsg.style.display = 'none';
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    if (tabName === 'changepass') {
+      if (tabLogin) tabLogin.classList.remove('is-active');
+      if (tabPass) tabPass.classList.add('is-active');
+      if (viewLogin) viewLogin.style.display = 'none';
+      if (viewPass) viewPass.style.display = 'block';
+
+      const curInput = document.getElementById('pass-current-input');
+      if (curInput) {
+        curInput.value = '';
+        setTimeout(() => curInput.focus(), 100);
+      }
+      const newInput = document.getElementById('pass-new-input');
+      if (newInput) newInput.value = '';
+      const confInput = document.getElementById('pass-confirm-input');
+      if (confInput) confInput.value = '';
+    } else {
+      if (tabLogin) tabLogin.classList.add('is-active');
+      if (tabPass) tabPass.classList.remove('is-active');
+      if (viewLogin) viewLogin.style.display = 'block';
+      if (viewPass) viewPass.style.display = 'none';
+    }
+  }
+
+  const tabLoginBtn = document.getElementById('btn-tab-login');
+  if (tabLoginBtn) tabLoginBtn.addEventListener('click', () => switchAdminModalTab('login'));
+
+  const tabPassBtn = document.getElementById('btn-tab-changepass');
+  if (tabPassBtn) tabPassBtn.addEventListener('click', () => switchAdminModalTab('changepass'));
+
+  const btnSessionSwitchPass = document.getElementById('btn-session-switch-pass');
+  if (btnSessionSwitchPass) btnSessionSwitchPass.addEventListener('click', () => switchAdminModalTab('changepass'));
+
+  const btnCancelChangepass = document.getElementById('btn-cancel-changepass');
+  if (btnCancelChangepass) btnCancelChangepass.addEventListener('click', () => switchAdminModalTab('login'));
+
   function openTeamAdminLogin() {
     if (teamAdminModal) {
       teamAdminModal.classList.add('is-open');
-      if (passElenaInput) passElenaInput.value = '';
-      if (passJuanmaInput) passJuanmaInput.value = '';
-      if (passAdminInput) passAdminInput.value = '';
-      setTimeout(() => {
-        if (passElenaInput) passElenaInput.focus();
-        else if (passAdminInput) passAdminInput.focus();
-      }, 100);
+
+      // Volver a la pestaña login por defecto
+      switchAdminModalTab('login');
+
+      // Detectar si ya hay una sesión activa de Elena o Juanma
+      const activeRole = currentRole || localStorage.getItem(STORAGE_KEY_ROLE);
+      const activeSessionBox = document.getElementById('auth-active-session-box');
+      const profilesGrid = document.getElementById('auth-profiles-grid');
+      const sessionIcon = document.getElementById('auth-session-icon');
+      const sessionTitle = document.getElementById('auth-session-title');
+      const sessionDesc = document.getElementById('auth-session-desc');
+
+      if (activeRole) {
+        if (activeSessionBox) activeSessionBox.style.display = 'block';
+        if (profilesGrid) profilesGrid.style.display = 'none';
+
+        const isElena = activeRole === 'elena';
+        if (sessionIcon) sessionIcon.textContent = isElena ? '🌸' : '💻';
+        if (sessionTitle) {
+          sessionTitle.textContent = isElena 
+            ? 'Sesión activa de Elena (Taller Textil)' 
+            : 'Sesión activa de Juanma (Gestión & Finanzas)';
+        }
+        if (sessionDesc) {
+          sessionDesc.textContent = isElena
+            ? 'Tenés acceso directo al taller, pedidos de clientas, stock de telas y balance.'
+            : 'Tenés acceso directo a finanzas, economía, métricas y configuración integral.';
+        }
+
+        const roleRadio = document.querySelector(`input[name="pass-role-target"][value="${activeRole}"]`);
+        if (roleRadio) roleRadio.checked = true;
+      } else {
+        if (activeSessionBox) activeSessionBox.style.display = 'none';
+        if (profilesGrid) profilesGrid.style.display = 'grid';
+        if (passElenaInput) passElenaInput.value = '';
+        if (passJuanmaInput) passJuanmaInput.value = '';
+        if (passAdminInput) passAdminInput.value = '';
+        setTimeout(() => {
+          if (passElenaInput) passElenaInput.focus();
+          else if (passAdminInput) passAdminInput.focus();
+        }, 100);
+      }
     }
   }
 
@@ -1114,78 +1196,97 @@ document.addEventListener('DOMContentLoaded', () => {
   if (openAdminBtn) openAdminBtn.addEventListener('click', openTeamAdminLogin);
   if (teamAdminCancelBtn) teamAdminCancelBtn.addEventListener('click', closeTeamAdminLogin);
 
-  // Login de Elena (Taller Textil & Confección)
+  // Login de Elena (Taller Textil & Confección) -> Redirección directa al Panel de Control
   function handleElenaLogin() {
-    const pass = (passElenaInput ? passElenaInput.value : '').trim().toLowerCase();
-    const valid = (PASSWORDS.elena && PASSWORDS.elena.includes(pass)) || pass === '' || pass === 'elena' || pass === 'mama' || pass === 'admin';
-    if (valid) {
+    const pass = (passElenaInput ? passElenaInput.value : '').trim();
+    let isOk = false;
+
+    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
+      const check = window.WorkshopDB.verifyAdminPassword('elena', pass);
+      isOk = check.valid;
+    } else {
+      const lower = pass.toLowerCase();
+      isOk = (PASSWORDS.elena && PASSWORDS.elena.includes(lower)) || lower === 'elena' || lower === 'mama' || lower === 'admin';
+    }
+
+    if (isOk) {
       currentRole = 'elena';
       localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
       closeTeamAdminLogin();
       updateAdminUi();
 
-      const dockEl = document.getElementById('footer-admin-dock');
-      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
-      if (dockEl) {
-        dockEl.style.display = 'block';
-        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
-        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
-        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      showToast('🌸 ¡Bienvenida Elena! Panel de Taller y Control activado.');
+      showToast('🌸 ¡Bienvenida Elena! Redirigiendo al Panel de Control...');
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 350);
     } else {
-      alert('Clave incorrecta para Elena. (Podés ingresar con: elena)');
+      alert('Clave incorrecta para Elena. Si la cambiaste, ingresá tu nueva clave.');
     }
   }
 
-  // Login de Juanma (Administración & Finanzas)
+  // Login de Juanma (Administración & Finanzas) -> Redirección directa al Panel de Control
   function handleJuanmaLogin() {
-    const pass = (passJuanmaInput ? passJuanmaInput.value : '').trim().toLowerCase();
-    const valid = (PASSWORDS.juanma && PASSWORDS.juanma.includes(pass)) || pass === '' || pass === 'juanma' || pass === 'admin';
-    if (valid) {
+    const pass = (passJuanmaInput ? passJuanmaInput.value : '').trim();
+    let isOk = false;
+
+    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
+      const check = window.WorkshopDB.verifyAdminPassword('juanma', pass);
+      isOk = check.valid;
+    } else {
+      const lower = pass.toLowerCase();
+      isOk = (PASSWORDS.juanma && PASSWORDS.juanma.includes(lower)) || lower === 'juanma' || lower === 'admin';
+    }
+
+    if (isOk) {
       currentRole = 'juanma';
       localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
       closeTeamAdminLogin();
       updateAdminUi();
 
-      const dockEl = document.getElementById('footer-admin-dock');
-      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
-      if (dockEl) {
-        dockEl.style.display = 'block';
-        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
-        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
-        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      showToast('💻 ¡Bienvenido Juanma! Panel de Gestión y Control activado.');
+      showToast('💻 ¡Bienvenido Juanma! Redirigiendo al Panel de Control...');
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 350);
     } else {
-      alert('Clave incorrecta para Juanma. (Podés ingresar con: juanma o admin)');
+      alert('Clave incorrecta para Juanma. Si la cambiaste, ingresá tu nueva clave.');
     }
   }
 
-  // Login Unificado de Respaldo
+  // Login Unificado de Respaldo -> Redirección directa al Panel de Control
   function handleAdminLogin() {
-    const pass = (passAdminInput ? passAdminInput.value : '').trim().toLowerCase();
-    const valid = (PASSWORDS.admin && PASSWORDS.admin.includes(pass)) || pass === '' || pass === 'admin' || pass === 'juanma' || pass === 'elena';
-    if (valid) {
-      currentRole = (pass === 'elena' || pass === 'mama') ? 'elena' : 'juanma';
-      localStorage.setItem(STORAGE_KEY_ROLE, currentRole);
+    const pass = (passAdminInput ? passAdminInput.value : '').trim();
+    let isOk = false;
+    let targetRole = 'juanma';
+
+    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
+      const check = window.WorkshopDB.verifyAdminPassword(null, pass);
+      if (check.valid) {
+        isOk = true;
+        targetRole = check.role || 'juanma';
+      }
+    } else {
+      const lower = pass.toLowerCase();
+      if (lower === 'elena' || lower === 'mama') {
+        isOk = true;
+        targetRole = 'elena';
+      } else if (PASSWORDS.admin && PASSWORDS.admin.includes(lower)) {
+        isOk = true;
+        targetRole = 'juanma';
+      }
+    }
+
+    if (isOk) {
+      currentRole = targetRole;
+      localStorage.setItem(STORAGE_KEY_ROLE, targetRole);
       closeTeamAdminLogin();
       updateAdminUi();
 
-      const dockEl = document.getElementById('footer-admin-dock');
-      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
-      if (dockEl) {
-        dockEl.style.display = 'block';
-        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
-        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
-        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-
-      showToast(currentRole === 'elena' ? '🌸 ¡Bienvenida Elena! Panel activado.' : '💻 ¡Bienvenido Juanma! Panel activado.');
+      showToast(`✨ ¡Acceso concedido! Redirigiendo al Panel de Control...`);
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 350);
     } else {
-      alert('Clave incorrecta. (Claves por defecto: elena o juanma)');
+      alert('Clave incorrecta. Por favor ingresá tu clave de administrador.');
     }
   }
 
@@ -1216,6 +1317,81 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Guardar Nueva Contraseña de Administrador
+  const btnSaveNewPass = document.getElementById('btn-save-new-pass');
+  if (btnSaveNewPass) {
+    btnSaveNewPass.addEventListener('click', () => {
+      const targetRoleInput = document.querySelector('input[name="pass-role-target"]:checked');
+      const targetRole = targetRoleInput ? targetRoleInput.value : 'elena';
+      const curInput = document.getElementById('pass-current-input');
+      const newInput = document.getElementById('pass-new-input');
+      const confInput = document.getElementById('pass-confirm-input');
+      const successMsg = document.getElementById('pass-change-msg-success');
+      const errorMsg = document.getElementById('pass-change-msg-error');
+
+      const currentPass = curInput ? curInput.value.trim() : '';
+      const newPass = newInput ? newInput.value.trim() : '';
+      const confPass = confInput ? confInput.value.trim() : '';
+
+      if (successMsg) successMsg.style.display = 'none';
+      if (errorMsg) errorMsg.style.display = 'none';
+
+      if (!window.WorkshopDB || !window.WorkshopDB.verifyAdminPassword) {
+        if (errorMsg) {
+          errorMsg.textContent = 'El módulo de seguridad no está disponible en este momento.';
+          errorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      // 1. Validar contraseña actual
+      const checkCurrent = window.WorkshopDB.verifyAdminPassword(targetRole, currentPass);
+      if (!checkCurrent.valid) {
+        if (errorMsg) {
+          errorMsg.textContent = `❌ La contraseña actual ingresada para ${targetRole === 'elena' ? 'Elena' : 'Juanma'} no es correcta.`;
+          errorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      // 2. Validar longitud mínima
+      if (!newPass || newPass.length < 3) {
+        if (errorMsg) {
+          errorMsg.textContent = '❌ La nueva contraseña debe tener al menos 3 caracteres.';
+          errorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      // 3. Validar coincidencia
+      if (newPass !== confPass) {
+        if (errorMsg) {
+          errorMsg.textContent = '❌ La repetición de la contraseña no coincide con la nueva clave.';
+          errorMsg.style.display = 'block';
+        }
+        return;
+      }
+
+      // 4. Guardar en base de datos
+      const res = window.WorkshopDB.updateAdminPassword(targetRole, newPass);
+      if (res.success) {
+        if (successMsg) {
+          successMsg.textContent = `✅ ¡La contraseña de ${targetRole === 'elena' ? 'Elena' : 'Juanma'} se actualizó con éxito! Ya podés usarla para entrar.`;
+          successMsg.style.display = 'block';
+        }
+        if (curInput) curInput.value = '';
+        if (newInput) newInput.value = '';
+        if (confInput) confInput.value = '';
+        showToast(`🔑 Contraseña de ${targetRole === 'elena' ? 'Elena' : 'Juanma'} guardada`);
+      } else {
+        if (errorMsg) {
+          errorMsg.textContent = `❌ Error: ${res.error || 'No se pudo guardar la clave.'}`;
+          errorMsg.style.display = 'block';
+        }
+      }
+    });
+  }
+
   // Cierre de Sesión Unificado
   function logoutAdmin() {
     currentRole = null;
@@ -1227,11 +1403,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dockEl) dockEl.style.display = 'none';
     if (toggleBtn) {
       toggleBtn.setAttribute('aria-expanded', 'false');
-      toggleBtn.innerHTML = '<span>🔒 Administración ▾</span>';
+      toggleBtn.innerHTML = '<span>🔒 Administración</span>';
     }
+
+    const activeSessionBox = document.getElementById('auth-active-session-box');
+    const profilesGrid = document.getElementById('auth-profiles-grid');
+    if (activeSessionBox) activeSessionBox.style.display = 'none';
+    if (profilesGrid) profilesGrid.style.display = 'grid';
 
     showToast('Sesión de administración cerrada.');
   }
+
+  const btnSessionLogout = document.getElementById('btn-session-logout');
+  if (btnSessionLogout) btnSessionLogout.addEventListener('click', logoutAdmin);
 
   if (adminLogoutBtn) adminLogoutBtn.addEventListener('click', logoutAdmin);
   if (adminLogoutElenaBtn) adminLogoutElenaBtn.addEventListener('click', logoutAdmin);
@@ -1297,29 +1481,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const githubBtn = document.getElementById('dock-github-btn');
     const logoutBtn = document.getElementById('dock-logout-btn');
 
-    if (toggleBtn && dockEl) {
+    if (toggleBtn) {
       toggleBtn.addEventListener('click', (e) => {
         if (e) e.preventDefault();
-
-        // Si NO hay sesión iniciada (Elena o Juanma), abrir el modal de login y NUNCA el panel directamente
-        if (!currentRole) {
-          dockEl.style.display = 'none';
-          toggleBtn.setAttribute('aria-expanded', 'false');
-          openTeamAdminLogin();
-          return;
-        }
-
-        // Si está autenticado, alternar la visualización del panel
-        const isHidden = dockEl.style.display === 'none' || !dockEl.style.display;
-        if (isHidden) {
-          dockEl.style.display = 'block';
-          toggleBtn.setAttribute('aria-expanded', 'true');
-          updateFooterDockBadges();
-          dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-          dockEl.style.display = 'none';
-          toggleBtn.setAttribute('aria-expanded', 'false');
-        }
+        // NUNCA desplegar nada hacia abajo en la tienda pública
+        if (dockEl) dockEl.style.display = 'none';
+        toggleBtn.setAttribute('aria-expanded', 'false');
+        // Abrir siempre la ventana flotante centrada en medio de la pantalla
+        openTeamAdminLogin();
       });
     }
 
