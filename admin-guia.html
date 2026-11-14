@@ -3,28 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
   <title>Guía & Tutorial de Taller | Divina Locura Deco</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="style.css?v=20261114v4">
+  <link rel="stylesheet" href="admin.css?v=20261114v4">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="guia">
 
   <header class="admin-top-nav">
     <div class="admin-top-nav__inner">
-      <a href="admin.html" class="admin-brand-wrap">
+      <a href="index.html" class="admin-brand-wrap" title="Volver a la Tienda Divina Locura Deco">
         <span class="admin-brand-title">Divina Locura Deco</span>
-        <span class="admin-brand-badge">
-          <span class="admin-dot-pulse"></span>
-          <span>Panel de Control</span>
-        </span>
+        <span class="admin-brand-subtitle">Taller Textil &amp; Blanquería de Autor</span>
       </a>
 
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-control-subbar">
+    <div class="admin-control-subbar__inner">
+      <div class="admin-control-subbar__badge">
+        <span class="admin-dot-pulse"></span>
+        <span>Panel de Control</span>
+      </div>
+      <span class="admin-control-subbar__divider" aria-hidden="true"></span>
       <nav class="admin-nav-links" aria-label="Navegación del Panel">
         <a href="admin.html" class="admin-nav-link">
           <span>📊 Resumen</span>
@@ -57,20 +76,8 @@
           <span>📖 Guía</span>
         </a>
       </nav>
-
-      <div class="admin-top-actions">
-        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
-          <span>🛍️ Tienda Pública</span>
-        </a>
-        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
-          <span>💾 Respaldo</span>
-        </button>
-        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
-          <span>Salir</span>
-        </button>
-      </div>
     </div>
-  </header>
+  </div>
 
   <main class="admin-shell">
     
@@ -253,8 +260,8 @@
 
   </main>
 
-  <script src="products-data.js"></script>
-  <script src="workshop-db.js"></script>
-  <script src="admin.js"></script>
+  <script src="products-data.js?v=20261114v4"></script>
+  <script src="workshop-db.js?v=20261114v4"></script>
+  <script src="admin.js?v=20261114v4"></script>
 </body>
 </html>

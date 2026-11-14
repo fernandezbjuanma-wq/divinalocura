@@ -113,7 +113,46 @@
       oldBackLink.parentNode.removeChild(oldBackLink);
     }
 
-    // 2. Unificar el botón de retorno a la tienda en las acciones superiores derechas
+    // 2. Separar el Panel de Control en su propia barra independiente debajo de la barra "Divina Locura Deco"
+    const topNav = document.querySelector('.admin-top-nav');
+    const brandWrap = document.querySelector('.admin-brand-wrap');
+    const brandBadge = document.querySelector('.admin-brand-badge');
+    const navLinks = document.querySelector('.admin-nav-links');
+
+    if (brandWrap && !brandWrap.querySelector('.admin-brand-subtitle')) {
+      const sub = document.createElement('span');
+      sub.className = 'admin-brand-subtitle';
+      sub.textContent = 'Taller Textil & Blanquería de Autor';
+      brandWrap.appendChild(sub);
+    }
+
+    if (topNav && navLinks && !document.querySelector('.admin-control-subbar')) {
+      const subbar = document.createElement('div');
+      subbar.className = 'admin-control-subbar';
+      const subbarInner = document.createElement('div');
+      subbarInner.className = 'admin-control-subbar__inner';
+
+      if (brandBadge) {
+        brandBadge.className = 'admin-control-subbar__badge';
+        subbarInner.appendChild(brandBadge);
+      } else {
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'admin-control-subbar__badge';
+        badgeEl.innerHTML = '<span class="admin-dot-pulse"></span><span>Panel de Control</span>';
+        subbarInner.appendChild(badgeEl);
+      }
+
+      const divider = document.createElement('span');
+      divider.className = 'admin-control-subbar__divider';
+      divider.setAttribute('aria-hidden', 'true');
+      subbarInner.appendChild(divider);
+
+      subbarInner.appendChild(navLinks);
+      subbar.appendChild(subbarInner);
+      topNav.insertAdjacentElement('afterend', subbar);
+    }
+
+    // 3. Unificar el botón de retorno a la tienda en las acciones superiores derechas
     const storeBtn = document.querySelector('.btn-admin-nav--store');
     if (storeBtn) {
       storeBtn.innerHTML = `
@@ -126,7 +165,7 @@
       storeBtn.setAttribute('title', 'Volver al inicio de la tienda principal');
     }
 
-    // 3. Indicador de conexión a Google Sheets en la cabecera
+    // 4. Indicador de conexión a Google Sheets en la cabecera
     const topActions = document.querySelector('.admin-top-actions');
     if (topActions && !document.getElementById('admin-cloud-pill')) {
       const cloudPill = document.createElement('a');

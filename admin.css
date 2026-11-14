@@ -24,36 +24,30 @@ body.admin-body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 1. BARRA DE NAVEGACIÓN SUPERIOR (DOS NIVELES EDITORIALES — CERO RECORTES) */
+/* 1. BARRA 1: CABECERA SUPERIOR DE MARCA (DIVINA LOCURA DECO) */
 .admin-top-nav {
-  background: rgba(252, 250, 247, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: #FCFAF7;
   color: #2B2625;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 20px rgba(43, 38, 37, 0.04);
-  border-bottom: 1px solid #E3DAD0;
+  z-index: 1001;
+  border-bottom: 1px solid #E2D9CE;
 }
 
 .admin-top-nav__inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0.75rem 2rem 0.6rem;
+  padding: 0.75rem 2rem;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  row-gap: 0.6rem;
-  column-gap: 1.5rem;
+  gap: 1.5rem;
 }
 
 .admin-brand-wrap {
-  order: 1;
   display: flex;
-  align-items: center;
-  gap: 0.9rem;
+  align-items: baseline;
+  gap: 0.85rem;
   text-decoration: none;
   color: inherit;
   flex-shrink: 0;
@@ -61,45 +55,25 @@ body.admin-body {
 
 .admin-brand-title {
   font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-  font-size: 1.22rem;
+  font-size: 1.28rem;
   font-weight: 600;
   color: #2B2625;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.admin-brand-badge {
-  background: #F4ECE6;
-  color: #8E4A38;
-  border: 1px solid rgba(164, 90, 68, 0.22);
-  font-size: 0.66rem;
-  font-weight: 600;
-  padding: 0.24rem 0.7rem;
-  border-radius: 999px;
+.admin-brand-subtitle {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #8C7A6B;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+  padding-left: 0.85rem;
+  border-left: 1px solid #DED5CA;
 }
 
-.admin-dot-pulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #3B6E4C;
-  box-shadow: 0 0 0 3px rgba(59, 110, 76, 0.16);
-  animation: adminPulse 2.4s infinite;
-}
-
-@keyframes adminPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.55; transform: scale(0.88); }
-}
-
-/* Acciones en la Cabecera Superior Derecha (Fila 1) */
+/* Acciones en la Barra 1 (Derecha) */
 .admin-top-actions {
-  order: 2;
   margin-left: auto;
   display: flex;
   align-items: center;
@@ -108,17 +82,70 @@ body.admin-body {
   flex-wrap: wrap;
 }
 
-/* Segunda Fila Dedicada a las 9 Secciones del Taller (Visibilidad 100% Completa) */
+/* 2. BARRA 2: BARRA PROPIA E INDEPENDIENTE DEL PANEL DE CONTROL (DEBAJO) */
+.admin-control-subbar {
+  background: #EAE2D7;
+  border-bottom: 1px solid #D5C8B8;
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.05);
+  position: sticky;
+  top: 53px;
+  z-index: 1000;
+}
+
+.admin-control-subbar__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.55rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-brand-badge,
+.admin-control-subbar__badge {
+  background: #2B2625;
+  color: #FAF8F5;
+  border: 1px solid #2B2625;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.34rem 0.78rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.admin-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #52B788;
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.24);
+  animation: adminPulse 2.4s infinite;
+}
+
+@keyframes adminPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.88); }
+}
+
+.admin-control-subbar__divider {
+  width: 1px;
+  height: 22px;
+  background: #CEC1B0;
+  flex-shrink: 0;
+}
+
+/* Navegación de las 9 Secciones dentro de la Barra Propia del Panel de Control */
 .admin-nav-links {
-  order: 3;
-  flex: 1 1 100%;
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.35rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid #ECE5DC;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
@@ -129,37 +156,38 @@ body.admin-body {
 }
 
 .admin-nav-link {
-  color: #5C534E;
+  color: #4A423E;
   text-decoration: none;
-  font-size: 0.79rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0.46rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 0.44rem 0.82rem;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 0.42rem;
+  gap: 0.4rem;
   transition: all 0.2s ease;
   position: relative;
   border: 1px solid transparent;
 }
 
 .admin-nav-link:hover {
-  background: #EFEAE2;
+  background: rgba(252, 250, 247, 0.75);
   color: #2B2625;
+  border-color: #D5C8B8;
 }
 
 .admin-nav-link.is-active {
-  background: #2B2625;
+  background: #A45A44;
   color: #FAF8F5;
   font-weight: 600;
-  border-color: #2B2625;
-  box-shadow: 0 2px 8px rgba(43, 38, 37, 0.14);
+  border-color: #8E4A38;
+  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.25);
 }
 
 .admin-badge-count {
-  background: rgba(164, 90, 68, 0.14);
-  color: #9C4F3B;
+  background: rgba(43, 38, 37, 0.12);
+  color: #2B2625;
   padding: 0.12rem 0.45rem;
   border-radius: 999px;
   font-size: 0.68rem;
@@ -167,7 +195,7 @@ body.admin-body {
 }
 
 .admin-nav-link.is-active .admin-badge-count {
-  background: #B86B52;
+  background: rgba(255, 255, 255, 0.24);
   color: #FFFFFF;
 }
 
