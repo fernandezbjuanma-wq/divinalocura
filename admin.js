@@ -514,9 +514,12 @@
                 <input type="text" class="admin-input ctrl-order-note" placeholder="Detalle de tela, cintas o empaque..." value="${ord.workshopNote || ''}" />
               </div>
 
-              <div style="display:flex; gap:0.5rem;">
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                 <button type="button" class="btn-admin-cta btn-save-order" title="Guardar Cambios">
                   <span>Guardar</span>
+                </button>
+                <button type="button" class="btn-admin-outline btn-order-receipt-pdf" title="Generar Recibo / Orden de Taller Imprimible y PDF">
+                  <span>📄 Recibo PDF</span>
                 </button>
                 <a href="admin-chat.html?phone=${encodeURIComponent(ord.customer ? ord.customer.phone : '')}" class="btn-admin-outline" title="Chatear con Clienta">
                   <span>💬 Chat</span>
@@ -551,6 +554,18 @@
         });
       });
 
+      // Wire PDF Receipt handlers
+      listContainer.querySelectorAll('.btn-order-receipt-pdf').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const card = btn.closest('[data-order-id]');
+          const orderId = card.getAttribute('data-order-id');
+          const ord = window.WorkshopDB.getOrders().find(o => o.id === orderId);
+          if (ord) {
+            openAdminOrderReceiptModal(ord);
+          }
+        });
+      });
+
       // Wire delete handlers
       listContainer.querySelectorAll('.btn-delete-order').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -564,6 +579,138 @@
           }
         });
       });
+    }
+
+    function openAdminOrderReceiptModal(ord) {
+      let modal = document.getElementById('admin-receipt-pdf-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'admin-receipt-pdf-modal';
+        modal.className = 'admin-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        document.body.appendChild(modal);
+      }
+
+      const items = ord.items || [];
+      const total = ord.totalAmount || items.reduce((acc, i) => {
+        const num = parseInt(String(i.price || '0').replace(/[^0-9]/g, ''), 10) || 16500;
+        return acc + num * (i.qty || 1);
+      }, 0);
+      const deposit = ord.depositAmount != null ? ord.depositAmount : Math.round(total * 0.5);
+      const pending = ord.pendingBalance != null ? ord.pendingBalance : Math.max(0, total - deposit);
+
+      modal.innerHTML = `
+        <div class="admin-modal__card receipt-pdf-card" id="admin-printable-receipt">
+          <div class="receipt-pdf-top-actions no-print">
+            <span class="receipt-pdf-kicker">📄 ORDEN DE CONFECCIÓN & RECIBO DE TALLER</span>
+            <div style="display:flex; gap:0.5rem;">
+              <button type="button" class="btn-admin-cta" id="btn-admin-print-receipt" style="padding:0.45rem 0.95rem; font-size:0.78rem;">
+                <span>🖨️ Imprimir / Guardar en PDF</span>
+              </button>
+              <button type="button" class="btn-admin-outline" id="btn-admin-close-receipt" style="padding:0.45rem 0.85rem; font-size:0.78rem;">
+                <span>Cerrar ✕</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="receipt-sheet-body">
+            <div class="receipt-sheet-header">
+              <div>
+                <div class="receipt-brand-title">DIVINA LOCURA <span>DECO</span></div>
+                <div class="receipt-brand-sub">Atelier Textil &amp; Blanquería de Autor por Elena · Buenos Aires</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="receipt-order-num">ORDEN #${esc(ord.id)}</div>
+                <div class="receipt-order-date">Fecha: ${esc(ord.date || 'Reciente')} ${ord.time ? '· ' + esc(ord.time) : ''}</div>
+              </div>
+            </div>
+
+            <div class="receipt-client-grid">
+              <div>
+                <span class="receipt-meta-label">CLIENTA</span>
+                <strong>${esc(ord.customer ? ord.customer.name : 'Clienta')}</strong>
+              </div>
+              <div>
+                <span class="receipt-meta-label">WHATSAPP / TELÉFONO</span>
+                <strong>${esc(ord.customer ? ord.customer.phone : '-')}</strong>
+              </div>
+              <div>
+                <span class="receipt-meta-label">LOCALIDAD / ENTREGA</span>
+                <strong>${esc((ord.customer && ord.customer.address) ? ord.customer.address : 'A convenir')}</strong>
+              </div>
+              <div>
+                <span class="receipt-meta-label">ENTREGA ESTIMADA</span>
+                <strong>${esc(ord.estimatedDelivery || '5 a 7 días hábiles')}</strong>
+              </div>
+            </div>
+
+            <table class="receipt-items-table">
+              <thead>
+                <tr>
+                  <th>Cant.</th>
+                  <th>Pieza Textil &amp; Detalle de Confección</th>
+                  <th style="text-align:right;">Unitario</th>
+                  <th style="text-align:right;">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(i => {
+                  const uPrice = parseInt(String(i.price || '0').replace(/[^0-9]/g, ''), 10) || 16500;
+                  const sub = uPrice * (i.qty || 1);
+                  return `
+                    <tr>
+                      <td><strong>${i.qty || 1}x</strong></td>
+                      <td>
+                        <div style="font-weight:600; color:#2B2625;">${esc(i.title)}</div>
+                        ${i.note ? `<div style="font-size:0.76rem; color:#8F4F3D; margin-top:2px;">🪡 ${esc(i.note)}</div>` : ''}
+                      </td>
+                      <td style="text-align:right;">$ ${uPrice.toLocaleString('es-AR')}</td>
+                      <td style="text-align:right; font-weight:600;">$ ${sub.toLocaleString('es-AR')}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+
+            <div class="receipt-totals-box">
+              <div class="receipt-total-row receipt-total-row--main">
+                <span>VALOR TOTAL DEL ENCARGO:</span>
+                <strong>$ ${total.toLocaleString('es-AR')} ARS</strong>
+              </div>
+              <div class="receipt-total-row receipt-total-row--deposit">
+                <span>⏳ Seña de Confección (50% Anticipo):</span>
+                <strong>$ ${deposit.toLocaleString('es-AR')} ARS</strong>
+              </div>
+              <div class="receipt-total-row">
+                <span>📦 Saldo a Cobrar contra Entrega (50%):</span>
+                <strong>$ ${pending.toLocaleString('es-AR')} ARS</strong>
+              </div>
+            </div>
+
+            ${ord.workshopNote ? `
+              <div style="margin-top:0.85rem; padding:0.65rem 0.9rem; background:#FAF6F0; border-left:3px solid #A45A44; font-size:0.8rem; color:#4A433E;">
+                <strong>🌸 Nota de Taller de Elena:</strong> ${esc(ord.workshopNote)}
+              </div>
+            ` : ''}
+
+            <div class="receipt-footer-note">
+              <div>
+                <strong>Alias Mercado Pago / Transferencia:</strong> <code>DIVINA.LOCURA.DECO</code> · WhatsApp Taller: +54 9 11 3693-2471
+              </div>
+              <div style="margin-top:0.3rem; font-style:italic; color:#6E655F;">
+                “Confeccionado a mano con fibras nobles prelavadas en el taller de Divina Locura Deco.”
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.add('is-open');
+      const closeBtn = document.getElementById('btn-admin-close-receipt');
+      if (closeBtn) closeBtn.onclick = () => modal.classList.remove('is-open');
+      const printBtn = document.getElementById('btn-admin-print-receipt');
+      if (printBtn) printBtn.onclick = () => window.print();
     }
 
     if (searchInput) searchInput.addEventListener('input', renderOrders);
@@ -1105,6 +1252,136 @@
       });
     }
 
+    // =====================================================================
+    // CALCULADORA INTERACTIVA DE COSTOS DE CONFECCIÓN & PRECIO SUGERIDO
+    // =====================================================================
+    const calcProductSelect = document.getElementById('calc-product-select');
+    const calcFabricSelect = document.getElementById('calc-fabric-select');
+    const calcMetersInput = document.getElementById('calc-meters-input');
+    const calcFabricCostInput = document.getElementById('calc-fabric-cost-input');
+    const calcNotionsInput = document.getElementById('calc-notions-input');
+    const calcLaborInput = document.getElementById('calc-labor-input');
+    const calcMarginSelect = document.getElementById('calc-margin-select');
+    const btnCalcApplyPrice = document.getElementById('btn-calc-apply-price');
+
+    const PRESET_RECIPES = {
+      'p1': { meters: 1.15, notions: 2400, labor: 4500 },
+      'p2': { meters: 0.45, notions: 900, labor: 1800 },
+      'p3': { meters: 0.90, notions: 2200, labor: 3600 },
+      'p4': { meters: 0.65, notions: 2100, labor: 4800 },
+      'p5': { meters: 0.30, notions: 1100, labor: 2200 },
+      'p6': { meters: 0.40, notions: 1600, labor: 2500 },
+      'p7': { meters: 0.95, notions: 2300, labor: 4600 },
+      'p8': { meters: 0.50, notions: 1700, labor: 2900 }
+    };
+
+    if (calcProductSelect && window.WorkshopDB.getProducts) {
+      const prods = window.WorkshopDB.getProducts();
+      calcProductSelect.innerHTML = '<option value="">— Simular pieza libre —</option>' +
+        prods.map(p => `<option value="${esc(p.id)}">${esc(p.title)} (${esc(p.price || 'Consultar')})</option>`).join('');
+    }
+
+    if (calcFabricSelect && window.WorkshopDB.getMaterials) {
+      const mats = window.WorkshopDB.getMaterials();
+      if (mats && mats.length > 0) {
+        calcFabricSelect.innerHTML = mats.map(m =>
+          `<option value="${m.costPerUnit || 6500}">${esc(m.name)} ($ ${(m.costPerUnit || 6500).toLocaleString('es-AR')}/${m.unit || 'm'})</option>`
+        ).join('');
+        if (calcFabricCostInput && mats[0]) {
+          calcFabricCostInput.value = mats[0].costPerUnit || 6500;
+        }
+      }
+    }
+
+    let lastSuggestedRounded = 22200;
+
+    function recalculateWorkshopCost() {
+      const meters = Math.max(0.05, parseFloat(calcMetersInput ? calcMetersInput.value : 0.85) || 0.85);
+      const costPerMeter = Math.max(0, parseFloat(calcFabricCostInput ? calcFabricCostInput.value : 6800) || 0);
+      const notions = Math.max(0, parseFloat(calcNotionsInput ? calcNotionsInput.value : 1800) || 0);
+      const labor = Math.max(0, parseFloat(calcLaborInput ? calcLaborInput.value : 3500) || 0);
+      const markupFactor = parseFloat(calcMarginSelect ? calcMarginSelect.value : 1.0) || 1.0;
+
+      const fabricSub = Math.round(meters * costPerMeter);
+      const unitCost = Math.round(fabricSub + notions + labor);
+      const rawSuggested = unitCost * (1 + markupFactor);
+      // Redondear a múltiplos de $ 100 ARS para precio comercial prolijo
+      const suggestedPrice = Math.ceil(rawSuggested / 100) * 100;
+      lastSuggestedRounded = suggestedPrice;
+
+      const deposit50 = Math.round(suggestedPrice * 0.5);
+      // Ganancia limpia en bolsillo de Elena (incluye su mano de obra + margen neto sobre materiales)
+      const netInPocket = Math.max(0, suggestedPrice - (fabricSub + notions));
+
+      const lblMeters = document.getElementById('calc-out-meters-lbl');
+      const outFabricSub = document.getElementById('calc-out-fabric-sub');
+      const outUnitCost = document.getElementById('calc-out-unit-cost');
+      const outSuggested = document.getElementById('calc-out-suggested-price');
+      const outDeposit = document.getElementById('calc-out-deposit');
+      const outNetProfit = document.getElementById('calc-out-net-profit');
+
+      if (lblMeters) lblMeters.textContent = `${meters}m`;
+      if (outFabricSub) outFabricSub.textContent = `$ ${fabricSub.toLocaleString('es-AR')}`;
+      if (outUnitCost) outUnitCost.textContent = `$ ${unitCost.toLocaleString('es-AR')} ARS`;
+      if (outSuggested) outSuggested.textContent = `$ ${suggestedPrice.toLocaleString('es-AR')} ARS`;
+      if (outDeposit) outDeposit.textContent = `$ ${deposit50.toLocaleString('es-AR')}`;
+      if (outNetProfit) outNetProfit.textContent = `+ $ ${netInPocket.toLocaleString('es-AR')} ARS`;
+    }
+
+    if (calcFabricSelect) {
+      calcFabricSelect.addEventListener('change', () => {
+        if (calcFabricCostInput) {
+          calcFabricCostInput.value = calcFabricSelect.value;
+        }
+        recalculateWorkshopCost();
+      });
+    }
+
+    if (calcProductSelect) {
+      calcProductSelect.addEventListener('change', () => {
+        const pid = calcProductSelect.value;
+        if (pid && PRESET_RECIPES[pid]) {
+          if (calcMetersInput) calcMetersInput.value = PRESET_RECIPES[pid].meters;
+          if (calcNotionsInput) calcNotionsInput.value = PRESET_RECIPES[pid].notions;
+          if (calcLaborInput) calcLaborInput.value = PRESET_RECIPES[pid].labor;
+        }
+        recalculateWorkshopCost();
+      });
+    }
+
+    [calcMetersInput, calcFabricCostInput, calcNotionsInput, calcLaborInput, calcMarginSelect].forEach(el => {
+      if (el) {
+        el.addEventListener('input', recalculateWorkshopCost);
+        el.addEventListener('change', recalculateWorkshopCost);
+      }
+    });
+
+    if (btnCalcApplyPrice) {
+      btnCalcApplyPrice.addEventListener('click', () => {
+        const pid = calcProductSelect ? calcProductSelect.value : '';
+        if (!pid) {
+          adminToast('💡 Primero elegí una Creación del Catálogo en el paso 1 para aplicarle este precio.');
+          if (calcProductSelect) calcProductSelect.focus();
+          return;
+        }
+        const prods = window.WorkshopDB.getProducts ? window.WorkshopDB.getProducts() : [];
+        const idx = prods.findIndex(p => p.id === pid);
+        if (idx === -1) return;
+
+        const formattedPrice = `$ ${lastSuggestedRounded.toLocaleString('es-AR')} ARS`;
+        prods[idx].price = formattedPrice;
+        if (window.WorkshopDB.saveProducts) {
+          window.WorkshopDB.saveProducts(prods);
+        } else {
+          localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(prods));
+        }
+
+        adminToast(`✨ Precio de "${prods[idx].title}" actualizado a ${formattedPrice} en toda la tienda.`);
+        renderFinances();
+      });
+    }
+
+    recalculateWorkshopCost();
     renderFinances();
   }
 

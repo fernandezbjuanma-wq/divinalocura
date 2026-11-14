@@ -2125,9 +2125,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
                   <strong>🌸 Mensaje de Elena:</strong> "${ord.workshopNote}"
                 </div>
               ` : ''}
-              <button type="button" class="btn btn--secondary btn-client-order-chat" data-ord-id="${ord.id}" style="margin-top:0.5rem; padding:0.3rem 0.65rem; font-size:0.75rem; display:inline-flex; align-items:center; gap:0.3rem;">
-                <span>💬 Escribirle a Elena sobre este pedido</span>
-              </button>
+              <div style="display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:0.5rem;">
+                <button type="button" class="btn btn--secondary btn-client-order-chat" data-ord-id="${ord.id}" style="padding:0.3rem 0.65rem; font-size:0.75rem; display:inline-flex; align-items:center; gap:0.3rem;">
+                  <span>💬 Escribirle a Elena</span>
+                </button>
+                <button type="button" class="btn btn--secondary btn-client-order-pdf" data-ord-id="${ord.id}" style="padding:0.3rem 0.65rem; font-size:0.75rem; display:inline-flex; align-items:center; gap:0.3rem;">
+                  <span>📄 Orden / Recibo PDF</span>
+                </button>
+              </div>
             </div>
           `).join('');
 
@@ -2140,6 +2145,17 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
               if (chatInput) {
                 chatInput.value = `Hola Elena! Te consulto por mi pedido #${b.getAttribute('data-ord-id')}: `;
                 chatInput.focus();
+              }
+            });
+          });
+
+          // Botones para abrir recibo PDF del pedido
+          clientOrdersList.querySelectorAll('.btn-client-order-pdf').forEach(b => {
+            b.addEventListener('click', () => {
+              const ordId = b.getAttribute('data-ord-id');
+              const targetOrd = clientOrders.find(o => o.id === ordId);
+              if (targetOrd && typeof openPrintableOrderReceipt === 'function') {
+                openPrintableOrderReceipt(targetOrd);
               }
             });
           });
@@ -2346,23 +2362,90 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     } catch (e) {}
   }
 
-  function addToCart(productId, customNote = '', qtyToAdd = 1) {
-    const product = products.find(p => p.id === productId);
+  // Estado de Cupones y Modalidad de Pago (Seña 50% vs Total 100%)
+  const COUPONS_CATALOG = {
+    'BIENVENIDA10': { code: 'BIENVENIDA10', pct: 10, label: '10% OFF Bienvenida' },
+    'ATELIER15': { code: 'ATELIER15', pct: 15, label: '15% OFF Atelier Exclusivo' },
+    'REGALO10': { code: 'REGALO10', pct: 10, label: '10% OFF Regalería' },
+    'ELENA10': { code: 'ELENA10', pct: 10, label: '10% OFF Clienta Amiga' }
+  };
+
+  let activeCoupon = null;
+  let paymentMode = 'deposit50'; // 'deposit50' (Seña 50%) o 'full100' (100% Total)
+
+  const FALLBACK_ITEM_PRICES = {
+    'p1': 28500,
+    'p2': 9800,
+    'p3': 18500,
+    'p4': 22000,
+    'p5': 11500,
+    'p6': 13200,
+    'p7': 24500,
+    'p8': 15800
+  };
+
+  function parseItemUnitPrice(item) {
+    const str = String(item.price || '');
+    const m = str.match(/\$\s*([\d.,]+)/) || str.match(/([\d.]{4,})/);
+    if (m) {
+      const parsed = parseFloat(m[1].replace(/\./g, '').replace(',', '.'));
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    if (item.id && FALLBACK_ITEM_PRICES[item.id]) {
+      return FALLBACK_ITEM_PRICES[item.id];
+    }
+    return 16500;
+  }
+
+  function calculateCartTotals() {
+    const subtotal = cart.reduce((sum, item) => {
+      return sum + (parseItemUnitPrice(item) * (item.qty || 1));
+    }, 0);
+
+    const discountPct = activeCoupon ? activeCoupon.pct : 0;
+    const discountAmount = Math.round(subtotal * (discountPct / 100));
+    const finalTotal = Math.max(0, subtotal - discountAmount);
+    const depositAmount = Math.round(finalTotal * 0.5);
+    const pendingBalance = Math.max(0, finalTotal - depositAmount);
+    const payableNow = paymentMode === 'deposit50' ? depositAmount : finalTotal;
+
+    return {
+      subtotal,
+      discountPct,
+      discountAmount,
+      couponCode: activeCoupon ? activeCoupon.code : '',
+      finalTotal,
+      depositAmount,
+      pendingBalance,
+      payableNow,
+      paymentMode
+    };
+  }
+
+  function addToCart(productOrId, customNote = '', qtyToAdd = 1) {
+    let product = null;
+    if (typeof productOrId === 'object' && productOrId !== null) {
+      product = productOrId;
+    } else {
+      product = products.find(p => p.id === productOrId);
+    }
     if (!product) return;
 
-    const defaultImg = (product.images && product.images[0]) ? product.images[0].src : 'assets/images/hero-textile.jpg';
+    const defaultImg = product.img || ((product.images && product.images[0]) ? product.images[0].src : 'assets/images/hero-textile.jpg');
     const addCount = Math.max(1, parseInt(qtyToAdd, 10) || 1);
+    const displayPrice = product.price && String(product.price).includes('$')
+      ? product.price
+      : (FALLBACK_ITEM_PRICES[product.id] ? `$ ${FALLBACK_ITEM_PRICES[product.id].toLocaleString('es-AR')} ARS` : (product.price || '$ 16.500 ARS'));
 
-    // Verificar si el mismo producto con la misma nota ya existe
-    const existingIndex = cart.findIndex(item => item.id === productId && (item.note || '') === (customNote || ''));
+    const existingIndex = cart.findIndex(item => item.id === product.id && (item.note || '') === (customNote || ''));
     if (existingIndex > -1) {
       cart[existingIndex].qty += addCount;
     } else {
       cart.push({
         id: product.id,
         title: product.title,
-        price: product.price || 'Confección a Mano',
-        categoryName: product.categoryName || getCategoryLabel(product.category),
+        price: displayPrice,
+        categoryName: product.categoryName || getCategoryLabel(product.category || 'hogar'),
         img: defaultImg,
         note: customNote,
         qty: addCount
@@ -2373,6 +2456,354 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     updateCartUi();
     openCartDrawer();
     showToast(`✨ Sumado a tu bolsa: "${product.title}" (${addCount})`);
+  }
+
+  function ensureCartFinancialSummaryBox() {
+    if (!cartDrawerFooter || document.getElementById('cart-financial-box')) return;
+
+    const finBox = document.createElement('div');
+    finBox.id = 'cart-financial-box';
+    finBox.className = 'cart-financial-box';
+    finBox.innerHTML = `
+      <!-- Cupones de Descuento -->
+      <div class="cart-coupon-row">
+        <input type="text" id="cart-coupon-input" class="cart-input cart-coupon-input" placeholder="Cupón (ej: BIENVENIDA10)" autocomplete="off" />
+        <button type="button" class="btn-cart-coupon" id="btn-apply-coupon">Aplicar</button>
+      </div>
+      <div class="cart-coupon-feedback" id="cart-coupon-feedback" style="display:none;"></div>
+
+      <!-- Selector de Modalidad: Seña 50% vs 100% Total -->
+      <div class="cart-paymode-selector" role="radiogroup" aria-label="Modalidad de pago">
+        <button type="button" class="cart-paymode-btn is-active" data-paymode="deposit50">
+          <span class="cart-paymode-btn__title">⏳ Seña 50% (Reserva)</span>
+          <span class="cart-paymode-btn__sub">50% hoy · 50% al entregar</span>
+        </button>
+        <button type="button" class="cart-paymode-btn" data-paymode="full100">
+          <span class="cart-paymode-btn__title">✨ Total 100%</span>
+          <span class="cart-paymode-btn__sub">Cancelación completa</span>
+        </button>
+      </div>
+
+      <!-- Desglose de Importes -->
+      <div class="cart-totals-breakdown">
+        <div class="cart-totals-line">
+          <span>Subtotal piezas:</span>
+          <strong id="cart-val-subtotal">$ 0 ARS</strong>
+        </div>
+        <div class="cart-totals-line cart-totals-line--discount" id="cart-row-discount" style="display:none;">
+          <span id="cart-lbl-discount">Descuento aplicado:</span>
+          <strong id="cart-val-discount">- $ 0 ARS</strong>
+        </div>
+        <div class="cart-totals-line cart-totals-line--total">
+          <span>Valor Total del Pedido:</span>
+          <strong id="cart-val-total">$ 0 ARS</strong>
+        </div>
+        <div class="cart-totals-highlight" id="cart-payable-highlight">
+          <div class="cart-totals-highlight__row">
+            <span id="cart-lbl-payable-now">Monto a abonar hoy (Seña 50%):</span>
+            <strong id="cart-val-payable-now">$ 0 ARS</strong>
+          </div>
+          <div class="cart-totals-highlight__sub" id="cart-val-pending-note">
+            Saldo contra entrega: $ 0 ARS
+          </div>
+        </div>
+      </div>
+
+      <!-- Alias Bancario / Mercado Pago en 1 Clic + Orden PDF -->
+      <div class="cart-alias-bar">
+        <div class="cart-alias-bar__info">
+          <span class="cart-alias-bar__kicker">TRANSFERENCIA / MERCADO PAGO</span>
+          <strong class="cart-alias-bar__value" id="cart-alias-text">DIVINA.LOCURA.DECO</strong>
+        </div>
+        <div class="cart-alias-bar__actions">
+          <button type="button" class="btn-copy-alias" id="btn-copy-alias" title="Copiar Alias CBU al portapapeles">
+            <span>📋 Copiar Alias</span>
+          </button>
+          <button type="button" class="btn-copy-alias btn-preview-order-pdf" id="btn-cart-preview-pdf" title="Ver o descargar presupuesto / orden en PDF">
+            <span>📄 Orden PDF</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    cartDrawerFooter.insertBefore(finBox, cartDrawerFooter.firstChild);
+
+    // Eventos de Cupón
+    const couponInput = document.getElementById('cart-coupon-input');
+    const applyCouponBtn = document.getElementById('btn-apply-coupon');
+    if (applyCouponBtn && couponInput) {
+      applyCouponBtn.addEventListener('click', () => {
+        const raw = (couponInput.value || '').trim().toUpperCase();
+        if (!raw) {
+          activeCoupon = null;
+          refreshCartFinancialSummary();
+          return;
+        }
+        if (COUPONS_CATALOG[raw]) {
+          activeCoupon = COUPONS_CATALOG[raw];
+          showToast(`🎉 ¡Cupón ${activeCoupon.code} (${activeCoupon.pct}% OFF) aplicado!`);
+          refreshCartFinancialSummary();
+        } else {
+          showToast('⚠️ Cupón no válido. Probá con BIENVENIDA10 o ATELIER15.');
+        }
+      });
+    }
+
+    // Eventos de Modalidad Seña 50% vs 100%
+    finBox.querySelectorAll('.cart-paymode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        finBox.querySelectorAll('.cart-paymode-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        paymentMode = btn.getAttribute('data-paymode') || 'deposit50';
+        refreshCartFinancialSummary();
+      });
+    });
+
+    // Evento Copiar Alias en 1 Clic
+    const copyAliasBtn = document.getElementById('btn-copy-alias');
+    if (copyAliasBtn) {
+      copyAliasBtn.addEventListener('click', () => {
+        const aliasVal = (settings && settings.mp_alias) ? settings.mp_alias : 'DIVINA.LOCURA.DECO';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(aliasVal).catch(() => {});
+        }
+        copyAliasBtn.innerHTML = '<span>✓ ¡Copiado!</span>';
+        showToast(`📋 Alias "${aliasVal}" copiado al portapapeles.`);
+        setTimeout(() => {
+          copyAliasBtn.innerHTML = '<span>📋 Copiar Alias</span>';
+        }, 2200);
+      });
+    }
+
+    // Evento Vista Previa Orden PDF
+    const previewPdfBtn = document.getElementById('btn-cart-preview-pdf');
+    if (previewPdfBtn) {
+      previewPdfBtn.addEventListener('click', () => {
+        const totals = calculateCartTotals();
+        const draftOrder = {
+          id: 'PRE-' + Math.floor(1000 + Math.random() * 9000),
+          date: new Date().toLocaleDateString('es-AR'),
+          time: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+          customer: {
+            name: (cartInputName && cartInputName.value.trim()) || (currentCustomer && currentCustomer.name) || 'Clienta Invitada',
+            phone: (cartInputPhone && cartInputPhone.value.trim()) || (currentCustomer && currentCustomer.phone) || '-',
+            email: (cartInputEmail && cartInputEmail.value.trim()) || (currentCustomer && currentCustomer.email) || '',
+            address: (cartInputAddress && cartInputAddress.value.trim()) || (currentCustomer && currentCustomer.address) || 'A coordinar con taller'
+          },
+          items: JSON.parse(JSON.stringify(cart)),
+          subtotalAmount: totals.subtotal,
+          discountAmount: totals.discountAmount,
+          couponCode: totals.couponCode,
+          totalAmount: totals.finalTotal,
+          depositAmount: totals.depositAmount,
+          pendingBalance: totals.pendingBalance,
+          paymentMode: totals.paymentMode,
+          estimatedDelivery: '5 a 7 días hábiles',
+          workshopNote: 'Confección artesanal a medida en el taller de Elena.'
+        };
+        openPrintableOrderReceipt(draftOrder);
+      });
+    }
+  }
+
+  function refreshCartFinancialSummary() {
+    ensureCartFinancialSummaryBox();
+    const totals = calculateCartTotals();
+
+    const elSub = document.getElementById('cart-val-subtotal');
+    const rowDisc = document.getElementById('cart-row-discount');
+    const lblDisc = document.getElementById('cart-lbl-discount');
+    const valDisc = document.getElementById('cart-val-discount');
+    const elTotal = document.getElementById('cart-val-total');
+    const lblPayNow = document.getElementById('cart-lbl-payable-now');
+    const valPayNow = document.getElementById('cart-val-payable-now');
+    const valPendingNote = document.getElementById('cart-val-pending-note');
+    const feedbackEl = document.getElementById('cart-coupon-feedback');
+    const aliasTextEl = document.getElementById('cart-alias-text');
+
+    if (aliasTextEl) {
+      aliasTextEl.textContent = (settings && settings.mp_alias) ? settings.mp_alias : 'DIVINA.LOCURA.DECO';
+    }
+    if (elSub) elSub.textContent = `$ ${totals.subtotal.toLocaleString('es-AR')} ARS`;
+
+    if (rowDisc && valDisc && lblDisc) {
+      if (totals.discountAmount > 0 && activeCoupon) {
+        rowDisc.style.display = 'flex';
+        lblDisc.textContent = `Cupón ${activeCoupon.code} (-${activeCoupon.pct}%):`;
+        valDisc.textContent = `- $ ${totals.discountAmount.toLocaleString('es-AR')} ARS`;
+      } else {
+        rowDisc.style.display = 'none';
+      }
+    }
+
+    if (feedbackEl) {
+      if (activeCoupon) {
+        feedbackEl.style.display = 'flex';
+        feedbackEl.innerHTML = `<span>✓ ${activeCoupon.label} activo (-$ ${totals.discountAmount.toLocaleString('es-AR')})</span> <button type="button" id="btn-remove-coupon" style="background:none;border:none;color:#A45A44;cursor:pointer;font-weight:700;font-size:0.75rem;">Quitar ✕</button>`;
+        const remBtn = document.getElementById('btn-remove-coupon');
+        if (remBtn) {
+          remBtn.onclick = () => {
+            activeCoupon = null;
+            const inp = document.getElementById('cart-coupon-input');
+            if (inp) inp.value = '';
+            refreshCartFinancialSummary();
+          };
+        }
+      } else {
+        feedbackEl.style.display = 'none';
+      }
+    }
+
+    if (elTotal) elTotal.textContent = `$ ${totals.finalTotal.toLocaleString('es-AR')} ARS`;
+
+    if (lblPayNow && valPayNow && valPendingNote) {
+      if (totals.paymentMode === 'deposit50') {
+        lblPayNow.textContent = 'Seña a abonar hoy (50%):';
+        valPayNow.textContent = `$ ${totals.depositAmount.toLocaleString('es-AR')} ARS`;
+        valPendingNote.textContent = `Saldo restante contra entrega: $ ${totals.pendingBalance.toLocaleString('es-AR')} ARS`;
+      } else {
+        lblPayNow.textContent = 'Total a abonar hoy (100%):';
+        valPayNow.textContent = `$ ${totals.finalTotal.toLocaleString('es-AR')} ARS`;
+        valPendingNote.textContent = 'Pedido 100% saldado (Sin saldo pendiente en entrega)';
+      }
+    }
+  }
+
+  // Generador de Orden / Recibo Imprimible y Descargable en PDF (Clientas & Taller)
+  function openPrintableOrderReceipt(ord) {
+    if (!ord) return;
+    let modal = document.getElementById('order-receipt-pdf-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'order-receipt-pdf-modal';
+      modal.className = 'admin-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      document.body.appendChild(modal);
+    }
+
+    const items = ord.items || [];
+    const calcTotal = ord.totalAmount || items.reduce((acc, i) => acc + parseItemUnitPrice(i) * (i.qty || 1), 0);
+    const deposit = ord.depositAmount != null ? ord.depositAmount : Math.round(calcTotal * 0.5);
+    const pending = ord.pendingBalance != null ? ord.pendingBalance : Math.max(0, calcTotal - deposit);
+    const aliasStr = (settings && settings.mp_alias) ? settings.mp_alias : 'DIVINA.LOCURA.DECO';
+
+    modal.innerHTML = `
+      <div class="admin-modal__card receipt-pdf-card" id="printable-receipt-sheet">
+        <div class="receipt-pdf-top-actions no-print">
+          <span class="receipt-pdf-kicker">📄 COMPROBANTE & ORDEN DE TALLER</span>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn--primary" id="btn-print-receipt-now" style="padding:0.45rem 0.95rem; font-size:0.78rem;">
+              <span>🖨️ Imprimir / Guardar PDF</span>
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-close-receipt-modal" style="padding:0.45rem 0.85rem; font-size:0.78rem;">
+              <span>Cerrar ✕</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="receipt-sheet-body">
+          <div class="receipt-sheet-header">
+            <div>
+              <div class="receipt-brand-title">DIVINA LOCURA <span>DECO</span></div>
+              <div class="receipt-brand-sub">Atelier Textil &amp; Blanquería de Autor por Elena · Buenos Aires</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="receipt-order-num">ORDEN #${ord.id || 'ORD-2026'}</div>
+              <div class="receipt-order-date">Fecha: ${ord.date || new Date().toLocaleDateString('es-AR')} ${ord.time ? '· ' + ord.time : ''}</div>
+            </div>
+          </div>
+
+          <div class="receipt-client-grid">
+            <div>
+              <span class="receipt-meta-label">CLIENTA</span>
+              <strong>${ord.customer ? ord.customer.name : 'Clienta'}</strong>
+            </div>
+            <div>
+              <span class="receipt-meta-label">WHATSAPP / CONTACTO</span>
+              <strong>${ord.customer ? ord.customer.phone : '-'}</strong>
+            </div>
+            <div>
+              <span class="receipt-meta-label">ENTREGA / LOCALIDAD</span>
+              <strong>${(ord.customer && ord.customer.address) ? ord.customer.address : 'A convenir'}</strong>
+            </div>
+            <div>
+              <span class="receipt-meta-label">PLAZO ESTIMADO</span>
+              <strong>${ord.estimatedDelivery || '5 a 7 días hábiles'}</strong>
+            </div>
+          </div>
+
+          <table class="receipt-items-table">
+            <thead>
+              <tr>
+                <th>Cant.</th>
+                <th>Pieza Textil &amp; Personalización de Taller</th>
+                <th style="text-align:right;">Precio Unit.</th>
+                <th style="text-align:right;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(item => {
+                const uPrice = parseItemUnitPrice(item);
+                const sub = uPrice * (item.qty || 1);
+                return `
+                  <tr>
+                    <td><strong>${item.qty || 1}x</strong></td>
+                    <td>
+                      <div style="font-weight:600; color:#2B2625;">${item.title}</div>
+                      ${item.note ? `<div style="font-size:0.76rem; color:#8F4F3D; margin-top:2px;">🪡 ${item.note}</div>` : ''}
+                    </td>
+                    <td style="text-align:right;">$ ${uPrice.toLocaleString('es-AR')}</td>
+                    <td style="text-align:right; font-weight:600;">$ ${sub.toLocaleString('es-AR')}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+
+          <div class="receipt-totals-box">
+            ${ord.discountAmount ? `
+              <div class="receipt-total-row" style="color:#2E7D32;">
+                <span>Descuento Aplicado (${ord.couponCode || 'Promoción'}):</span>
+                <strong>- $ ${ord.discountAmount.toLocaleString('es-AR')} ARS</strong>
+              </div>
+            ` : ''}
+            <div class="receipt-total-row receipt-total-row--main">
+              <span>TOTAL DEL PEDIDO:</span>
+              <strong>$ ${calcTotal.toLocaleString('es-AR')} ARS</strong>
+            </div>
+            <div class="receipt-total-row receipt-total-row--deposit">
+              <span>⏳ Seña de Reserva (50% Confección):</span>
+              <strong>$ ${deposit.toLocaleString('es-AR')} ARS</strong>
+            </div>
+            <div class="receipt-total-row">
+              <span>📦 Saldo Restante contra Entrega (50%):</span>
+              <strong>$ ${pending.toLocaleString('es-AR')} ARS</strong>
+            </div>
+          </div>
+
+          <div class="receipt-footer-note">
+            <div>
+              <strong>Datos para Transferencia / Seña:</strong> Alias: <code>${aliasStr}</code> · WhatsApp Taller: +54 9 11 3693-2471
+            </div>
+            <div style="margin-top:0.35rem; font-style:italic; color:#6E655F;">
+              “Cada pieza es cortada, prelavada y confeccionada a mano por Elena con dedicación artesanal.”
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    modal.classList.add('is-open');
+
+    const closeBtn = document.getElementById('btn-close-receipt-modal');
+    if (closeBtn) {
+      closeBtn.onclick = () => modal.classList.remove('is-open');
+    }
+    const printBtn = document.getElementById('btn-print-receipt-now');
+    if (printBtn) {
+      printBtn.onclick = () => window.print();
+    }
   }
 
   function updateCartUi() {
@@ -2468,6 +2899,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       });
     });
 
+    // Actualizar desglose de importes, señas y cupones
+    refreshCartFinancialSummary();
+
     // Sincronizar datos de clienta si está logueada
     if (currentCustomer) {
       if (cartInputName && !cartInputName.value) cartInputName.value = currentCustomer.name;
@@ -2477,15 +2911,30 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
-  // Hook del botón del Lookbook Modal para agregar a la bolsa
+  // Selector de Tono de Tela en el Modal Lookbook + Agregar a la Bolsa
+  let lookbookSelectedTone = 'Champán Seda';
+  const lookbookSwatchesBar = document.getElementById('lookbook-swatches-bar');
+  const lookbookActiveToneEl = document.getElementById('lookbook-active-tone');
   const lookbookAddBagBtn = document.getElementById('lookbook-add-bag-btn');
   const lookbookCustomNote = document.getElementById('lookbook-custom-note');
+
+  if (lookbookSwatchesBar) {
+    lookbookSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        lookbookSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        lookbookSelectedTone = btn.getAttribute('data-lb-tone') || 'Champán Seda';
+        if (lookbookActiveToneEl) lookbookActiveToneEl.textContent = lookbookSelectedTone;
+      });
+    });
+  }
 
   if (lookbookAddBagBtn) {
     lookbookAddBagBtn.addEventListener('click', () => {
       if (!currentLookbookProduct) return;
-      const note = lookbookCustomNote ? lookbookCustomNote.value.trim() : '';
-      addToCart(currentLookbookProduct.id, note);
+      const rawNote = lookbookCustomNote ? lookbookCustomNote.value.trim() : '';
+      const combinedNote = rawNote ? `Tono: ${lookbookSelectedTone} · ${rawNote}` : `Tono: ${lookbookSelectedTone}`;
+      addToCart(currentLookbookProduct.id, combinedNote);
       closeLookbookModal();
     });
   }
@@ -2493,13 +2942,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   // Función para procesar y registrar el pedido (local + Google Sheets + aviso por mail)
   function createAndSaveOrder(name, phone, email, address, wantPayment) {
     const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
-    
-    // Calcular monto total estimado
-    const totalAmount = cart.reduce((sum, item) => {
-      const m = String(item.price || '').match(/\$\s*([\d.,]+)/) || String(item.price || '').match(/([\d.,]+)/);
-      const priceNum = m ? (parseFloat(m[1].replace(/\./g, '').replace(',', '.')) || 0) : 0;
-      return sum + (priceNum * (item.qty || 1));
-    }, 0);
+    const totals = calculateCartTotals();
 
     const newOrder = {
       id: orderId,
@@ -2508,9 +2951,16 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       customer: { name, phone, email, address },
       items: JSON.parse(JSON.stringify(cart)),
       totalCount: cart.reduce((sum, item) => sum + item.qty, 0),
-      totalAmount: totalAmount,
+      subtotalAmount: totals.subtotal,
+      discountAmount: totals.discountAmount,
+      couponCode: totals.couponCode,
+      totalAmount: totals.finalTotal,
+      depositAmount: totals.depositAmount,
+      pendingBalance: totals.pendingBalance,
+      payableNow: totals.payableNow,
+      paymentMode: totals.paymentMode,
       status: 'Pendiente de Confirmación',
-      paymentStatus: 'Pendiente',
+      paymentStatus: totals.paymentMode === 'deposit50' ? 'Seña 50% a coordinar' : 'Total 100% a coordinar',
       estimatedDelivery: '5 a 7 días hábiles',
       workshopNote: 'Pedido recibido en el taller. Elena revisará las telas y confirmará el inicio de la confección.'
     };
@@ -2567,7 +3017,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     return { name, phone, email, address };
   }
 
-  // Checkout por WhatsApp (además queda guardado en la planilla de Google y le llega mail a Elena)
+  // Checkout por WhatsApp (incluye desglose de Seña 50% vs 100% y Cupón si aplica)
   if (cartBtnWhatsapp) {
     cartBtnWhatsapp.addEventListener('click', () => {
       if (cart.length === 0) return;
@@ -2585,13 +3035,21 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       msg += `\n*PIEZAS ENCARGADAS (${order.totalCount}):*\n`;
       order.items.forEach((item, i) => {
         msg += `${i + 1}. *${item.qty}x ${item.title}* (${item.price})\n`;
-        if (item.note) msg += `   └ Nota: ${item.note}\n`;
+        if (item.note) msg += `   └ Personalización: ${item.note}\n`;
       });
+      if (order.discountAmount > 0) {
+        msg += `\n*Cupón aplicado (${order.couponCode}):* - $ ${order.discountAmount.toLocaleString('es-AR')} ARS`;
+      }
       if (order.totalAmount > 0) {
-        msg += `\n*Total estimado:* $ ${order.totalAmount.toLocaleString('es-AR')} ARS\n`;
+        msg += `\n*Total del Pedido:* $ ${order.totalAmount.toLocaleString('es-AR')} ARS\n`;
+        if (order.paymentMode === 'deposit50') {
+          msg += `*Modalidad elegida:* Seña 50% ($ ${order.depositAmount.toLocaleString('es-AR')} ARS hoy y $ ${order.pendingBalance.toLocaleString('es-AR')} ARS contra entrega)\n`;
+        } else {
+          msg += `*Modalidad elegida:* Pago Total 100% ($ ${order.totalAmount.toLocaleString('es-AR')} ARS)\n`;
+        }
       }
       msg += `--------------------------------------\n`;
-      msg += `Hola Elena! Te envío mi pedido desde la web de Divina Locura Deco para coordinar disponibilidad y confección. ¡Muchas gracias! ✨`;
+      msg += `Hola Elena! Te envío mi pedido desde la web de Divina Locura Deco para coordinar la confección. ¡Muchas gracias! ✨`;
 
       const cleanPhone = (settings.whatsapp_phone || '').replace(/[^0-9]/g, '');
       let waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
@@ -2600,6 +3058,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       }
 
       cart = [];
+      activeCoupon = null;
       saveCartToStorage();
       updateCartUi();
       closeCartDrawer();
@@ -2609,7 +3068,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
   }
 
-  // Checkout por Email (si Google Sheets está conectado, el mail le sale directo y automático a Elena)
+  // Checkout por Email
   if (cartBtnEmail) {
     cartBtnEmail.addEventListener('click', async () => {
       if (cart.length === 0) return;
@@ -2619,6 +3078,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address, false);
 
       cart = [];
+      activeCoupon = null;
       saveCartToStorage();
       updateCartUi();
       closeCartDrawer();
@@ -2644,8 +3104,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         body += `${i + 1}. ${item.qty}x ${item.title} (${item.price})\n`;
         if (item.note) body += `   - Personalización / Nota: ${item.note}\n`;
       });
+      body += `\nTotal del Pedido: $ ${(order.totalAmount || 0).toLocaleString('es-AR')} ARS`;
+      body += `\nSeña 50%: $ ${(order.depositAmount || 0).toLocaleString('es-AR')} ARS | Saldo contra entrega: $ ${(order.pendingBalance || 0).toLocaleString('es-AR')} ARS\n`;
       body += `\nFecha del pedido: ${order.date} a las ${order.time}\n`;
-      body += `\nEnviado a través de la tienda web oficial de Divina Locura Deco.`;
 
       const targetEmail = 'divinalocuradeco@gmail.com';
       window.location.href = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -2656,7 +3117,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   // Botón de Cobro Online con Mercado Pago
   function ensureMercadoPagoButton() {
     if (!cartDrawerFooter || document.getElementById('cart-btn-mercadopago')) return;
-    const actionsBox = cartDrawerFooter.querySelector('.cart-drawer__actions') || cartDrawerFooter;
+    const actionsBox = cartDrawerFooter.querySelector('.cart-actions-grid') || cartDrawerFooter.querySelector('.cart-drawer__actions') || cartDrawerFooter;
     const mpBtn = document.createElement('button');
     mpBtn.type = 'button';
     mpBtn.id = 'cart-btn-mercadopago';
@@ -2673,6 +3134,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       showToast('💳 Registrando pedido y preparando pago con Mercado Pago...');
       const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address, true);
       cart = [];
+      activeCoupon = null;
       saveCartToStorage();
       updateCartUi();
       closeCartDrawer();
@@ -2689,14 +3151,17 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       if (payUrl) {
         window.open(payUrl, '_blank', 'noopener,noreferrer');
       } else {
-        const aliasText = settings.mp_alias ? ` (Alias: ${settings.mp_alias})` : '';
-        const msg = `🌸 Hola Elena! Acabo de registrar el pedido *#${order.id}* ($ ${(order.totalAmount || 0).toLocaleString('es-AR')} ARS) a nombre de *${cust.name}* y quiero abonarlo con *Mercado Pago*${aliasText}. ¿Me pasás el link de pago? ✨`;
+        const aliasText = settings.mp_alias ? ` (Alias: ${settings.mp_alias})` : ' (Alias: DIVINA.LOCURA.DECO)';
+        const amountLabel = order.paymentMode === 'deposit50'
+          ? `Seña 50% de $ ${(order.depositAmount || 0).toLocaleString('es-AR')} ARS`
+          : `Total de $ ${(order.totalAmount || 0).toLocaleString('es-AR')} ARS`;
+        const msg = `🌸 Hola Elena! Acabo de registrar el pedido *#${order.id}* (${amountLabel}) a nombre de *${cust.name}* y quiero abonarlo con *Mercado Pago*${aliasText}. ¿Me confirmás el link o alias? ✨`;
         const cleanPhone = (settings.whatsapp_phone || '').replace(/[^0-9]/g, '');
         const waUrl = (cleanPhone && cleanPhone !== '5491100000000')
           ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`
           : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
         window.open(waUrl, '_blank', 'noopener,noreferrer');
-        showToast('💳 Pedido guardado. Se abrió WhatsApp para coordinar el link de Mercado Pago con Elena.');
+        showToast('💳 Pedido guardado. Se abrió WhatsApp para coordinar el pago con Elena.');
       }
     });
   }
@@ -2709,6 +3174,174 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
   refreshMercadoPagoButtonVisibility();
+
+  // =========================================================================
+  // 12B. MUESTRARIO INTERACTIVO DE TELAS NOBLES & ARMADOR DE CAJAS DE REGALO
+  // =========================================================================
+  const FABRIC_SHOWCASE_DATA = {
+    saten: {
+      img: 'assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg',
+      badge: '120 g/m² · Brillo Perlado',
+      kicker: 'Línea Descanso & Cuidado Personal',
+      heading: 'Satén de Seda Antifrizz',
+      desc: 'Tejido sedoso, hipoalergénico y termorregulador que evita la fricción capilar durante la noche. A diferencia del algodón convencional, no absorbe la hidratación natural de tu piel ni tus cremas nocturnas, previniendo el frizz, el quiebre y las marcas de expresión al despertar.',
+      touch: 'Caída fluida, superficie ultra lisa de baja fricción y frescura térmica todo el año.',
+      care: 'Lavar a mano o en ciclo delicado con agua fría (máx. 30°C) y jabón neutro. Secar tendido a la sombra sin retorcer.',
+      filter: 'cuidado-personal',
+      btnLabel: 'Ver Creaciones en Satén →'
+    },
+    waffle: {
+      img: 'assets/images/cat-waffle.jpg',
+      badge: '280 g/m² · Puro Algodón Prelavado',
+      kicker: 'Línea Cocina, Mesa & Hogar',
+      heading: 'Algodón Waffle Nido de Abeja',
+      desc: 'Textura tridimensional alveolar 100% puro algodón. Su entramado panal multiplica la superficie de absorción y permite que el aire circule libremente, logrando un secado rápido e higiénico con estética rústica europea.',
+      touch: 'Relieve esponjoso y envolvente que gana suavidad con cada lavado sin perder estructura ni encoger.',
+      care: 'Apto lavarropas con agua fría o tibia. No requiere planchado para conservar su relieve natural nido de abeja.',
+      filter: 'hogar',
+      btnLabel: 'Ver Creaciones en Waffle →'
+    },
+    lino: {
+      img: 'assets/images/catalog/cosmetic-bag-on-linen-surface.jpg',
+      badge: '310 g/m² · Trama Orgánica Firme',
+      kicker: 'Línea Organización, Baño & Accesorios',
+      heading: 'Lino Rústico & Lienzo de Algodón',
+      desc: 'Fibras nobles de porte arquitectónico pensadas para contenedores textiles, bolsilleros de pared y neceseres. Combinadas en el taller con forrería interior impermeable y pasamanería de algodón.',
+      touch: 'Cuerpo firme, tacto orgánico natural y alta resistencia al uso cotidiano.',
+      care: 'Limpiar interior impermeable con paño húmedo o lavar en ciclo suave con agua fría. Planchar del revés ligeramente húmedo.',
+      filter: 'organizacion',
+      btnLabel: 'Ver Organización & Lino →'
+    },
+    bebe: {
+      img: 'assets/images/models/model-towel-baby.jpg',
+      badge: '420 g/m² · Hipoalergénico Bebés',
+      kicker: 'Línea Recién Nacidos & Primera Infancia',
+      heading: 'Gasa Pañalera & Toalla Doble Felpa',
+      desc: 'Algodón peinado de doble felpa ultra absorbente y muselina pañalera 100% libre de sintéticos. Seleccionada especialmente por Elena para proteger la piel delicada del recién nacido y acompañar sus primeros sueños.',
+      touch: 'Caricia de nube, libre de pelusas y apta para bordado personalizado a mano sin raspar en el reverso.',
+      care: 'Lavar con jabón líquido neutro o hipoalergénico para bebé. No usar lavandina ni suavizantes perfumados.',
+      filter: 'infantil',
+      btnLabel: 'Ver Línea Bebés & Ajuar →'
+    }
+  };
+
+  const fabricTabsNav = document.getElementById('fabric-tabs-nav');
+  const fabricFilterBtn = document.getElementById('fabric-showcase-filter-btn');
+
+  if (fabricTabsNav) {
+    fabricTabsNav.querySelectorAll('.fabric-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-fabric-key');
+        const info = FABRIC_SHOWCASE_DATA[key];
+        if (!info) return;
+
+        fabricTabsNav.querySelectorAll('.fabric-tab-btn').forEach(b => {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+
+        const imgEl = document.getElementById('fabric-showcase-img');
+        const badgeEl = document.getElementById('fabric-showcase-badge');
+        const kickerEl = document.getElementById('fabric-showcase-kicker');
+        const headEl = document.getElementById('fabric-showcase-heading');
+        const descEl = document.getElementById('fabric-showcase-desc');
+        const touchEl = document.getElementById('fabric-showcase-touch');
+        const careEl = document.getElementById('fabric-showcase-care');
+        const btnLblEl = document.getElementById('fabric-showcase-btn-label');
+
+        if (imgEl) imgEl.src = info.img;
+        if (badgeEl) badgeEl.textContent = info.badge;
+        if (kickerEl) kickerEl.textContent = info.kicker;
+        if (headEl) headEl.textContent = info.heading;
+        if (descEl) descEl.textContent = info.desc;
+        if (touchEl) touchEl.textContent = info.touch;
+        if (careEl) careEl.textContent = info.care;
+        if (btnLblEl) btnLblEl.textContent = info.btnLabel;
+        if (fabricFilterBtn) fabricFilterBtn.setAttribute('data-fabric-filter', info.filter);
+      });
+    });
+  }
+
+  if (fabricFilterBtn) {
+    fabricFilterBtn.addEventListener('click', () => {
+      const cat = fabricFilterBtn.getAttribute('data-fabric-filter') || 'todos';
+      const targetFilterBtn = document.querySelector(`.catalog-filters .filter-btn[data-filter="${cat}"]`);
+      if (targetFilterBtn) targetFilterBtn.click();
+    });
+  }
+
+  // Armador de Cajas de Regalo con 10% OFF Automático
+  const GIFT_BOXES_CATALOG = {
+    gift_saten: {
+      id: 'gift_saten',
+      title: 'Caja Regalo · Ritual Descanso & Satén Antifrizz (-10%)',
+      price: '$ 36.000 ARS',
+      categoryName: 'Regalería de Autor · 10% OFF',
+      img: 'assets/images/catalog/sleep-bonnet-and-mask-on.jpg'
+    },
+    gift_bebe: {
+      id: 'gift_bebe',
+      title: 'Caja Regalo · Ajuar Bienvenida Recién Nacido Bordado (-10%)',
+      price: '$ 41.850 ARS',
+      categoryName: 'Regalería Bebés · 10% OFF',
+      img: 'assets/images/catalog/embroidered-bunny-fabric-organiz.jpg'
+    },
+    gift_hogar: {
+      id: 'gift_hogar',
+      title: 'Caja Regalo · Set Anfitriona Cocina & Tocador Orgánico (-10%)',
+      price: '$ 34.920 ARS',
+      categoryName: 'Regalería Hogar · 10% OFF',
+      img: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg'
+    }
+  };
+
+  let selectedGiftBoxKey = 'gift_saten';
+  const giftActiveBoxName = document.getElementById('gift-active-box-name');
+  const giftRecipientInput = document.getElementById('gift-input-recipient');
+  const giftToneSelect = document.getElementById('gift-input-tone');
+  const giftMessageInput = document.getElementById('gift-input-message');
+  const btnAddGiftToCart = document.getElementById('btn-add-gift-to-cart');
+
+  document.querySelectorAll('.btn-select-gift-box').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const gKey = btn.getAttribute('data-gift-select') || 'gift_saten';
+      const gData = GIFT_BOXES_CATALOG[gKey];
+      if (!gData) return;
+
+      selectedGiftBoxKey = gKey;
+      document.querySelectorAll('.gift-box-card').forEach(card => {
+        card.classList.toggle('is-selected', card.getAttribute('data-gift-id') === gKey);
+      });
+      if (giftActiveBoxName) {
+        giftActiveBoxName.textContent = `${gData.title} (${gData.price})`;
+      }
+      const panel = document.getElementById('gift-dedication-panel');
+      if (panel) {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      if (giftRecipientInput) {
+        setTimeout(() => giftRecipientInput.focus(), 200);
+      }
+      showToast(`🎁 Seleccionaste: ${gData.title}. Completá la dedicatoria abajo o sumala directo a tu bolsa.`);
+    });
+  });
+
+  if (btnAddGiftToCart) {
+    btnAddGiftToCart.addEventListener('click', () => {
+      const gData = GIFT_BOXES_CATALOG[selectedGiftBoxKey] || GIFT_BOXES_CATALOG.gift_saten;
+      const recipient = (giftRecipientInput ? giftRecipientInput.value : '').trim();
+      const tone = giftToneSelect ? giftToneSelect.value : 'Tonos Crudo & Champán';
+      const msg = (giftMessageInput ? giftMessageInput.value : '').trim();
+
+      const noteParts = [`Paleta: ${tone}`];
+      if (recipient) noteParts.push(`Para/Bordado: "${recipient}"`);
+      if (msg) noteParts.push(`Tarjeta manuscrita: "${msg}"`);
+
+      addToCart(gData, noteParts.join(' · '), 1);
+    });
+  }
 
   // =========================================================================
   // 13. HUB FLOTANTE DESPLAZANTE & CHATBOT CONCIERGE ("ELENA ASISTENTE DEL TALLER")

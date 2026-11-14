@@ -174,6 +174,71 @@
             “Coser es cuidar a quienes habitan el hogar.”
           </blockquote>
 
+          <!-- PERSONALIZADOR DE TELA & BORDADO ARTESANAL EN VIVO (ESTILO ZARA HOME MONOGRAMMING) -->
+          <div class="pdp-atelier-customizer" id="pdp-atelier-customizer">
+            <div class="pdp-custom-group">
+              <div class="pdp-custom-header">
+                <span class="pdp-custom-label">Tono de Tela: <strong id="pdp-selected-tone-name">Champán Seda</strong></span>
+                <span class="pdp-custom-sub">Prelavado artesanal</span>
+              </div>
+              <div class="pdp-swatches-row" id="pdp-tone-swatches" role="radiogroup" aria-label="Elegir tono de tela">
+                <button type="button" class="pdp-swatch-btn is-active" data-tone="Champán Seda" data-hex="#E8DAC8" title="Champán Seda">
+                  <span class="pdp-swatch-circle" style="background:#E8DAC8;"></span>
+                </button>
+                <button type="button" class="pdp-swatch-btn" data-tone="Crudo Natural" data-hex="#F3EFE8" title="Crudo Natural">
+                  <span class="pdp-swatch-circle" style="background:#F3EFE8;"></span>
+                </button>
+                <button type="button" class="pdp-swatch-btn" data-tone="Rosa Viejo" data-hex="#D9B8AE" title="Rosa Viejo">
+                  <span class="pdp-swatch-circle" style="background:#D9B8AE;"></span>
+                </button>
+                <button type="button" class="pdp-swatch-btn" data-tone="Terracota Suave" data-hex="#B86B52" title="Terracota Suave">
+                  <span class="pdp-swatch-circle" style="background:#B86B52;"></span>
+                </button>
+                <button type="button" class="pdp-swatch-btn" data-tone="Gris Perla" data-hex="#CBC7C0" title="Gris Perla">
+                  <span class="pdp-swatch-circle" style="background:#CBC7C0;"></span>
+                </button>
+                <button type="button" class="pdp-swatch-btn" data-tone="Verde Salvia" data-hex="#A2B2A4" title="Verde Salvia">
+                  <span class="pdp-swatch-circle" style="background:#A2B2A4;"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Opción Bordado a Mano (Monograma / Nombre) -->
+            <div class="pdp-monogram-box">
+              <label class="pdp-monogram-toggle-label" for="pdp-monogram-check">
+                <input type="checkbox" id="pdp-monogram-check" class="pdp-monogram-checkbox" />
+                <span class="pdp-monogram-title">🪡 Personalizar con Bordado a Mano <small>(Sin cargo extra)</small></span>
+              </label>
+
+              <div class="pdp-monogram-panel" id="pdp-monogram-panel" style="display:none;">
+                <div class="pdp-monogram-grid">
+                  <div>
+                    <label for="pdp-embroidery-text" class="admin-label">Nombre o Iniciales (máx. 14 letras)</label>
+                    <input type="text" id="pdp-embroidery-text" class="admin-input" maxlength="14" placeholder="Ej: Emma / M.G." autocomplete="off" />
+                  </div>
+                  <div>
+                    <label for="pdp-embroidery-thread" class="admin-label">Color de Hilo de Bordar</label>
+                    <select id="pdp-embroidery-thread" class="admin-select">
+                      <option value="Hilo Terracota" data-color="#9A4E38">Hilo Terracota</option>
+                      <option value="Hilo Dorado Suave" data-color="#9E7B42">Hilo Dorado Suave</option>
+                      <option value="Hilo Chocolate" data-color="#4A352D">Hilo Chocolate</option>
+                      <option value="Hilo Rosa Viejo" data-color="#A86D60">Hilo Rosa Viejo</option>
+                      <option value="Hilo Crudo" data-color="#7D7266">Hilo Crudo</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Vista Previa en Vivo del Bordado sobre la Tela -->
+                <div class="pdp-embroidery-preview" id="pdp-embroidery-preview">
+                  <span class="pdp-embroidery-preview__kicker">VISTA PREVIA DEL BORDADO EN TALLER</span>
+                  <div class="pdp-embroidery-preview__canvas" id="pdp-embroidery-canvas">
+                    <span class="pdp-embroidery-preview__sample" id="pdp-embroidery-sample">Emma</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Acciones de Compra -->
           <div class="pdp-purchase-actions">
             <div class="pdp-qty-and-cart">

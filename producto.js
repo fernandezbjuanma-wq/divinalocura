@@ -168,8 +168,91 @@ document.addEventListener('DOMContentLoaded', () => {
   if (pdpStory) pdpStory.textContent = `“${storyContent}”`;
   if (pdpDesc) pdpDesc.textContent = product.desc || 'Pieza utilitaria de alta gama pensada para aportar armonía, practicidad y calidez al hogar.';
 
-  // 7. Cantidad y Botones de Compra
+  // 7. Personalizador de Tela, Bordado en Vivo, Cantidad y Botones de Compra
   let currentQty = 1;
+  let selectedTone = 'Champán Seda';
+  let selectedToneHex = '#E8DAC8';
+
+  const toneSwatches = document.getElementById('pdp-tone-swatches');
+  const selectedToneName = document.getElementById('pdp-selected-tone-name');
+  const monogramCheck = document.getElementById('pdp-monogram-check');
+  const monogramPanel = document.getElementById('pdp-monogram-panel');
+  const embroideryText = document.getElementById('pdp-embroidery-text');
+  const embroideryThread = document.getElementById('pdp-embroidery-thread');
+  const embroideryCanvas = document.getElementById('pdp-embroidery-canvas');
+  const embroiderySample = document.getElementById('pdp-embroidery-sample');
+
+  // Si es producto infantil (p4 o p7), activar sugerencia de bordado o tono crudo por defecto
+  if (product.category === 'infantil' || product.id === 'p4' || product.id === 'p7') {
+    selectedTone = 'Crudo Natural';
+    selectedToneHex = '#F3EFE8';
+    if (selectedToneName) selectedToneName.textContent = selectedTone;
+    if (toneSwatches) {
+      toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-tone') === selectedTone);
+      });
+    }
+  }
+
+  function updateEmbroideryPreview() {
+    if (embroideryCanvas) {
+      embroideryCanvas.style.backgroundColor = selectedToneHex;
+    }
+    if (embroiderySample) {
+      const val = (embroideryText && embroideryText.value.trim()) ? embroideryText.value.trim() : 'Emma';
+      embroiderySample.textContent = val;
+      if (embroideryThread) {
+        const opt = embroideryThread.options[embroideryThread.selectedIndex];
+        const color = (opt && opt.getAttribute('data-color')) || '#9A4E38';
+        embroiderySample.style.color = color;
+      }
+    }
+  }
+
+  if (toneSwatches) {
+    toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        selectedTone = btn.getAttribute('data-tone') || 'Champán Seda';
+        selectedToneHex = btn.getAttribute('data-hex') || '#E8DAC8';
+        if (selectedToneName) selectedToneName.textContent = selectedTone;
+        updateEmbroideryPreview();
+      });
+    });
+  }
+
+  if (monogramCheck && monogramPanel) {
+    monogramCheck.addEventListener('change', () => {
+      monogramPanel.style.display = monogramCheck.checked ? 'block' : 'none';
+      if (monogramCheck.checked && embroideryText) {
+        setTimeout(() => embroideryText.focus(), 60);
+      }
+      updateEmbroideryPreview();
+    });
+  }
+
+  if (embroideryText) {
+    embroideryText.addEventListener('input', updateEmbroideryPreview);
+  }
+  if (embroideryThread) {
+    embroideryThread.addEventListener('change', updateEmbroideryPreview);
+  }
+  updateEmbroideryPreview();
+
+  function buildPdpCustomizationNote() {
+    const parts = [`Tono: ${selectedTone}`];
+    if (monogramCheck && monogramCheck.checked) {
+      const embVal = (embroideryText ? embroideryText.value : '').trim();
+      const threadVal = embroideryThread ? embroideryThread.value : 'Hilo Terracota';
+      if (embVal) {
+        parts.push(`Bordado: "${embVal}" (${threadVal})`);
+      } else {
+        parts.push(`Bordado a mano (${threadVal})`);
+      }
+    }
+    return parts.join(' · ');
+  }
 
   if (pdpQtyMinus) {
     pdpQtyMinus.addEventListener('click', () => {
@@ -198,7 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (pdpAddBagBtn) {
     pdpAddBagBtn.addEventListener('click', () => {
       if (window.DivinaLocura && window.DivinaLocura.addToCart) {
-        window.DivinaLocura.addToCart(product.id, '', currentQty);
+        const customNote = buildPdpCustomizationNote();
+        window.DivinaLocura.addToCart(product.id, customNote, currentQty);
       }
     });
   }
@@ -206,11 +290,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (pdpWaBtn) {
     pdpWaBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      let query = `${product.title} (Cantidad: ${currentQty})`;
+      const customNote = buildPdpCustomizationNote();
+      let query = `${product.title} (Cantidad: ${currentQty} · ${customNote})`;
       if (window.DivinaLocura && window.DivinaLocura.buildWhatsAppUrl) {
         window.open(window.DivinaLocura.buildWhatsAppUrl(query), '_blank', 'noopener,noreferrer');
       } else {
-        window.open(`https://api.whatsapp.com/send?phone=5491100000000&text=${encodeURIComponent('Hola Elena, me interesa: ' + query)}`, '_blank');
+        window.open(`https://api.whatsapp.com/send?phone=5491136932471&text=${encodeURIComponent('Hola Elena, me interesa: ' + query)}`, '_blank');
       }
     });
   }

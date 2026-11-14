@@ -48,6 +48,8 @@
           <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
           <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
           <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
+          <li><a href="#armador-regalos" class="side-drawer__link" data-close-drawer>Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="#muestrario-telas" class="side-drawer__link" data-close-drawer>Muestrario de Telas Nobles</a></li>
           <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
@@ -535,6 +537,207 @@
       </div>
     </section>
 
+    <!-- MEJORA 3: ARMADOR INTERACTIVO DE SETS & CAJAS DE REGALO CON 10% OFF AUTOMÁTICO -->
+    <section class="gift-builder-section" id="armador-regalos" aria-labelledby="gift-builder-title">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-eyebrow">Edición Especial &middot; Regalería de Autor</span>
+          <h2 class="section-title" id="gift-builder-title">Cajas de Regalo &amp; Sets con 10% OFF</h2>
+          <p class="section-desc">
+            Combinaciones pensadas por Elena para agasajar o renovar tu hogar. Presentadas en bolsa de lino reutilizable perfumada con lavanda y tarjeta dedicatoria manuscrita sin cargo.
+          </p>
+        </header>
+
+        <div class="gift-boxes-grid">
+          <!-- Set 1: Ritual Satén Antifrizz -->
+          <article class="gift-box-card" data-gift-id="gift_saten" data-gift-title="Caja Regalo · Ritual Descanso & Satén Antifrizz" data-gift-price="$ 36.000 ARS" data-gift-img="assets/images/catalog/sleep-bonnet-and-mask-on.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/catalog/sleep-bonnet-and-mask-on.jpg" alt="Caja Ritual Descanso y Satén Antifrizz" loading="lazy" />
+              <span class="gift-box-card__badge">Ahorrás 10% &middot; Set Completo</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Cuidado Capilar &amp; Piel</span>
+              <h3 class="gift-box-card__title">Caja Ritual Descanso &amp; Satén Antifrizz</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ 1 Funda de almohada en satén de seda (50x70 cm)</li>
+                <li>✓ 1 Cofia nocturna doble faz regulable</li>
+                <li>✓ 1 Antifaz de descanso acolchado + 2 Scrunchies</li>
+                <li>✓ Bolsa de lino reutilizable + Tarjeta manuscrita</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 40.000 ARS</span>
+                <strong class="gift-box-card__new-price">$ 36.000 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_saten" style="width:100%;">
+                <span>🎁 Personalizar y Encargar esta Caja</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Set 2: Ajuar Bienvenida Recién Nacido -->
+          <article class="gift-box-card" data-gift-id="gift_bebe" data-gift-title="Caja Regalo · Ajuar Bienvenida Recién Nacido Bordado" data-gift-price="$ 41.850 ARS" data-gift-img="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg" alt="Caja Ajuar Bienvenida Recién Nacido" loading="lazy" />
+              <span class="gift-box-card__badge">Bordado de Nombre Incluido &middot; -10%</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Bebés &amp; Nacimiento</span>
+              <h3 class="gift-box-card__title">Ajuar Bienvenida Recién Nacido Bordado</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ 1 Muñeca de apego conejita con nombre bordado a mano</li>
+                <li>✓ 1 Toallón doble felpa hipoalergénico con capucha</li>
+                <li>✓ 1 Organizador textil conejito para cuna o cambiador</li>
+                <li>✓ Presentación de nacimiento + Tarjeta dedicatoria</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 46.500 ARS</span>
+                <strong class="gift-box-card__new-price">$ 41.850 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_bebe" style="width:100%;">
+                <span>🎁 Personalizar y Encargar esta Caja</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Set 3: Anfitriona Cocina & Tocador -->
+          <article class="gift-box-card" data-gift-id="gift_hogar" data-gift-title="Caja Regalo · Set Anfitriona Cocina & Tocador Orgánico" data-gift-price="$ 34.920 ARS" data-gift-img="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg" alt="Set Anfitriona Cocina y Tocador Orgánico" loading="lazy" />
+              <span class="gift-box-card__badge">Ahorrás 10% &middot; Regalo Hogar</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Cocina, Mesa &amp; Baño</span>
+              <h3 class="gift-box-card__title">Set Anfitriona Cocina &amp; Tocador Orgánico</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ 2 Repasadores Waffle 100% algodón con guarda Vichy</li>
+                <li>✓ 1 Porta rollos cilíndrico acolchado con puntilla</li>
+                <li>✓ 1 Neceser rústico con forro interior impermeable</li>
+                <li>✓ Bolsa textil artesanal + Tarjeta manuscrita</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 38.800 ARS</span>
+                <strong class="gift-box-card__new-price">$ 34.920 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_hogar" style="width:100%;">
+                <span>🎁 Personalizar y Encargar esta Caja</span>
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <!-- Barra Interactiva de Tarjeta Dedicatoria y Bordado para la Caja Seleccionada -->
+        <div class="gift-dedication-panel" id="gift-dedication-panel">
+          <div class="gift-dedication-panel__header">
+            <div>
+              <span class="gift-dedication-kicker">✨ PERSONALIZACIÓN DE TU CAJA DE REGALO</span>
+              <h4 class="gift-dedication-title" id="gift-active-box-name">Caja Ritual Descanso &amp; Satén Antifrizz ($ 36.000 ARS)</h4>
+            </div>
+            <span class="gift-dedication-tag">10% OFF Aplicado</span>
+          </div>
+
+          <div class="gift-dedication-form-grid">
+            <div>
+              <label for="gift-input-recipient" class="admin-label">¿Para quién es el regalo? (o nombre a bordar)</label>
+              <input type="text" id="gift-input-recipient" class="admin-input" placeholder="Ej: Para Lucía / Bordar nombre: Olivia" />
+            </div>
+            <div>
+              <label for="gift-input-tone" class="admin-label">Paleta de color preferida</label>
+              <select id="gift-input-tone" class="admin-select">
+                <option value="Tonos Crudo & Champán">Tonos Crudo &amp; Champán</option>
+                <option value="Tonos Rosa Viejo & Tierra">Tonos Rosa Viejo &amp; Tierra</option>
+                <option value="Tonos Verde Salvia & Lino">Tonos Verde Salvia &amp; Lino</option>
+                <option value="A elección de Elena">A elección de Elena</option>
+              </select>
+            </div>
+            <div>
+              <label for="gift-input-message" class="admin-label">Dedicatoria en tarjeta manuscrita por Elena (opcional)</label>
+              <input type="text" id="gift-input-message" class="admin-input" placeholder="Ej: ¡Feliz cumple amiga! Con mucho amor..." />
+            </div>
+            <div class="gift-dedication-cta-col">
+              <button type="button" class="btn btn--add-to-bag" id="btn-add-gift-to-cart" style="width:100%; height:44px;">
+                <span>🛍️ Sumar Caja a la Bolsa (-10%)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEJORA 2: MUESTRARIO INTERACTIVO DE TELAS NOBLES & GUÍA DE CUIDADOS -->
+    <section class="fabric-swatch-section" id="muestrario-telas" aria-labelledby="fabric-swatch-title">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-eyebrow">Archivo Textil &middot; Cuidado Slow-Fashion</span>
+          <h2 class="section-title" id="fabric-swatch-title">Muestrario de Fibras Nobles &amp; Cuidados</h2>
+          <p class="section-desc">
+            Explorá las 4 texturas insignia seleccionadas y prelavadas en nuestro taller. Tocá cada género para conocer sus beneficios, caída y ritual de lavado.
+          </p>
+        </header>
+
+        <!-- Selector de Pestañas de Telas -->
+        <div class="fabric-tabs-nav" id="fabric-tabs-nav" role="tablist" aria-label="Seleccionar fibra textil">
+          <button type="button" class="fabric-tab-btn is-active" data-fabric-key="saten" role="tab" aria-selected="true">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#EFE4D4,#D8C2A8);"></span>
+            <span class="fabric-tab-name">01. Satén de Seda Antifrizz</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="waffle" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F5F1EA,#DED5C6);"></span>
+            <span class="fabric-tab-name">02. Algodón Waffle Nido de Abeja</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="lino" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#DFD6C7,#BFA992);"></span>
+            <span class="fabric-tab-name">03. Lino Rústico &amp; Lienzo</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="bebe" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F3E6E1,#DAB7AC);"></span>
+            <span class="fabric-tab-name">04. Gasa Pañalera &amp; Doble Felpa</span>
+          </button>
+        </div>
+
+        <!-- Panel Detallado de la Tela Activa -->
+        <div class="fabric-showcase-card" id="fabric-showcase-card">
+          <div class="fabric-showcase-card__media">
+            <img src="assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg" alt="Textura de Satén de Seda Antifrizz" id="fabric-showcase-img" loading="lazy" />
+            <span class="fabric-showcase-card__tag" id="fabric-showcase-badge">120 g/m² &middot; Brillo Perlado</span>
+          </div>
+
+          <div class="fabric-showcase-card__info">
+            <span class="section-eyebrow" id="fabric-showcase-kicker">Línea Descanso &amp; Cuidado Personal</span>
+            <h3 class="fabric-showcase-card__title" id="fabric-showcase-heading">Satén de Seda Antifrizz</h3>
+            <p class="fabric-showcase-card__desc" id="fabric-showcase-desc">
+              Tejido sedoso, hipoalergénico y termorregulador que evita la fricción capilar durante la noche. A diferencia del algodón convencional, no absorbe la hidratación natural de tu piel ni tus cremas nocturnas, previniendo el frizz, el quiebre y las marcas de expresión al despertar.
+            </p>
+
+            <div class="fabric-specs-grid">
+              <div class="fabric-spec-box">
+                <span class="fabric-spec-box__label">✨ Propiedades &amp; Tacto</span>
+                <p class="fabric-spec-box__text" id="fabric-showcase-touch">Caída fluida, superficie ultra lisa de baja fricción y frescura térmica todo el año.</p>
+              </div>
+              <div class="fabric-spec-box">
+                <span class="fabric-spec-box__label">🧺 Ritual de Lavado &amp; Cuidado</span>
+                <p class="fabric-spec-box__text" id="fabric-showcase-care">Lavar a mano o en ciclo delicado con agua fría (máx. 30°C) y jabón neutro. Secar tendido a la sombra sin retorcer.</p>
+              </div>
+            </div>
+
+            <div class="fabric-showcase-footer">
+              <div class="fabric-tones-preview">
+                <span class="fabric-tones-label">Tonos en taller:</span>
+                <span class="fabric-tone-dot" style="background:#E8DAC8;" title="Champán Seda"></span>
+                <span class="fabric-tone-dot" style="background:#D9B8AE;" title="Rosa Viejo"></span>
+                <span class="fabric-tone-dot" style="background:#F3EFE8;" title="Crudo Natural"></span>
+                <span class="fabric-tone-dot" style="background:#CBC7C0;" title="Gris Perla"></span>
+                <span class="fabric-tone-dot" style="background:#2B2625;" title="Negro Onix"></span>
+              </div>
+
+              <a href="#catalogo" class="btn btn--secondary" id="fabric-showcase-filter-btn" data-fabric-filter="cuidado-personal">
+                <span id="fabric-showcase-btn-label">Ver Creaciones en Satén &rarr;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SECCIÓN: EL TALLER DE ELENA -->
     <section class="about-section" id="sobre-elena" aria-labelledby="about-title">
       <div class="container about__inner">
@@ -647,6 +850,8 @@
             <div class="footer-links">
               <a href="#categorias">Categorías</a>
               <a href="#catalogo">Catálogo</a>
+              <a href="#armador-regalos">Cajas de Regalo (-10%)</a>
+              <a href="#muestrario-telas">Muestrario de Telas</a>
               <a href="#espacios">Espacios &amp; Estilismo</a>
               <a href="#sobre-elena">El Taller</a>
             </div>
@@ -847,11 +1052,20 @@
         <!-- Acciones: Personalización, Agregar a la Bolsa & Pedido por WhatsApp -->
         <div class="lookbook-actions">
           <div class="lookbook-custom-box">
-            <label for="lookbook-custom-note" class="lookbook-custom-label">
-              <span>✨ Personalización de esta pieza (opcional):</span>
-              <small>Nombre a bordar, tono de tela o medida especial</small>
+            <div class="lookbook-swatches-bar" id="lookbook-swatches-bar">
+              <span class="lookbook-swatches-label">Tono de Tela: <strong id="lookbook-active-tone">Champán Seda</strong></span>
+              <div class="lookbook-swatches-list">
+                <button type="button" class="pdp-swatch-btn is-active" data-lb-tone="Champán Seda" title="Champán Seda"><span class="pdp-swatch-circle" style="background:#E8DAC8;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Crudo Natural" title="Crudo Natural"><span class="pdp-swatch-circle" style="background:#F3EFE8;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Rosa Viejo" title="Rosa Viejo"><span class="pdp-swatch-circle" style="background:#D9B8AE;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Terracota Suave" title="Terracota Suave"><span class="pdp-swatch-circle" style="background:#B86B52;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Verde Salvia" title="Verde Salvia"><span class="pdp-swatch-circle" style="background:#A2B2A4;"></span></button>
+              </div>
+            </div>
+            <label for="lookbook-custom-note" class="lookbook-custom-label" style="margin-top:0.5rem;">
+              <span>🪡 Bordado a mano o nota especial (opcional):</span>
             </label>
-            <input type="text" id="lookbook-custom-note" class="lookbook-custom-input" placeholder="Ej: Bordar con nombre 'Emma' / Satén Champán" />
+            <input type="text" id="lookbook-custom-note" class="lookbook-custom-input" placeholder="Ej: Bordar nombre 'Emma' en Hilo Dorado / Medida especial" />
           </div>
 
           <div class="lookbook-actions__buttons">

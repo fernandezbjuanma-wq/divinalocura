@@ -7296,4 +7296,911 @@ body.admin-mode-active .catalog-item__admin-bar {
   font-weight: 600;
 }
 
+/* ==========================================================================
+   MEJORA 1: PERSONALIZADOR INTERACTIVO DE TELA & BORDADO (ZARA HOME MONOGRAM)
+   ========================================================================== */
+.pdp-atelier-customizer {
+  background: #FAF8F4;
+  border: 1px solid #E4DBD0;
+  border-radius: 4px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pdp-custom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+
+.pdp-custom-label {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #5C534D;
+}
+
+.pdp-custom-label strong {
+  color: #2B2625;
+  font-weight: 700;
+}
+
+.pdp-custom-sub {
+  font-size: 0.7rem;
+  color: #8C7B6E;
+  font-style: italic;
+}
+
+.pdp-swatches-row,
+.lookbook-swatches-list {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.lookbook-swatches-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
+}
+
+.lookbook-swatches-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: #5C534D;
+}
+
+.pdp-swatch-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 2px;
+  border: 1.5px solid rgba(43, 38, 37, 0.18);
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pdp-swatch-btn:hover {
+  transform: scale(1.08);
+  border-color: #8C7B6E;
+}
+
+.pdp-swatch-btn.is-active {
+  border-color: #2B2625;
+  box-shadow: 0 0 0 2px rgba(164, 90, 68, 0.22);
+  transform: scale(1.08);
+}
+
+.pdp-swatch-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pdp-monogram-box {
+  border-top: 1px dashed #DFD5C8;
+  padding-top: 0.85rem;
+}
+
+.pdp-monogram-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pdp-monogram-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #A45A44;
+  cursor: pointer;
+}
+
+.pdp-monogram-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2B2625;
+}
+
+.pdp-monogram-title small {
+  font-weight: 400;
+  color: #8F4F3D;
+}
+
+.pdp-monogram-panel {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(43, 38, 37, 0.06);
+}
+
+.pdp-monogram-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.pdp-embroidery-preview {
+  background: #FFFFFF;
+  border: 1px solid #E5DDD2;
+  border-radius: 4px;
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+}
+
+.pdp-embroidery-preview__kicker {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #8C7B6E;
+  margin-bottom: 0.4rem;
+}
+
+.pdp-embroidery-preview__canvas {
+  height: 52px;
+  border-radius: 3px;
+  background: #E8DAC8;
+  border: 1px dashed rgba(43, 38, 37, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.pdp-embroidery-preview__sample {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #9A4E38;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ==========================================================================
+   MEJORA 2: MUESTRARIO INTERACTIVO DE TELAS NOBLES (#muestrario-telas)
+   ========================================================================== */
+.fabric-swatch-section {
+  padding: 5.5rem 0;
+  background: #FAF8F4;
+  border-top: 1px solid rgba(43, 38, 37, 0.08);
+  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
+}
+
+.fabric-tabs-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.fabric-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #FFFFFF;
+  border: 1px solid #E4DBD0;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.22s ease;
+}
+
+.fabric-tab-btn:hover {
+  border-color: #B5A495;
+  transform: translateY(-1px);
+}
+
+.fabric-tab-btn.is-active {
+  background: #231F1E;
+  border-color: #231F1E;
+  color: #FAF8F5;
+  box-shadow: 0 8px 22px rgba(35, 31, 30, 0.14);
+}
+
+.fabric-tab-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(43, 38, 37, 0.18);
+}
+
+.fabric-tab-name {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+
+.fabric-showcase-card {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  background: #FFFFFF;
+  border: 1px solid #E5DDD2;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(35, 31, 30, 0.06);
+}
+
+.fabric-showcase-card__media {
+  position: relative;
+  min-height: 360px;
+  background: #F3EFE8;
+}
+
+.fabric-showcase-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fabric-showcase-card__tag {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  background: rgba(35, 31, 30, 0.86);
+  color: #FAF8F5;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.fabric-showcase-card__info {
+  padding: 2.5rem 2.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fabric-showcase-card__title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 500;
+  color: #2B2625;
+  margin: 0.25rem 0 0.85rem;
+}
+
+.fabric-showcase-card__desc {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #5A524C;
+  margin-bottom: 1.5rem;
+}
+
+.fabric-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.fabric-spec-box {
+  background: #FAF7F2;
+  border: 1px solid #ECE4DA;
+  border-radius: 4px;
+  padding: 0.95rem 1.1rem;
+}
+
+.fabric-spec-box__label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8F4F3D;
+  margin-bottom: 0.35rem;
+}
+
+.fabric-spec-box__text {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #4A433E;
+  margin: 0;
+}
+
+.fabric-showcase-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 1.25rem;
+  border-top: 1px solid #ECE4DA;
+}
+
+.fabric-tones-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.fabric-tones-label {
+  font-size: 0.74rem;
+  color: #7A7067;
+  margin-right: 0.25rem;
+}
+
+.fabric-tone-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(43, 38, 37, 0.2);
+  display: inline-block;
+}
+
+/* ==========================================================================
+   MEJORA 3: ARMADOR DE SETS & CAJAS DE REGALO CON 10% OFF (#armador-regalos)
+   ========================================================================== */
+.gift-builder-section {
+  padding: 5.5rem 0;
+  background: #F4EFE8;
+  border-top: 1px solid rgba(43, 38, 37, 0.08);
+}
+
+.gift-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.gift-box-card {
+  background: #FFFFFF;
+  border: 1px solid #E4DBD0;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.gift-box-card:hover,
+.gift-box-card.is-selected {
+  transform: translateY(-4px);
+  border-color: #A45A44;
+  box-shadow: 0 14px 32px rgba(35, 31, 30, 0.09);
+}
+
+.gift-box-card__media {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+}
+
+.gift-box-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gift-box-card:hover .gift-box-card__media img {
+  transform: scale(1.04);
+}
+
+.gift-box-card__badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  background: #A45A44;
+  color: #FAF8F5;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.gift-box-card__body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.gift-box-card__kicker {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #8C7B6E;
+  font-weight: 600;
+}
+
+.gift-box-card__title {
+  font-family: var(--font-serif);
+  font-size: 1.32rem;
+  color: #2B2625;
+  margin: 0.3rem 0 0.85rem;
+}
+
+.gift-box-card__includes {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  flex: 1;
+}
+
+.gift-box-card__includes li {
+  font-size: 0.8rem;
+  color: #5A524C;
+  padding: 0.28rem 0;
+  border-bottom: 1px dashed rgba(43, 38, 37, 0.08);
+}
+
+.gift-box-card__pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.gift-box-card__old-price {
+  font-size: 0.82rem;
+  color: #9A9086;
+  text-decoration: line-through;
+}
+
+.gift-box-card__new-price {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: #2B2625;
+  font-weight: 700;
+}
+
+.gift-dedication-panel {
+  background: #FFFFFF;
+  border: 1px solid #DBCBC0;
+  border-radius: 6px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 10px 28px rgba(35, 31, 30, 0.05);
+}
+
+.gift-dedication-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #ECE4DA;
+}
+
+.gift-dedication-kicker {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #A45A44;
+}
+
+.gift-dedication-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: #2B2625;
+  margin: 0.15rem 0 0;
+}
+
+.gift-dedication-tag {
+  background: #EBF5EE;
+  color: #2E7D32;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+}
+
+.gift-dedication-form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.4fr auto;
+  gap: 0.9rem;
+  align-items: flex-end;
+}
+
+/* ==========================================================================
+   MEJORA 4: BOLSA DE PEDIDOS CON SEÑA 50%, CUPONES Y ALIAS EN 1 CLIC
+   ========================================================================== */
+.cart-financial-box {
+  background: #FAF7F2;
+  border: 1px solid #E3D9CD;
+  border-radius: 6px;
+  padding: 0.85rem 0.95rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cart-coupon-row {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.cart-coupon-input {
+  flex: 1;
+  font-size: 0.76rem !important;
+  padding: 0.42rem 0.65rem !important;
+  text-transform: uppercase;
+}
+
+.btn-cart-coupon {
+  background: #231F1E;
+  color: #FAF8F5;
+  border: 1px solid #231F1E;
+  border-radius: 4px;
+  padding: 0.42rem 0.85rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cart-coupon-feedback {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
+  color: #2E7D32;
+  background: #EBF5EE;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.cart-paymode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.cart-paymode-btn {
+  background: #FFFFFF;
+  border: 1px solid #DCD2C6;
+  border-radius: 4px;
+  padding: 0.48rem 0.55rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.18s ease;
+}
+
+.cart-paymode-btn.is-active {
+  border-color: #A45A44;
+  background: #FDF8F5;
+  box-shadow: 0 0 0 1px #A45A44;
+}
+
+.cart-paymode-btn__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2B2625;
+}
+
+.cart-paymode-btn__sub {
+  font-size: 0.65rem;
+  color: #7A7067;
+}
+
+.cart-totals-breakdown {
+  border-top: 1px solid #E5DDD2;
+  padding-top: 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.cart-totals-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #5C534D;
+}
+
+.cart-totals-line--discount {
+  color: #2E7D32;
+}
+
+.cart-totals-line--total {
+  font-size: 0.86rem;
+  color: #2B2625;
+  font-weight: 700;
+  padding-top: 0.2rem;
+}
+
+.cart-totals-highlight {
+  margin-top: 0.3rem;
+  background: #FFFFFF;
+  border: 1px solid #DFCFC3;
+  border-left: 3px solid #A45A44;
+  border-radius: 4px;
+  padding: 0.48rem 0.65rem;
+}
+
+.cart-totals-highlight__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #2B2625;
+}
+
+.cart-totals-highlight__row strong {
+  color: #A45A44;
+  font-size: 0.92rem;
+}
+
+.cart-totals-highlight__sub {
+  font-size: 0.7rem;
+  color: #7A7067;
+  margin-top: 0.15rem;
+}
+
+.cart-alias-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: #EFEAE2;
+  border-radius: 4px;
+  padding: 0.45rem 0.65rem;
+}
+
+.cart-alias-bar__kicker {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  color: #7A7067;
+  font-weight: 700;
+}
+
+.cart-alias-bar__value {
+  font-size: 0.76rem;
+  color: #2B2625;
+  letter-spacing: 0.03em;
+}
+
+.cart-alias-bar__actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.btn-copy-alias {
+  background: #FFFFFF;
+  border: 1px solid #C9BEB1;
+  border-radius: 3px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.69rem;
+  font-weight: 600;
+  color: #2B2625;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-copy-alias:hover {
+  border-color: #2B2625;
+  background: #2B2625;
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   MEJORA 6: GENERADOR DE RECIBO / ORDEN DE TALLER IMPRIMIBLE Y PDF
+   ========================================================================== */
+.receipt-pdf-card {
+  max-width: 680px !important;
+  width: 94% !important;
+  padding: 1.5rem 1.75rem !important;
+  background: #FFFFFF !important;
+}
+
+.receipt-pdf-top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.15rem;
+  border-bottom: 1px dashed #DFD5C8;
+}
+
+.receipt-pdf-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #A45A44;
+}
+
+.receipt-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #2B2625;
+  margin-bottom: 1rem;
+}
+
+.receipt-brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #2B2625;
+}
+
+.receipt-brand-title span {
+  font-size: 0.8rem;
+  font-family: var(--font-sans);
+  color: #A45A44;
+  letter-spacing: 0.2em;
+}
+
+.receipt-brand-sub {
+  font-size: 0.75rem;
+  color: #6E655F;
+  margin-top: 0.15rem;
+}
+
+.receipt-order-num {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #A45A44;
+}
+
+.receipt-order-date {
+  font-size: 0.75rem;
+  color: #6E655F;
+}
+
+.receipt-client-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  background: #FAF7F2;
+  border: 1px solid #ECE4DA;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+.receipt-meta-label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8C7B6E;
+  margin-bottom: 0.15rem;
+}
+
+.receipt-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+}
+
+.receipt-items-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6E655F;
+  padding: 0.5rem 0.4rem;
+  border-bottom: 1px solid #D8CFC4;
+}
+
+.receipt-items-table td {
+  padding: 0.6rem 0.4rem;
+  border-bottom: 1px dashed #ECE4DA;
+  vertical-align: top;
+}
+
+.receipt-totals-box {
+  background: #FAF8F4;
+  border: 1px solid #E4DBD0;
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: #4A433E;
+}
+
+.receipt-total-row--main {
+  font-size: 1rem;
+  color: #2B2625;
+  border-bottom: 1px solid #E4DBD0;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.receipt-total-row--deposit strong {
+  color: #A45A44;
+}
+
+.receipt-footer-note {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #ECE4DA;
+  font-size: 0.75rem;
+  color: #5A524C;
+  text-align: center;
+}
+
+@media (max-width: 960px) {
+  .fabric-tabs-nav {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fabric-showcase-card {
+    grid-template-columns: 1fr;
+  }
+  .gift-boxes-grid {
+    grid-template-columns: 1fr;
+  }
+  .gift-dedication-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .receipt-client-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt-pdf-card,
+  .receipt-pdf-card * {
+    visibility: visible;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .receipt-pdf-card {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
 
