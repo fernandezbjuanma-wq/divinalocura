@@ -1,0 +1,16 @@
+# Sistema Operativo y Editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencias y Archivos Temporales
+node_modules/
+*.log
+npm-debug.log*
+.env
+.env.local
+dist/
+tmp/

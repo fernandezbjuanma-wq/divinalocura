@@ -7,7 +7,7 @@
  *  Stock de Piezas, Telas e Insumos, Gastos, Producción, Productos, Ajustes
  *  y Visitas.
  *
- *  Cómo instalarlo: seguí la guía COMO_CONECTAR_LA_BASE_DE_DATOS.md
+ *  Cómo instalarlo: seguí la guía docs/COMO_CONECTAR_LA_BASE_DE_DATOS.md
  *
  *  1) Cambiá las dos claves iniciales de abajo (después se pueden cambiar
  *     desde la web).

@@ -1,50 +1,41 @@
-# Divina Locura Deco 🌿
+# Divina Locura Deco — Tienda Online & Sistema de Gestión del Taller
 
-Landing page estática y catálogo interactivo estilo boutique para **Divina Locura Deco**, emprendimiento de blanquería artesanal y artículos utilitarios en tela confeccionados a mano por Elena.
+Sitio web editorial y plataforma integral de administración para **Divina Locura Deco**, el taller artesanal de blanquería, textiles de hogar, línea satén antifrizz y accesorios utilitarios confeccionados a mano por **Elena**.
 
-Inspirado en la estética editorial de **Anthropologie** y referentes contemporáneos de diseño (Dribbble & Pinterest): minimalismo cálido, espaciado generoso, paleta terrosa y foco absoluto en las texturas nobles del lino, algodón tusor y nido de abeja.
-
----
-
-## 🎨 Documento de Inspiración & Referentes
-Puedes ver todas las referencias visuales, tableros de Pinterest, tiendas de autor y shots de Dribbble en:  
-👉 **[Ver INSPIRACION.md](./INSPIRACION.md)**
+🌐 **Sitio Web en Vivo:** [https://fernandezbjuanma-wq.github.io/divinalocura/](https://fernandezbjuanma-wq.github.io/divinalocura/)
 
 ---
 
-## ✨ Características del Proyecto
+## 📁 Estructura del Repositorio
 
-- **HTML5 Semántico**: Estructura limpia y accesible con metadatos optimizados.
-- **CSS3 Puro (Vanilla CSS)**:
-  - Sistema de tokens y variables globales en `:root` (fondos tiza `#F9F8F6`, arena `#F5F4F0`, acentos terracota `#A4634E` y texto carbón cálido `#2C2A29`).
-  - Tipografías Google Fonts: *Playfair Display* (Serif elegante) y *Montserrat* (Sans-Serif limpia).
-  - Fila de **cuadros de vista previa por categoría** inspirada directamente en *Anthropologie House & Home*.
-  - Grilla de catálogo asimétrica con **CSS Grid** (estilo Lookbook).
-  - Micro-animaciones en hover (zoom suave `scale(1.03)`, elevación de botones y sombras cálidas).
-  - 100% Responsive (adaptado a teléfonos móviles, tablets y monitores de escritorio).
-- **JavaScript Nativo (`main.js`)**:
-  - Filtros dinámicos por categorías (*Hogar*, *Organización*, *Cuidado Personal*).
-  - Integración directa con la API de **WhatsApp** con mensaje predeterminado personalizado por cada producto para coordinar pedidos con Elena.
+### 1. Tienda Pública (Estética Zara Home & Anthropologie)
+- [`index.html`](./index.html) — Página principal con portada dinámica multi-colección, catálogo interactivo, galería de espacios, historia del taller, carrito con Mercado Pago / Transferencia / WhatsApp y botón flotante desplazante (**Contacto & Atelier**).
+- [`producto.html`](./producto.html) — Ficha editorial individual de cada creación con galería multivista, historia de confección, opiniones de clientas y accesos a WhatsApp e Instagram.
+- [`style.css`](./style.css) — Sistema de diseño editorial cálido (paleta lino, alabastro, terracota y carbón).
+- [`main.js`](./main.js) — Lógica principal de la tienda, carrito, asistente virtual, cuentas de clientas y sincronización en vivo.
+- [`producto.js`](./producto.js) — Lógica de la ficha individual de producto y sistema de reseñas.
+- [`products-data.js`](./products-data.js) — Catálogo base de creaciones del taller.
 
----
+### 2. Panel de Control & Administración (Elena & Juanma)
+- [`admin.html`](./admin.html) — Tablero Ejecutivo de Resumen y KPIs del taller.
+- [`admin-pedidos.html`](./admin-pedidos.html) — Gestión de pedidos de clientas, señas del 50%, pagos y entregas.
+- [`admin-produccion.html`](./admin-produccion.html) — Tablero Kanban de taller con descuento automático de metros de tela del stock.
+- [`admin-stock.html`](./admin-stock.html) — Inventario de rollos de tela, costos por metro y alertas de reposición.
+- [`admin-finances.html`](./admin-finances.html) — Tablero Financiero & Ganancias (ingresos, gastos, margen neto, presupuesto y exportación CSV).
+- [`admin-chat.html`](./admin-chat.html) — Bandeja de mensajes directos de clientas y respuestas rápidas.
+- [`admin-productos.html`](./admin-productos.html) — Gestor de creaciones con compresor automático de fotos y galería multivista.
+- [`admin-configuracion.html`](./admin-configuracion.html) — Configuración de textos de la web, claves de administradores, Google Sheets y Mercado Pago.
+- [`admin-guia.html`](./admin-guia.html) — Manual interactivo paso a paso para Elena y Juanma.
+- [`admin.css`](./admin.css) & [`admin.js`](./admin.js) — Estilos editoriales y lógica del portal administrativo.
 
-## 🚀 Cómo Visualizar en Local
+### 3. Base de Datos & Backend en Google Sheets
+- [`workshop-db.js`](./workshop-db.js) — Motor de datos unificado con persistencia local y sincronización bidireccional en la nube con Google Sheets.
+- [`apps-script/Codigo.gs`](./apps-script/Codigo.gs) — Script listo para pegar en **Google Sheets → Extensiones → Apps Script** (crea las 7 pestañas de base de datos, genera un menú propio en la planilla y habilita el conector con Mercado Pago).
 
-Al ser un sitio web estático puro:
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/fernandezbjuanma-wq/divinalocura.git
-   ```
-2. Abre `index.html` en cualquier navegador web moderno (Google Chrome, Firefox, Safari o Edge) o usa la extensión *Live Server* en VS Code.
-
----
-
-## 🌐 Publicación / Despliegue en Servidor
-
-- **Vercel / Netlify**: Conexión con 1 clic al repositorio de GitHub para despliegue automático con SSL gratuito.
-- **Google Firebase Hosting**: Despliegue gratuito en los servidores mundiales de Google.
-- **GitHub Pages**: Activación desde *Settings > Pages* en GitHub.
-
----
-
-&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena.
+### 4. Recursos & Documentación
+- [`assets/images/`](./assets/images/) — Fotografías del catálogo (`catalog/`), modelos (`models/`) y portadas de colección.
+- [`docs/`](./docs/) — Guías y manuales del proyecto:
+  - 📘 **[Cómo conectar la Base de Datos en Google Sheets y Mercado Pago](./docs/COMO_CONECTAR_LA_BASE_DE_DATOS.md)**
+  - 📸 **[Cómo editar y subir fotos nuevas al catálogo](./docs/COMO_EDITAR_Y_SUBIR_FOTOS.md)**
+  - 📊 **[Informe Estratégico de Diseño y Marketing](./docs/INFORME_ESTRATEGICO_DISENO_Y_MARKETING.md)**
+  - ✨ **[Moodboard e Inspiración Visual (Zara Home / Anthropologie)](./docs/INSPIRACION.md)**
