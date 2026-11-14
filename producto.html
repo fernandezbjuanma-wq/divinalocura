@@ -76,7 +76,7 @@
         </a>
       </div>
 
-      <!-- Derecha: Mi Cuenta, Bolsa de Pedidos y WhatsApp -->
+      <!-- Derecha: Mi Cuenta, Bolsa de Pedidos y Ayuda -->
       <div class="site-header__right">
         <button type="button" class="header-text-btn" id="header-login-btn">
           <span id="header-user-label">MI CUENTA</span>
@@ -86,7 +86,6 @@
           <span class="header-cart-badge" id="header-cart-count">0</span>
         </button>
         <a href="#contacto" class="header-text-btn header-help-link">AYUDA</a>
-        <button type="button" class="header-text-btn btn--whatsapp header-wa-btn" data-product-name="Consulta general desde producto">WHATSAPP</button>
       </div>
     </div>
   </header>
@@ -326,16 +325,26 @@
       </div>
       <div class="footer-bottom">
         <p class="footer-copy" id="footer-copy-text">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
-        <div class="footer-admin-discreet">
-          <button type="button" class="btn-footer-admin-discreet" id="btn-toggle-footer-admin" aria-expanded="false" title="Área interna de taller y gestión">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>Administración</span>
-            <span class="footer-admin-arrow">▾</span>
-          </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SUBFLOOR DE ADMINISTRACIÓN (MÁS ABAJO, FUERA DE LA BARRA MARRÓN DEL SITIO) -->
+  <div class="site-subfloor" id="site-subfloor">
+    <div class="container site-subfloor__inner">
+      <div class="subfloor-bar">
+        <div class="subfloor-status">
+          <span class="subfloor-dot"></span>
+          <span>Taller Textil Divina Locura &middot; Área Interna de Gestión</span>
         </div>
+        <button type="button" class="btn-subfloor-admin" id="btn-toggle-footer-admin" aria-expanded="false" title="Acceso al Panel de Control de Elena &amp; Juanma">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span id="subfloor-btn-label">🔒 Panel de Control &middot; Elena &amp; Juanma</span>
+          <span class="subfloor-arrow">▾</span>
+        </button>
       </div>
 
-      <!-- PANEL DE CONTROL ORDENADO EN EL PIE DE PÁGINA (Discreto y Colapsable) -->
+      <!-- PANEL DE CONTROL ORDENADO EN EL SUBFLOOR (Desplegable aquí abajo) -->
       <section class="footer-admin-dock" id="footer-admin-dock" aria-label="Panel de Control de Administración" style="display:none;">
         <div class="footer-admin-dock__header">
           <div class="footer-admin-dock__title">
@@ -409,7 +418,7 @@
         </div>
       </section>
     </div>
-  </footer>
+  </div>
 
   <!-- DRAWER: Bolsa de Pedidos Lateral (Cart Drawer) -->
   <aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
@@ -515,6 +524,10 @@
               <span>🌸 Guardar mis datos e Ingresar</span>
             </button>
             <p class="client-privacy-note">Tus datos se guardan de forma segura en tu navegador para autocompletar tus futuras compras con Elena.</p>
+            <div class="client-admin-switch-row">
+              <span>¿Pertenecés al equipo de taller?</span>
+              <button type="button" class="btn-link-admin-switch" id="btn-switch-to-team-modal">Ingresar como Elena o Juanma 🔐</button>
+            </div>
           </div>
         </form>
       </div>
@@ -525,6 +538,22 @@
           <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
           <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
           <p class="admin-modal__desc">Seguí el estado de tus piezas a medida, chateá directo con Elena y gestioná tus entregas.</p>
+        </div>
+
+        <!-- Resumen rápido de clienta -->
+        <div class="client-quick-kpis">
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" id="client-kpi-orders-count">0</span>
+            <span class="client-kpi-pill__lbl">Mis Pedidos</span>
+          </div>
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" id="client-kpi-active-count">0</span>
+            <span class="client-kpi-pill__lbl">En Confección</span>
+          </div>
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" style="color:#2E7D32;">● En línea</span>
+            <span class="client-kpi-pill__lbl">Taller Elena</span>
+          </div>
         </div>
 
         <!-- Pestañas internas para la clienta -->
@@ -1414,6 +1443,25 @@
 
   <!-- El Panel de Control vive en su propia sección apartada e independiente: admin.html -->
   <div id="admin-bar" class="is-hidden" style="display:none;" aria-hidden="true"></div>
+
+  <!-- BOTÓN FLOTANTE DE WHATSAPP DIRECTO CON ELENA (TALLER) -->
+  <div class="floating-whatsapp" id="floating-whatsapp">
+    <a 
+      href="https://wa.me/5491136932471?text=Hola%20Elena%2C%20estoy%20en%20la%20tienda%20Divina%20Locura%20Deco%20y%20quer%C3%ADa%20hacerte%20una%20consulta%20por%20confecci%C3%B3n%20a%20medida." 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      class="floating-whatsapp__btn" 
+      id="floating-whatsapp-btn"
+      aria-label="Escribir directamente a Elena por WhatsApp"
+      title="Escribir directamente a Elena por WhatsApp"
+    >
+      <svg class="floating-whatsapp__icon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+        <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.41a8.214 8.214 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.49-.4-.42-.56-.43h-.47c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.44.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.3z"/>
+      </svg>
+      <span class="floating-whatsapp__label">WhatsApp</span>
+      <span class="floating-whatsapp__pulse"></span>
+    </a>
+  </div>
 
   <!-- CHATBOT CONCIERGE FLOTANTE: "Elena Asistente del Taller" -->
   <aside class="chatbot-widget" id="chatbot-widget" aria-label="Asistente virtual de Divina Locura">

@@ -568,7 +568,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (headerLoginBtn) {
     headerLoginBtn.addEventListener('click', () => {
-      openClientLogin();
+      if (currentRole === 'elena' || currentRole === 'juanma' || currentRole === 'admin') {
+        const dockEl = document.getElementById('footer-admin-dock');
+        const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+        if (dockEl) {
+          dockEl.style.display = 'block';
+          if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+          if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
+          dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        showToast(currentRole === 'elena' ? '🌸 Sesión activa de Elena. Desplegando Panel de Control...' : '💻 Sesión activa de Juanma. Desplegando Panel de Control...');
+      } else {
+        openClientLogin();
+      }
     });
   }
 
@@ -780,22 +792,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('admin-mode-active', 'role-elena', 'role-juanma');
 
     const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+    const subfloorBtnLabel = document.getElementById('subfloor-btn-label');
 
     if (currentRole === 'elena') {
       document.body.classList.add('admin-mode-active', 'role-elena');
+      if (subfloorBtnLabel) {
+        subfloorBtnLabel.innerHTML = '🌸 Taller Textil &middot; Elena (Sesión Activa)';
+      } else if (toggleBtn) {
+        toggleBtn.innerHTML = '<span>🌸 Taller Textil &middot; Elena ▾</span>';
+      }
       if (toggleBtn) {
-        toggleBtn.innerHTML = '<span>🔒 Administración · Elena 🌸 ▾</span>';
         toggleBtn.setAttribute('title', 'Sesión activa: Elena (Taller Textil). Clic para desplegar / ocultar el Panel de Control');
       }
     } else if (currentRole === 'juanma' || currentRole === 'admin') {
       document.body.classList.add('admin-mode-active', 'role-juanma');
+      if (subfloorBtnLabel) {
+        subfloorBtnLabel.innerHTML = '💻 Administración &middot; Juanma (Sesión Activa)';
+      } else if (toggleBtn) {
+        toggleBtn.innerHTML = '<span>💻 Administración &middot; Juanma ▾</span>';
+      }
       if (toggleBtn) {
-        toggleBtn.innerHTML = '<span>🔒 Administración · Juanma 💻 ▾</span>';
         toggleBtn.setAttribute('title', 'Sesión activa: Juanma (Negocio & Finanzas). Clic para desplegar / ocultar el Panel de Control');
       }
     } else {
-      if (toggleBtn) {
+      if (subfloorBtnLabel) {
+        subfloorBtnLabel.innerHTML = '🔒 Panel de Control &middot; Elena &amp; Juanma';
+      } else if (toggleBtn) {
         toggleBtn.innerHTML = '<span>🔒 Administración ▾</span>';
+      }
+      if (toggleBtn) {
         toggleBtn.setAttribute('title', 'Acceso para Administradores (Elena & Juanma)');
       }
     }
@@ -1629,7 +1654,11 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
 
   function updateClientUi() {
     if (headerUserLabel) {
-      if (currentCustomer && currentCustomer.name) {
+      if (currentRole === 'elena') {
+        headerUserLabel.textContent = 'ELENA · TALLER 🌸';
+      } else if (currentRole === 'juanma' || currentRole === 'admin') {
+        headerUserLabel.textContent = 'JUANMA · ADMIN 💻';
+      } else if (currentCustomer && currentCustomer.name) {
         const firstName = currentCustomer.name.trim().split(' ')[0];
         headerUserLabel.textContent = `HOLA, ${firstName.toUpperCase()} 🌸`;
       } else {
@@ -1659,6 +1688,15 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
             (o.customer.name && currentCustomer.name && o.customer.name.toLowerCase() === currentCustomer.name.toLowerCase())
           ))
         );
+
+        // Actualizar chips de KPIs del cliente
+        const kpiOrders = document.getElementById('client-kpi-orders-count');
+        const kpiActive = document.getElementById('client-kpi-active-count');
+        if (kpiOrders) kpiOrders.textContent = clientOrders.length;
+        if (kpiActive) {
+          const activeOrders = clientOrders.filter(o => o.status !== 'Entregado').length;
+          kpiActive.textContent = activeOrders;
+        }
 
         if (clientOrders.length === 0) {
           clientOrdersList.innerHTML = '<p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>';
@@ -1838,6 +1876,15 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     btnOpenCartFromProfile.addEventListener('click', () => {
       closeClientLogin();
       openCartDrawer();
+    });
+  }
+
+  // Cambiar a Login de Administradores (Elena & Juanma) desde Mi Cuenta
+  const btnSwitchToTeam = document.getElementById('btn-switch-to-team-modal');
+  if (btnSwitchToTeam) {
+    btnSwitchToTeam.addEventListener('click', () => {
+      closeClientLogin();
+      openTeamAdminLogin();
     });
   }
 
