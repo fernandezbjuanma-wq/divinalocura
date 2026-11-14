@@ -536,13 +536,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // 2. Cambiar pastilla de navegación inferior del hero
+    // 2. Cambiar pastilla de navegación inferior del hero (sin hacer scroll vertical en la página)
+    const navStrip = document.getElementById('hero-nav-strip');
     const navPills = document.querySelectorAll('.hero-nav-pill');
     navPills.forEach((pill, idx) => {
       if (idx === currentHeroSlideIndex) {
         pill.classList.add('is-active');
-        if (typeof pill.scrollIntoView === 'function') {
-          pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        if (navStrip && navStrip.scrollWidth > navStrip.clientWidth) {
+          const targetLeft = pill.offsetLeft - (navStrip.clientWidth / 2) + (pill.clientWidth / 2);
+          navStrip.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
         }
       } else {
         pill.classList.remove('is-active');
@@ -606,8 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
     switchHeroVisuals(index);
     const slide = HERO_SLIDES_DATA[currentHeroSlideIndex];
 
-    // Sincronizar filtro de catálogo sólo si no es "espacios"
-    if (slide.filter && slide.filter !== 'espacios' && currentCategory !== slide.filter) {
+    // Sincronizar filtro de catálogo ÚNICAMENTE cuando la persona hace clic manualmente en el menú del hero
+    if (isUserAction && slide.filter && slide.filter !== 'espacios' && currentCategory !== slide.filter) {
       currentCategory = slide.filter;
       filterBtns.forEach(btn => {
         if (btn.getAttribute('data-filter') === slide.filter) {
