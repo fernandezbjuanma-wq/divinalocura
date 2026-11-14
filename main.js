@@ -835,7 +835,16 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
       closeTeamAdminLogin();
       updateAdminUi();
-      showToast('💻 ¡Modo Administrador Activado! Todas las opciones de taller, pedidos, finanzas y sistema habilitadas.');
+
+      const dockEl = document.getElementById('footer-admin-dock');
+      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+      if (dockEl) {
+        dockEl.style.display = 'block';
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
+      }
+
+      showToast('💻 ¡Modo Administrador Activado! Panel de control disponible al pie de página.');
     } else {
       alert('Clave de administrador incorrecta. (Clave por defecto: admin o juanma)');
     }
@@ -879,6 +888,12 @@ document.addEventListener('DOMContentLoaded', () => {
     currentRole = null;
     localStorage.removeItem(STORAGE_KEY_ROLE);
     updateAdminUi();
+
+    const dockEl = document.getElementById('footer-admin-dock');
+    const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+    if (dockEl) dockEl.style.display = 'none';
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+
     showToast('Sesión de administración cerrada.');
   }
 
@@ -908,6 +923,96 @@ document.addEventListener('DOMContentLoaded', () => {
       openTeamAdminLogin();
     }
   });
+
+  // =========================================================================
+  // HUB DEL PANEL DE CONTROL EN EL PIE DE PÁGINA (ORGANIZADO Y DISCRETO)
+  // =========================================================================
+  function updateFooterDockBadges() {
+    if (!window.WorkshopDB) return;
+    try {
+      const orders = window.WorkshopDB.getOrders ? window.WorkshopDB.getOrders() : [];
+      const production = window.WorkshopDB.getProductionQueue ? window.WorkshopDB.getProductionQueue() : [];
+      const chats = window.WorkshopDB.getChats ? window.WorkshopDB.getChats() : [];
+
+      const oBadge = document.getElementById('dock-orders-badge');
+      if (oBadge) oBadge.textContent = orders.length;
+
+      const pBadge = document.getElementById('dock-prod-badge');
+      if (pBadge) {
+        const active = production.filter(p => p.phase !== 'completado');
+        pBadge.textContent = active.length;
+      }
+
+      const cBadge = document.getElementById('dock-chat-badge');
+      if (cBadge) cBadge.textContent = chats.length;
+
+      const logoutBtn = document.getElementById('dock-logout-btn');
+      if (logoutBtn) {
+        logoutBtn.textContent = currentRole ? 'Cerrar Sesión' : 'Iniciar Sesión Admin';
+      }
+    } catch (err) {}
+  }
+
+  function setupFooterAdminHub() {
+    const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+    const dockEl = document.getElementById('footer-admin-dock');
+    const closeBtn = document.getElementById('btn-dock-close');
+    const backupBtn = document.getElementById('dock-backup-btn');
+    const githubBtn = document.getElementById('dock-github-btn');
+    const logoutBtn = document.getElementById('dock-logout-btn');
+
+    if (toggleBtn && dockEl) {
+      toggleBtn.addEventListener('click', (e) => {
+        if (e) e.preventDefault();
+        const isHidden = dockEl.style.display === 'none' || !dockEl.style.display;
+        if (isHidden) {
+          dockEl.style.display = 'block';
+          toggleBtn.setAttribute('aria-expanded', 'true');
+          updateFooterDockBadges();
+        } else {
+          dockEl.style.display = 'none';
+          toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    if (closeBtn && dockEl) {
+      closeBtn.addEventListener('click', () => {
+        dockEl.style.display = 'none';
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    if (backupBtn) {
+      backupBtn.addEventListener('click', () => {
+        if (typeof exportWorkshopBackup === 'function') {
+          exportWorkshopBackup();
+        } else if (typeof downloadProductsFile === 'function') {
+          downloadProductsFile();
+        }
+      });
+    }
+
+    if (githubBtn) {
+      githubBtn.addEventListener('click', () => {
+        if (typeof openGithubModal === 'function') openGithubModal();
+      });
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (currentRole) {
+          logoutAdmin();
+          if (dockEl) dockEl.style.display = 'none';
+          if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+        } else {
+          openTeamAdminLogin();
+        }
+      });
+    }
+  }
+
+  setupFooterAdminHub();
 
   // =========================================================================
   // 7. EDITOR DE PRODUCTO (ADAPTADO PARA ELENA Y JUANMA)

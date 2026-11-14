@@ -20,6 +20,7 @@
   <script src="workshop-db.js" defer></script>
   <script src="products-data.js" defer></script>
   <script src="main.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
@@ -49,7 +50,6 @@
           <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
-          <li style="margin-top:0.5rem; border-top:1px dashed rgba(43,38,37,0.15); padding-top:0.5rem;"><a href="admin.html" class="side-drawer__link" style="color:var(--accent-terracotta); font-weight:700;">💻 Panel de Control de Administración</a></li>
         </ul>
       </nav>
       <div class="side-drawer__footer">
@@ -85,9 +85,6 @@
 
       <!-- Derecha: Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos, Ayuda y WhatsApp -->
       <div class="site-header__right">
-        <a href="admin.html" class="header-text-btn header-admin-link" id="header-admin-link" style="color:var(--accent-terracotta); font-weight:700;">
-          <span>💻 PANEL DE CONTROL</span>
-        </a>
         <button type="button" class="header-text-btn" id="header-login-btn">
           <span id="header-user-label">MI CUENTA</span>
         </button>
@@ -602,15 +599,93 @@
           <a href="#catalogo">Catálogo</a>
           <a href="#espacios">Espacios &amp; Estilismo</a>
           <a href="#sobre-elena">El Taller</a>
-          <a href="admin.html" class="btn-admin-access" id="open-admin-link" aria-label="Abrir panel de administración dedicado">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>💻 Panel de Control</span>
-          </a>
+          <a href="#contacto">Contacto</a>
         </div>
       </div>
       <div class="footer-bottom">
         <p class="footer-copy" id="footer-copy-text">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
+        <div class="footer-admin-discreet">
+          <button type="button" class="btn-footer-admin-discreet" id="btn-toggle-footer-admin" aria-expanded="false" title="Área interna de taller y gestión">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Administración</span>
+            <span class="footer-admin-arrow">▾</span>
+          </button>
+        </div>
       </div>
+
+      <!-- PANEL DE CONTROL ORDENADO EN EL PIE DE PÁGINA (Discreto y Colapsable) -->
+      <section class="footer-admin-dock" id="footer-admin-dock" aria-label="Panel de Control de Administración" style="display:none;">
+        <div class="footer-admin-dock__header">
+          <div class="footer-admin-dock__title">
+            <span class="footer-admin-pill">💻 Panel de Control de Taller</span>
+            <span class="footer-admin-status">● Sistema en línea</span>
+          </div>
+          <div class="footer-admin-dock__tools">
+            <a href="admin.html" class="btn-dock-direct" title="Abrir portal de pantalla completa">Abrir Panel Completo ↗</a>
+            <button type="button" class="btn-dock-close" id="btn-dock-close" aria-label="Cerrar panel">✕</button>
+          </div>
+        </div>
+
+        <div class="footer-admin-dock__grid">
+          
+          <!-- Bloque 1: Ventas & Clientas -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">📋</span>
+              <h4>Ventas &amp; Clientas</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin-pedidos.html"><span>Pedidos &amp; Entregas</span> <small class="dock-badge" id="dock-orders-badge">0</small></a></li>
+              <li><a href="admin-pedidos.html#directorio"><span>Directorio de Clientas</span></a></li>
+              <li><a href="admin-chat.html"><span>Chat con Clientas</span> <small class="dock-badge" id="dock-chat-badge">0</small></a></li>
+            </ul>
+          </div>
+
+          <!-- Bloque 2: Producción & Telas -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">✂️</span>
+              <h4>Taller &amp; Producción</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin-produccion.html"><span>Pipeline Confección (5 Fases)</span> <small class="dock-badge" id="dock-prod-badge">0</small></a></li>
+              <li><a href="admin-stock.html"><span>Stock de Telas Nobles</span></a></li>
+              <li><a href="admin-productos.html"><span>Catálogo &amp; + Creaciones</span></a></li>
+            </ul>
+          </div>
+
+          <!-- Bloque 3: Finanzas & Tienda -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">💰</span>
+              <h4>Economía &amp; Tienda</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin.html"><span>Tablero Resumen General</span></a></li>
+              <li><a href="admin-finances.html"><span>Ganancias &amp; Finanzas</span></a></li>
+              <li><a href="admin-configuracion.html"><span>Configuración de Textos</span></a></li>
+              <li><a href="admin-guia.html"><span>Guía de Taller para Elena</span></a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Barra inferior de herramientas rápidas -->
+        <div class="footer-admin-dock__footer">
+          <div class="dock-footer-actions">
+            <button type="button" class="btn-dock-action" id="dock-backup-btn" title="Descargar copia de seguridad en JSON">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Descargar Respaldo JSON</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="dock-github-btn" title="Publicar cambios a GitHub">
+              <span>🐙 Publicar GitHub</span>
+            </button>
+            <button type="button" class="btn-dock-action btn-dock-action--logout" id="dock-logout-btn">
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   </footer>
 
