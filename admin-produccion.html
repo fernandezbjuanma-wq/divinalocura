@@ -113,7 +113,7 @@
           </div>
         </div>
 
-        <form id="form-add-production" style="display:grid; grid-template-columns: repeat(4, 1fr) auto; gap:1rem; align-items:flex-end;">
+        <form id="form-add-production" style="display:grid; grid-template-columns: 1.2fr 1.2fr 1.3fr 0.7fr 0.8fr auto; gap:0.85rem; align-items:flex-end;">
           <div>
             <label class="admin-label">Clienta o Destino</label>
             <input type="text" id="prod-input-client" class="admin-input" placeholder="Ej: Mariana Gómez / Stock Taller" required />
@@ -125,8 +125,14 @@
           </div>
 
           <div>
-            <label class="admin-label">Tela / Material Seleccionado</label>
-            <input type="text" id="prod-input-fabric" class="admin-input" placeholder="Ej: Satén Seda Champán (Rollo #1)" />
+            <label class="admin-label">Rollo de Tela (Descuenta Stock)</label>
+            <input type="text" id="prod-input-fabric" list="prod-fabric-datalist" class="admin-input" placeholder="Elegí o escribí la tela..." />
+            <datalist id="prod-fabric-datalist"></datalist>
+          </div>
+
+          <div>
+            <label class="admin-label">Metros a Usar</label>
+            <input type="number" id="prod-input-meters" class="admin-input" placeholder="Auto" step="0.1" min="0.1" title="Si lo dejás vacío se calcula automático según la pieza" />
           </div>
 
           <div>
@@ -134,13 +140,13 @@
             <select id="prod-input-priority" class="admin-select">
               <option value="normal">Normal</option>
               <option value="media">Media</option>
-              <option value="urgente">🔥 Urgente / Entrega Pronta</option>
+              <option value="urgente">🔥 Urgente</option>
             </select>
           </div>
 
           <div>
             <button type="submit" class="btn-admin-cta" style="white-space:nowrap;">
-              <span>+ Sumar a Corte</span>
+              <span>✂️ + Sumar y Cortar</span>
             </button>
           </div>
         </form>

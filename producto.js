@@ -9,12 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('id') || 'p1';
 
-  // 2. Obtener lista de productos
+  // 2. Obtener lista de productos (unificada con WorkshopDB)
   let allProducts = [];
-  try {
-    const saved = localStorage.getItem('divinalocura_products');
-    if (saved) allProducts = JSON.parse(saved);
-  } catch (e) {}
+  if (window.WorkshopDB && typeof window.WorkshopDB.getProducts === 'function') {
+    allProducts = window.WorkshopDB.getProducts();
+  } else {
+    try {
+      const saved = localStorage.getItem('divinalocura_products') || localStorage.getItem('divinalocura_custom_products');
+      if (saved) allProducts = JSON.parse(saved);
+    } catch (e) {}
+  }
 
   if (!allProducts || allProducts.length === 0) {
     if (typeof INITIAL_PRODUCTS !== 'undefined') {
@@ -22,8 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const product = allProducts.find(p => p.id === productId) || allProducts[0];
+  let product = allProducts.find(p => p.id === productId) || allProducts[0];
   if (!product) return;
+
+  if (window.WorkshopDB && typeof window.WorkshopDB.recordProductView === 'function') {
+    window.WorkshopDB.recordProductView(product.id);
+  }
 
   // Actualizar título de la pestaña del navegador
   document.title = `${product.title} — Divina Locura Deco`;

@@ -8,10 +8,22 @@
   'use strict';
 
   const STORAGE_KEY_ROLE = 'divinalocura_role';
-  const STORAGE_KEY_PRODUCTS = 'divinalocura_custom_products';
+  const STORAGE_KEY_PRODUCTS = 'divinalocura_products';
   const STORAGE_KEY_SETTINGS = 'divinalocura_settings';
 
   const PASSWORDS = ['admin', 'juanma', 'elena', 'admin2026', 'juanma2026', 'elena2026', 'mama'];
+
+  function esc(str) {
+    if (window.WorkshopDB && typeof window.WorkshopDB.escapeHtml === 'function') {
+      return window.WorkshopDB.escapeHtml(str);
+    }
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   // Notificaciones Toast en el Panel
   function adminToast(msg, duration = 3500) {
@@ -62,13 +74,14 @@
   // Cierre de Sesión
   function logoutAdmin() {
     localStorage.removeItem(STORAGE_KEY_ROLE);
+    localStorage.removeItem('divinalocura_admin_token');
     adminToast('Sesión de administración cerrada.');
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 400);
   }
 
-  // Inyectar accesos destacados para volver al inicio de la tienda
+  // Inyectar accesos destacados para volver al inicio de la tienda + indicador de Google Sheets
   function injectBackToStoreElements() {
     // 1. Botón flotante permanente en toda la administración
     if (!document.getElementById('floating-back-store-btn')) {
@@ -110,6 +123,35 @@
       storeBtn.innerHTML = '<span>🏠 Ir al Inicio</span>';
       storeBtn.setAttribute('title', 'Volver al inicio de la tienda (donde está todo)');
     }
+
+    // 4. Indicador de conexión a Google Sheets en la cabecera
+    const topActions = document.querySelector('.admin-top-actions');
+    if (topActions && !document.getElementById('admin-cloud-pill')) {
+      const cloudPill = document.createElement('a');
+      cloudPill.id = 'admin-cloud-pill';
+      cloudPill.href = 'admin-configuracion.html';
+      cloudPill.className = 'btn-admin-nav';
+      cloudPill.style.cssText = 'font-size:0.75rem; padding:0.38rem 0.7rem; text-decoration:none;';
+      topActions.insertBefore(cloudPill, topActions.firstChild);
+    }
+    refreshCloudPill();
+  }
+
+  function refreshCloudPill() {
+    const pill = document.getElementById('admin-cloud-pill');
+    if (!pill) return;
+    const isCloud = window.WorkshopDB && window.WorkshopDB.isCloudConfigured && window.WorkshopDB.isCloudConfigured();
+    if (isCloud) {
+      pill.innerHTML = '<span>☁️ Google Sheets Activo</span>';
+      pill.style.borderColor = 'rgba(101, 133, 114, 0.45)';
+      pill.style.color = '#3B5946';
+      pill.title = 'Conectado en tiempo real con la planilla de Google de Elena';
+    } else {
+      pill.innerHTML = '<span>☁️ Conectar Base de Datos</span>';
+      pill.style.borderColor = 'rgba(164, 90, 68, 0.35)';
+      pill.style.color = '#A45A44';
+      pill.title = 'Hacé clic para conectar la planilla de Google Sheets gratis';
+    }
   }
 
   // Comprobar Sesión y Configurar Navegación Superior
@@ -136,20 +178,37 @@
       const passInput = document.getElementById('guard-pass-input');
       const btn = document.getElementById('guard-login-btn');
 
-      function doLogin() {
+      async function doLogin() {
         const p = (passInput ? passInput.value : '').trim();
         let targetRole = null;
 
-        if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
-          const check = window.WorkshopDB.verifyAdminPassword(null, p);
-          if (check.valid) {
-            targetRole = check.role || 'juanma';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>Verificando...</span>';
+        }
+
+        try {
+          if (window.WorkshopDB && typeof window.WorkshopDB.loginAdminAsync === 'function') {
+            const check = await window.WorkshopDB.loginAdminAsync(null, p);
+            if (check && check.valid) {
+              targetRole = check.role || 'juanma';
+            }
+          } else if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
+            const check = window.WorkshopDB.verifyAdminPassword(null, p);
+            if (check.valid) {
+              targetRole = check.role || 'juanma';
+            }
           }
+        } catch (err) {}
+
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>Ingresar al Panel 💻</span>';
         }
 
         if (!targetRole) {
           const lower = p.toLowerCase();
-          if (PASSWORDS.includes(lower) || lower === '') {
+          if (PASSWORDS.includes(lower)) {
             targetRole = (lower === 'elena' || lower === 'mama') ? 'elena' : 'juanma';
           }
         }
@@ -161,6 +220,7 @@
           adminToast(targetRole === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control!');
           setupNavCounts();
           initActivePage();
+          triggerBackgroundCloudPull();
         } else {
           alert('Clave incorrecta. Si la cambiaste, ingresá tu nueva clave.');
         }
@@ -187,6 +247,19 @@
 
     setupNavCounts();
     initActivePage();
+    triggerBackgroundCloudPull();
+  }
+
+  function triggerBackgroundCloudPull() {
+    if (window.WorkshopDB && window.WorkshopDB.isCloudConfigured && window.WorkshopDB.isCloudConfigured()) {
+      window.WorkshopDB.pullAllFromCloud().then(res => {
+        if (res && res.ok) {
+          refreshCloudPill();
+          setupNavCounts();
+          initActivePage();
+        }
+      }).catch(() => {});
+    }
   }
 
   // Actualizar Contadores en la Barra de Navegación
@@ -503,6 +576,15 @@
       { id: 'empaque', title: '5. Empaque & Envío', icon: '📦' }
     ];
 
+    // Poblar selector de rollos reales del stock
+    const datalist = document.getElementById('prod-fabric-datalist');
+    if (datalist && window.WorkshopDB.getMaterials) {
+      const mats = window.WorkshopDB.getMaterials();
+      datalist.innerHTML = mats.map(m =>
+        `<option value="${esc(m.name)}">Disponible: ${m.currentStock}${m.unit || 'm'}</option>`
+      ).join('');
+    }
+
     function renderPipeline() {
       const queue = window.WorkshopDB.getProductionQueue ? window.WorkshopDB.getProductionQueue() : [];
 
@@ -518,13 +600,16 @@
           colList.innerHTML = '<p style="color:#8A837A; font-size:0.78rem; text-align:center; padding:1.5rem 0;">Sin piezas en esta fase</p>';
         } else {
           colList.innerHTML = items.map(item => `
-            <div class="admin-kanban-card" data-prod-id="${item.id}">
-              <div style="font-size:0.72rem; color:#A45A44; font-weight:700; text-transform:uppercase;">#${item.id}</div>
-              <h5 class="admin-kanban-card__title">${item.productTitle}</h5>
+            <div class="admin-kanban-card" data-prod-id="${esc(item.id)}">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.72rem; color:#A45A44; font-weight:700; text-transform:uppercase;">#${esc(item.id)}</span>
+                ${item.metersUsed ? `<span style="font-size:0.7rem; background:#EFEAE4; color:#4A5548; padding:2px 6px; border-radius:4px; font-weight:600;">✂️ -${item.metersUsed}m</span>` : ''}
+              </div>
+              <h5 class="admin-kanban-card__title">${esc(item.productTitle)}</h5>
               <div class="admin-kanban-card__meta">
-                Clienta: <strong>${item.clientName}</strong><br>
-                Tela: <strong>${item.fabric}</strong><br>
-                Prioridad: <span style="font-weight:700; color:${item.priority === 'urgente' ? '#DC2626' : '#658572'}">${item.priority || 'Normal'}</span>
+                Clienta: <strong>${esc(item.clientName)}</strong><br>
+                Tela: <strong>${esc(item.fabric)}</strong><br>
+                Prioridad: <span style="font-weight:700; color:${item.priority === 'urgente' ? '#DC2626' : '#658572'}">${esc(item.priority || 'Normal')}</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-top:0.75rem;">
                 <select class="admin-select ctrl-phase-select" style="padding:0.35rem 0.5rem; font-size:0.76rem;">
@@ -547,7 +632,11 @@
           const prodId = card.getAttribute('data-prod-id');
           const newPhase = sel.value;
           window.WorkshopDB.updateProductionPhase(prodId, newPhase);
-          adminToast(`Pieza #${prodId} movida a fase: ${newPhase}`);
+          if (newPhase === 'completado') {
+            adminToast(`✅ Pieza #${prodId} terminada. Stock/Pedido actualizado automáticamente.`);
+          } else {
+            adminToast(`Pieza #${prodId} movida a fase: ${newPhase}`);
+          }
           setupNavCounts();
           renderPipeline();
         });
@@ -578,6 +667,8 @@
         const client = document.getElementById('prod-input-client').value.trim();
         const product = document.getElementById('prod-input-product').value.trim();
         const fabric = document.getElementById('prod-input-fabric').value.trim();
+        const metersEl = document.getElementById('prod-input-meters');
+        const metersVal = metersEl && metersEl.value ? parseFloat(metersEl.value) : 0;
         const priority = document.getElementById('prod-input-priority').value;
 
         if (!client || !product) {
@@ -585,16 +676,21 @@
           return;
         }
 
-        window.WorkshopDB.addProductionItem({
+        const created = window.WorkshopDB.addProductionItem({
           clientName: client,
           productTitle: product,
           fabric: fabric || 'Satén / Lino',
+          metersRequired: metersVal > 0 ? metersVal : undefined,
           priority: priority,
           phase: 'corte'
         });
 
         form.reset();
-        adminToast('✨ Nueva pieza ingresada a Corte de Telas con éxito.');
+        if (created && created.metersUsed) {
+          adminToast(`✂️ Pieza en Corte. Se descontaron ${created.metersUsed}m de "${created.fabric}" del stock.`);
+        } else {
+          adminToast('✨ Nueva pieza ingresada a Corte de Telas con éxito.');
+        }
         setupNavCounts();
         renderPipeline();
       });
@@ -1099,16 +1195,24 @@
   // =========================================================================
   function initProductosPage() {
     let products = [];
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-      if (saved) products = JSON.parse(saved);
-      else if (typeof INITIAL_PRODUCTS !== 'undefined') products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
-    } catch (e) {
-      console.warn(e);
+    if (window.WorkshopDB && typeof window.WorkshopDB.getProducts === 'function') {
+      products = window.WorkshopDB.getProducts();
+    } else {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+        if (saved) products = JSON.parse(saved);
+        else if (typeof INITIAL_PRODUCTS !== 'undefined') products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+      } catch (e) {
+        console.warn(e);
+      }
     }
 
     function saveProducts() {
-      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      if (window.WorkshopDB && typeof window.WorkshopDB.saveProducts === 'function') {
+        window.WorkshopDB.saveProducts(products);
+      } else {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+      }
     }
 
     const tbody = document.getElementById('products-table-tbody');
@@ -1116,26 +1220,105 @@
     const form = document.getElementById('product-edit-form');
     const btnNew = document.getElementById('btn-new-product-page');
     const btnCancel = document.getElementById('edit-cancel-btn');
+    const imagesListEl = document.getElementById('admin-edit-images-list');
+
+    function renderImageSlots(imagesArray) {
+      if (!imagesListEl) return;
+      const defaultLabels = ['Foto Principal', 'Detalle Textura', 'En Uso / Ambiente', 'Presentación'];
+      const slots = [0, 1, 2, 3].map(idx => {
+        const existing = (imagesArray && imagesArray[idx]) ? imagesArray[idx] : null;
+        return {
+          label: existing && existing.label ? existing.label : defaultLabels[idx],
+          src: existing && existing.src ? existing.src : (idx === 0 ? 'assets/images/hero-textile.jpg' : '')
+        };
+      });
+
+      imagesListEl.innerHTML = slots.map((slot, idx) => `
+        <div class="admin-img-slot" data-slot-idx="${idx}" style="background:#FFFFFF; border:1px solid #E5DFD7; border-radius:8px; padding:0.65rem; display:flex; flex-direction:column; gap:0.45rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <img src="${esc(slot.src || 'assets/images/hero-textile.jpg')}" class="slot-preview-img" alt="Vista ${idx + 1}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #EFEAE4; opacity:${slot.src ? '1' : '0.35'};" />
+            <div style="flex:1; min-width:0;">
+              <input type="text" class="admin-input slot-label-input" value="${esc(slot.label)}" placeholder="Etiqueta vista ${idx + 1}" style="padding:0.3rem 0.5rem; font-size:0.76rem; margin-bottom:0.25rem;" />
+              <label class="btn-admin-outline" style="padding:0.22rem 0.55rem; font-size:0.72rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.25rem; margin:0;">
+                <span class="slot-upload-text">📁 Subir foto</span>
+                <input type="file" accept="image/*" class="slot-file-input" style="display:none;" />
+              </label>
+            </div>
+          </div>
+          <input type="text" class="admin-input slot-src-input" value="${esc(slot.src)}" placeholder="O pegá ruta / URL de foto..." style="padding:0.3rem 0.5rem; font-size:0.74rem;" />
+        </div>
+      `).join('');
+
+      imagesListEl.querySelectorAll('.admin-img-slot').forEach(slotEl => {
+        const previewImg = slotEl.querySelector('.slot-preview-img');
+        const srcInput = slotEl.querySelector('.slot-src-input');
+        const fileInput = slotEl.querySelector('.slot-file-input');
+        const uploadText = slotEl.querySelector('.slot-upload-text');
+
+        if (srcInput && previewImg) {
+          srcInput.addEventListener('input', () => {
+            const val = srcInput.value.trim();
+            previewImg.src = val || 'assets/images/hero-textile.jpg';
+            previewImg.style.opacity = val ? '1' : '0.35';
+          });
+        }
+
+        if (fileInput) {
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            if (uploadText) uploadText.textContent = '⏳ Subiendo...';
+            try {
+              let resultUrl = '';
+              if (window.WorkshopDB && typeof window.WorkshopDB.processAndUploadImage === 'function') {
+                const up = await window.WorkshopDB.processAndUploadImage(file, file.name);
+                resultUrl = up.url || '';
+                if (up.cloud) {
+                  adminToast('☁️ Foto subida a Google Drive y lista para publicar.');
+                } else {
+                  adminToast('📸 Foto optimizada y cargada con éxito.');
+                }
+              }
+              if (resultUrl && srcInput && previewImg) {
+                srcInput.value = resultUrl;
+                previewImg.src = resultUrl;
+                previewImg.style.opacity = '1';
+              }
+            } catch (err) {
+              alert('No se pudo procesar la imagen seleccionada.');
+            } finally {
+              if (uploadText) uploadText.textContent = '📁 Subir foto';
+            }
+          });
+        }
+      });
+    }
 
     function renderProductsTable() {
       if (!tbody) return;
+      const catNames = {
+        'cuidado-personal': 'Cuidado Personal & Descanso',
+        'organizacion': 'Organización & Hogar',
+        'infantil': 'Infantil & Bebés'
+      };
       tbody.innerHTML = products.map(p => {
         const firstImg = (p.images && p.images[0]) ? p.images[0].src : 'assets/images/hero-textile.jpg';
+        const photoCount = (p.images || []).filter(i => i && i.src).length || 1;
         return `
-          <tr data-prod-id="${p.id}">
+          <tr data-prod-id="${esc(p.id)}">
             <td style="width:70px;">
-              <img src="${firstImg}" alt="${p.title}" style="width:54px; height:54px; object-fit:cover; border-radius:6px; border:1px solid rgba(43,38,37,0.1);" />
+              <img src="${esc(firstImg)}" alt="${esc(p.title)}" style="width:54px; height:54px; object-fit:cover; border-radius:6px; border:1px solid rgba(43,38,37,0.1);" />
             </td>
             <td>
-              <strong>${p.title}</strong><br>
-              <span style="font-size:0.76rem; color:#8A837A;">ID: ${p.id} &middot; ${p.texture || 'Confección artesanal'}</span>
+              <strong>${esc(p.title)}</strong><br>
+              <span style="font-size:0.76rem; color:#8A837A;">ID: ${esc(p.id)} &middot; ${esc(p.texture || 'Confección artesanal')} &middot; 📸 ${photoCount} foto${photoCount > 1 ? 's' : ''}</span>
             </td>
-            <td><span class="admin-badge admin-badge--ready">${p.category}</span></td>
-            <td><strong>${p.price}</strong></td>
-            <td><span class="admin-badge admin-badge--production">${p.tag || 'Taller'}</span></td>
+            <td><span class="admin-badge admin-badge--ready">${esc(catNames[p.category] || p.category)}</span></td>
+            <td><strong>${esc(p.price)}</strong></td>
+            <td><span class="admin-badge admin-badge--production">${esc(p.tag || 'Taller')}</span></td>
             <td>
               <div style="display:flex; gap:0.5rem;">
-                <button type="button" class="btn-admin-cta btn-edit-prod" style="padding:0.4rem 0.8rem; font-size:0.78rem;">✏️ Editar</button>
+                <button type="button" class="btn-admin-cta btn-edit-prod" style="padding:0.4rem 0.8rem; font-size:0.78rem;">✏️ Editar / Fotos</button>
                 <button type="button" class="btn-admin-outline btn-del-prod" style="padding:0.4rem 0.6rem; color:#DC2626;" title="Eliminar">🗑️</button>
               </div>
             </td>
@@ -1158,7 +1341,7 @@
           if (confirm(`¿Eliminar la pieza "${id}" del catálogo?`)) {
             products = products.filter(p => p.id !== id);
             saveProducts();
-            adminToast('Producto eliminado.');
+            adminToast('Producto eliminado del catálogo.');
             renderProductsTable();
           }
         });
@@ -1168,6 +1351,9 @@
     function openEditor(id = null) {
       if (!modal) return;
       modal.classList.add('is-open');
+
+      const costInput = document.getElementById('edit-cost');
+      const metersInput = document.getElementById('edit-meters');
 
       if (id) {
         const prod = products.find(p => p.id === id);
@@ -1179,14 +1365,20 @@
         document.getElementById('edit-texture').value = prod.texture || '';
         document.getElementById('edit-tag').value = prod.tag || '';
         document.getElementById('edit-desc').value = prod.desc || '';
+        if (costInput) costInput.value = prod.cost || '';
+        if (metersInput) metersInput.value = prod.metersPerUnit || '';
+        renderImageSlots(prod.images || []);
       } else {
         document.getElementById('edit-product-id').value = '';
         document.getElementById('edit-title').value = '';
         document.getElementById('edit-category').value = 'cuidado-personal';
-        document.getElementById('edit-price').value = '$ 12.500 ARS';
+        document.getElementById('edit-price').value = '$ 16.500 ARS';
         document.getElementById('edit-texture').value = 'Confección a mano con telas nobles';
         document.getElementById('edit-tag').value = 'Novedad de Taller';
         document.getElementById('edit-desc').value = '';
+        if (costInput) costInput.value = '';
+        if (metersInput) metersInput.value = '0.8';
+        renderImageSlots([{ label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' }]);
       }
     }
 
@@ -1203,29 +1395,72 @@
         const texture = document.getElementById('edit-texture').value.trim();
         const tag = document.getElementById('edit-tag').value.trim();
         const desc = document.getElementById('edit-desc').value.trim();
+        const costEl = document.getElementById('edit-cost');
+        const metersEl = document.getElementById('edit-meters');
+        const cost = costEl && costEl.value ? parseFloat(costEl.value) : undefined;
+        const metersPerUnit = metersEl && metersEl.value ? parseFloat(metersEl.value) : undefined;
 
         if (!title) return;
+
+        const catMap = {
+          'cuidado-personal': 'Cuidado Personal & Descanso',
+          'organizacion': 'Organización & Hogar',
+          'infantil': 'Infantil & Bebés'
+        };
+
+        // Recolectar las hasta 4 fotos
+        const collectedImages = [];
+        if (imagesListEl) {
+          imagesListEl.querySelectorAll('.admin-img-slot').forEach((slotEl, idx) => {
+            const lbl = slotEl.querySelector('.slot-label-input').value.trim() || `Vista ${idx + 1}`;
+            const src = slotEl.querySelector('.slot-src-input').value.trim();
+            if (src) {
+              collectedImages.push({ label: lbl, src: src });
+            }
+          });
+        }
+        if (collectedImages.length === 0) {
+          collectedImages.push({ label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' });
+        }
 
         if (id) {
           const idx = products.findIndex(p => p.id === id);
           if (idx >= 0) {
             products[idx] = {
               ...products[idx],
-              title, category: cat, price, texture, tag, desc
+              title,
+              category: cat,
+              categoryName: catMap[cat] || products[idx].categoryName || 'Colección',
+              price,
+              texture,
+              tag,
+              desc,
+              cost: cost !== undefined ? cost : products[idx].cost,
+              metersPerUnit: metersPerUnit !== undefined ? metersPerUnit : products[idx].metersPerUnit,
+              images: collectedImages
             };
           }
         } else {
-          const newId = 'p' + (Date.now() % 10000);
+          const newId = 'p' + (Date.now() % 100000);
           products.unshift({
             id: newId,
-            title, category: cat, price, texture, tag, desc,
-            images: [{ label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' }]
+            title,
+            category: cat,
+            categoryName: catMap[cat] || 'Colección',
+            price,
+            texture,
+            tag,
+            desc,
+            story: desc,
+            cost: cost,
+            metersPerUnit: metersPerUnit || 0.8,
+            images: collectedImages
           });
         }
 
         saveProducts();
         modal.classList.remove('is-open');
-        adminToast('✨ Catálogo actualizado con éxito.');
+        adminToast('✨ Creación guardada y publicada en la tienda y lookbook.');
         renderProductsTable();
       });
     }
@@ -1238,14 +1473,160 @@
   // =========================================================================
   function initConfiguracionPage() {
     let settings = {};
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
-      if (saved) settings = JSON.parse(saved);
-    } catch (e) {}
+    if (window.WorkshopDB && typeof window.WorkshopDB.getSettings === 'function') {
+      settings = window.WorkshopDB.getSettings();
+    } else {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
+        if (saved) settings = JSON.parse(saved);
+      } catch (e) {}
+    }
 
+    // --- Bloque 0: Conexión con Google Sheets + Apps Script ---
+    const cloudUrlInput = document.getElementById('cfg-cloud-url');
+    const notifyEmailInput = document.getElementById('cfg-notify-email');
+    const sheetUrlInput = document.getElementById('cfg-sheet-url');
+    const cloudStatusBadge = document.getElementById('cfg-cloud-status-badge');
+    const cloudFeedback = document.getElementById('cfg-cloud-feedback');
+    const btnSaveCloud = document.getElementById('btn-cfg-save-cloud');
+    const btnPullCloud = document.getElementById('btn-cfg-pull-cloud');
+    const btnPushCloud = document.getElementById('btn-cfg-push-cloud');
+    const btnOpenSheet = document.getElementById('btn-cfg-open-sheet');
+
+    function showCloudMessage(msg, isError = false) {
+      if (!cloudFeedback) return;
+      cloudFeedback.style.display = 'block';
+      cloudFeedback.style.background = isError ? '#FFEBEE' : '#E8F5E9';
+      cloudFeedback.style.color = isError ? '#C62828' : '#2E7D32';
+      cloudFeedback.textContent = msg;
+    }
+
+    function updateCloudBadgeUI() {
+      const currentUrl = window.WorkshopDB && window.WorkshopDB.getCloudUrl ? window.WorkshopDB.getCloudUrl() : '';
+      const sheetLink = (sheetUrlInput && sheetUrlInput.value.trim()) || settings.google_sheet_url || localStorage.getItem('divinalocura_sheet_url') || '';
+      if (cloudUrlInput && !cloudUrlInput.value) cloudUrlInput.value = currentUrl;
+      if (notifyEmailInput && !notifyEmailInput.value) notifyEmailInput.value = settings.notify_email || '';
+      if (sheetUrlInput && !sheetUrlInput.value) sheetUrlInput.value = sheetLink;
+
+      if (btnOpenSheet) {
+        if (sheetLink) {
+          btnOpenSheet.href = sheetLink;
+          btnOpenSheet.style.display = 'inline-flex';
+        } else {
+          btnOpenSheet.style.display = 'none';
+        }
+      }
+
+      if (cloudStatusBadge) {
+        if (currentUrl) {
+          cloudStatusBadge.className = 'admin-badge admin-badge--delivered';
+          cloudStatusBadge.textContent = '☁️ Conectado a Google Sheets';
+        } else {
+          cloudStatusBadge.className = 'admin-badge admin-badge--pending';
+          cloudStatusBadge.textContent = '💾 Modo Local (Falta pegar URL de Google)';
+        }
+      }
+      refreshCloudPill();
+    }
+
+    updateCloudBadgeUI();
+
+    if (btnSaveCloud) {
+      btnSaveCloud.addEventListener('click', async () => {
+        const url = cloudUrlInput ? cloudUrlInput.value.trim() : '';
+        const notifyEmail = notifyEmailInput ? notifyEmailInput.value.trim() : '';
+        const sheetLink = sheetUrlInput ? sheetUrlInput.value.trim() : '';
+
+        if (window.WorkshopDB && window.WorkshopDB.setCloudUrl) {
+          window.WorkshopDB.setCloudUrl(url);
+        }
+        settings = {
+          ...settings,
+          cloud_script_url: url,
+          notify_email: notifyEmail,
+          google_sheet_url: sheetLink
+        };
+        if (window.WorkshopDB && window.WorkshopDB.saveSettings) {
+          window.WorkshopDB.saveSettings(settings);
+        } else {
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+        }
+
+        updateCloudBadgeUI();
+
+        if (!url) {
+          showCloudMessage('💾 Se guardó en modo local. Cuando crees la planilla de Google, pegá la URL acá.', false);
+          return;
+        }
+
+        btnSaveCloud.disabled = true;
+        showCloudMessage('⏳ Conectando con Google Sheets y sincronizando datos...', false);
+        try {
+          if (notifyEmail && window.WorkshopDB.saveSecureCloudConfig) {
+            await window.WorkshopDB.saveSecureCloudConfig({ notifyEmail });
+          }
+          const pullRes = await window.WorkshopDB.pullAllFromCloud();
+          if (pullRes && pullRes.ok) {
+            updateCloudBadgeUI();
+            showCloudMessage('✅ ¡Conectado con éxito a Google Sheets! Todos los pedidos, catálogo y finanzas están sincronizados.', false);
+            adminToast('☁️ Conectado con éxito a Google Sheets');
+          } else {
+            const pushRes = await window.WorkshopDB.pushAllToCloud();
+            if (pushRes && pushRes.ok) {
+              updateCloudBadgeUI();
+              showCloudMessage('✅ ¡Planilla inicializada con todos los datos actuales del taller!', false);
+              adminToast('☁️ Datos subidos a la planilla de Google');
+            } else {
+              showCloudMessage('⚠️ Se guardó la URL, pero verificá que la Aplicación Web de Google tenga acceso para "Cualquier persona".', true);
+            }
+          }
+        } catch (err) {
+          showCloudMessage('⚠️ Error al conectar: verificá que la URL termine en /exec y tenga permisos públicos.', true);
+        } finally {
+          btnSaveCloud.disabled = false;
+        }
+      });
+    }
+
+    if (btnPullCloud) {
+      btnPullCloud.addEventListener('click', async () => {
+        if (!window.WorkshopDB || !window.WorkshopDB.isCloudConfigured()) {
+          showCloudMessage('Primero pegá la URL de Google Apps Script arriba.', true);
+          return;
+        }
+        showCloudMessage('⏳ Trayendo últimos datos desde la planilla de Google...', false);
+        const res = await window.WorkshopDB.pullAllFromCloud();
+        if (res && res.ok) {
+          updateCloudBadgeUI();
+          showCloudMessage('✅ Datos actualizados desde la planilla de Google.', false);
+          adminToast('🔄 Datos sincronizados desde Google Sheets');
+        } else {
+          showCloudMessage('❌ No se pudo leer la planilla: ' + (res && res.error ? res.error : 'Revisá la URL'), true);
+        }
+      });
+    }
+
+    if (btnPushCloud) {
+      btnPushCloud.addEventListener('click', async () => {
+        if (!window.WorkshopDB || !window.WorkshopDB.isCloudConfigured()) {
+          showCloudMessage('Primero pegá la URL de Google Apps Script arriba.', true);
+          return;
+        }
+        showCloudMessage('⏳ Subiendo todos los productos, pedidos, stock y gastos a las pestañas de Google Sheets...', false);
+        const res = await window.WorkshopDB.pushAllToCloud();
+        if (res && res.ok) {
+          updateCloudBadgeUI();
+          showCloudMessage('✅ ¡Todos los datos actuales fueron volcados en las hojas de la planilla de Google!', false);
+          adminToast('📤 Planilla de Google actualizada por completo');
+        } else {
+          showCloudMessage('❌ Error al subir a la planilla: ' + (res && res.error ? res.error : 'Revisá permisos'), true);
+        }
+      });
+    }
+
+    // --- Bloque 1 y 2: Textos Hero, Contacto y Mercado Pago ---
     const form = document.getElementById('form-admin-settings');
     if (form) {
-      // Poblar campos
       document.getElementById('cfg-announcement').value = settings.announcement || '';
       document.getElementById('cfg-hero-eyebrow').value = settings.hero_eyebrow || '';
       document.getElementById('cfg-hero-title').value = settings.hero_title || '';
@@ -1255,8 +1636,17 @@
       document.getElementById('cfg-instagram').value = settings.instagram_user || '';
       document.getElementById('cfg-github-token').value = settings.gh_token || '';
 
-      form.addEventListener('submit', (e) => {
+      const mpLinkInput = document.getElementById('cfg-mp-link');
+      const mpAliasInput = document.getElementById('cfg-mp-alias');
+      const mpTokenInput = document.getElementById('cfg-mp-token');
+      if (mpLinkInput) mpLinkInput.value = settings.mp_payment_link || '';
+      if (mpAliasInput) mpAliasInput.value = settings.mp_alias || '';
+
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const mpTokenVal = mpTokenInput ? mpTokenInput.value.trim() : '';
+        const notifyEmailVal = notifyEmailInput ? notifyEmailInput.value.trim() : (settings.notify_email || '');
+
         const updated = {
           ...settings,
           announcement: document.getElementById('cfg-announcement').value.trim(),
@@ -1266,11 +1656,28 @@
           hero_cta: document.getElementById('cfg-hero-cta').value.trim(),
           whatsapp_phone: document.getElementById('cfg-whatsapp').value.trim(),
           instagram_user: document.getElementById('cfg-instagram').value.trim(),
+          mp_payment_link: mpLinkInput ? mpLinkInput.value.trim() : '',
+          mp_alias: mpAliasInput ? mpAliasInput.value.trim() : '',
+          notify_email: notifyEmailVal,
           gh_token: document.getElementById('cfg-github-token').value.trim()
         };
 
-        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(updated));
-        adminToast('⚙️ Ajustes guardados. Se verán reflejados de inmediato en la tienda pública.');
+        settings = updated;
+        if (window.WorkshopDB && typeof window.WorkshopDB.saveSettings === 'function') {
+          window.WorkshopDB.saveSettings(updated);
+        } else {
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(updated));
+        }
+
+        if ((mpTokenVal || notifyEmailVal) && window.WorkshopDB && window.WorkshopDB.saveSecureCloudConfig) {
+          await window.WorkshopDB.saveSecureCloudConfig({
+            mpAccessToken: mpTokenVal || undefined,
+            notifyEmail: notifyEmailVal || undefined
+          });
+          if (mpTokenInput) mpTokenInput.value = '';
+        }
+
+        adminToast('⚙️ Ajustes de portada, contacto y Mercado Pago guardados con éxito.');
       });
     }
 
@@ -1299,7 +1706,7 @@
     const passSuccessMsg = document.getElementById('cfg-pass-msg-success');
     const passErrorMsg = document.getElementById('cfg-pass-msg-error');
 
-    function handleConfigPassChange(role, curInputId, newInputId) {
+    async function handleConfigPassChange(role, curInputId, newInputId) {
       if (passSuccessMsg) passSuccessMsg.style.display = 'none';
       if (passErrorMsg) passErrorMsg.style.display = 'none';
 
@@ -1316,15 +1723,6 @@
         return;
       }
 
-      const checkCurrent = window.WorkshopDB.verifyAdminPassword(role, curPass);
-      if (!checkCurrent.valid) {
-        if (passErrorMsg) {
-          passErrorMsg.textContent = `❌ La contraseña actual ingresada para ${role === 'elena' ? 'Elena' : 'Juanma'} no es correcta.`;
-          passErrorMsg.style.display = 'block';
-        }
-        return;
-      }
-
       if (!newPass || newPass.length < 3) {
         if (passErrorMsg) {
           passErrorMsg.textContent = '❌ La nueva contraseña debe tener al menos 3 caracteres.';
@@ -1333,8 +1731,19 @@
         return;
       }
 
-      const res = window.WorkshopDB.updateAdminPassword(role, newPass);
-      if (res.success) {
+      let res;
+      if (window.WorkshopDB.updateAdminPasswordAsync) {
+        res = await window.WorkshopDB.updateAdminPasswordAsync(role, newPass, curPass);
+      } else {
+        const checkCurrent = window.WorkshopDB.verifyAdminPassword(role, curPass);
+        if (!checkCurrent.valid) {
+          res = { success: false, error: `La contraseña actual ingresada para ${role === 'elena' ? 'Elena' : 'Juanma'} no es correcta.` };
+        } else {
+          res = window.WorkshopDB.updateAdminPassword(role, newPass);
+        }
+      }
+
+      if (res && res.success) {
         if (passSuccessMsg) {
           passSuccessMsg.textContent = `✅ ¡La contraseña de ${role === 'elena' ? 'Elena' : 'Juanma'} se actualizó con éxito!`;
           passSuccessMsg.style.display = 'block';
@@ -1344,7 +1753,7 @@
         adminToast(`🔑 Clave de ${role === 'elena' ? 'Elena' : 'Juanma'} actualizada`);
       } else {
         if (passErrorMsg) {
-          passErrorMsg.textContent = `❌ Error: ${res.error || 'No se pudo guardar la clave.'}`;
+          passErrorMsg.textContent = `❌ ${res && res.error ? res.error : 'La contraseña actual no es correcta.'}`;
           passErrorMsg.style.display = 'block';
         }
       }

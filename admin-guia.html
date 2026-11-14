@@ -118,6 +118,9 @@
           <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-4" style="color:#2B2625;">
             📦 4. Empaque &amp; Entrega
           </button>
+          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-5" style="color:#2B2625;">
+            ☁️ 5. Planilla de Google &amp; Subir Fotos
+          </button>
         </div>
       </section>
 
@@ -161,18 +164,17 @@
       <section class="admin-card guide-step-card" id="guide-step-2" style="display:none;">
         <div class="admin-card__header">
           <div>
-            <h3 class="admin-card__title">2. Cómo Cargar o Modificar una Creación</h3>
-            <div class="admin-card__subtitle">Publicación inmediata en el catálogo sin conocimientos de programación</div>
+            <h3 class="admin-card__title">2. Cómo Cargar o Modificar una Creación (con hasta 4 fotos)</h3>
+            <div class="admin-card__subtitle">Publicación inmediata en el catálogo y en Google Drive sin conocimientos de programación</div>
           </div>
         </div>
 
         <ol style="color:#5F5852; line-height:1.8; font-size:0.92rem; padding-left:1.5rem; margin:1rem 0;">
           <li>Andá a la sección <strong><a href="admin-productos.html" style="color:#A45A44;">📸 Creaciones</a></strong> en la barra superior.</li>
-          <li>Hacé clic en el botón <strong>+ Nueva Creación Artesanal</strong>.</li>
-          <li>Completá el nombre (ej. <em>Cofia de Satén Champán</em>) y el precio en pesos.</li>
-          <li>Elegí la categoría adecuada (Cuidado Personal, Organización o Infantil).</li>
-          <li>Escribí una frase breve sobre la tela utilizada (ej. <em>Satén de seda suave al tacto</em>).</li>
-          <li>Hacé clic en <strong>✨ Guardar y Publicar</strong>. ¡Listo! Ya aparece en la boutique web.</li>
+          <li>Hacé clic en el botón <strong>+ Nueva Creación Artesanal</strong> (o en <strong>✏️ Editar / Fotos</strong> sobre cualquier pieza existente).</li>
+          <li>Completá el nombre (ej. <em>Cofia de Satén Champán</em>), el precio en pesos y el costo estimado para calcular tu ganancia neta.</li>
+          <li>En <strong>📸 Fotos de la Creación</strong>, tocá <strong>📁 Subir foto</strong> para elegir hasta 4 fotos directo desde tu celular o computadora. Se comprimen solas y se guardan en Google Drive.</li>
+          <li>Hacé clic en <strong>✨ Guardar y Publicar</strong>. ¡Listo! Ya aparece en la boutique web y en el Lookbook.</li>
         </ol>
       </section>
 
@@ -180,20 +182,20 @@
       <section class="admin-card guide-step-card" id="guide-step-3" style="display:none;">
         <div class="admin-card__header">
           <div>
-            <h3 class="admin-card__title">3. Control del Pipeline de Confección</h3>
-            <div class="admin-card__subtitle">Acompaña cada encargo a través de las 5 fases de confección</div>
+            <h3 class="admin-card__title">3. Control del Pipeline de Confección &amp; Stock Automático</h3>
+            <div class="admin-card__subtitle">Acompaña cada encargo a través de las 5 fases y descuenta los metros de tela automáticamente</div>
           </div>
         </div>
 
         <p style="font-size:0.9rem; color:#5F5852; line-height:1.6;">
-          En la página de <strong><a href="admin-produccion.html" style="color:#A45A44;">✂️ Producción</a></strong> podés ver todas las piezas en orden. A medida que vayas avanzando en el taller, cambiá la fase desde el selector:
+          En la página de <strong><a href="admin-produccion.html" style="color:#A45A44;">✂️ Producción</a></strong> podés ver todas las piezas en orden. Cuando sumás una pieza a Corte o pasás un pedido a <em>En Confección</em>, <strong>el sistema descuenta automáticamente los metros de tela del rollo correspondiente</strong>:
         </p>
         <ul style="color:#5F5852; line-height:1.8; font-size:0.88rem; padding-left:1.5rem;">
-          <li><strong>Corte:</strong> Telas ya medidas y cortadas según moldes.</li>
+          <li><strong>Corte:</strong> Telas medidas y cortadas (descuenta los metros del rollo en <em>Stock &amp; Telas</em>).</li>
           <li><strong>Costura:</strong> Ensamblado en máquina y costura de elásticos/fuelles.</li>
           <li><strong>Bordado:</strong> Nombres personalizados, puntadas decorativas o flores.</li>
           <li><strong>Calidad:</strong> Revisión minuciosa de hilos sobrantes y planchado al vapor.</li>
-          <li><strong>Empaque:</strong> Perfumado con esencia textil, envuelto en papel de seda y listo para entrega.</li>
+          <li><strong>Empaque / Completado:</strong> Al marcar como <em>Completado</em>, el pedido pasa solo a <strong>Listo para Entregar ✨</strong>.</li>
         </ul>
       </section>
 
@@ -214,6 +216,37 @@
           <li>Incluir la tarjetita escrita a mano con el nombre de la clienta (ej: <em>"Hecho a mano con amor para Mariana"</em>).</li>
           <li>Cerrar la bolsita de tela o caja kraft con hilo de yute natural o cinta de lino.</li>
         </ul>
+      </section>
+
+      <!-- PASO 5: PLANILLA DE GOOGLE & FOTOS -->
+      <section class="admin-card guide-step-card" id="guide-step-5" style="display:none;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">5. Cómo Conectar la Planilla de Google Sheets y Subir Fotos</h3>
+            <div class="admin-card__subtitle">Base de datos gratuita en vivo para ver todo en una planilla de Excel/Google y recibir avisos por mail</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:0.5rem;">
+          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
+            <h4 style="margin:0 0 0.6rem 0; color:#2B2625;">📊 Conectar Google Sheets en 4 pasos</h4>
+            <ol style="color:#5F5852; line-height:1.7; font-size:0.86rem; padding-left:1.25rem; margin:0;">
+              <li>Creá una Hoja de Cálculo nueva en Google Drive (ej. <em>Divina Locura - Base de Datos</em>).</li>
+              <li>En el menú superior de la planilla tocá <strong>Extensiones &rarr; Apps Script</strong>.</li>
+              <li>Borrá lo que haya, pegá el contenido del archivo <code>apps-script/Codigo.gs</code> y tocá <strong>Implementar &rarr; Nueva implementación &rarr; Aplicación web</strong> (Acceso: <em>Cualquier persona</em>).</li>
+              <li>Copiá la URL que te da Google, entrá a <strong><a href="admin-configuracion.html" style="color:#A45A44;">⚙️ Configuración</a></strong>, pegala y tocá <strong>☁️ Conectar y Sincronizar</strong>.</li>
+            </ol>
+          </div>
+
+          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
+            <h4 style="margin:0 0 0.6rem 0; color:#2B2625;">📸 3 Formas de Subir Fotos Nuevas</h4>
+            <ul style="color:#5F5852; line-height:1.7; font-size:0.86rem; padding-left:1.25rem; margin:0;">
+              <li><strong>Opción 1 (Desde el Panel):</strong> En <em>📸 Creaciones</em> tocás <strong>📁 Subir foto</strong> desde tu celular o compu. Se comprime sola y se sube directo a tu carpeta de Google Drive.</li>
+              <li><strong>Opción 2 (Pasándolas por el Chat del Asistente):</strong> Adjuntá las fotos nuevas directamente en el chat y decime a qué producto corresponden; yo las optimizo y las subo al repositorio de GitHub por vos.</li>
+              <li><strong>Opción 3 (Desde la Tienda logueada):</strong> Tocando el botón <em>✏️ Editar</em> que aparece arriba de cada tarjeta cuando estás logueada como Elena o Juanma.</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
     </div>

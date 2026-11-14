@@ -17,6 +17,17 @@
   const KEY_ANALYTICS = 'divinalocura_analytics_db';
   const KEY_PRODUCTION = 'divinalocura_production_db';
   const KEY_SECURITY = 'divinalocura_passwords';
+  const KEY_PRODUCTS = 'divinalocura_products';
+  const KEY_PRODUCTS_LEGACY = 'divinalocura_custom_products';
+  const KEY_SETTINGS = 'divinalocura_settings';
+  const KEY_CLOUD_URL = 'divinalocura_cloud_url';
+  const KEY_ADMIN_TOKEN = 'divinalocura_admin_token';
+  const KEY_VISITOR_ID = 'divinalocura_visitor_id';
+  const KEY_KNOWN_IDS = 'divinalocura_known_ids';
+
+  // URL de Google Apps Script (si se pega acá queda fija para todos los dispositivos;
+  // también se puede pegar desde Configuración de la Tienda sin tocar código).
+  const DEFAULT_CLOUD_URL = '';
 
   const CATEGORY_COLORS = {
     'Telas': '#C87D69',        // Terracota textil artesanal (identitario Divina Locura)
@@ -218,13 +229,13 @@
   ];
 
   const SEED_STOCK_MATERIALS = [
-    { id: 'mat-1', name: 'Satén de Seda Premium (Champán & Perla)', category: 'Telas', qty: 16, unit: 'metros', minAlert: 5 },
-    { id: 'mat-2', name: 'Lino Rústico Puro Lavado (Crudo)', category: 'Telas', qty: 9, unit: 'metros', minAlert: 4 },
-    { id: 'mat-3', name: 'Nido de Abeja (Waffle) Algodón 100%', category: 'Telas', qty: 14, unit: 'metros', minAlert: 5 },
-    { id: 'mat-4', name: 'Puntilla de Algodón Vintage', category: 'Mercería', qty: 22, unit: 'metros', minAlert: 6 },
-    { id: 'mat-5', name: 'Cierres Invisibles 20cm y 30cm', category: 'Mercería', qty: 28, unit: 'unidades', minAlert: 8 },
-    { id: 'mat-6', name: 'Elásticos Suaves Especiales para Cofias', category: 'Mercería', qty: 35, unit: 'metros', minAlert: 10 },
-    { id: 'mat-7', name: 'Bolsitas de Lino para Empaque de Regalo', category: 'Packaging', qty: 18, unit: 'unidades', minAlert: 5 }
+    { id: 'mat-1', name: 'Satén de Seda Premium (Champán & Perla)', category: 'Telas', qty: 16, unit: 'metros', minAlert: 5, costPerUnit: 4200 },
+    { id: 'mat-2', name: 'Lino Rústico Puro Lavado (Crudo)', category: 'Telas', qty: 9, unit: 'metros', minAlert: 4, costPerUnit: 3800 },
+    { id: 'mat-3', name: 'Nido de Abeja (Waffle) Algodón 100%', category: 'Telas', qty: 14, unit: 'metros', minAlert: 5, costPerUnit: 3400 },
+    { id: 'mat-4', name: 'Puntilla de Algodón Vintage', category: 'Mercería', qty: 22, unit: 'metros', minAlert: 6, costPerUnit: 950 },
+    { id: 'mat-5', name: 'Cierres Invisibles 20cm y 30cm', category: 'Mercería', qty: 28, unit: 'unidades', minAlert: 8, costPerUnit: 650 },
+    { id: 'mat-6', name: 'Elásticos Suaves Especiales para Cofias', category: 'Mercería', qty: 35, unit: 'metros', minAlert: 10, costPerUnit: 420 },
+    { id: 'mat-7', name: 'Bolsitas de Lino para Empaque de Regalo', category: 'Packaging', qty: 18, unit: 'unidades', minAlert: 5, costPerUnit: 1100 }
   ];
 
   const SEED_EXPENSES = [
@@ -321,8 +332,31 @@
   ];
 
   // =========================================================================
-  // HELPER PARA LOCALSTORAGE CON FALLBACK SEGURO
+  // HELPER PARA LOCALSTORAGE + SINCRONIZACIÓN CON GOOGLE SHEETS
   // =========================================================================
+  const KEY_TO_COLLECTION = {};
+  KEY_TO_COLLECTION[KEY_CLIENTS] = 'clients';
+  KEY_TO_COLLECTION[KEY_ORDERS] = 'orders';
+  KEY_TO_COLLECTION[KEY_CHATS] = 'chats';
+  KEY_TO_COLLECTION[KEY_STOCK_PRODUCTS] = 'stockProducts';
+  KEY_TO_COLLECTION[KEY_STOCK_MATERIALS] = 'stockMaterials';
+  KEY_TO_COLLECTION[KEY_EXPENSES] = 'expenses';
+  KEY_TO_COLLECTION[KEY_PRODUCTION] = 'production';
+  KEY_TO_COLLECTION[KEY_PRODUCTS] = 'products';
+  KEY_TO_COLLECTION[KEY_SETTINGS] = 'settings';
+
+  let suppressCloudSync = false;
+  const pendingCloudSaves = {};
+  const syncListeners = [];
+  let cloudMeta = { sheetUrl: '', mpEnabled: false, notifyEmail: '', lastSync: null, syncing: false, lastError: '' };
+
+  function notifySyncListeners(detail) {
+    syncListeners.forEach(fn => { try { fn(detail); } catch (e) {} });
+    try {
+      window.dispatchEvent(new CustomEvent('divinalocura:sync', { detail: detail || cloudMeta }));
+    } catch (e) {}
+  }
+
   function getJson(key, defaultVal) {
     try {
       const data = localStorage.getItem(key);
@@ -333,62 +367,148 @@
     return defaultVal;
   }
 
-  function setJson(key, val) {
+  function setJson(key, val, skipCloud) {
     try {
       localStorage.setItem(key, JSON.stringify(val));
+      // Mantener sincronizada la clave vieja de productos por si alguna pestaña la lee
+      if (key === KEY_PRODUCTS) localStorage.setItem(KEY_PRODUCTS_LEGACY, JSON.stringify(val));
     } catch (e) {
       console.warn('Error guardando', key, e);
     }
+    const col = KEY_TO_COLLECTION[key];
+    if (col && !skipCloud && !suppressCloudSync) {
+      scheduleCloudSave(col, val);
+    }
+  }
+
+  function getKnownIds(col) {
+    const all = getJson(KEY_KNOWN_IDS, {});
+    return Array.isArray(all[col]) ? all[col] : [];
+  }
+
+  function setKnownIds(col, list) {
+    if (!Array.isArray(list)) return;
+    const all = getJson(KEY_KNOWN_IDS, {});
+    all[col] = list.map(x => x && x.id).filter(Boolean);
+    try { localStorage.setItem(KEY_KNOWN_IDS, JSON.stringify(all)); } catch (e) {}
+  }
+
+  function scheduleCloudSave(collectionName, data) {
+    if (!getCloudUrl() || !getAdminToken()) return;
+    clearTimeout(pendingCloudSaves[collectionName]);
+    pendingCloudSaves[collectionName] = setTimeout(() => {
+      pushCollectionToCloud(collectionName, data);
+    }, 350);
+  }
+
+  function getCloudUrl() {
+    try {
+      const saved = (localStorage.getItem(KEY_CLOUD_URL) || '').trim();
+      if (saved) return saved;
+      const st = getJson(KEY_SETTINGS, {});
+      if (st && st.cloud_url) return String(st.cloud_url).trim();
+    } catch (e) {}
+    return DEFAULT_CLOUD_URL;
+  }
+
+  function getAdminToken() {
+    try { return localStorage.getItem(KEY_ADMIN_TOKEN) || ''; } catch (e) { return ''; }
+  }
+
+  async function callCloud(action, payload) {
+    const url = getCloudUrl();
+    if (!url) return { ok: false, offline: true, error: 'Sin URL de Google Sheets configurada.' };
+    try {
+      const body = Object.assign({ action: action, token: getAdminToken() }, payload || {});
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(body),
+        redirect: 'follow'
+      });
+      const json = await res.json();
+      if (json && json.code === 'AUTH') {
+        try { localStorage.removeItem(KEY_ADMIN_TOKEN); } catch (e) {}
+      }
+      return json || { ok: false, error: 'Respuesta vacía' };
+    } catch (err) {
+      return { ok: false, networkError: true, error: String(err && err.message || err) };
+    }
+  }
+
+  async function pushCollectionToCloud(collectionName, data) {
+    if (!getCloudUrl() || !getAdminToken()) return { ok: false, skipped: true };
+    cloudMeta.syncing = true;
+    notifySyncListeners({ status: 'saving', collection: collectionName });
+    const baseIds = (collectionName === 'orders' || collectionName === 'clients') ? getKnownIds(collectionName) : undefined;
+    const res = await callCloud('save', { name: collectionName, data: data, baseIds: baseIds });
+    cloudMeta.syncing = false;
+    if (res && res.ok) {
+      cloudMeta.lastSync = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      cloudMeta.lastError = '';
+      if (Array.isArray(res.data) && (collectionName === 'orders' || collectionName === 'clients')) {
+        suppressCloudSync = true;
+        setJson(collectionName === 'orders' ? KEY_ORDERS : KEY_CLIENTS, res.data, true);
+        setKnownIds(collectionName, res.data);
+        suppressCloudSync = false;
+      } else if (Array.isArray(data)) {
+        setKnownIds(collectionName, data);
+      }
+      notifySyncListeners({ status: 'saved', collection: collectionName, lastSync: cloudMeta.lastSync });
+    } else {
+      cloudMeta.lastError = (res && res.error) || 'No se pudo guardar en Google Sheets';
+      notifySyncListeners({ status: 'error', error: cloudMeta.lastError });
+    }
+    return res;
   }
 
   function cleanPhoneKey(phone) {
     if (!phone) return 'anon';
-    return phone.replace(/[^0-9]/g, '');
+    return String(phone).replace(/[^0-9]/g, '');
+  }
+
+  function escapeHtml(str) {
+    return String(str === undefined || str === null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   // =========================================================================
   // INICIALIZACIÓN DE BASES DE DATOS SI ESTÁN VACÍAS
   // =========================================================================
   function initDatabase() {
-    // 1. Clientas
-    if (!localStorage.getItem(KEY_CLIENTS)) {
-      setJson(KEY_CLIENTS, SEED_CLIENTS);
-    }
+    suppressCloudSync = true;
+    try {
+      // Migrar productos si habían quedado en la clave vieja del panel
+      const mainProds = localStorage.getItem(KEY_PRODUCTS);
+      const legacyProds = localStorage.getItem(KEY_PRODUCTS_LEGACY);
+      if (!mainProds && legacyProds) {
+        localStorage.setItem(KEY_PRODUCTS, legacyProds);
+      } else if (mainProds && legacyProds && mainProds !== legacyProds) {
+        // Preferir la lista donde haya más productos o ediciones recientes
+        try {
+          const a = JSON.parse(mainProds);
+          const b = JSON.parse(legacyProds);
+          if (Array.isArray(b) && b.length >= (Array.isArray(a) ? a.length : 0)) {
+            localStorage.setItem(KEY_PRODUCTS, legacyProds);
+          }
+        } catch (e) {}
+      }
 
-    // 2. Pedidos
-    const existingOrders = getJson(KEY_ORDERS, null);
-    if (!existingOrders || existingOrders.length === 0) {
-      setJson(KEY_ORDERS, SEED_ORDERS);
-    }
-
-    // 3. Chats
-    if (!localStorage.getItem(KEY_CHATS)) {
-      setJson(KEY_CHATS, SEED_CHATS);
-    }
-
-    // 4. Stock Productos
-    if (!localStorage.getItem(KEY_STOCK_PRODUCTS)) {
-      setJson(KEY_STOCK_PRODUCTS, SEED_STOCK_PRODUCTS);
-    }
-
-    // 5. Stock Telas / Insumos
-    if (!localStorage.getItem(KEY_STOCK_MATERIALS)) {
-      setJson(KEY_STOCK_MATERIALS, SEED_STOCK_MATERIALS);
-    }
-
-    // 6. Gastos
-    if (!localStorage.getItem(KEY_EXPENSES)) {
-      setJson(KEY_EXPENSES, SEED_EXPENSES);
-    }
-
-    // 7. Analíticas & Tráfico
-    if (!localStorage.getItem(KEY_ANALYTICS)) {
-      setJson(KEY_ANALYTICS, SEED_ANALYTICS);
-    }
-
-    // 8. Cola de Producción Textil
-    if (!localStorage.getItem(KEY_PRODUCTION)) {
-      setJson(KEY_PRODUCTION, SEED_PRODUCTION);
+      if (!localStorage.getItem(KEY_CLIENTS)) setJson(KEY_CLIENTS, SEED_CLIENTS, true);
+      const existingOrders = getJson(KEY_ORDERS, null);
+      if (!existingOrders || existingOrders.length === 0) setJson(KEY_ORDERS, SEED_ORDERS, true);
+      if (!localStorage.getItem(KEY_CHATS)) setJson(KEY_CHATS, SEED_CHATS, true);
+      if (!localStorage.getItem(KEY_STOCK_PRODUCTS)) setJson(KEY_STOCK_PRODUCTS, SEED_STOCK_PRODUCTS, true);
+      if (!localStorage.getItem(KEY_STOCK_MATERIALS)) setJson(KEY_STOCK_MATERIALS, SEED_STOCK_MATERIALS, true);
+      if (!localStorage.getItem(KEY_EXPENSES)) setJson(KEY_EXPENSES, SEED_EXPENSES, true);
+      if (!localStorage.getItem(KEY_ANALYTICS)) setJson(KEY_ANALYTICS, SEED_ANALYTICS, true);
+      if (!localStorage.getItem(KEY_PRODUCTION)) setJson(KEY_PRODUCTION, SEED_PRODUCTION, true);
+    } finally {
+      suppressCloudSync = false;
     }
   }
 
@@ -428,7 +548,50 @@
       }
 
       setJson(KEY_CLIENTS, clients);
+      // Si es una clienta registrándose en la tienda pública, enviarlo al servidor
+      if (getCloudUrl() && !getAdminToken()) {
+        callCloud('registerClient', { client: clientRecord });
+      }
       return clientRecord;
+    },
+
+    // -----------------------------------------------------------------------
+    // PRODUCTOS DEL CATÁLOGO (UNIFICADOS ENTRE TIENDA Y PANEL)
+    // -----------------------------------------------------------------------
+    getProducts: function () {
+      const saved = getJson(KEY_PRODUCTS, null);
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+      const legacy = getJson(KEY_PRODUCTS_LEGACY, null);
+      if (Array.isArray(legacy) && legacy.length > 0) {
+        setJson(KEY_PRODUCTS, legacy, true);
+        return legacy;
+      }
+      if (typeof INITIAL_PRODUCTS !== 'undefined' && Array.isArray(INITIAL_PRODUCTS)) {
+        return JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+      }
+      if (typeof window.INITIAL_PRODUCTS !== 'undefined' && Array.isArray(window.INITIAL_PRODUCTS)) {
+        return JSON.parse(JSON.stringify(window.INITIAL_PRODUCTS));
+      }
+      return [];
+    },
+
+    saveProducts: function (productsList) {
+      if (!Array.isArray(productsList)) return [];
+      setJson(KEY_PRODUCTS, productsList);
+      return productsList;
+    },
+
+    getSettings: function (defaults) {
+      return Object.assign({}, defaults || {}, getJson(KEY_SETTINGS, {}));
+    },
+
+    saveSettings: function (settingsObj) {
+      const merged = Object.assign({}, getJson(KEY_SETTINGS, {}), settingsObj || {});
+      if (merged.cloud_url !== undefined) {
+        try { localStorage.setItem(KEY_CLOUD_URL, String(merged.cloud_url || '').trim()); } catch (e) {}
+      }
+      setJson(KEY_SETTINGS, merged);
+      return merged;
     },
 
     // -----------------------------------------------------------------------
@@ -442,11 +605,56 @@
       const orders = this.getOrders();
       const idx = orders.findIndex(o => o.id === orderId);
       if (idx >= 0) {
+        const prevStatus = orders[idx].status;
         orders[idx] = { ...orders[idx], ...updates };
         setJson(KEY_ORDERS, orders);
+        // Si el pedido pasa a "Cortando Telas" o "En Confección" y todavía no está en la cola de producción, sumarlo automáticamente
+        const newSt = orders[idx].status;
+        if (newSt !== prevStatus && (newSt === 'Cortando Telas' || newSt === 'En Confección')) {
+          this.ensureOrderInProduction(orders[idx]);
+        }
         return orders[idx];
       }
       return null;
+    },
+
+    ensureOrderInProduction: function (order) {
+      if (!order || !order.id) return [];
+      const queue = this.getProductionQueue();
+      if (queue.some(p => p.orderId === order.id)) return [];
+      const created = [];
+      (order.items || []).forEach(it => {
+        const qty = Number(it.qty) || 1;
+        const est = this.estimateFabricForItem(it);
+        const item = this.addProductionItem({
+          orderId: order.id,
+          productName: (qty > 1 ? qty + 'x ' : '') + (it.title || 'Pieza Textil'),
+          clientName: (order.customer && order.customer.name) || 'Clienta',
+          fabric: est.fabricName,
+          metersRequired: +(est.metersPerUnit * qty).toFixed(2),
+          phase: order.status === 'En Confección' ? 'costura' : 'corte',
+          targetDate: order.estimatedDelivery || 'A coordinar',
+          priority: 'normal',
+          notes: it.note || order.workshopNote || ''
+        });
+        created.push(item);
+      });
+      return created;
+    },
+
+    estimateFabricForItem: function (it) {
+      const id = String((it && it.id) || '').toLowerCase();
+      const title = String((it && (it.title || it.productName)) || '').toLowerCase();
+      if (id === 'p1' || title.includes('set skincare') || title.includes('kit')) {
+        return { fabricName: 'Satén de Seda Premium', metersPerUnit: 1.5 };
+      }
+      if (id === 'p5' || title.includes('cofia') || title.includes('antifaz') || title.includes('satén') || title.includes('saten')) {
+        return { fabricName: 'Satén de Seda Premium', metersPerUnit: 0.9 };
+      }
+      if (id === 'p2' || title.includes('waffle') || title.includes('repasador') || title.includes('nido de abeja') || title.includes('toall')) {
+        return { fabricName: 'Nido de Abeja (Waffle) Algodón 100%', metersPerUnit: 0.9 };
+      }
+      return { fabricName: 'Lino Rústico Puro Lavado', metersPerUnit: 1.2 };
     },
 
     deleteOrder: function (orderId) {
@@ -458,10 +666,22 @@
 
     addOrder: function (newOrder) {
       const orders = this.getOrders();
+      // Si la pieza está con entrega inmediata en stock, descontar 1 unidad terminada
+      const stock = this.getProductStock();
+      let stockChanged = false;
+      (newOrder.items || []).forEach(it => {
+        const st = stock.find(s => s.id === it.id);
+        if (st && st.inStock > 0) {
+          const take = Math.min(st.inStock, Number(it.qty) || 1);
+          st.inStock = Math.max(0, st.inStock - take);
+          stockChanged = true;
+        }
+      });
+      if (stockChanged) setJson(KEY_STOCK_PRODUCTS, stock);
+
       orders.unshift(newOrder);
       setJson(KEY_ORDERS, orders);
 
-      // Actualizar contador de pedidos de la clienta
       if (newOrder.customer && newOrder.customer.phone) {
         this.saveClient({
           name: newOrder.customer.name,
@@ -475,42 +695,113 @@
       return orders;
     },
 
+    // Enviar pedido al servidor (Google Sheets + mail a Elena + link de Mercado Pago opcional)
+    submitPublicOrder: async function (newOrder, wantPayment) {
+      if (!getCloudUrl()) return { ok: false, offline: true };
+      const res = await callCloud('createOrder', { order: newOrder, wantPayment: !!wantPayment });
+      if (res && res.ok && res.order) {
+        suppressCloudSync = true;
+        const orders = this.getOrders().map(o => (o.id === newOrder.id ? res.order : o));
+        setJson(KEY_ORDERS, orders, true);
+        suppressCloudSync = false;
+      }
+      return res;
+    },
+
     // -----------------------------------------------------------------------
     // CHAT DIRECTO ENTRE CLIENTA Y ELENA
     // -----------------------------------------------------------------------
     getChats: function () {
-      return getJson(KEY_CHATS, SEED_CHATS);
+      const raw = getJson(KEY_CHATS, SEED_CHATS) || {};
+      Object.keys(raw).forEach(k => {
+        if (Array.isArray(raw[k])) {
+          raw[k] = raw[k].map(m => ({
+            ...m,
+            time: m.time || m.timestamp || ''
+          }));
+        }
+      });
+      return raw;
     },
 
     getMessagesForPhone: function (phone) {
       const chats = this.getChats();
       const key = cleanPhoneKey(phone);
-      return chats[key] || [];
+      return chats[key] || chats[phone] || [];
+    },
+
+    getChatForPhone: function (phone) {
+      return this.getMessagesForPhone(phone);
     },
 
     sendMessage: function (phone, text, sender, senderName) {
       const chats = this.getChats();
-      const key = cleanPhoneKey(phone);
+      const key = cleanPhoneKey(phone) || phone;
       if (!chats[key]) chats[key] = [];
 
+      const ts = new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      const normSender = (sender === 'workshop' ? 'elena' : (sender || 'client'));
       const newMsg = {
         id: 'msg-' + Date.now(),
-        sender: sender || 'client', // 'client' | 'elena'
-        senderName: senderName || (sender === 'elena' ? 'Elena (Taller)' : 'Clienta'),
-        text: text.trim(),
-        timestamp: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        sender: normSender,
+        senderName: senderName || (normSender === 'elena' ? 'Elena (Taller)' : 'Clienta'),
+        text: String(text || '').trim(),
+        timestamp: ts,
+        time: ts
       };
 
       chats[key].push(newMsg);
       setJson(KEY_CHATS, chats);
+
+      if (normSender !== 'elena' && getCloudUrl() && !getAdminToken()) {
+        callCloud('sendClientMessage', { phone: phone, name: newMsg.senderName, text: newMsg.text });
+      }
       return newMsg;
+    },
+
+    addMessageToChat: function (phone, msgObj) {
+      if (!msgObj) return null;
+      return this.sendMessage(phone, msgObj.text || '', msgObj.sender || 'workshop', msgObj.senderName);
+    },
+
+    fetchClientCloudData: async function (phone) {
+      if (!getCloudUrl() || !phone) return null;
+      const res = await callCloud('clientData', { phone: phone });
+      if (res && res.ok) {
+        suppressCloudSync = true;
+        if (Array.isArray(res.orders) && res.orders.length) {
+          const current = this.getOrders();
+          const map = {};
+          current.forEach(o => { map[o.id] = o; });
+          res.orders.forEach(o => { map[o.id] = Object.assign(map[o.id] || {}, o); });
+          setJson(KEY_ORDERS, Object.values(map), true);
+        }
+        if (Array.isArray(res.messages)) {
+          const chats = this.getChats();
+          chats[cleanPhoneKey(phone)] = res.messages;
+          setJson(KEY_CHATS, chats, true);
+        }
+        suppressCloudSync = false;
+      }
+      return res;
     },
 
     // -----------------------------------------------------------------------
     // CONTROL DE STOCK (PIEZAS TERMINADAS)
     // -----------------------------------------------------------------------
     getProductStock: function () {
-      return getJson(KEY_STOCK_PRODUCTS, SEED_STOCK_PRODUCTS);
+      const stock = getJson(KEY_STOCK_PRODUCTS, SEED_STOCK_PRODUCTS);
+      // Asegurar que cualquier producto nuevo del catálogo aparezca en el control de stock
+      const prods = this.getProducts();
+      let added = false;
+      prods.forEach(p => {
+        if (p && p.id && !stock.some(s => s.id === p.id)) {
+          stock.push({ id: p.id, title: p.title, inStock: 2, minAlert: 1, status: 'Entrega Inmediata' });
+          added = true;
+        }
+      });
+      if (added) setJson(KEY_STOCK_PRODUCTS, stock, true);
+      return stock;
     },
 
     updateProductStock: function (productId, newQty, newStatus) {
@@ -526,36 +817,94 @@
     },
 
     // -----------------------------------------------------------------------
-    // CONTROL DE TELAS & INSUMOS DE PRODUCCIÓN
+    // CONTROL DE TELAS & INSUMOS DE PRODUCCIÓN (CON DESCUENTO AUTOMÁTICO)
     // -----------------------------------------------------------------------
     getMaterials: function () {
-      return getJson(KEY_STOCK_MATERIALS, SEED_STOCK_MATERIALS);
+      const raw = getJson(KEY_STOCK_MATERIALS, SEED_STOCK_MATERIALS) || [];
+      return raw.map(m => {
+        const q = m.qty !== undefined ? Number(m.qty) : Number(m.currentStock || 0);
+        const minA = m.minAlert !== undefined ? Number(m.minAlert) : Number(m.minStock || 4);
+        const cat = m.category || m.type || 'Telas';
+        return {
+          ...m,
+          qty: q,
+          currentStock: q,
+          minAlert: minA,
+          minStock: minA,
+          category: cat,
+          type: cat,
+          unit: m.unit || 'm'
+        };
+      });
+    },
+
+    findMatchingMaterial: function (textOrFabric) {
+      const mats = this.getMaterials();
+      const q = String(textOrFabric || '').toLowerCase();
+      if (!q) return null;
+      // 1) Coincidencia por ID directo
+      const byId = mats.find(m => m.id.toLowerCase() === q);
+      if (byId) return byId;
+      // 2) Coincidencia por palabras clave textiles
+      const keywords = [
+        { words: ['satén', 'saten', 'seda', 'champán', 'champan', 'perla', 'antifrizz'], match: m => /sat[eé]n|seda/i.test(m.name) },
+        { words: ['waffle', 'nido de abeja', 'repasador', 'felpa', 'toall'], match: m => /waffle|abeja/i.test(m.name) },
+        { words: ['lino', 'tusor', 'crudo', 'cesta', 'conej', 'portarroll', 'neceser'], match: m => /lino/i.test(m.name) && m.category === 'Telas' },
+        { words: ['puntilla', 'encaje'], match: m => /puntilla/i.test(m.name) },
+        { words: ['cierre'], match: m => /cierre/i.test(m.name) },
+        { words: ['elástico', 'elastico'], match: m => /el[aá]stico/i.test(m.name) },
+        { words: ['bolsita', 'empaque', 'packaging'], match: m => /bolsita|empaque/i.test(m.name) }
+      ];
+      for (let i = 0; i < keywords.length; i++) {
+        if (keywords[i].words.some(w => q.includes(w))) {
+          const found = mats.find(keywords[i].match);
+          if (found) return found;
+        }
+      }
+      // 3) Coincidencia por palabras sueltas del nombre del material
+      return mats.find(m => {
+        const tokens = String(m.name || '').toLowerCase().split(/\s+/).filter(t => t.length >= 4);
+        return tokens.some(t => q.includes(t));
+      }) || null;
     },
 
     updateMaterialQty: function (materialId, deltaOrQty, isDelta = false) {
       const mats = this.getMaterials();
       const idx = mats.findIndex(m => m.id === materialId);
       if (idx >= 0) {
-        if (isDelta) {
-          mats[idx].qty = Math.max(0, (mats[idx].qty || 0) + deltaOrQty);
-        } else {
-          mats[idx].qty = Math.max(0, deltaOrQty);
-        }
+        const cur = mats[idx].qty !== undefined ? Number(mats[idx].qty) : Number(mats[idx].currentStock || 0);
+        const nextQty = isDelta
+          ? Math.max(0, +(cur + Number(deltaOrQty)).toFixed(2))
+          : Math.max(0, +Number(deltaOrQty).toFixed(2));
+        mats[idx].qty = nextQty;
+        mats[idx].currentStock = nextQty;
         setJson(KEY_STOCK_MATERIALS, mats);
         return mats[idx];
       }
       return null;
     },
 
+    updateMaterialStock: function (materialId, newQty) {
+      return this.updateMaterialQty(materialId, newQty, false);
+    },
+
     addMaterial: function (materialData) {
       const mats = this.getMaterials();
+      const q = parseFloat(materialData.qty !== undefined ? materialData.qty : materialData.currentStock) || 0;
+      const minA = parseFloat(materialData.minAlert !== undefined ? materialData.minAlert : materialData.minStock) || 4;
+      const cat = materialData.category || materialData.type || 'Telas';
       const newMat = {
         id: 'mat-' + Date.now(),
         name: materialData.name,
-        category: materialData.category || 'Telas',
-        qty: parseFloat(materialData.qty) || 0,
+        category: cat,
+        type: cat,
+        qty: q,
+        currentStock: q,
         unit: materialData.unit || 'metros',
-        minAlert: parseFloat(materialData.minAlert) || 2
+        minAlert: minA,
+        minStock: minA,
+        costPerUnit: parseFloat(materialData.costPerUnit) || 3500,
+        color: materialData.color || '#C87D69'
       };
       mats.push(newMat);
       setJson(KEY_STOCK_MATERIALS, mats);
@@ -574,30 +923,29 @@
     // -----------------------------------------------------------------------
     getBudget: function () {
       const stored = localStorage.getItem(KEY_BUDGET);
-      return stored ? parseFloat(stored) : 120000; // $120.000 ARS por defecto
+      return stored ? parseFloat(stored) : 120000;
     },
 
     setBudget: function (amount) {
       const num = Math.max(0, parseFloat(amount) || 0);
       localStorage.setItem(KEY_BUDGET, num);
+      if (!suppressCloudSync) scheduleCloudSave('budget', num);
       return num;
     },
 
-    // Helper para normalizar fechas en formato 'YYYY-MM'
     normalizeYearMonth: function (dateStr) {
       if (!dateStr) return '';
-      // Si viene como DD/MM/YYYY
-      if (dateStr.includes('/')) {
-        const parts = dateStr.split('/');
+      const s = String(dateStr);
+      if (s.includes('/')) {
+        const parts = s.split('/');
         if (parts.length === 3) {
-          const y = parts[2].trim().padStart(4, '20');
+          const y = parts[2].trim().slice(0, 4).padStart(4, '20');
           const m = parts[1].trim().padStart(2, '0');
           return `${y}-${m}`;
         }
       }
-      // Si viene como YYYY-MM-DD
-      if (dateStr.includes('-')) {
-        const parts = dateStr.split('-');
+      if (s.includes('-')) {
+        const parts = s.split('-');
         if (parts.length >= 2) {
           const y = parts[0].trim();
           const m = parts[1].trim().padStart(2, '0');
@@ -607,7 +955,6 @@
       return '';
     },
 
-    // Obtener lista de meses disponibles para el selector 'sel-mes'
     getAvailableMonths: function () {
       const orders = this.getOrders();
       const expenses = this.getExpenses();
@@ -623,7 +970,6 @@
         if (ym) monthSet.add(ym);
       });
 
-      // Asegurar que el mes actual siempre esté disponible
       const now = new Date();
       const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       monthSet.add(currentYM);
@@ -646,21 +992,47 @@
     },
 
     // -----------------------------------------------------------------------
-    // GASTOS & BALANCE DE PRODUCCIÓN (TALLER DIVINA LOCURA)
+    // GASTOS & BALANCE DE PRODUCCIÓN (SUMA METROS SI COMPRA TELA)
     // -----------------------------------------------------------------------
     getExpenses: function () {
-      return getJson(KEY_EXPENSES, SEED_EXPENSES);
+      const raw = getJson(KEY_EXPENSES, SEED_EXPENSES) || [];
+      return raw.map(e => ({
+        ...e,
+        concept: e.concept || e.description || 'Gasto de taller',
+        description: e.description || e.concept || 'Gasto de taller'
+      }));
     },
 
     addExpense: function (expenseData) {
       const expenses = this.getExpenses();
+      const textConcept = expenseData.concept || expenseData.description || 'Gasto de taller';
       const newExp = {
         id: 'exp-' + Date.now(),
         date: expenseData.date || new Date().toISOString().split('T')[0],
-        concept: expenseData.concept || 'Gasto de taller',
+        concept: textConcept,
+        description: textConcept,
         category: expenseData.category || 'Telas',
         amount: parseFloat(expenseData.amount) || 0
       };
+
+      // Si el gasto dice por ejemplo "Compra 10m Satén" o trae materialId + qtyAdded, sumar al stock automáticamente
+      let restocked = null;
+      const explicitMatId = expenseData.materialId;
+      const explicitQty = parseFloat(expenseData.qtyAdded);
+      if (explicitMatId && explicitQty > 0) {
+        restocked = this.updateMaterialQty(explicitMatId, explicitQty, true);
+      } else if (newExp.category === 'Telas' || newExp.category === 'Mercería' || newExp.category === 'Packaging') {
+        const m = String(newExp.concept).match(/(\d+(?:[.,]\d+)?)\s*(?:m|mt|mts|metros|un|u|unidades)\b/i);
+        const target = this.findMatchingMaterial(newExp.concept);
+        if (m && target) {
+          const qtyAdd = parseFloat(m[1].replace(',', '.'));
+          if (qtyAdd > 0) {
+            restocked = this.updateMaterialQty(target.id, qtyAdd, true);
+          }
+        }
+      }
+      if (restocked) newExp.restockedMaterial = `${restocked.name} (${restocked.qty} ${restocked.unit})`;
+
       expenses.unshift(newExp);
       setJson(KEY_EXPENSES, expenses);
       return newExp;
@@ -673,12 +1045,11 @@
       return expenses;
     },
 
-    // Resumen financiero filtrado por mes (o 'all' para histórico)
+    // Resumen financiero filtrado por mes (con rentabilidad real calculada de los pedidos y catálogo)
     getFinancialSummary: function (selectedMonth = 'all') {
       const allOrders = this.getOrders();
       const allExpenses = this.getExpenses();
 
-      // Filtrar por período seleccionado
       const filteredOrders = allOrders.filter(ord => {
         if (!selectedMonth || selectedMonth === 'all') return true;
         return this.normalizeYearMonth(ord.date) === selectedMonth;
@@ -689,36 +1060,33 @@
         return this.normalizeYearMonth(exp.date) === selectedMonth;
       });
 
-      // Sumar ingresos de pedidos no cancelados
+      const parsePrice = (val) => {
+        if (typeof val === 'number') return val;
+        const m = String(val || '').match(/\$\s*([\d.,]+)/) || String(val || '').match(/([\d.,]+)/);
+        if (!m) return 0;
+        return parseFloat(m[1].replace(/\./g, '').replace(',', '.')) || 0;
+      };
+
       const totalIncome = filteredOrders.reduce((sum, ord) => {
-        if (ord.totalAmount) return sum + ord.totalAmount;
+        if (ord.totalAmount) return sum + Number(ord.totalAmount);
         const itemsTotal = (ord.items || []).reduce((sub, item) => {
-          const rawNum = String(item.price || '').replace(/[^0-9]/g, '');
-          const priceNum = rawNum ? parseFloat(rawNum) : 0;
-          return sub + (priceNum * (item.qty || 1));
+          return sub + (parsePrice(item.price) * (item.qty || 1));
         }, 0);
         return sum + itemsTotal;
       }, 0);
 
-      // Sumar gastos
-      const totalExpenses = filteredExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
-
+      const totalExpenses = filteredExpenses.reduce((sum, exp) => sum + (parseFloat(exp.amount) || 0), 0);
       const netProfit = totalIncome - totalExpenses;
       const profitMargin = totalIncome > 0 ? Math.round((netProfit / totalIncome) * 100) : 0;
 
-      // Desglose por categoría para el componente de "Reparto del Mes"
       const categoryTotals = {};
-      Object.keys(CATEGORY_COLORS).forEach(cat => {
-        categoryTotals[cat] = 0;
-      });
-
+      Object.keys(CATEGORY_COLORS).forEach(cat => { categoryTotals[cat] = 0; });
       filteredExpenses.forEach(exp => {
         const cat = exp.category || 'Varios';
         if (!categoryTotals[cat]) categoryTotals[cat] = 0;
-        categoryTotals[cat] += (exp.amount || 0);
+        categoryTotals[cat] += (parseFloat(exp.amount) || 0);
       });
 
-      // Calcular porcentajes de reparto
       const categoryPercentages = Object.keys(categoryTotals)
         .map(cat => {
           const amount = categoryTotals[cat];
@@ -733,28 +1101,21 @@
         .filter(item => item.amount > 0)
         .sort((a, b) => b.amount - a.amount);
 
-      // Límites de consumo y presupuesto mensual
       const budgetLimit = this.getBudget();
       const budgetPercent = budgetLimit > 0 ? Math.min(100, Math.round((totalExpenses / budgetLimit) * 100)) : 0;
       let budgetStatus = 'ok';
-      let budgetBadgeText = 'Dentro del límite presupuestario';
-
+      let budgetBadgeText = '🌿 Consumo controlado & saludable';
       if (totalExpenses > budgetLimit) {
         budgetStatus = 'danger';
         budgetBadgeText = '🚨 Límite de consumo superado';
       } else if (totalExpenses >= budgetLimit * 0.8) {
         budgetStatus = 'warning';
         budgetBadgeText = '⚠️ Advertencia (Cerca del tope)';
-      } else {
-        budgetStatus = 'ok';
-        budgetBadgeText = '🌿 Consumo controlado & saludable';
       }
 
-      // Valor del inventario de materiales en taller (metros * costo promedio estimado $3.500)
       const materials = this.getMaterials();
-      const fabricStockValue = materials.reduce((sum, m) => sum + ((m.qty || 0) * 3500), 0);
+      const fabricStockValue = materials.reduce((sum, m) => sum + ((parseFloat(m.qty) || 0) * (parseFloat(m.costPerUnit) || 3500)), 0);
 
-      // Flujo de cobros: Cobrado 100% vs Señas 50% vs Saldo a cobrar
       let paidTotal = 0;
       let depositTotal = 0;
       let pendingBalance = 0;
@@ -762,12 +1123,12 @@
       let pendingOrdersCount = 0;
 
       filteredOrders.forEach(ord => {
-        const amt = ord.totalAmount || 0;
-        if (ord.status === 'Entregado') {
+        const amt = parseFloat(ord.totalAmount) || 0;
+        const isPaid = ord.status === 'Entregado' || String(ord.paymentStatus || '').includes('Pagado') || ord.status === 'Confirmado · Pagado';
+        if (isPaid) {
           paidTotal += amt;
           paidOrdersCount++;
         } else {
-          // Pedido en confección: seña del 50% cobrada, saldo del 50% a cobrar contra entrega
           const deposit = Math.round(amt * 0.5);
           depositTotal += deposit;
           pendingBalance += (amt - deposit);
@@ -777,16 +1138,36 @@
 
       const avgTicket = filteredOrders.length > 0 ? Math.round(totalIncome / filteredOrders.length) : 0;
 
-      // Rentabilidad por producto estrella de Elena
-      const starProductsProfit = [
-        { name: 'Almohadón Tusor & Lino con Vivos', category: 'Almohadones', cost: 4200, price: 14500, margin: 71, badge: '⭐ Alta Demanda' },
-        { name: 'Bata Kimono Satén Seda Champán', category: 'Batas & Relax', cost: 8500, price: 28000, margin: 70, badge: '⭐ Producto Estrella' },
-        { name: 'Juego de Cama Waffle Honeycomb', category: 'Dormitorio', cost: 11000, price: 36000, margin: 69, badge: '⭐ Mayor Facturación' },
-        { name: 'Mantel Puro Lino Crudo Deshilachado', category: 'Mesa', cost: 7200, price: 24000, margin: 70, badge: '🌿 Clásico Noble' },
-        { name: 'Nécessaire Impermeable con Cierre', category: 'Accesorios', cost: 2800, price: 9500, margin: 71, badge: '🌿 Rotación Rápida' }
-      ];
+      // Rentabilidad real por producto del catálogo + unidades vendidas en el período
+      const catalog = this.getProducts();
+      const soldCountByProd = {};
+      filteredOrders.forEach(ord => {
+        (ord.items || []).forEach(it => {
+          const key = it.id || it.title;
+          soldCountByProd[key] = (soldCountByProd[key] || 0) + (Number(it.qty) || 1);
+        });
+      });
 
-      // Consumo estimado de insumos y telas en el período
+      const starProductsProfit = catalog.slice(0, 8).map(p => {
+        const price = parsePrice(p.price) || 12500;
+        const est = this.estimateFabricForItem(p);
+        const mat = this.findMatchingMaterial(est.fabricName);
+        const unitCostMat = mat ? (parseFloat(mat.costPerUnit) || 3500) : 3500;
+        const cost = Number(p.cost) || Math.round(est.metersPerUnit * unitCostMat + 850); // tela + mercería/packaging
+        const margin = price > 0 ? Math.round(((price - cost) / price) * 100) : 0;
+        const sold = soldCountByProd[p.id] || soldCountByProd[p.title] || 0;
+        return {
+          id: p.id,
+          name: p.title,
+          category: p.category || 'Taller',
+          cost: cost,
+          price: price,
+          margin: margin,
+          sold: sold,
+          badge: sold >= 2 ? `🔥 ${sold} vendidos` : (sold === 1 ? '⭐ 1 vendido' : (p.tag || '🌿 En catálogo'))
+        };
+      }).sort((a, b) => (b.sold * b.price) - (a.sold * a.price) || b.margin - a.margin).slice(0, 6);
+
       const fabricConsumption = this.getFabricConsumption(selectedMonth);
 
       return {
@@ -818,7 +1199,6 @@
       };
     },
 
-    // Consumo de telas e insumos basado en pedidos confeccionados
     getFabricConsumption: function (selectedMonth = 'all') {
       const orders = this.getOrders().filter(ord => {
         if (!selectedMonth || selectedMonth === 'all') return true;
@@ -834,48 +1214,79 @@
         (ord.items || []).forEach(item => {
           const qty = item.qty || 1;
           piecesFinished += qty;
-          const id = item.id || '';
-          if (id === 'p1' || id === 'p5') {
-            satinMeters += (2.2 * qty);
-          } else if (id === 'p2') {
-            waffleMeters += (0.9 * qty);
-          } else if (id === 'p3' || id === 'p4' || id === 'p6' || id === 'p8') {
-            linenMeters += (1.4 * qty);
-          } else {
-            linenMeters += (1.0 * qty);
-          }
+          const est = this.estimateFabricForItem(item);
+          if (/sat[eé]n/i.test(est.fabricName)) satinMeters += est.metersPerUnit * qty;
+          else if (/waffle/i.test(est.fabricName)) waffleMeters += est.metersPerUnit * qty;
+          else linenMeters += est.metersPerUnit * qty;
         });
       });
 
       return {
         totalMeters: Math.round(satinMeters + linenMeters + waffleMeters),
         piecesFinished,
-        satinMeters: Math.round(satinMeters),
-        linenMeters: Math.round(linenMeters),
-        waffleMeters: Math.round(waffleMeters)
+        satinMeters: +(satinMeters).toFixed(1),
+        linenMeters: +(linenMeters).toFixed(1),
+        waffleMeters: +(waffleMeters).toFixed(1)
       };
     },
 
     // -----------------------------------------------------------------------
-    // ANALÍTICAS DE TRÁFICO & VISITAS DEL NEGOCIO
+    // ANALÍTICAS DE TRÁFICO & VISITAS REALES
     // -----------------------------------------------------------------------
     getAnalytics: function () {
       return getJson(KEY_ANALYTICS, SEED_ANALYTICS);
+    },
+
+    detectTrafficSource: function () {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const utm = (params.get('utm_source') || params.get('ref') || params.get('origen') || '').toLowerCase();
+        const ref = (document.referrer || '').toLowerCase();
+        const combined = utm + ' ' + ref;
+        if (combined.includes('instagram') || combined.includes('ig')) return 'instagram';
+        if (combined.includes('whatsapp') || combined.includes('wa.me')) return 'whatsapp';
+        if (combined.includes('google')) return 'google';
+        if (combined.includes('facebook') || combined.includes('fb')) return 'facebook';
+      } catch (e) {}
+      return 'directo';
+    },
+
+    getVisitorId: function () {
+      try {
+        let vid = localStorage.getItem(KEY_VISITOR_ID);
+        if (!vid) {
+          vid = 'v-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+          localStorage.setItem(KEY_VISITOR_ID, vid);
+        }
+        return vid;
+      } catch (e) {
+        return 'anon';
+      }
     },
 
     trackVisit: function () {
       const data = this.getAnalytics();
       data.totalVisits = (data.totalVisits || 0) + 1;
       data.todayVisits = (data.todayVisits || 0) + 1;
+      const src = this.detectTrafficSource();
+      const vid = this.getVisitorId();
+      let isNewSession = false;
       try {
         if (!sessionStorage.getItem('divinalocura_visited_session')) {
           data.uniqueVisitors = (data.uniqueVisitors || 0) + 1;
           sessionStorage.setItem('divinalocura_visited_session', 'true');
+          isNewSession = true;
         }
-      } catch (e) {
-        // Fallback silencioso si sessionStorage está restringido
+      } catch (e) {}
+      setJson(KEY_ANALYTICS, data, true);
+      if (isNewSession && getCloudUrl()) {
+        callCloud('trackVisit', {
+          type: 'visita',
+          page: window.location.pathname.split('/').pop() || 'index.html',
+          source: src,
+          visitorId: vid
+        });
       }
-      setJson(KEY_ANALYTICS, data);
       return data;
     },
 
@@ -884,26 +1295,67 @@
       const data = this.getAnalytics();
       if (!data.productViews) data.productViews = {};
       data.productViews[productId] = (data.productViews[productId] || 0) + 1;
-      setJson(KEY_ANALYTICS, data);
+      setJson(KEY_ANALYTICS, data, true);
+      if (getCloudUrl()) {
+        callCloud('trackVisit', {
+          type: 'producto',
+          productId: productId,
+          source: this.detectTrafficSource(),
+          visitorId: this.getVisitorId()
+        });
+      }
       return data;
     },
 
+    recordProductView: function (productId) {
+      return this.trackProductView(productId);
+    },
+
     // -----------------------------------------------------------------------
-    // CONTROL DE PRODUCCIÓN & TALLER TEXTIL (COLA DE CONFECCIÓN)
+    // CONTROL DE PRODUCCIÓN & TALLER TEXTIL (CON DESCUENTO AUTOMÁTICO DE TELA)
     // -----------------------------------------------------------------------
     getProductionQueue: function () {
-      return getJson(KEY_PRODUCTION, SEED_PRODUCTION);
+      const raw = getJson(KEY_PRODUCTION, SEED_PRODUCTION) || [];
+      return raw.map(item => ({
+        ...item,
+        productName: item.productName || item.productTitle || 'Pieza Textil Artesanal',
+        productTitle: item.productTitle || item.productName || 'Pieza Textil Artesanal',
+        metersRequired: item.metersRequired || item.metersUsed || 1.0,
+        metersUsed: item.metersUsed || item.metersRequired || 1.0
+      }));
     },
 
     addProductionItem: function (item) {
       const queue = this.getProductionQueue();
+      const prodName = item.productName || item.productTitle || 'Pieza Textil Artesanal';
+      const est = this.estimateFabricForItem({ title: prodName });
+      const meters = parseFloat(item.metersRequired || item.metersUsed) || est.metersPerUnit || 1.0;
+      const fabricText = item.fabric || est.fabricName;
+
+      // Descontar automáticamente los metros del rollo de tela correspondiente
+      let deductedInfo = '';
+      if (item.deductStock !== false) {
+        const mat = item.materialId
+          ? this.getMaterials().find(m => m.id === item.materialId)
+          : this.findMatchingMaterial(fabricText + ' ' + prodName);
+        if (mat) {
+          const updated = this.updateMaterialQty(mat.id, -meters, true);
+          if (updated) {
+            deductedInfo = `${meters} ${updated.unit} de ${updated.name} (quedan ${updated.qty} ${updated.unit})`;
+          }
+        }
+      }
+
       const newItem = {
-        id: 'prod-' + Date.now(),
+        id: 'prod-' + Date.now() + '-' + Math.floor(Math.random() * 100),
         orderId: item.orderId || 'Encargo Directo',
-        productName: item.productName || 'Pieza Textil Artesanal',
+        productName: prodName,
+        productTitle: prodName,
         clientName: item.clientName || 'Clienta',
-        fabric: item.fabric || 'Satén / Lino',
-        metersRequired: parseFloat(item.metersRequired) || 1.0,
+        fabric: fabricText,
+        metersRequired: meters,
+        metersUsed: meters,
+        deductedInfo: deductedInfo,
         phase: item.phase || 'corte',
         assignedDate: item.assignedDate || new Date().toLocaleDateString('es-AR'),
         targetDate: item.targetDate || 'A coordinar',
@@ -920,6 +1372,7 @@
       const queue = this.getProductionQueue();
       const item = queue.find(p => p.id === itemId);
       if (item) {
+        const prev = item.phase;
         const currentIdx = phases.indexOf(item.phase);
         if (currentIdx >= 0 && currentIdx < phases.length - 1) {
           item.phase = phases[currentIdx + 1];
@@ -927,6 +1380,9 @@
           item.phase = 'completado';
         }
         setJson(KEY_PRODUCTION, queue);
+        if (prev !== 'completado' && item.phase === 'completado') {
+          this.onProductionCompleted(item);
+        }
         return item;
       }
       return null;
@@ -936,11 +1392,38 @@
       const queue = this.getProductionQueue();
       const item = queue.find(p => p.id === itemId);
       if (item) {
+        const prev = item.phase;
         item.phase = phase;
         setJson(KEY_PRODUCTION, queue);
+        if (prev !== 'completado' && phase === 'completado') {
+          this.onProductionCompleted(item);
+        }
         return item;
       }
       return null;
+    },
+
+    onProductionCompleted: function (item) {
+      if (!item) return;
+      // Si es reposición de stock del taller, sumar 1 unidad terminada al producto correspondiente
+      if (/stock|taller|reposici/i.test(String(item.clientName || '') + ' ' + String(item.orderId || ''))) {
+        const stock = this.getProductStock();
+        const q = String(item.productName || item.productTitle || '').toLowerCase();
+        const match = stock.find(s => q.includes(s.title.toLowerCase().slice(0, 10)) || s.title.toLowerCase().includes(q.slice(0, 10)));
+        if (match) {
+          this.updateProductStock(match.id, (match.inStock || 0) + 1);
+        }
+      }
+      // Si pertenece a un pedido y todas sus piezas están completadas, marcar como "Listo para Entregar"
+      if (item.orderId && item.orderId.startsWith('ORD-')) {
+        const queue = this.getProductionQueue().filter(p => p.orderId === item.orderId);
+        if (queue.length > 0 && queue.every(p => p.phase === 'completado')) {
+          const ord = this.getOrders().find(o => o.id === item.orderId);
+          if (ord && ord.status !== 'Entregado' && ord.status !== 'entregado') {
+            this.updateOrder(item.orderId, { status: 'Listo para Entregar ✨' });
+          }
+        }
+      }
     },
 
     deleteProductionItem: function (itemId) {
@@ -968,7 +1451,7 @@
       orders.forEach(o => {
         const amt = parseFloat(o.totalAmount) || 0;
         totalRevenue += amt;
-        if (o.status === 'Entregado') {
+        if (o.status === 'Entregado' || o.status === 'entregado') {
           completedOrders++;
         } else {
           inProgressOrders++;
@@ -983,7 +1466,8 @@
       const netProfit = totalRevenue - totalExpenses;
       const profitMargin = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
       const avgTicket = orders.length > 0 ? Math.round(totalRevenue / orders.length) : 0;
-      const conversionRate = analytics.totalVisits > 0 ? ((orders.length / analytics.totalVisits) * 100).toFixed(1) : '0.0';
+      const visits = analytics.totalVisits !== undefined ? analytics.totalVisits : 0;
+      const conversionRate = visits > 0 ? ((orders.length / visits) * 100).toFixed(1) : '0.0';
 
       const lowProductStock = stock.filter(p => p.inStock <= (p.minAlert || 2));
       const lowMaterialStock = materials.filter(m => m.qty <= (m.minAlert || 5));
@@ -993,26 +1477,35 @@
 
       return {
         analytics,
-        totalVisits: analytics.totalVisits || 1420,
-        uniqueVisitors: analytics.uniqueVisitors || 985,
-        todayVisits: analytics.todayVisits || 64,
+        totalVisits: visits,
+        visits: visits,
+        uniqueVisitors: analytics.uniqueVisitors !== undefined ? analytics.uniqueVisitors : 0,
+        todayVisits: analytics.todayVisits !== undefined ? analytics.todayVisits : 0,
+        isRealAnalytics: !!analytics.isReal,
         conversionRate,
         sources: analytics.sources || { instagram: 64, whatsapp: 22, direct: 14 },
         totalRevenue,
+        revenue: totalRevenue,
         totalExpenses,
         netProfit,
+        profit: netProfit,
         profitMargin,
+        netMargin: profitMargin,
         avgTicket,
         ordersCount: orders.length,
+        totalOrders: orders.length,
         completedOrders,
         inProgressOrders,
+        pendingOrders: inProgressOrders,
         productionCount: activeProduction.length,
+        productionActive: activeProduction.length,
         productionTotal: production.length,
         productionQueue: production,
         lowProductStock,
         lowMaterialStock,
         totalAlertsCount,
         weeklyHistory: analytics.weeklyHistory || [],
+        dailyHistory: analytics.dailyHistory || [],
         productViews: analytics.productViews || {}
       };
     },
@@ -1024,10 +1517,12 @@
       const backupData = {
         meta: {
           app: 'Divina Locura Deco - Taller de Confección & Gestión Integral',
-          version: '3.0.0',
+          version: '4.0.0',
           exportedAt: new Date().toISOString(),
           readableDate: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')
         },
+        products: this.getProducts(),
+        settings: this.getSettings(),
         clients: this.getClients(),
         orders: this.getOrders(),
         chats: this.getChats(),
@@ -1047,15 +1542,17 @@
         const data = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
         if (!data || typeof data !== 'object') throw new Error('Formato JSON inválido');
 
+        if (Array.isArray(data.products)) setJson(KEY_PRODUCTS, data.products);
+        if (data.settings && typeof data.settings === 'object') setJson(KEY_SETTINGS, data.settings);
         if (Array.isArray(data.clients)) setJson(KEY_CLIENTS, data.clients);
         if (Array.isArray(data.orders)) setJson(KEY_ORDERS, data.orders);
         if (data.chats && typeof data.chats === 'object') setJson(KEY_CHATS, data.chats);
         if (Array.isArray(data.stockProducts)) setJson(KEY_STOCK_PRODUCTS, data.stockProducts);
         if (Array.isArray(data.stockMaterials)) setJson(KEY_STOCK_MATERIALS, data.stockMaterials);
         if (Array.isArray(data.production)) setJson(KEY_PRODUCTION, data.production);
-        if (data.analytics && typeof data.analytics === 'object') setJson(KEY_ANALYTICS, data.analytics);
+        if (data.analytics && typeof data.analytics === 'object') setJson(KEY_ANALYTICS, data.analytics, true);
         if (Array.isArray(data.expenses)) setJson(KEY_EXPENSES, data.expenses);
-        if (typeof data.budget === 'number') localStorage.setItem(KEY_BUDGET, data.budget);
+        if (typeof data.budget === 'number') this.setBudget(data.budget);
 
         return { success: true, message: 'Respaldo restaurado con éxito' };
       } catch (err) {
@@ -1065,7 +1562,7 @@
     },
 
     // -----------------------------------------------------------------------
-    // GESTIÓN DE SEGURIDAD & CLAVES DE ADMINISTRADOR
+    // GESTIÓN DE SEGURIDAD & CLAVES (GOOGLE SHEETS + FALLBACK LOCAL)
     // -----------------------------------------------------------------------
     getAdminPasswords: function () {
       try {
@@ -1095,13 +1592,31 @@
       passwords[role] = trimmed;
       try {
         localStorage.setItem(KEY_SECURITY, JSON.stringify(passwords));
-        return { 
-          success: true, 
-          message: `¡Contraseña de ${role === 'elena' ? 'Elena' : 'Juanma'} actualizada correctamente!` 
+        return {
+          success: true,
+          message: `¡Contraseña de ${role === 'elena' ? 'Elena' : 'Juanma'} actualizada correctamente!`
         };
       } catch (e) {
         return { success: false, error: 'No se pudo guardar la contraseña en el navegador.' };
       }
+    },
+
+    updateAdminPasswordAsync: async function (role, currentPassword, newPassword) {
+      if (getCloudUrl()) {
+        const res = await callCloud('changePassword', { role: role, current: currentPassword, newPassword: newPassword });
+        if (res && res.ok) {
+          this.updateAdminPassword(role, newPassword);
+          return { success: true, message: res.message || '¡Contraseña actualizada en Google!' };
+        }
+        if (res && !res.networkError) {
+          return { success: false, error: res.error || 'No se pudo actualizar la clave.' };
+        }
+      }
+      const check = this.verifyAdminPassword(role, currentPassword);
+      if (!check.valid) {
+        return { success: false, error: `La contraseña actual ingresada para ${role === 'elena' ? 'Elena' : 'Juanma'} no es correcta.` };
+      }
+      return this.updateAdminPassword(role, newPassword);
     },
 
     verifyAdminPassword: function (role, enteredPassword) {
@@ -1110,25 +1625,248 @@
       if (!entered) return { valid: false };
 
       if (role === 'elena') {
-        const isOk = entered === passwords.elena.toLowerCase() || entered === 'elena' || entered === 'admin' || entered === 'mama';
+        const isOk = entered === passwords.elena.toLowerCase();
         return { valid: isOk, role: 'elena', name: 'Elena' };
       }
 
       if (role === 'juanma') {
-        const isOk = entered === passwords.juanma.toLowerCase() || entered === 'juanma' || entered === 'admin';
+        const isOk = entered === passwords.juanma.toLowerCase();
         return { valid: isOk, role: 'juanma', name: 'Juanma' };
       }
 
-      // Sin rol predefinido (determinar quién es)
-      if (entered === passwords.elena.toLowerCase() || entered === 'elena' || entered === 'mama') {
+      if (entered === passwords.elena.toLowerCase()) {
         return { valid: true, role: 'elena', name: 'Elena' };
       }
-      if (entered === passwords.juanma.toLowerCase() || entered === 'juanma' || entered === 'admin') {
+      if (entered === passwords.juanma.toLowerCase()) {
         return { valid: true, role: 'juanma', name: 'Juanma' };
       }
 
       return { valid: false };
-    }
+    },
+
+    loginAdminAsync: async function (role, enteredPassword) {
+      const entered = (enteredPassword || '').trim();
+      if (!entered) return { valid: false, error: 'Ingresá tu contraseña.' };
+
+      if (getCloudUrl()) {
+        const res = await callCloud('login', { role: role, password: entered });
+        if (res && res.ok && res.token) {
+          try { localStorage.setItem(KEY_ADMIN_TOKEN, res.token); } catch (e) {}
+          this.updateAdminPassword(res.role || role || 'elena', entered);
+          return { valid: true, role: res.role || role || 'elena', cloud: true };
+        }
+        if (res && !res.networkError && !res.offline) {
+          return { valid: false, error: res.error || 'Clave incorrecta.' };
+        }
+      }
+
+      const local = this.verifyAdminPassword(role, entered);
+      return { valid: local.valid, role: local.role, error: local.valid ? '' : 'Clave incorrecta.' };
+    },
+
+    logoutCloud: function () {
+      if (getCloudUrl() && getAdminToken()) {
+        callCloud('logout', {});
+      }
+      try { localStorage.removeItem(KEY_ADMIN_TOKEN); } catch (e) {}
+    },
+
+    // -----------------------------------------------------------------------
+    // SINCRONIZACIÓN CON GOOGLE SHEETS & SUBIDA DE FOTOS A GOOGLE DRIVE
+    // -----------------------------------------------------------------------
+    getCloudConfig: function () {
+      return {
+        url: getCloudUrl(),
+        connected: !!(getCloudUrl() && getAdminToken()),
+        hasUrl: !!getCloudUrl(),
+        hasToken: !!getAdminToken(),
+        sheetUrl: cloudMeta.sheetUrl || '',
+        mpEnabled: !!cloudMeta.mpEnabled,
+        notifyEmail: cloudMeta.notifyEmail || '',
+        lastSync: cloudMeta.lastSync,
+        syncing: cloudMeta.syncing,
+        lastError: cloudMeta.lastError
+      };
+    },
+
+    setCloudUrl: function (url) {
+      const clean = String(url || '').trim();
+      try {
+        localStorage.setItem(KEY_CLOUD_URL, clean);
+        const st = getJson(KEY_SETTINGS, {});
+        st.cloud_url = clean;
+        localStorage.setItem(KEY_SETTINGS, JSON.stringify(st));
+      } catch (e) {}
+      return clean;
+    },
+
+    onSyncChange: function (cb) {
+      if (typeof cb === 'function') syncListeners.push(cb);
+    },
+
+    // Trae catálogo y textos públicos para cualquier visitante de la tienda
+    pullPublicFromCloud: async function () {
+      const url = getCloudUrl();
+      if (!url) return { ok: false, offline: true };
+      try {
+        const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'action=publicData', { method: 'GET', redirect: 'follow' });
+        const json = await res.json();
+        if (json && json.ok) {
+          suppressCloudSync = true;
+          if (Array.isArray(json.products) && json.products.length > 0) {
+            setJson(KEY_PRODUCTS, json.products, true);
+          }
+          if (json.settings && typeof json.settings === 'object' && Object.keys(json.settings).length > 0) {
+            const merged = Object.assign({}, getJson(KEY_SETTINGS, {}), json.settings);
+            setJson(KEY_SETTINGS, merged, true);
+          }
+          cloudMeta.mpEnabled = !!json.mpEnabled;
+          suppressCloudSync = false;
+          notifySyncListeners({ status: 'public-loaded', mpEnabled: cloudMeta.mpEnabled });
+        }
+        return json;
+      } catch (err) {
+        return { ok: false, error: String(err && err.message || err) };
+      }
+    },
+
+    // Trae toda la base de datos de la planilla al abrir el Panel de Control
+    pullAllFromCloud: async function (onlyCollections) {
+      if (!getCloudUrl() || !getAdminToken()) return { ok: false, skipped: true };
+      cloudMeta.syncing = true;
+      notifySyncListeners({ status: 'pulling' });
+      const res = await callCloud('pull', { collections: onlyCollections || null });
+      cloudMeta.syncing = false;
+
+      if (!res || !res.ok) {
+        cloudMeta.lastError = (res && res.error) || 'No se pudo conectar con Google Sheets';
+        notifySyncListeners({ status: 'error', error: cloudMeta.lastError });
+        return res || { ok: false };
+      }
+
+      suppressCloudSync = true;
+      try {
+        const isEmptySheet = Array.isArray(res.orders) && res.orders.length === 0 &&
+          Array.isArray(res.products) && res.products.length === 0 &&
+          Array.isArray(res.stockMaterials) && res.stockMaterials.length === 0 && !onlyCollections;
+
+        if (isEmptySheet) {
+          // Primera vez que se conecta la planilla: subir los datos actuales del taller para poblarla sola
+          await this.pushAllToCloud();
+        } else {
+          if (Array.isArray(res.orders)) { setJson(KEY_ORDERS, res.orders, true); setKnownIds('orders', res.orders); }
+          if (Array.isArray(res.clients)) { setJson(KEY_CLIENTS, res.clients, true); setKnownIds('clients', res.clients); }
+          if (res.chats && typeof res.chats === 'object') setJson(KEY_CHATS, res.chats, true);
+          if (Array.isArray(res.stockProducts) && res.stockProducts.length) setJson(KEY_STOCK_PRODUCTS, res.stockProducts, true);
+          if (Array.isArray(res.stockMaterials) && res.stockMaterials.length) setJson(KEY_STOCK_MATERIALS, res.stockMaterials, true);
+          if (Array.isArray(res.expenses)) setJson(KEY_EXPENSES, res.expenses, true);
+          if (Array.isArray(res.production)) setJson(KEY_PRODUCTION, res.production, true);
+          if (Array.isArray(res.products) && res.products.length) setJson(KEY_PRODUCTS, res.products, true);
+          if (res.settings && typeof res.settings === 'object' && Object.keys(res.settings).length) {
+            const st = Object.assign({}, getJson(KEY_SETTINGS, {}), res.settings);
+            setJson(KEY_SETTINGS, st, true);
+          }
+          if (typeof res.budget === 'number' && res.budget > 0) localStorage.setItem(KEY_BUDGET, res.budget);
+          if (res.analytics && typeof res.analytics === 'object') setJson(KEY_ANALYTICS, res.analytics, true);
+        }
+        if (res.sheetUrl) cloudMeta.sheetUrl = res.sheetUrl;
+        if (res.mpEnabled !== undefined) cloudMeta.mpEnabled = !!res.mpEnabled;
+        if (res.notifyEmail) cloudMeta.notifyEmail = res.notifyEmail;
+        cloudMeta.lastSync = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        cloudMeta.lastError = '';
+      } finally {
+        suppressCloudSync = false;
+      }
+
+      notifySyncListeners({ status: 'pulled', lastSync: cloudMeta.lastSync, sheetUrl: cloudMeta.sheetUrl });
+      return res;
+    },
+
+    // Sube todas las colecciones actuales a la planilla de Google
+    pushAllToCloud: async function () {
+      if (!getCloudUrl() || !getAdminToken()) return { ok: false, error: 'Iniciá sesión y conectá la URL de Google Sheets primero.' };
+      const list = [
+        ['products', this.getProducts()],
+        ['orders', this.getOrders()],
+        ['clients', this.getClients()],
+        ['chats', this.getChats()],
+        ['stockProducts', this.getProductStock()],
+        ['stockMaterials', this.getMaterials()],
+        ['expenses', this.getExpenses()],
+        ['production', this.getProductionQueue()],
+        ['settings', this.getSettings()],
+        ['budget', this.getBudget()]
+      ];
+      for (let i = 0; i < list.length; i++) {
+        const r = await pushCollectionToCloud(list[i][0], list[i][1]);
+        if (!r || !r.ok) return r || { ok: false };
+      }
+      return { ok: true };
+    },
+
+    saveSecureCloudConfig: async function (opts) {
+      const r = await callCloud('setSecureConfig', opts || {});
+      if (r && r.ok) {
+        cloudMeta.mpEnabled = !!r.mpEnabled;
+        cloudMeta.notifyEmail = r.notifyEmail || cloudMeta.notifyEmail;
+      }
+      return r;
+    },
+
+    confirmMercadoPagoReturn: async function () {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const payId = params.get('payment_id') || params.get('collection_id');
+        if (!payId || !getCloudUrl()) return null;
+        const r = await callCloud('confirmPayment', { paymentId: payId });
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        return r;
+      } catch (e) { return null; }
+    },
+
+    // Comprime cualquier foto en el navegador (máx 1200px, JPEG 82%) y si Google Drive está conectado la sube ahí
+    processAndUploadImage: function (file, maxWidth = 1200, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        if (!file) return reject(new Error('No se seleccionó ningún archivo'));
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
+        reader.onload = (evt) => {
+          const img = new Image();
+          img.onerror = () => resolve({ url: evt.target.result, uploaded: false });
+          img.onload = async () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+            if (getCloudUrl() && getAdminToken()) {
+              const up = await callCloud('uploadImage', {
+                name: (file.name || 'pieza').replace(/\.[^.]+$/, ''),
+                dataUrl: dataUrl
+              });
+              if (up && up.ok && up.url) {
+                return resolve({ url: up.url, uploaded: true, fileId: up.fileId });
+              }
+            }
+            resolve({ url: dataUrl, uploaded: false });
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    },
+
+    escapeHtml: escapeHtml
   };
 
   window.WorkshopDB = WorkshopDB;

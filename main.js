@@ -425,6 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveProductsToStorage() {
+    if (window.WorkshopDB && typeof window.WorkshopDB.saveProducts === 'function') {
+      window.WorkshopDB.saveProducts(products);
+      return;
+    }
     try {
       localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
     } catch (err) {
@@ -1197,19 +1201,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (teamAdminCancelBtn) teamAdminCancelBtn.addEventListener('click', closeTeamAdminLogin);
 
   // Login de Elena (Taller Textil & Confección) -> Redirección directa al Panel de Control
-  function handleElenaLogin() {
+  async function handleElenaLogin() {
     const pass = (passElenaInput ? passElenaInput.value : '').trim();
-    let isOk = false;
+    const res = (window.WorkshopDB && window.WorkshopDB.loginAdminAsync)
+      ? await window.WorkshopDB.loginAdminAsync('elena', pass)
+      : { valid: pass.toLowerCase() === 'elena' };
 
-    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
-      const check = window.WorkshopDB.verifyAdminPassword('elena', pass);
-      isOk = check.valid;
-    } else {
-      const lower = pass.toLowerCase();
-      isOk = (PASSWORDS.elena && PASSWORDS.elena.includes(lower)) || lower === 'elena' || lower === 'mama' || lower === 'admin';
-    }
-
-    if (isOk) {
+    if (res.valid) {
       currentRole = 'elena';
       localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
       closeTeamAdminLogin();
@@ -1218,26 +1216,20 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('🌸 ¡Bienvenida Elena! Redirigiendo al Panel de Control...');
       setTimeout(() => {
         window.location.href = 'admin.html';
-      }, 350);
+      }, 300);
     } else {
-      alert('Clave incorrecta para Elena. Si la cambiaste, ingresá tu nueva clave.');
+      alert(res.error || 'Clave incorrecta para Elena. Si la cambiaste, ingresá tu nueva clave.');
     }
   }
 
   // Login de Juanma (Administración & Finanzas) -> Redirección directa al Panel de Control
-  function handleJuanmaLogin() {
+  async function handleJuanmaLogin() {
     const pass = (passJuanmaInput ? passJuanmaInput.value : '').trim();
-    let isOk = false;
+    const res = (window.WorkshopDB && window.WorkshopDB.loginAdminAsync)
+      ? await window.WorkshopDB.loginAdminAsync('juanma', pass)
+      : { valid: pass.toLowerCase() === 'juanma' };
 
-    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
-      const check = window.WorkshopDB.verifyAdminPassword('juanma', pass);
-      isOk = check.valid;
-    } else {
-      const lower = pass.toLowerCase();
-      isOk = (PASSWORDS.juanma && PASSWORDS.juanma.includes(lower)) || lower === 'juanma' || lower === 'admin';
-    }
-
-    if (isOk) {
+    if (res.valid) {
       currentRole = 'juanma';
       localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
       closeTeamAdminLogin();
@@ -1246,47 +1238,31 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('💻 ¡Bienvenido Juanma! Redirigiendo al Panel de Control...');
       setTimeout(() => {
         window.location.href = 'admin.html';
-      }, 350);
+      }, 300);
     } else {
-      alert('Clave incorrecta para Juanma. Si la cambiaste, ingresá tu nueva clave.');
+      alert(res.error || 'Clave incorrecta para Juanma. Si la cambiaste, ingresá tu nueva clave.');
     }
   }
 
   // Login Unificado de Respaldo -> Redirección directa al Panel de Control
-  function handleAdminLogin() {
+  async function handleAdminLogin() {
     const pass = (passAdminInput ? passAdminInput.value : '').trim();
-    let isOk = false;
-    let targetRole = 'juanma';
+    const res = (window.WorkshopDB && window.WorkshopDB.loginAdminAsync)
+      ? await window.WorkshopDB.loginAdminAsync(null, pass)
+      : { valid: false };
 
-    if (window.WorkshopDB && window.WorkshopDB.verifyAdminPassword) {
-      const check = window.WorkshopDB.verifyAdminPassword(null, pass);
-      if (check.valid) {
-        isOk = true;
-        targetRole = check.role || 'juanma';
-      }
-    } else {
-      const lower = pass.toLowerCase();
-      if (lower === 'elena' || lower === 'mama') {
-        isOk = true;
-        targetRole = 'elena';
-      } else if (PASSWORDS.admin && PASSWORDS.admin.includes(lower)) {
-        isOk = true;
-        targetRole = 'juanma';
-      }
-    }
-
-    if (isOk) {
-      currentRole = targetRole;
-      localStorage.setItem(STORAGE_KEY_ROLE, targetRole);
+    if (res.valid) {
+      currentRole = res.role || 'juanma';
+      localStorage.setItem(STORAGE_KEY_ROLE, currentRole);
       closeTeamAdminLogin();
       updateAdminUi();
 
       showToast(`✨ ¡Acceso concedido! Redirigiendo al Panel de Control...`);
       setTimeout(() => {
         window.location.href = 'admin.html';
-      }, 350);
+      }, 300);
     } else {
-      alert('Clave incorrecta. Por favor ingresá tu clave de administrador.');
+      alert(res.error || 'Clave incorrecta. Por favor ingresá tu clave de administrador.');
     }
   }
 
@@ -1317,10 +1293,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Guardar Nueva Contraseña de Administrador
+  // Guardar Nueva Contraseña de Administrador (en Google Sheets + local)
   const btnSaveNewPass = document.getElementById('btn-save-new-pass');
   if (btnSaveNewPass) {
-    btnSaveNewPass.addEventListener('click', () => {
+    btnSaveNewPass.addEventListener('click', async () => {
       const targetRoleInput = document.querySelector('input[name="pass-role-target"]:checked');
       const targetRole = targetRoleInput ? targetRoleInput.value : 'elena';
       const curInput = document.getElementById('pass-current-input');
@@ -1336,25 +1312,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (successMsg) successMsg.style.display = 'none';
       if (errorMsg) errorMsg.style.display = 'none';
 
-      if (!window.WorkshopDB || !window.WorkshopDB.verifyAdminPassword) {
-        if (errorMsg) {
-          errorMsg.textContent = 'El módulo de seguridad no está disponible en este momento.';
-          errorMsg.style.display = 'block';
-        }
-        return;
-      }
+      if (!window.WorkshopDB) return;
 
-      // 1. Validar contraseña actual
-      const checkCurrent = window.WorkshopDB.verifyAdminPassword(targetRole, currentPass);
-      if (!checkCurrent.valid) {
-        if (errorMsg) {
-          errorMsg.textContent = `❌ La contraseña actual ingresada para ${targetRole === 'elena' ? 'Elena' : 'Juanma'} no es correcta.`;
-          errorMsg.style.display = 'block';
-        }
-        return;
-      }
-
-      // 2. Validar longitud mínima
       if (!newPass || newPass.length < 3) {
         if (errorMsg) {
           errorMsg.textContent = '❌ La nueva contraseña debe tener al menos 3 caracteres.';
@@ -1363,7 +1322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // 3. Validar coincidencia
       if (newPass !== confPass) {
         if (errorMsg) {
           errorMsg.textContent = '❌ La repetición de la contraseña no coincide con la nueva clave.';
@@ -1372,8 +1330,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // 4. Guardar en base de datos
-      const res = window.WorkshopDB.updateAdminPassword(targetRole, newPass);
+      const res = window.WorkshopDB.updateAdminPasswordAsync
+        ? await window.WorkshopDB.updateAdminPasswordAsync(targetRole, currentPass, newPass)
+        : window.WorkshopDB.updateAdminPassword(targetRole, newPass);
+
       if (res.success) {
         if (successMsg) {
           successMsg.textContent = `✅ ¡La contraseña de ${targetRole === 'elena' ? 'Elena' : 'Juanma'} se actualizó con éxito! Ya podés usarla para entrar.`;
@@ -1385,7 +1345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(`🔑 Contraseña de ${targetRole === 'elena' ? 'Elena' : 'Juanma'} guardada`);
       } else {
         if (errorMsg) {
-          errorMsg.textContent = `❌ Error: ${res.error || 'No se pudo guardar la clave.'}`;
+          errorMsg.textContent = `❌ ${res.error || 'No se pudo guardar la clave.'}`;
           errorMsg.style.display = 'block';
         }
       }
@@ -1396,6 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function logoutAdmin() {
     currentRole = null;
     localStorage.removeItem(STORAGE_KEY_ROLE);
+    if (window.WorkshopDB && window.WorkshopDB.logoutCloud) window.WorkshopDB.logoutCloud();
     updateAdminUi();
 
     const dockEl = document.getElementById('footer-admin-dock');
@@ -1679,20 +1640,29 @@ document.addEventListener('DOMContentLoaded', () => {
     editImagesList.appendChild(row);
   }
 
-  // Subir imagen desde teléfono o computadora (FileReader Base64)
+  // Subir imagen desde teléfono o computadora (comprimida y subida a Google Drive si está conectado)
   if (editFileInput) {
-    editFileInput.addEventListener('change', (e) => {
+    editFileInput.addEventListener('change', async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64Data = event.target.result;
-        addImageRow('Nueva Foto Subida', base64Data);
-        showToast('📸 Foto cargada desde tu dispositivo.');
-      };
-      reader.readAsDataURL(file);
       editFileInput.value = '';
+      showToast('⏳ Procesando y optimizando foto...');
+      try {
+        if (window.WorkshopDB && window.WorkshopDB.processAndUploadImage) {
+          const res = await window.WorkshopDB.processAndUploadImage(file);
+          addImageRow('Nueva Foto Subida', res.url);
+          showToast(res.uploaded ? '☁️ ¡Foto subida a Google Drive y agregada!' : '📸 Foto optimizada y cargada.');
+        } else {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            addImageRow('Nueva Foto Subida', event.target.result);
+            showToast('📸 Foto cargada desde tu dispositivo.');
+          };
+          reader.readAsDataURL(file);
+        }
+      } catch (err) {
+        showToast('❌ No se pudo procesar la foto.');
+      }
     });
   }
 
@@ -2518,14 +2488,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
   }
 
-  // Función para procesar y registrar el pedido
-  function createAndSaveOrder(name, phone, email, address) {
+  // Función para procesar y registrar el pedido (local + Google Sheets + aviso por mail)
+  function createAndSaveOrder(name, phone, email, address, wantPayment) {
     const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
     
     // Calcular monto total estimado
     const totalAmount = cart.reduce((sum, item) => {
-      const rawNum = String(item.price || '').replace(/[^0-9]/g, '');
-      const priceNum = rawNum ? parseFloat(rawNum) : 0;
+      const m = String(item.price || '').match(/\$\s*([\d.,]+)/) || String(item.price || '').match(/([\d.,]+)/);
+      const priceNum = m ? (parseFloat(m[1].replace(/\./g, '').replace(',', '.')) || 0) : 0;
       return sum + (priceNum * (item.qty || 1));
     }, 0);
 
@@ -2538,6 +2508,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       totalCount: cart.reduce((sum, item) => sum + item.qty, 0),
       totalAmount: totalAmount,
       status: 'Pendiente de Confirmación',
+      paymentStatus: 'Pendiente',
       estimatedDelivery: '5 a 7 días hábiles',
       workshopNote: 'Pedido recibido en el taller. Elena revisará las telas y confirmará el inicio de la confección.'
     };
@@ -2547,10 +2518,10 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
     } catch (e) {}
 
-    // Sincronizar con WorkshopDB
+    // Sincronizar con WorkshopDB + enviar a Google Sheets (manda mail a Elena automáticamente)
+    let cloudPromise = Promise.resolve({ ok: false });
     if (window.WorkshopDB) {
       window.WorkshopDB.addOrder(newOrder);
-      // Mensaje de inicio de hilo automático si no había
       const existingMsgs = window.WorkshopDB.getMessagesForPhone(phone);
       if (existingMsgs.length === 0) {
         window.WorkshopDB.sendMessage(
@@ -2560,9 +2531,11 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
           name
         );
       }
+      if (typeof window.WorkshopDB.submitPublicOrder === 'function') {
+        cloudPromise = window.WorkshopDB.submitPublicOrder(newOrder, !!wantPayment);
+      }
     }
 
-    // Si la clienta no estaba guardada, guardarla
     if (!currentCustomer) {
       currentCustomer = { name, phone, email, address };
       try {
@@ -2574,6 +2547,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     updateElenaOrdersBadge();
     updateWorkshopCounters();
 
+    newOrder._cloudPromise = cloudPromise;
     return newOrder;
   }
 
@@ -2591,16 +2565,16 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     return { name, phone, email, address };
   }
 
-  // Checkout por WhatsApp
+  // Checkout por WhatsApp (además queda guardado en la planilla de Google y le llega mail a Elena)
   if (cartBtnWhatsapp) {
     cartBtnWhatsapp.addEventListener('click', () => {
       if (cart.length === 0) return;
       const cust = getCartCustomerData();
       if (!cust) return;
 
-      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address);
+      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address, false);
 
-      let msg = `🌸 *NUEVO PEDIDO DESDE LA TIENDA WEB*\n`;
+      let msg = `🌸 *NUEVO PEDIDO #${order.id} · DIVINA LOCURA DECO*\n`;
       msg += `--------------------------------------\n`;
       msg += `*Cliente:* ${cust.name}\n`;
       msg += `*WhatsApp:* ${cust.phone}\n`;
@@ -2611,6 +2585,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         msg += `${i + 1}. *${item.qty}x ${item.title}* (${item.price})\n`;
         if (item.note) msg += `   └ Nota: ${item.note}\n`;
       });
+      if (order.totalAmount > 0) {
+        msg += `\n*Total estimado:* $ ${order.totalAmount.toLocaleString('es-AR')} ARS\n`;
+      }
       msg += `--------------------------------------\n`;
       msg += `Hola Elena! Te envío mi pedido desde la web de Divina Locura Deco para coordinar disponibilidad y confección. ¡Muchas gracias! ✨`;
 
@@ -2620,25 +2597,39 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
         waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
       }
 
-      // Vaciar carrito
       cart = [];
       saveCartToStorage();
       updateCartUi();
       closeCartDrawer();
 
       window.open(waUrl, '_blank', 'noopener,noreferrer');
-      showToast('🌸 ¡Pedido enviado por WhatsApp a Elena! Te responderá en breve.');
+      showToast('🌸 ¡Pedido registrado en el taller y enviado por WhatsApp a Elena!');
     });
   }
 
-  // Checkout por Email
+  // Checkout por Email (si Google Sheets está conectado, el mail le sale directo y automático a Elena)
   if (cartBtnEmail) {
-    cartBtnEmail.addEventListener('click', () => {
+    cartBtnEmail.addEventListener('click', async () => {
       if (cart.length === 0) return;
       const cust = getCartCustomerData();
       if (!cust) return;
 
-      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address);
+      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address, false);
+
+      cart = [];
+      saveCartToStorage();
+      updateCartUi();
+      closeCartDrawer();
+
+      const cloudCfg = (window.WorkshopDB && window.WorkshopDB.getCloudConfig) ? window.WorkshopDB.getCloudConfig() : {};
+      if (cloudCfg.hasUrl && order._cloudPromise) {
+        showToast('⏳ Enviando pedido directo al taller de Elena...');
+        const res = await order._cloudPromise;
+        if (res && res.ok) {
+          showToast(`✅ ¡Pedido #${res.orderId || order.id} recibido! Elena ya recibió el aviso por correo.`);
+          return;
+        }
+      }
 
       const subject = `Nuevo Pedido en Tienda Web (#${order.id}) - ${cust.name}`;
       let body = `NUEVO PEDIDO DESDE LA TIENDA WEB - DIVINA LOCURA DECO\n\n`;
@@ -2655,17 +2646,67 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       body += `\nEnviado a través de la tienda web oficial de Divina Locura Deco.`;
 
       const targetEmail = 'divinalocuradeco@gmail.com';
-      const mailtoUrl = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = `mailto:${targetEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      showToast('✉️ Pedido generado para envío por correo electrónico a Elena.');
+    });
+  }
 
+  // Botón de Cobro Online con Mercado Pago
+  function ensureMercadoPagoButton() {
+    if (!cartDrawerFooter || document.getElementById('cart-btn-mercadopago')) return;
+    const actionsBox = cartDrawerFooter.querySelector('.cart-drawer__actions') || cartDrawerFooter;
+    const mpBtn = document.createElement('button');
+    mpBtn.type = 'button';
+    mpBtn.id = 'cart-btn-mercadopago';
+    mpBtn.className = 'btn btn--secondary';
+    mpBtn.style.cssText = 'display:inline-flex; width:100%; justify-content:center; align-items:center; gap:0.5rem; background:#009EE3; color:#FFFFFF; border:1px solid #009EE3; font-weight:700; margin-bottom:0.5rem;';
+    mpBtn.innerHTML = '<span>💳 Encargar y Pagar con Mercado Pago</span>';
+    actionsBox.insertBefore(mpBtn, actionsBox.firstChild);
+
+    mpBtn.addEventListener('click', async () => {
+      if (cart.length === 0) return;
+      const cust = getCartCustomerData();
+      if (!cust) return;
+      mpBtn.disabled = true;
+      showToast('💳 Registrando pedido y preparando pago con Mercado Pago...');
+      const order = createAndSaveOrder(cust.name, cust.phone, cust.email, cust.address, true);
       cart = [];
       saveCartToStorage();
       updateCartUi();
       closeCartDrawer();
 
-      window.location.href = mailtoUrl;
-      showToast('✉️ Pedido generado para envío por correo electrónico a Elena.');
+      let payUrl = '';
+      if (order._cloudPromise) {
+        const res = await order._cloudPromise;
+        if (res && res.paymentUrl) payUrl = res.paymentUrl;
+      }
+      if (!payUrl) {
+        payUrl = settings.mp_payment_link || settings.mp_link || '';
+      }
+      mpBtn.disabled = false;
+      if (payUrl) {
+        window.open(payUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        const aliasText = settings.mp_alias ? ` (Alias: ${settings.mp_alias})` : '';
+        const msg = `🌸 Hola Elena! Acabo de registrar el pedido *#${order.id}* ($ ${(order.totalAmount || 0).toLocaleString('es-AR')} ARS) a nombre de *${cust.name}* y quiero abonarlo con *Mercado Pago*${aliasText}. ¿Me pasás el link de pago? ✨`;
+        const cleanPhone = (settings.whatsapp_phone || '').replace(/[^0-9]/g, '');
+        const waUrl = (cleanPhone && cleanPhone !== '5491100000000')
+          ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`
+          : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+        showToast('💳 Pedido guardado. Se abrió WhatsApp para coordinar el link de Mercado Pago con Elena.');
+      }
     });
   }
+
+  function refreshMercadoPagoButtonVisibility() {
+    ensureMercadoPagoButton();
+    const mpBtn = document.getElementById('cart-btn-mercadopago');
+    if (mpBtn) {
+      mpBtn.style.display = 'inline-flex';
+    }
+  }
+  refreshMercadoPagoButtonVisibility();
 
   // =========================================================================
   // 13. CHATBOT CONCIERGE ("ELENA ASISTENTE DEL TALLER")
@@ -4134,4 +4175,36 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   updateCartUi();
   updateElenaOrdersBadge();
   updateWorkshopCounters();
+
+  // Sincronización con Google Sheets (catálogo público, pagos de Mercado Pago y estado de pedidos de la clienta)
+  if (window.WorkshopDB) {
+    if (typeof window.WorkshopDB.pullPublicFromCloud === 'function') {
+      window.WorkshopDB.pullPublicFromCloud().then((res) => {
+        if (res && res.ok) {
+          if (Array.isArray(res.products) && res.products.length > 0) {
+            products = res.products;
+            renderCatalog();
+          }
+          if (res.settings && typeof res.settings === 'object') {
+            settings = Object.assign({}, settings, res.settings);
+            applySystemSettings();
+          }
+          refreshMercadoPagoButtonVisibility();
+        }
+      });
+    }
+    if (typeof window.WorkshopDB.confirmMercadoPagoReturn === 'function') {
+      window.WorkshopDB.confirmMercadoPagoReturn().then((payRes) => {
+        if (payRes && payRes.ok && payRes.status === 'approved') {
+          showToast('🎉 ¡Pago confirmado con éxito! Elena ya recibió el aviso para empezar tu pedido.');
+          updateClientUi();
+        }
+      });
+    }
+    if (currentCustomer && currentCustomer.phone && typeof window.WorkshopDB.fetchClientCloudData === 'function') {
+      window.WorkshopDB.fetchClientCloudData(currentCustomer.phone).then((cRes) => {
+        if (cRes && cRes.ok) updateClientUi();
+      });
+    }
+  }
 });

@@ -103,6 +103,53 @@
         </div>
       </section>
 
+      <!-- Bloque 0: Base de Datos en Vivo (Google Sheets + Apps Script + Google Drive) -->
+      <section class="admin-card" style="border:2px solid rgba(101, 133, 114, 0.35); background:linear-gradient(180deg, #FAF8F5 0%, #FFFFFF 100%);">
+        <div class="admin-card__header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <span class="admin-page-kicker" style="color:#4A5548;">Sincronización en la Nube &middot; Tiempo Real</span>
+            <h3 class="admin-card__title">☁️ Base de Datos en Google Sheets &amp; Fotos en Google Drive</h3>
+            <div class="admin-card__subtitle">Conectá la planilla de Google de Elena para recibir pedidos desde cualquier celular, avisos por mail y subir fotos directo a Drive</div>
+          </div>
+          <span class="admin-badge admin-badge--pending" id="cfg-cloud-status-badge">💾 Modo Local (En este dispositivo)</span>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label" for="cfg-cloud-url">URL de la Aplicación Web de Google Apps Script</label>
+          <input type="url" id="cfg-cloud-url" class="admin-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
+          <div style="font-size:0.78rem; color:#7A726D; margin-top:0.35rem;">
+            Pegá acá la dirección que te da Google al publicar el archivo <strong>apps-script/Codigo.gs</strong> como Aplicación Web.
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+          <div class="admin-form-group">
+            <label class="admin-label" for="cfg-notify-email">Email de Elena para Avisos Automáticos de Pedidos</label>
+            <input type="email" id="cfg-notify-email" class="admin-input" placeholder="Ej: elena.divinalocura@gmail.com" />
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label" for="cfg-sheet-url">Enlace Directo a la Planilla de Google (opcional)</label>
+            <input type="url" id="cfg-sheet-url" class="admin-input" placeholder="https://docs.google.com/spreadsheets/d/..." />
+          </div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-top:0.5rem;">
+          <button type="button" class="btn-admin-cta" id="btn-cfg-save-cloud">
+            <span>☁️ Conectar y Sincronizar con Google Sheets</span>
+          </button>
+          <button type="button" class="btn-admin-outline" id="btn-cfg-pull-cloud" title="Traer últimos pedidos y cambios desde la planilla">
+            <span>🔄 Traer Datos de la Planilla</span>
+          </button>
+          <button type="button" class="btn-admin-outline" id="btn-cfg-push-cloud" title="Subir todo el catálogo, stock, pedidos y finanzas actuales a la planilla">
+            <span>📤 Subir Datos Actuales a la Planilla</span>
+          </button>
+          <a href="#" target="_blank" rel="noopener" class="btn-admin-outline" id="btn-cfg-open-sheet" style="display:none; text-decoration:none;">
+            <span>📊 Abrir Planilla de Google</span>
+          </a>
+        </div>
+        <div id="cfg-cloud-feedback" style="display:none; margin-top:0.85rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;"></div>
+      </section>
+
       <form id="form-admin-settings">
         
         <!-- Bloque 1: Mensajes Destacados & Hero -->
@@ -141,12 +188,12 @@
           </div>
         </section>
 
-        <!-- Bloque 2: Contacto & Redes -->
+        <!-- Bloque 2: Contacto, Redes & Cobro Online con Mercado Pago -->
         <section class="admin-card">
           <div class="admin-card__header">
             <div>
-              <h3 class="admin-card__title">Canales de Contacto &amp; Redes</h3>
-              <div class="admin-card__subtitle">Coordinación de encargos directos</div>
+              <h3 class="admin-card__title">Canales de Contacto, Redes &amp; Mercado Pago</h3>
+              <div class="admin-card__subtitle">Coordinación de encargos por WhatsApp y cobro online desde la bolsa de pedidos</div>
             </div>
           </div>
 
@@ -161,14 +208,31 @@
             </div>
           </div>
 
-          <div class="admin-form-group">
-            <label class="admin-label">Token Personal de GitHub (PAT opcional)</label>
-            <input type="password" id="cfg-github-token" class="admin-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+            <div class="admin-form-group">
+              <label class="admin-label">Link de Pago de Mercado Pago (opcional)</label>
+              <input type="url" id="cfg-mp-link" class="admin-input" placeholder="https://link.mercadopago.com.ar/divinalocura" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">Alias Bancario / Mercado Pago (para señas)</label>
+              <input type="text" id="cfg-mp-alias" class="admin-input" placeholder="Ej: divina.locura.deco.mp" />
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+            <div class="admin-form-group">
+              <label class="admin-label">Access Token de Mercado Pago (se guarda seguro en Google)</label>
+              <input type="password" id="cfg-mp-token" class="admin-input" placeholder="APP_USR-xxxxxxxx (crea cobros con el monto exacto del carrito)" />
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">Token Personal de GitHub (PAT opcional)</label>
+              <input type="password" id="cfg-github-token" class="admin-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+            </div>
           </div>
 
           <div style="margin-top:1.5rem;">
             <button type="submit" class="btn-admin-cta" style="padding:0.85rem 1.75rem;">
-              <span>💾 Guardar Todos los Cambios</span>
+              <span>💾 Guardar Todos los Cambios de Tienda y Pagos</span>
             </button>
           </div>
         </section>
