@@ -24,6 +24,8 @@
   const KEY_ADMIN_TOKEN = 'divinalocura_admin_token';
   const KEY_VISITOR_ID = 'divinalocura_visitor_id';
   const KEY_KNOWN_IDS = 'divinalocura_known_ids';
+  const KEY_SHOWCASE_FABRICS = 'divinalocura_showcase_fabrics_db';
+  const KEY_COLOR_PALETTE = 'divinalocura_color_palette_db';
 
   // URL de Google Apps Script (si se pega acá queda fija para todos los dispositivos;
   // también se puede pegar desde Configuración de la Tienda sin tocar código).
@@ -916,6 +918,161 @@
       mats = mats.filter(m => m.id !== materialId);
       setJson(KEY_STOCK_MATERIALS, mats);
       return mats;
+    },
+
+    // -----------------------------------------------------------------------
+    // PALETA DE COLORES DE TELAS & MUESTRARIO DE TELAS DE ELENA
+    // -----------------------------------------------------------------------
+    getColorPalette: function () {
+      const defaultPalette = [
+        { name: 'Champán Seda', hex: '#E8DAC8' },
+        { name: 'Crudo Natural', hex: '#F3EFE8' },
+        { name: 'Rosa Viejo', hex: '#DFBDB5' },
+        { name: 'Terracota Suave', hex: '#C87D69' },
+        { name: 'Gris Perla', hex: '#D3D1CE' },
+        { name: 'Verde Salvia', hex: '#A6B5A7' },
+        { name: 'Blanco Lino', hex: '#FAF8F5' },
+        { name: 'Celeste Bebé', hex: '#C8DCE8' },
+        { name: 'Vichy Arena', hex: '#D4C3AE' },
+        { name: 'Chocolate', hex: '#6D4C41' }
+      ];
+      const saved = getJson(KEY_COLOR_PALETTE, null);
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+      return defaultPalette;
+    },
+
+    saveColorPalette: function (palette) {
+      if (!Array.isArray(palette)) return;
+      setJson(KEY_COLOR_PALETTE, palette);
+      return palette;
+    },
+
+    addCustomColor: function (name, hex) {
+      const cleanName = String(name || '').trim();
+      const cleanHex = String(hex || '#C87D69').trim();
+      if (!cleanName) return this.getColorPalette();
+      const list = this.getColorPalette();
+      const idx = list.findIndex(c => c.name.toLowerCase() === cleanName.toLowerCase());
+      if (idx >= 0) {
+        list[idx].hex = cleanHex;
+      } else {
+        list.push({ name: cleanName, hex: cleanHex });
+      }
+      setJson(KEY_COLOR_PALETTE, list);
+      return list;
+    },
+
+    getShowcaseFabrics: function () {
+      const defaultFabrics = [
+        {
+          id: 'saten',
+          name: 'Satén de Seda Antifrizz',
+          tabLabel: '01. Satén de Seda Antifrizz',
+          swatchHex: '#DFCFB9',
+          img: 'assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg',
+          badge: '120 g/m² · Brillo Perlado',
+          kicker: 'Línea Descanso & Cuidado Personal',
+          desc: 'Tejido sedoso, hipoalergénico y termorregulador que evita la fricción capilar durante la noche. A diferencia del algodón convencional, no absorbe la hidratación natural de tu piel ni tus cremas nocturnas, previniendo el frizz, el quiebre y las marcas de expresión al despertar.',
+          touch: 'Caída fluida, superficie ultra lisa de baja fricción y frescura térmica todo el año.',
+          care: 'Lavar a mano o en ciclo delicado con agua fría (máx. 30°C) y jabón neutro. Secar tendido a la sombra sin retorcer.',
+          colors: ['Champán Seda', 'Rosa Viejo', 'Crudo Natural', 'Gris Perla'],
+          filter: 'cuidado-personal',
+          btnLabel: 'Ver Creaciones en Satén →'
+        },
+        {
+          id: 'waffle',
+          name: 'Algodón Waffle Nido de Abeja',
+          tabLabel: '02. Algodón Waffle Nido de Abeja',
+          swatchHex: '#E6DDD0',
+          img: 'assets/images/cat-waffle.jpg',
+          badge: '280 g/m² · Puro Algodón Prelavado',
+          kicker: 'Línea Cocina, Mesa & Hogar',
+          desc: 'Textura tridimensional alveolar 100% puro algodón. Su entramado panal multiplica la superficie de absorción y permite que el aire circule libremente, logrando un secado rápido e higiénico con estética rústica europea.',
+          touch: 'Relieve esponjoso y envolvente que gana suavidad con cada lavado sin perder estructura ni encoger.',
+          care: 'Apto lavarropas con agua fría o tibia. No requiere planchado para conservar su relieve natural nido de abeja.',
+          colors: ['Crudo Natural', 'Vichy Arena', 'Verde Salvia', 'Terracota Suave'],
+          filter: 'hogar',
+          btnLabel: 'Ver Creaciones en Waffle →'
+        },
+        {
+          id: 'lino',
+          name: 'Lino Rústico & Lienzo de Algodón',
+          tabLabel: '03. Lino Rústico & Lienzo',
+          swatchHex: '#CFBFA9',
+          img: 'assets/images/catalog/cosmetic-bag-on-linen-surface.jpg',
+          badge: '310 g/m² · Trama Orgánica Firme',
+          kicker: 'Línea Organización, Baño & Accesorios',
+          desc: 'Fibras nobles de porte arquitectónico pensadas para contenedores textiles, bolsilleros de pared y neceseres. Combinadas en el taller con forrería interior impermeable y pasamanería de algodón.',
+          touch: 'Cuerpo firme, tacto orgánico natural y alta resistencia al uso cotidiano.',
+          care: 'Limpiar interior impermeable con paño húmedo o lavar en ciclo suave con agua fría. Planchar del revés ligeramente húmedo.',
+          colors: ['Crudo Natural', 'Blanco Lino', 'Terracota Suave', 'Verde Salvia'],
+          filter: 'organizacion',
+          btnLabel: 'Ver Organización & Lino →'
+        },
+        {
+          id: 'bebe',
+          name: 'Gasa Pañalera & Toalla Doble Felpa',
+          tabLabel: '04. Gasa Pañalera & Doble Felpa',
+          swatchHex: '#E5CEC6',
+          img: 'assets/images/models/model-towel-baby.jpg',
+          badge: '420 g/m² · Hipoalergénico Bebés',
+          kicker: 'Línea Recién Nacidos & Primera Infancia',
+          desc: 'Algodón peinado de doble felpa ultra absorbente y muselina pañalera 100% libre de sintéticos. Seleccionada especialmente por Elena para proteger la piel delicada del recién nacido y acompañar sus primeros sueños.',
+          touch: 'Caricia de nube, libre de pelusas y apta para bordado personalizado a mano sin raspar en el reverso.',
+          care: 'Lavar con jabón líquido neutro o hipoalergénico para bebé. No usar lavandina ni suavizantes perfumados.',
+          colors: ['Crudo Natural', 'Rosa Viejo', 'Celeste Bebé', 'Blanco Lino'],
+          filter: 'infantil',
+          btnLabel: 'Ver Línea Bebés & Ajuar →'
+        }
+      ];
+      const saved = getJson(KEY_SHOWCASE_FABRICS, null);
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+      return defaultFabrics;
+    },
+
+    saveShowcaseFabrics: function (fabrics) {
+      if (!Array.isArray(fabrics)) return;
+      setJson(KEY_SHOWCASE_FABRICS, fabrics);
+      return fabrics;
+    },
+
+    upsertShowcaseFabric: function (fabricObj) {
+      if (!fabricObj || !fabricObj.name) return this.getShowcaseFabrics();
+      const list = this.getShowcaseFabrics();
+      const id = fabricObj.id || ('tela-' + Date.now());
+      const idx = list.findIndex(f => f.id === id);
+      const colorsArr = Array.isArray(fabricObj.colors)
+        ? fabricObj.colors
+        : String(fabricObj.colors || 'Crudo Natural, Champán Seda').split(',').map(s => s.trim()).filter(Boolean);
+      const item = {
+        id: id,
+        name: fabricObj.name,
+        tabLabel: fabricObj.tabLabel || fabricObj.name,
+        swatchHex: fabricObj.swatchHex || '#D8C2A8',
+        img: fabricObj.img || 'assets/images/hero-textile.jpg',
+        badge: fabricObj.badge || ' Prelavado en Taller · Fibra Noble',
+        kicker: fabricObj.kicker || 'Tela Seleccionada por Elena',
+        desc: fabricObj.desc || 'Tela noble prelavada en el taller, disponible para confecciones a medida y piezas del catálogo.',
+        touch: fabricObj.touch || 'Tacto suave, caída natural y alta durabilidad.',
+        care: fabricObj.care || 'Lavar con agua fría y jabón neutro. Secar a la sombra.',
+        colors: colorsArr,
+        filter: fabricObj.filter || 'todos',
+        btnLabel: fabricObj.btnLabel || `Ver Creaciones con ${fabricObj.name} →`
+      };
+      if (idx >= 0) {
+        list[idx] = Object.assign({}, list[idx], item);
+      } else {
+        list.push(item);
+      }
+      setJson(KEY_SHOWCASE_FABRICS, list);
+      return list;
+    },
+
+    deleteShowcaseFabric: function (fabricId) {
+      let list = this.getShowcaseFabrics();
+      list = list.filter(f => f.id !== fabricId);
+      setJson(KEY_SHOWCASE_FABRICS, list);
+      return list;
     },
 
     // -----------------------------------------------------------------------

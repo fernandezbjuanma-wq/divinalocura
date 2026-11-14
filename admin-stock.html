@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=20261114v5">
-  <link rel="stylesheet" href="admin.css?v=20261114v5">
+  <link rel="stylesheet" href="style.css?v=20261114v7">
+  <link rel="stylesheet" href="admin.css?v=20261114v7">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="stock">
@@ -159,7 +159,7 @@
       </section>
 
       <!-- TABLA DE ROLLOS DE TELAS ACTIVOS -->
-      <section class="admin-card">
+      <section class="admin-card" style="margin-bottom:2rem;">
         <div class="admin-card__header">
           <div>
             <h3 class="admin-card__title">Rollos e Insumos en el Taller de Elena</h3>
@@ -181,9 +181,29 @@
               </tr>
             </thead>
             <tbody id="materials-table-tbody">
-              <!-- Inyectado por admin.js?v=20261114v5 -->
+              <!-- Inyectado por admin.js?v=20261114v7 -->
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- MUESTRARIO DE TELAS PÚBLICO & ESPECIFICACIONES PARA ENCARGOS A MEDIDA -->
+      <section class="admin-card" style="border:2px solid rgba(164, 90, 68, 0.25); background:linear-gradient(180deg, #FAF8F5 0%, #FFFFFF 100%);">
+        <div class="admin-card__header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <span class="admin-page-kicker">Muestrario en la Web &middot; Encargos a Medida</span>
+            <h3 class="admin-card__title">📖 Telas que Tiene Elena para Encargos &amp; Especificaciones</h3>
+            <div class="admin-card__subtitle">
+              Estas son las telas que ven las clientas en el <strong>Muestrario de Telas</strong> y en el <strong>Diseñador de Encargos a Medida</strong>. Podés cambiar sus especificaciones, cuidados, colores o agregar nuevas telas que tengas en el taller.
+            </div>
+          </div>
+          <button type="button" class="btn-admin-cta" id="btn-new-showcase-fabric">
+            <span>🧵 + Agregar Tela al Muestrario</span>
+          </button>
+        </div>
+
+        <div id="showcase-fabrics-admin-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.15rem; margin-top:0.5rem;">
+          <!-- Inyectado por admin.js -->
         </div>
       </section>
 
@@ -191,8 +211,82 @@
 
   </main>
 
-  <script src="products-data.js?v=20261114v5"></script>
-  <script src="workshop-db.js?v=20261114v5"></script>
-  <script src="admin.js?v=20261114v5"></script>
+  <!-- MODAL: EDITOR DE TELA DEL MUESTRARIO DE ELENA -->
+  <div class="admin-modal" id="showcase-fabric-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card" style="max-width:620px; width:92%; max-height:90vh; overflow-y:auto;">
+      <div class="admin-modal__header" style="margin-bottom:1rem;">
+        <span class="admin-page-kicker">Muestrario de Taller &middot; Elena</span>
+        <h3 class="admin-modal__title" id="sf-modal-title" style="margin:0 0 0.25rem 0;">Especificaciones de la Tela</h3>
+        <p class="admin-modal__desc" style="margin:0; font-size:0.84rem; color:#5F5852;">Cargá los detalles técnicos, colores disponibles y cuidados para que las clientas puedan pedir encargos con esta tela.</p>
+      </div>
+
+      <form id="showcase-fabric-form" style="display:flex; flex-direction:column; gap:0.9rem;">
+        <input type="hidden" id="sf-id" />
+
+        <div style="display:grid; grid-template-columns:1fr 80px; gap:0.85rem;">
+          <div>
+            <label class="admin-label">Nombre de la Tela</label>
+            <input type="text" id="sf-name" class="admin-input" placeholder="Ej: Tusor Pesado 100% Algodón" required />
+          </div>
+          <div>
+            <label class="admin-label">Muestra</label>
+            <input type="color" id="sf-hex" value="#D8C2A8" style="width:100%; height:42px; border:1px solid #DCD6CE; border-radius:6px; cursor:pointer;" />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem;">
+          <div>
+            <label class="admin-label">Línea / Para qué encargos sirve</label>
+            <input type="text" id="sf-kicker" class="admin-input" placeholder="Ej: Fundas, Manteles & Cortinas" />
+          </div>
+          <div>
+            <label class="admin-label">Gramaje / Especificación Corta</label>
+            <input type="text" id="sf-badge" class="admin-input" placeholder="Ej: 320 g/m² · Prelavado Anti-encogimiento" />
+          </div>
+        </div>
+
+        <div>
+          <label class="admin-label">Colores en que Elena tiene esta tela (separados por coma)</label>
+          <input type="text" id="sf-colors" class="admin-input" placeholder="Ej: Crudo Natural, Arena, Rosa Viejo, Verde Salvia, Gris Perla" />
+        </div>
+
+        <div>
+          <label class="admin-label">Descripción &amp; Beneficios de la Tela</label>
+          <textarea id="sf-desc" class="admin-textarea" rows="2" placeholder="Contá qué tiene de especial esta tela y qué cosas lindas se pueden hacer por encargo..."></textarea>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem;">
+          <div>
+            <label class="admin-label">✨ Propiedades &amp; Tacto</label>
+            <textarea id="sf-touch" class="admin-textarea" rows="2" placeholder="Ej: Caída suave, trama firme y respirable..."></textarea>
+          </div>
+          <div>
+            <label class="admin-label">🧺 Cuidados de Lavado</label>
+            <textarea id="sf-care" class="admin-textarea" rows="2" placeholder="Ej: Apto lavarropas con agua fría. Secar a la sombra..."></textarea>
+          </div>
+        </div>
+
+        <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:8px; padding:0.85rem;">
+          <label class="admin-label">📸 Foto de la Textura / Tela</label>
+          <div style="display:flex; gap:0.65rem; align-items:center;">
+            <input type="text" id="sf-img" class="admin-input" placeholder="Ruta o URL de la foto..." style="flex:1;" />
+            <label class="btn-admin-outline" style="cursor:pointer; white-space:nowrap; margin:0; padding:0.55rem 0.85rem;">
+              <span id="sf-upload-lbl">📁 Subir foto</span>
+              <input type="file" id="sf-file-input" accept="image/*" style="display:none;" />
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.4rem;">
+          <button type="button" class="btn-admin-outline" id="sf-cancel-btn">Cancelar</button>
+          <button type="submit" class="btn-admin-cta">✨ Guardar Tela en el Muestrario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="products-data.js?v=20261114v7"></script>
+  <script src="workshop-db.js?v=20261114v7"></script>
+  <script src="admin.js?v=20261114v7"></script>
 </body>
 </html>

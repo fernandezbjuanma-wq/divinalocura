@@ -485,9 +485,20 @@
             <!-- Ítems del Pedido -->
             <div style="background:#FAF8F4; border-radius:8px; padding:0.85rem 1rem; margin-bottom:1rem; border:1px solid rgba(43,38,37,0.06);">
               ${(ord.items || []).map(i => `
-                <div style="display:flex; justify-content:space-between; font-size:0.86rem; padding:0.35rem 0; border-bottom:1px dashed rgba(43,38,37,0.08);">
-                  <span><strong>${i.qty}x</strong> ${i.title} ${i.note ? `<span style="color:#8A837A;">(${i.note})</span>` : ''}</span>
-                  <span style="font-weight:600;">${i.price}</span>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; font-size:0.86rem; padding:0.45rem 0; border-bottom:1px dashed rgba(43,38,37,0.08);">
+                  <div style="display:flex; align-items:flex-start; gap:0.75rem; flex:1;">
+                    ${i.referenceImage ? `
+                      <a href="${esc(i.referenceImage)}" target="_blank" title="Ver foto o boceto subido por la clienta en tamaño grande" style="flex-shrink:0; display:block;">
+                        <img src="${esc(i.referenceImage)}" alt="Boceto clienta" style="width:52px; height:52px; object-fit:cover; border-radius:6px; border:2px solid #A45A44; box-shadow:0 2px 6px rgba(0,0,0,0.12);" />
+                      </a>
+                    ` : ''}
+                    <div>
+                      <span><strong>${i.qty}x</strong> ${esc(i.title)}</span>
+                      ${i.note ? `<div style="color:#6E5A4F; font-size:0.79rem; margin-top:2px;">🪡 ${esc(i.note)}</div>` : ''}
+                      ${i.referenceImage ? `<div style="margin-top:3px;"><span style="display:inline-block; background:#FDF3EE; color:#A45A44; border:1px solid rgba(164,90,68,0.3); border-radius:4px; padding:1px 6px; font-size:0.7rem; font-weight:700;">📸 Incluye Foto / Idea de Referencia para la Máquina</span></div>` : ''}
+                    </div>
+                  </div>
+                  <span style="font-weight:600; white-space:nowrap;">${esc(i.price)}</span>
                 </div>
               `).join('')}
             </div>
@@ -662,8 +673,13 @@
                     <tr>
                       <td><strong>${i.qty || 1}x</strong></td>
                       <td>
-                        <div style="font-weight:600; color:#2B2625;">${esc(i.title)}</div>
-                        ${i.note ? `<div style="font-size:0.76rem; color:#8F4F3D; margin-top:2px;">🪡 ${esc(i.note)}</div>` : ''}
+                        <div style="display:flex; align-items:flex-start; gap:0.65rem;">
+                          ${i.referenceImage ? `<img src="${esc(i.referenceImage)}" alt="Referencia clienta" style="width:44px; height:44px; object-fit:cover; border-radius:4px; border:1px solid #A45A44;" />` : ''}
+                          <div>
+                            <div style="font-weight:600; color:#2B2625;">${esc(i.title)}</div>
+                            ${i.note ? `<div style="font-size:0.76rem; color:#8F4F3D; margin-top:2px;">🪡 ${esc(i.note)}</div>` : ''}
+                          </div>
+                        </div>
                       </td>
                       <td style="text-align:right;">$ ${uPrice.toLocaleString('es-AR')}</td>
                       <td style="text-align:right; font-weight:600;">$ ${sub.toLocaleString('es-AR')}</td>
@@ -989,6 +1005,144 @@
         renderStock();
       });
     }
+
+    // =========================================================================
+    // MUESTRARIO PÚBLICO DE TELAS DE ELENA (ESPECIFICACIONES + ENCARGOS)
+    // =========================================================================
+    const sfGrid = document.getElementById('showcase-fabrics-admin-grid');
+    const sfModal = document.getElementById('showcase-fabric-modal');
+    const sfForm = document.getElementById('showcase-fabric-form');
+    const btnNewSf = document.getElementById('btn-new-showcase-fabric');
+    const btnCancelSf = document.getElementById('sf-cancel-btn');
+    const sfFileInput = document.getElementById('sf-file-input');
+    const sfImgInput = document.getElementById('sf-img');
+    const sfUploadText = document.getElementById('sf-upload-text');
+
+    function renderShowcaseFabricsAdmin() {
+      if (!sfGrid || !window.WorkshopDB.getShowcaseFabrics) return;
+      const list = window.WorkshopDB.getShowcaseFabrics();
+
+      if (list.length === 0) {
+        sfGrid.innerHTML = '<p style="color:#8A837A; font-size:0.85rem;">No hay telas cargadas en el muestrario público.</p>';
+        return;
+      }
+
+      sfGrid.innerHTML = list.map(f => `
+        <div class="admin-card" data-sf-id="${esc(f.id)}" style="margin-bottom:0; padding:1rem; background:#FDFBF9; border:1px solid rgba(43,38,37,0.1); display:flex; flex-direction:column; justify-content:space-between; gap:0.75rem;">
+          <div>
+            <div style="display:flex; gap:0.75rem; align-items:center; margin-bottom:0.65rem;">
+              <img src="${esc(f.img || 'assets/images/hero-textile.jpg')}" alt="${esc(f.title)}" style="width:58px; height:58px; object-fit:cover; border-radius:8px; border:1px solid rgba(43,38,37,0.12);" />
+              <div>
+                <span style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#A45A44;">${esc(f.badge || 'Fibra Noble')}</span>
+                <h4 style="margin:0.1rem 0; font-size:0.98rem; color:#2B2625;">${esc(f.title || f.tabLabel)}</h4>
+                <span style="font-size:0.75rem; color:#6A625B;">Colores: <strong>${esc(f.availableColorsText || 'Crudo, Rosa Viejo, Salvia')}</strong></span>
+              </div>
+            </div>
+            <p style="font-size:0.79rem; color:#4A433E; margin:0 0 0.5rem 0; line-height:1.45;">${esc(f.desc || '')}</p>
+            <div style="font-size:0.74rem; color:#5F5852; background:#F6F1EA; padding:0.45rem 0.65rem; border-radius:6px;">
+              <div>✨ <strong>Beneficio:</strong> ${esc(f.benefit || '-')}</div>
+              <div>🧺 <strong>Cuidado:</strong> ${esc(f.care || '-')}</div>
+              <div>🛋️ <strong>Encargos ideales:</strong> ${esc(f.ideal || '-')}</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.45rem; border-top:1px solid rgba(43,38,37,0.06); padding-top:0.6rem;">
+            <button type="button" class="btn-admin-cta btn-sf-edit" style="padding:0.35rem 0.75rem; font-size:0.76rem;">✏️ Editar Ficha</button>
+            <button type="button" class="btn-admin-outline btn-sf-del" style="padding:0.35rem 0.6rem; font-size:0.76rem; color:#DC2626;">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+
+      sfGrid.querySelectorAll('.btn-sf-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sfId = btn.closest('[data-sf-id]').getAttribute('data-sf-id');
+          openSfModal(sfId);
+        });
+      });
+
+      sfGrid.querySelectorAll('.btn-sf-del').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sfId = btn.closest('[data-sf-id]').getAttribute('data-sf-id');
+          if (confirm('¿Quitar esta tela del Muestrario público de la página?')) {
+            window.WorkshopDB.deleteShowcaseFabric(sfId);
+            adminToast('Tela quitada del muestrario.');
+            renderShowcaseFabricsAdmin();
+          }
+        });
+      });
+    }
+
+    function openSfModal(sfId = null) {
+      if (!sfModal) return;
+      sfModal.classList.add('is-open');
+      const list = window.WorkshopDB.getShowcaseFabrics ? window.WorkshopDB.getShowcaseFabrics() : [];
+      const found = sfId ? list.find(x => x.id === sfId) : null;
+
+      document.getElementById('sf-id').value = found ? found.id : '';
+      document.getElementById('sf-tab-label').value = found ? (found.tabLabel || found.title || '') : '';
+      document.getElementById('sf-badge').value = found ? (found.badge || '') : '100% Fibra Noble · Prelavado';
+      document.getElementById('sf-title').value = found ? (found.title || '') : '';
+      document.getElementById('sf-desc').value = found ? (found.desc || '') : '';
+      document.getElementById('sf-benefit').value = found ? (found.benefit || '') : '';
+      document.getElementById('sf-care').value = found ? (found.care || '') : '';
+      document.getElementById('sf-ideal').value = found ? (found.ideal || '') : '';
+      document.getElementById('sf-colors-text').value = found ? (found.availableColorsText || 'Crudo, Rosa Viejo, Verde Salvia, Terracota') : 'Crudo, Rosa Viejo, Verde Salvia, Terracota';
+      document.getElementById('sf-img').value = found ? (found.img || 'assets/images/hero-textile.jpg') : 'assets/images/hero-textile.jpg';
+      document.getElementById('sf-filter-term').value = found ? (found.filterTerm || '') : '';
+    }
+
+    if (btnNewSf) btnNewSf.addEventListener('click', () => openSfModal(null));
+    if (btnCancelSf) btnCancelSf.addEventListener('click', () => sfModal.classList.remove('is-open'));
+
+    if (sfFileInput) {
+      sfFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (sfUploadText) sfUploadText.textContent = '⏳ Subiendo...';
+        try {
+          if (window.WorkshopDB && window.WorkshopDB.processAndUploadImage) {
+            const up = await window.WorkshopDB.processAndUploadImage(file, file.name);
+            if (up && up.url && sfImgInput) {
+              sfImgInput.value = up.url;
+              adminToast('📸 Foto de tela lista.');
+            }
+          }
+        } catch (err) {
+          alert('No se pudo procesar la foto de la tela.');
+        } finally {
+          if (sfUploadText) sfUploadText.textContent = '📁 Subir foto';
+        }
+      });
+    }
+
+    if (sfForm) {
+      sfForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const idVal = document.getElementById('sf-id').value.trim() || ('tela-' + (Date.now() % 100000));
+        const tabLabel = document.getElementById('sf-tab-label').value.trim();
+        const title = document.getElementById('sf-title').value.trim() || tabLabel;
+        if (!title) return;
+
+        window.WorkshopDB.upsertShowcaseFabric({
+          id: idVal,
+          tabLabel: tabLabel || title,
+          badge: document.getElementById('sf-badge').value.trim() || '100% Fibra Noble',
+          title: title,
+          desc: document.getElementById('sf-desc').value.trim(),
+          benefit: document.getElementById('sf-benefit').value.trim(),
+          care: document.getElementById('sf-care').value.trim(),
+          ideal: document.getElementById('sf-ideal').value.trim(),
+          availableColorsText: document.getElementById('sf-colors-text').value.trim(),
+          img: document.getElementById('sf-img').value.trim() || 'assets/images/hero-textile.jpg',
+          filterTerm: document.getElementById('sf-filter-term').value.trim() || tabLabel.split(' ')[0]
+        });
+
+        sfModal.classList.remove('is-open');
+        adminToast(`✨ Tela "${title}" publicada en el Muestrario y en el Diseñador a Medida.`);
+        renderShowcaseFabricsAdmin();
+      });
+    }
+
+    renderShowcaseFabricsAdmin();
   }
 
   // =========================================================================
@@ -1609,6 +1763,76 @@
       });
     }
 
+    const colorsListEl = document.getElementById('admin-edit-colors-list');
+    const newColorNameInput = document.getElementById('admin-new-color-name');
+    const newColorHexInput = document.getElementById('admin-new-color-hex');
+    const btnAddColor = document.getElementById('btn-admin-add-color');
+    const allowEmbroideryCheckbox = document.getElementById('edit-allow-embroidery');
+
+    function renderColorCheckboxes(selectedColorNames) {
+      if (!colorsListEl) return;
+      const palette = (window.WorkshopDB && window.WorkshopDB.getColorPalette)
+        ? window.WorkshopDB.getColorPalette()
+        : [
+            { name: 'Crudo Natural', hex: '#F3EFEA' },
+            { name: 'Rosa Viejo', hex: '#C87D69' },
+            { name: 'Verde Salvia', hex: '#8A9A86' },
+            { name: 'Terracota Suave', hex: '#A45A44' },
+            { name: 'Avellana / Arena', hex: '#D8C8B8' },
+            { name: 'Gris Perla', hex: '#C5C6C7' },
+            { name: 'Celeste Bruma', hex: '#B8C9D4' }
+          ];
+
+      const selectedSet = new Set(
+        Array.isArray(selectedColorNames) && selectedColorNames.length > 0
+          ? selectedColorNames
+          : palette.slice(0, 4).map(c => c.name)
+      );
+
+      colorsListEl.innerHTML = palette.map(c => {
+        const isChecked = selectedSet.has(c.name);
+        return `
+          <label class="admin-color-chip-label" style="display:inline-flex; align-items:center; gap:0.45rem; padding:0.35rem 0.65rem; border-radius:999px; border:1px solid ${isChecked ? '#A45A44' : '#DED6CC'}; background:${isChecked ? '#FDF6F2' : '#FFFFFF'}; cursor:pointer; font-size:0.78rem; font-weight:600; color:#2B2625; user-select:none;">
+            <input type="checkbox" class="prod-color-checkbox" value="${esc(c.name)}" data-hex="${esc(c.hex)}" ${isChecked ? 'checked' : ''} style="accent-color:#A45A44;" />
+            <span style="width:14px; height:14px; border-radius:50%; background:${esc(c.hex)}; border:1px solid rgba(0,0,0,0.2); display:inline-block;"></span>
+            <span>${esc(c.name)}</span>
+          </label>
+        `;
+      }).join('');
+
+      colorsListEl.querySelectorAll('.prod-color-checkbox').forEach(chk => {
+        chk.addEventListener('change', () => {
+          const lbl = chk.closest('.admin-color-chip-label');
+          if (lbl) {
+            lbl.style.borderColor = chk.checked ? '#A45A44' : '#DED6CC';
+            lbl.style.background = chk.checked ? '#FDF6F2' : '#FFFFFF';
+          }
+        });
+      });
+    }
+
+    if (btnAddColor) {
+      btnAddColor.addEventListener('click', () => {
+        const name = newColorNameInput ? newColorNameInput.value.trim() : '';
+        const hex = newColorHexInput ? newColorHexInput.value : '#C87D69';
+        if (!name) {
+          alert('Escribí el nombre del nuevo color (ej: Lila Pastel o Mostaza).');
+          return;
+        }
+        const currentlyChecked = [];
+        if (colorsListEl) {
+          colorsListEl.querySelectorAll('.prod-color-checkbox:checked').forEach(c => currentlyChecked.push(c.value));
+        }
+        currentlyChecked.push(name);
+        if (window.WorkshopDB && window.WorkshopDB.addCustomColor) {
+          window.WorkshopDB.addCustomColor(name, hex);
+        }
+        if (newColorNameInput) newColorNameInput.value = '';
+        renderColorCheckboxes(currentlyChecked);
+        adminToast(`🎨 Color "${name}" agregado a la paleta del taller.`);
+      });
+    }
+
     function renderProductsTable() {
       if (!tbody) return;
       const catNames = {
@@ -1616,9 +1840,21 @@
         'organizacion': 'Organización & Hogar',
         'infantil': 'Infantil & Bebés'
       };
+      const palette = (window.WorkshopDB && window.WorkshopDB.getColorPalette) ? window.WorkshopDB.getColorPalette() : [];
+
       tbody.innerHTML = products.map(p => {
         const firstImg = (p.images && p.images[0]) ? p.images[0].src : 'assets/images/hero-textile.jpg';
         const photoCount = (p.images || []).filter(i => i && i.src).length || 1;
+        const availColors = Array.isArray(p.availableColors) && p.availableColors.length > 0
+          ? p.availableColors
+          : ['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Terracota Suave'];
+
+        const colorDotsHtml = availColors.map(cName => {
+          const found = palette.find(x => x.name === cName);
+          const hex = found ? found.hex : '#D8C8B8';
+          return `<span title="${esc(cName)}" style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${esc(hex)}; border:1px solid rgba(0,0,0,0.22); margin-right:3px; vertical-align:middle;"></span>`;
+        }).join('');
+
         return `
           <tr data-prod-id="${esc(p.id)}">
             <td style="width:70px;">
@@ -1627,13 +1863,16 @@
             <td>
               <strong>${esc(p.title)}</strong><br>
               <span style="font-size:0.76rem; color:#8A837A;">ID: ${esc(p.id)} &middot; ${esc(p.texture || 'Confección artesanal')} &middot; 📸 ${photoCount} foto${photoCount > 1 ? 's' : ''}</span>
+              <div style="margin-top:4px; font-size:0.73rem; color:#5F5852;">
+                🎨 Colores: ${colorDotsHtml} <span style="color:#8A837A;">(${availColors.length})</span>
+              </div>
             </td>
             <td><span class="admin-badge admin-badge--ready">${esc(catNames[p.category] || p.category)}</span></td>
             <td><strong>${esc(p.price)}</strong></td>
             <td><span class="admin-badge admin-badge--production">${esc(p.tag || 'Taller')}</span></td>
             <td>
               <div style="display:flex; gap:0.5rem;">
-                <button type="button" class="btn-admin-cta btn-edit-prod" style="padding:0.4rem 0.8rem; font-size:0.78rem;">✏️ Editar / Fotos</button>
+                <button type="button" class="btn-admin-cta btn-edit-prod" style="padding:0.4rem 0.8rem; font-size:0.78rem;">✏️ Editar / Colores</button>
                 <button type="button" class="btn-admin-outline btn-del-prod" style="padding:0.4rem 0.6rem; color:#DC2626;" title="Eliminar">🗑️</button>
               </div>
             </td>
@@ -1682,6 +1921,8 @@
         document.getElementById('edit-desc').value = prod.desc || '';
         if (costInput) costInput.value = prod.cost || '';
         if (metersInput) metersInput.value = prod.metersPerUnit || '';
+        if (allowEmbroideryCheckbox) allowEmbroideryCheckbox.checked = prod.allowEmbroidery !== false;
+        renderColorCheckboxes(prod.availableColors);
         renderImageSlots(prod.images || []);
       } else {
         document.getElementById('edit-product-id').value = '';
@@ -1693,6 +1934,8 @@
         document.getElementById('edit-desc').value = '';
         if (costInput) costInput.value = '';
         if (metersInput) metersInput.value = '0.8';
+        if (allowEmbroideryCheckbox) allowEmbroideryCheckbox.checked = true;
+        renderColorCheckboxes(['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Terracota Suave']);
         renderImageSlots([{ label: 'Foto Principal', src: 'assets/images/hero-textile.jpg' }]);
       }
     }
@@ -1714,6 +1957,17 @@
         const metersEl = document.getElementById('edit-meters');
         const cost = costEl && costEl.value ? parseFloat(costEl.value) : undefined;
         const metersPerUnit = metersEl && metersEl.value ? parseFloat(metersEl.value) : undefined;
+        const allowEmbroidery = allowEmbroideryCheckbox ? allowEmbroideryCheckbox.checked : true;
+
+        const selectedColors = [];
+        if (colorsListEl) {
+          colorsListEl.querySelectorAll('.prod-color-checkbox:checked').forEach(chk => {
+            selectedColors.push(chk.value);
+          });
+        }
+        if (selectedColors.length === 0) {
+          selectedColors.push('Crudo Natural');
+        }
 
         if (!title) return;
 
@@ -1752,6 +2006,8 @@
               desc,
               cost: cost !== undefined ? cost : products[idx].cost,
               metersPerUnit: metersPerUnit !== undefined ? metersPerUnit : products[idx].metersPerUnit,
+              availableColors: selectedColors,
+              allowEmbroidery: allowEmbroidery,
               images: collectedImages
             };
           }
@@ -1769,13 +2025,15 @@
             story: desc,
             cost: cost,
             metersPerUnit: metersPerUnit || 0.8,
+            availableColors: selectedColors,
+            allowEmbroidery: allowEmbroidery,
             images: collectedImages
           });
         }
 
         saveProducts();
         modal.classList.remove('is-open');
-        adminToast('✨ Creación guardada y publicada en la tienda y lookbook.');
+        adminToast('✨ Creación, colores disponibles y fotos guardados con éxito.');
         renderProductsTable();
       });
     }
@@ -1939,23 +2197,95 @@
       });
     }
 
-    // --- Bloque 1 y 2: Textos Hero, Contacto y Mercado Pago ---
+    // --- Bloque 0.5, 1 y 2: Interruptores de Secciones, Textos Completos, Contacto y Mercado Pago ---
     const form = document.getElementById('form-admin-settings');
     if (form) {
-      document.getElementById('cfg-announcement').value = settings.announcement || '';
-      document.getElementById('cfg-hero-eyebrow').value = settings.hero_eyebrow || '';
-      document.getElementById('cfg-hero-title').value = settings.hero_title || '';
-      document.getElementById('cfg-hero-tagline').value = settings.hero_tagline || '';
-      document.getElementById('cfg-hero-cta').value = settings.hero_cta || '';
-      document.getElementById('cfg-whatsapp').value = settings.whatsapp_phone || '';
-      document.getElementById('cfg-instagram').value = settings.instagram_user || '';
-      document.getElementById('cfg-github-token').value = settings.gh_token || '';
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+      };
+      const getVal = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      };
+
+      // Interruptores de visibilidad (Elena decide qué activar)
+      const chkGiftBoxes = document.getElementById('cfg-show-gift-boxes');
+      const chkCustomBuilder = document.getElementById('cfg-show-custom-builder');
+      const chkFabricShowcase = document.getElementById('cfg-show-fabric-showcase');
+      const chkEnableCoupons = document.getElementById('cfg-enable-coupons');
+
+      if (chkGiftBoxes) chkGiftBoxes.checked = settings.show_gift_boxes !== false;
+      if (chkCustomBuilder) chkCustomBuilder.checked = settings.show_custom_builder !== false;
+      if (chkFabricShowcase) chkFabricShowcase.checked = settings.show_fabric_showcase !== false;
+      if (chkEnableCoupons) chkEnableCoupons.checked = settings.enable_coupons === true;
+
+      // Cargar todos los textos editables
+      setVal('cfg-announcement', settings.announcement);
+      setVal('cfg-hero-eyebrow', settings.hero_eyebrow);
+      setVal('cfg-hero-title', settings.hero_title);
+      setVal('cfg-hero-tagline', settings.hero_tagline);
+      setVal('cfg-hero-cta', settings.hero_cta);
+
+      setVal('cfg-cat-eyebrow', settings.categories_eyebrow);
+      setVal('cfg-cat-title', settings.categories_title);
+      setVal('cfg-cat-desc', settings.categories_desc);
+
+      setVal('cfg-catalog-eyebrow', settings.catalog_eyebrow);
+      setVal('cfg-catalog-title', settings.catalog_title);
+      setVal('cfg-catalog-desc', settings.catalog_desc);
+
+      setVal('cfg-fabrics-title', settings.fabrics_title);
+      setVal('cfg-fabrics-desc', settings.fabrics_desc);
+
+      setVal('cfg-builder-title', settings.builder_title);
+      setVal('cfg-builder-desc', settings.builder_desc);
+
+      setVal('cfg-gifts-title', settings.gifts_title);
+      setVal('cfg-gifts-desc', settings.gifts_desc);
+
+      setVal('cfg-about-eyebrow', settings.about_eyebrow);
+      setVal('cfg-about-title', settings.about_title);
+      setVal('cfg-about-lead', settings.about_lead);
+      setVal('cfg-about-p1', settings.about_p1);
+
+      setVal('cfg-spaces-eyebrow', settings.spaces_eyebrow);
+      setVal('cfg-spaces-title', settings.spaces_title);
+      setVal('cfg-spaces-desc', settings.spaces_desc);
+
+      setVal('cfg-footer-title', settings.footer_title);
+      setVal('cfg-footer-desc', settings.footer_desc);
+      setVal('cfg-footer-tagline', settings.footer_tagline);
+
+      setVal('cfg-whatsapp', settings.whatsapp_phone);
+      setVal('cfg-instagram', settings.instagram_user);
+      setVal('cfg-github-token', settings.gh_token);
 
       const mpLinkInput = document.getElementById('cfg-mp-link');
       const mpAliasInput = document.getElementById('cfg-mp-alias');
       const mpTokenInput = document.getElementById('cfg-mp-token');
       if (mpLinkInput) mpLinkInput.value = settings.mp_payment_link || '';
       if (mpAliasInput) mpAliasInput.value = settings.mp_alias || '';
+
+      const btnResetTexts = document.getElementById('btn-cfg-reset-default-texts');
+      if (btnResetTexts) {
+        btnResetTexts.addEventListener('click', () => {
+          if (!confirm('¿Querés volver todos los títulos y textos a como venían originalmente de fábrica?')) return;
+          [
+            'cfg-announcement', 'cfg-hero-eyebrow', 'cfg-hero-title', 'cfg-hero-tagline', 'cfg-hero-cta',
+            'cfg-cat-eyebrow', 'cfg-cat-title', 'cfg-cat-desc',
+            'cfg-catalog-eyebrow', 'cfg-catalog-title', 'cfg-catalog-desc',
+            'cfg-fabrics-title', 'cfg-fabrics-desc',
+            'cfg-builder-title', 'cfg-builder-desc',
+            'cfg-gifts-title', 'cfg-gifts-desc',
+            'cfg-about-eyebrow', 'cfg-about-title', 'cfg-about-lead', 'cfg-about-p1',
+            'cfg-spaces-eyebrow', 'cfg-spaces-title', 'cfg-spaces-desc',
+            'cfg-footer-title', 'cfg-footer-desc', 'cfg-footer-tagline'
+          ].forEach(id => setVal(id, ''));
+          form.dispatchEvent(new Event('submit'));
+          adminToast('🔄 Todos los textos volvieron a los originales.');
+        });
+      }
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1964,17 +2294,53 @@
 
         const updated = {
           ...settings,
-          announcement: document.getElementById('cfg-announcement').value.trim(),
-          hero_eyebrow: document.getElementById('cfg-hero-eyebrow').value.trim(),
-          hero_title: document.getElementById('cfg-hero-title').value.trim(),
-          hero_tagline: document.getElementById('cfg-hero-tagline').value.trim(),
-          hero_cta: document.getElementById('cfg-hero-cta').value.trim(),
-          whatsapp_phone: document.getElementById('cfg-whatsapp').value.trim(),
-          instagram_user: document.getElementById('cfg-instagram').value.trim(),
+          show_gift_boxes: chkGiftBoxes ? chkGiftBoxes.checked : true,
+          show_custom_builder: chkCustomBuilder ? chkCustomBuilder.checked : true,
+          show_fabric_showcase: chkFabricShowcase ? chkFabricShowcase.checked : true,
+          enable_coupons: chkEnableCoupons ? chkEnableCoupons.checked : false,
+
+          announcement: getVal('cfg-announcement'),
+          hero_eyebrow: getVal('cfg-hero-eyebrow'),
+          hero_title: getVal('cfg-hero-title'),
+          hero_tagline: getVal('cfg-hero-tagline'),
+          hero_cta: getVal('cfg-hero-cta'),
+
+          categories_eyebrow: getVal('cfg-cat-eyebrow'),
+          categories_title: getVal('cfg-cat-title'),
+          categories_desc: getVal('cfg-cat-desc'),
+
+          catalog_eyebrow: getVal('cfg-catalog-eyebrow'),
+          catalog_title: getVal('cfg-catalog-title'),
+          catalog_desc: getVal('cfg-catalog-desc'),
+
+          fabrics_title: getVal('cfg-fabrics-title'),
+          fabrics_desc: getVal('cfg-fabrics-desc'),
+
+          builder_title: getVal('cfg-builder-title'),
+          builder_desc: getVal('cfg-builder-desc'),
+
+          gifts_title: getVal('cfg-gifts-title'),
+          gifts_desc: getVal('cfg-gifts-desc'),
+
+          about_eyebrow: getVal('cfg-about-eyebrow'),
+          about_title: getVal('cfg-about-title'),
+          about_lead: getVal('cfg-about-lead'),
+          about_p1: getVal('cfg-about-p1'),
+
+          spaces_eyebrow: getVal('cfg-spaces-eyebrow'),
+          spaces_title: getVal('cfg-spaces-title'),
+          spaces_desc: getVal('cfg-spaces-desc'),
+
+          footer_title: getVal('cfg-footer-title'),
+          footer_desc: getVal('cfg-footer-desc'),
+          footer_tagline: getVal('cfg-footer-tagline'),
+
+          whatsapp_phone: getVal('cfg-whatsapp'),
+          instagram_user: getVal('cfg-instagram'),
           mp_payment_link: mpLinkInput ? mpLinkInput.value.trim() : '',
           mp_alias: mpAliasInput ? mpAliasInput.value.trim() : '',
           notify_email: notifyEmailVal,
-          gh_token: document.getElementById('cfg-github-token').value.trim()
+          gh_token: getVal('cfg-github-token')
         };
 
         settings = updated;
@@ -1992,7 +2358,7 @@
           if (mpTokenInput) mpTokenInput.value = '';
         }
 
-        adminToast('⚙️ Ajustes de portada, contacto y Mercado Pago guardados con éxito.');
+        adminToast('✨ Textos de la página, secciones visibles y configuración guardados con éxito.');
       });
     }
 

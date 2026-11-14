@@ -8203,4 +8203,385 @@ body.admin-mode-active .catalog-item__admin-bar {
   }
 }
 
+/* ==========================================================================
+   COLORES DISPONIBLES EN TARJETAS DE CATÁLOGO + DISEÑADOR DE ENCARGOS A MEDIDA
+   ========================================================================== */
+.catalog-item__colors-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px dashed #EBE4DC;
+}
+
+.catalog-item__colors-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8A7F75;
+  font-weight: 600;
+}
+
+.catalog-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(43, 38, 37, 0.22);
+  display: inline-block;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+}
+
+.catalog-item__colors-names {
+  font-size: 0.72rem;
+  color: #6E655F;
+  margin-left: 0.15rem;
+}
+
+/* Sección: Constructor de Diseño a Medida & Subida de Boceto (#disenador-a-medida) */
+.custom-builder-section {
+  background: linear-gradient(180deg, #FAF7F2 0%, #F4EFE6 100%);
+  border-top: 1px solid #E5DDD3;
+  border-bottom: 1px solid #E5DDD3;
+}
+
+.custom-builder-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.custom-builder-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.cb-step-block {
+  background: #FFFFFF;
+  border: 1px solid #E5DDD3;
+  border-radius: 8px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 6px 20px rgba(43, 38, 37, 0.03);
+}
+
+.cb-step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.cb-step-num {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #F4ECE4;
+  color: #A45A44;
+  padding: 0.24rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid #E3D2C4;
+}
+
+.cb-step-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: #2B2625;
+  margin: 0;
+}
+
+.cb-piece-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.cb-piece-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.7rem 0.85rem;
+  background: #FAF8F5;
+  border: 1px solid #DFD6CB;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+}
+
+.cb-piece-btn:hover {
+  border-color: #A45A44;
+  background: #FFFDFB;
+}
+
+.cb-piece-btn.is-active {
+  background: #2B2625;
+  border-color: #2B2625;
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(43, 38, 37, 0.14);
+}
+
+.cb-piece-icon {
+  font-size: 1.15rem;
+}
+
+.cb-piece-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.cb-piece-price {
+  font-size: 0.7rem;
+  color: #8C7A6B;
+}
+
+.cb-piece-btn.is-active .cb-piece-price {
+  color: #E5D4C6;
+}
+
+.cb-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.cb-label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #4A433E;
+  margin-bottom: 0.4rem;
+}
+
+.cb-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0;
+}
+
+.cb-finishings-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.cb-check-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.34rem 0.7rem;
+  background: #FAF7F2;
+  border: 1px solid #DFD5C8;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  color: #3D3632;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.cb-check-pill:hover {
+  border-color: #A45A44;
+}
+
+.cb-check-pill input[type="checkbox"] {
+  accent-color: #A45A44;
+}
+
+.cb-upload-zone {
+  background: #FAF6F1;
+  border: 1.5px dashed #CBB8A6;
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+}
+
+.cb-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #2B2625;
+  color: #FFFFFF;
+  padding: 0.6rem 1.1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+
+.cb-upload-btn:hover {
+  background: #A45A44;
+}
+
+.cb-upload-preview-wrap {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #FFFFFF;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #E2D9CE;
+}
+
+.cb-upload-preview-wrap img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #DFD3C3;
+}
+
+/* Ficha Técnica en Vivo (Columna Derecha) */
+.cb-live-card {
+  position: sticky;
+  top: 6rem;
+  background: #FFFFFF;
+  border: 1.5px solid #2B2625;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 16px 38px rgba(43, 38, 37, 0.08);
+}
+
+.cb-live-card__kicker {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #A45A44;
+  text-transform: uppercase;
+}
+
+.cb-live-card__title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: #2B2625;
+  margin: 0.25rem 0 0.2rem;
+}
+
+.cb-live-card__sub {
+  font-size: 0.78rem;
+  color: #6E655F;
+  margin-bottom: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #ECE4DA;
+}
+
+.cb-live-card__sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #FAF8F4;
+  border: 1px solid #EAE1D6;
+  border-radius: 6px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.cb-live-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  border-bottom: 1px dashed #E6DDD2;
+  padding-bottom: 0.35rem;
+}
+
+.cb-live-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cb-live-row span {
+  color: #7A7067;
+  flex-shrink: 0;
+}
+
+.cb-live-row strong {
+  color: #2B2625;
+  text-align: right;
+}
+
+.cb-live-ref-box {
+  background: #FDF9F5;
+  border: 1px solid #E3D2C4;
+  border-radius: 6px;
+  padding: 0.65rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.cb-live-ref-box span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #8F4F3D;
+  margin-bottom: 0.4rem;
+}
+
+.cb-live-ref-box img {
+  max-height: 130px;
+  border-radius: 4px;
+  border: 1px solid #DFD3C3;
+  margin: 0 auto;
+}
+
+.cb-live-pricing {
+  background: #F4EFE6;
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.cb-live-price-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.85rem;
+  color: #2B2625;
+}
+
+.cb-live-price-main strong {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: #2B2625;
+}
+
+.cb-live-price-deposit {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #A45A44;
+  margin-top: 0.3rem;
+}
+
+.cb-live-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+@media (max-width: 960px) {
+  .custom-builder-layout {
+    grid-template-columns: 1fr;
+  }
+  .cb-piece-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cb-two-cols {
+    grid-template-columns: 1fr;
+  }
+  .cb-live-card {
+    position: static;
+  }
+}
+
+
 

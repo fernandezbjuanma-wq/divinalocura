@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
   
-  <link rel="stylesheet" href="style.css?v=20261114v5" />
+  <link rel="stylesheet" href="style.css?v=20261114v7" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -128,7 +128,7 @@
 
           <!-- Tira de Miniaturas Multivista -->
           <div class="pdp-thumbs-strip" id="pdp-thumbs-strip" aria-label="Otras perspectivas de la pieza">
-            <!-- Rellenado dinámicamente con producto.js?v=20261114v5 -->
+            <!-- Rellenado dinámicamente con producto.js?v=20261114v7 -->
           </div>
         </section>
 
@@ -233,6 +233,31 @@
                   <span class="pdp-embroidery-preview__kicker">VISTA PREVIA DEL BORDADO EN TALLER</span>
                   <div class="pdp-embroidery-preview__canvas" id="pdp-embroidery-canvas">
                     <span class="pdp-embroidery-preview__sample" id="pdp-embroidery-sample">Emma</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Opción Subir Foto de Referencia o Medida Especial para la Máquina de Elena -->
+            <div class="pdp-monogram-box" style="margin-top:0.55rem; border-top:1px dashed rgba(43,38,37,0.12); padding-top:0.65rem;">
+              <label class="pdp-monogram-toggle-label" for="pdp-ref-upload-check">
+                <input type="checkbox" id="pdp-ref-upload-check" class="pdp-monogram-checkbox" />
+                <span class="pdp-monogram-title">📸 ¿Querés subir una foto de idea/boceto o pedir otra medida?</span>
+              </label>
+
+              <div class="pdp-monogram-panel" id="pdp-ref-upload-panel" style="display:none; margin-top:0.6rem;">
+                <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                  <input type="text" id="pdp-special-measure-input" class="admin-input" placeholder="Medida especial o detalle para la máquina de Elena..." />
+                  <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+                    <label class="btn btn--secondary" style="padding:0.45rem 0.85rem; font-size:0.78rem; cursor:pointer; margin:0;">
+                      <span id="pdp-ref-upload-btn-text">📷 Adjuntar Foto / Captura</span>
+                      <input type="file" id="pdp-reference-file" accept="image/*" style="display:none;" />
+                    </label>
+                    <div id="pdp-ref-preview-wrap" style="display:none; align-items:center; gap:0.45rem;">
+                      <img id="pdp-ref-preview-img" src="" alt="Referencia" style="width:38px; height:38px; object-fit:cover; border-radius:5px; border:1px solid #A45A44;" />
+                      <span style="font-size:0.75rem; color:#2E7D32; font-weight:600;">✓ Foto adjuntada</span>
+                    </div>
+                    <a href="index.html#disenador-a-medida" style="font-size:0.76rem; color:#A45A44; font-weight:600; margin-left:auto;">✂️ Ir al Diseñador a Medida &rarr;</a>
                   </div>
                 </div>
               </div>
@@ -347,7 +372,7 @@
 
           <!-- Columna Derecha: Lista de Comentarios Existentes -->
           <div class="pdp-comments-list" id="pdp-comments-list" aria-live="polite">
-            <!-- Rellenado dinámicamente con producto.js?v=20261114v5 -->
+            <!-- Rellenado dinámicamente con producto.js?v=20261114v7 -->
           </div>
 
         </div>
@@ -362,7 +387,7 @@
         </header>
 
         <div class="lookbook-grid" id="pdp-related-grid">
-          <!-- Rellenado con producto.js?v=20261114v5 -->
+          <!-- Rellenado con producto.js?v=20261114v7 -->
         </div>
       </section>
 
@@ -1749,9 +1774,9 @@
   </div>
 
   <!-- Scripts -->
-  <script src="workshop-db.js?v=20261114v5"></script>
-  <script src="products-data.js?v=20261114v5"></script>
-  <script src="main.js?v=20261114v5"></script>
-  <script src="producto.js?v=20261114v5"></script>
+  <script src="workshop-db.js?v=20261114v7"></script>
+  <script src="products-data.js?v=20261114v7"></script>
+  <script src="main.js?v=20261114v7"></script>
+  <script src="producto.js?v=20261114v7"></script>
 </body>
 </html>

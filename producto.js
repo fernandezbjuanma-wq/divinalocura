@@ -168,10 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (pdpStory) pdpStory.textContent = `“${storyContent}”`;
   if (pdpDesc) pdpDesc.textContent = product.desc || 'Pieza utilitaria de alta gama pensada para aportar armonía, practicidad y calidez al hogar.';
 
-  // 7. Personalizador de Tela, Bordado en Vivo, Cantidad y Botones de Compra
+  // 7. Personalizador de Tela (Colores Disponibles Configurados por Elena), Bordado en Vivo, Foto de Referencia y Compra
   let currentQty = 1;
-  let selectedTone = 'Champán Seda';
-  let selectedToneHex = '#E8DAC8';
+  let selectedTone = 'Crudo Natural';
+  let selectedToneHex = '#F3EFEA';
+  let pdpReferenceImage = '';
 
   const toneSwatches = document.getElementById('pdp-tone-swatches');
   const selectedToneName = document.getElementById('pdp-selected-tone-name');
@@ -182,16 +183,75 @@ document.addEventListener('DOMContentLoaded', () => {
   const embroideryCanvas = document.getElementById('pdp-embroidery-canvas');
   const embroiderySample = document.getElementById('pdp-embroidery-sample');
 
-  // Si es producto infantil (p4 o p7), activar sugerencia de bordado o tono crudo por defecto
-  if (product.category === 'infantil' || product.id === 'p4' || product.id === 'p7') {
-    selectedTone = 'Crudo Natural';
-    selectedToneHex = '#F3EFE8';
-    if (selectedToneName) selectedToneName.textContent = selectedTone;
-    if (toneSwatches) {
-      toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(btn => {
-        btn.classList.toggle('is-active', btn.getAttribute('data-tone') === selectedTone);
+  const refUploadCheck = document.getElementById('pdp-ref-upload-check');
+  const refUploadPanel = document.getElementById('pdp-ref-upload-panel');
+  const specialMeasureInput = document.getElementById('pdp-special-measure-input');
+  const refFileInput = document.getElementById('pdp-reference-file');
+  const refUploadBtnText = document.getElementById('pdp-ref-upload-btn-text');
+  const refPreviewWrap = document.getElementById('pdp-ref-preview-wrap');
+  const refPreviewImg = document.getElementById('pdp-ref-preview-img');
+
+  // Obtener paleta de colores de Elena y colores habilitados para este producto
+  const colorPalette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
+    ? window.WorkshopDB.getColorPalette()
+    : [
+        { name: 'Crudo Natural', hex: '#F3EFEA' },
+        { name: 'Champán Seda', hex: '#E8DAC8' },
+        { name: 'Rosa Viejo', hex: '#C87D69' },
+        { name: 'Verde Salvia', hex: '#8A9A86' },
+        { name: 'Terracota Suave', hex: '#A45A44' },
+        { name: 'Gris Perla', hex: '#C5C6C7' }
+      ];
+
+  const defaultColorsByCategory = {
+    'cuidado-personal': ['Champán Seda', 'Crudo Natural', 'Rosa Viejo', 'Gris Perla'],
+    'infantil': ['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Celeste Bruma'],
+    'organizacion': ['Crudo Natural', 'Avellana / Arena', 'Verde Salvia', 'Terracota Suave'],
+    'hogar': ['Crudo Natural', 'Terracota Suave', 'Verde Salvia', 'Rosa Viejo']
+  };
+
+  const enabledColorNames = (Array.isArray(product.availableColors) && product.availableColors.length > 0)
+    ? product.availableColors
+    : (defaultColorsByCategory[product.category] || ['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Terracota Suave']);
+
+  const productColors = enabledColorNames.map(cName => {
+    const found = colorPalette.find(p => p.name.toLowerCase() === String(cName).toLowerCase());
+    return {
+      name: cName,
+      hex: found ? found.hex : '#E8DAC8'
+    };
+  });
+
+  if (productColors.length > 0) {
+    selectedTone = productColors[0].name;
+    selectedToneHex = productColors[0].hex;
+  }
+
+  if (selectedToneName) selectedToneName.textContent = selectedTone;
+
+  if (toneSwatches) {
+    toneSwatches.innerHTML = productColors.map((c, idx) => `
+      <button type="button" class="pdp-swatch-btn ${idx === 0 ? 'is-active' : ''}" data-tone="${c.name}" data-hex="${c.hex}" title="${c.name}">
+        <span class="pdp-swatch-circle" style="background:${c.hex};"></span>
+      </button>
+    `).join('');
+
+    toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        selectedTone = btn.getAttribute('data-tone') || 'Crudo Natural';
+        selectedToneHex = btn.getAttribute('data-hex') || '#F3EFEA';
+        if (selectedToneName) selectedToneName.textContent = selectedTone;
+        updateEmbroideryPreview();
       });
-    }
+    });
+  }
+
+  // Respetar si Elena habilitó o deshabilitó el bordado en este producto
+  if (product.allowEmbroidery === false && monogramCheck) {
+    const monoBox = monogramCheck.closest('.pdp-monogram-box');
+    if (monoBox) monoBox.style.display = 'none';
   }
 
   function updateEmbroideryPreview() {
@@ -209,19 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (toneSwatches) {
-    toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        toneSwatches.querySelectorAll('.pdp-swatch-btn').forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        selectedTone = btn.getAttribute('data-tone') || 'Champán Seda';
-        selectedToneHex = btn.getAttribute('data-hex') || '#E8DAC8';
-        if (selectedToneName) selectedToneName.textContent = selectedTone;
-        updateEmbroideryPreview();
-      });
-    });
-  }
-
   if (monogramCheck && monogramPanel) {
     monogramCheck.addEventListener('change', () => {
       monogramPanel.style.display = monogramCheck.checked ? 'block' : 'none';
@@ -229,6 +276,40 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => embroideryText.focus(), 60);
       }
       updateEmbroideryPreview();
+    });
+  }
+
+  if (refUploadCheck && refUploadPanel) {
+    refUploadCheck.addEventListener('change', () => {
+      refUploadPanel.style.display = refUploadCheck.checked ? 'block' : 'none';
+    });
+  }
+
+  if (refFileInput) {
+    refFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (refUploadBtnText) refUploadBtnText.textContent = '⏳ Procesando...';
+      try {
+        if (window.WorkshopDB && typeof window.WorkshopDB.processAndUploadImage === 'function') {
+          const up = await window.WorkshopDB.processAndUploadImage(file, file.name);
+          pdpReferenceImage = (up && up.url) ? up.url : '';
+        } else {
+          pdpReferenceImage = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result || '');
+            r.readAsDataURL(file);
+          });
+        }
+        if (pdpReferenceImage && refPreviewWrap && refPreviewImg) {
+          refPreviewImg.src = pdpReferenceImage;
+          refPreviewWrap.style.display = 'inline-flex';
+        }
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        if (refUploadBtnText) refUploadBtnText.textContent = '📷 Cambiar Foto';
+      }
     });
   }
 
@@ -241,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateEmbroideryPreview();
 
   function buildPdpCustomizationNote() {
-    const parts = [`Tono: ${selectedTone}`];
+    const parts = [`Color: ${selectedTone}`];
     if (monogramCheck && monogramCheck.checked) {
       const embVal = (embroideryText ? embroideryText.value : '').trim();
       const threadVal = embroideryThread ? embroideryThread.value : 'Hilo Terracota';
@@ -250,6 +331,12 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         parts.push(`Bordado a mano (${threadVal})`);
       }
+    }
+    if (refUploadCheck && refUploadCheck.checked && specialMeasureInput && specialMeasureInput.value.trim()) {
+      parts.push(`Detalle/Medida: ${specialMeasureInput.value.trim()}`);
+    }
+    if (pdpReferenceImage) {
+      parts.push('📸 Incluye foto de referencia adjunta');
     }
     return parts.join(' · ');
   }
@@ -282,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pdpAddBagBtn.addEventListener('click', () => {
       if (window.DivinaLocura && window.DivinaLocura.addToCart) {
         const customNote = buildPdpCustomizationNote();
-        window.DivinaLocura.addToCart(product.id, customNote, currentQty);
+        window.DivinaLocura.addToCart(product.id, customNote, currentQty, null, pdpReferenceImage);
       }
     });
   }

@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=20261114v5">
-  <link rel="stylesheet" href="admin.css?v=20261114v5">
+  <link rel="stylesheet" href="style.css?v=20261114v7">
+  <link rel="stylesheet" href="admin.css?v=20261114v7">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="productos">
@@ -137,7 +137,7 @@
               </tr>
             </thead>
             <tbody id="products-table-tbody">
-              <!-- Inyectado por admin.js?v=20261114v5 -->
+              <!-- Inyectado por admin.js?v=20261114v7 -->
             </tbody>
           </table>
         </div>
@@ -201,6 +201,29 @@
           </div>
         </div>
 
+        <!-- SELECTOR DE COLORES DE TELA DISPONIBLES PARA ESTE PRODUCTO -->
+        <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;">
+            <label class="admin-label" style="margin:0;">🎨 Colores de Tela Disponibles para esta Pieza</label>
+            <span style="font-size:0.74rem; color:#8F4F3D; font-weight:600;">Marcá los tonos que tenés para ofrecer a las clientas</span>
+          </div>
+          <p style="font-size:0.78rem; color:#7A726D; margin:0 0 0.75rem 0;">Las clientas verán únicamente los colores que dejes activados acá al momento de elegir esta creación.</p>
+          <div id="admin-edit-colors-list" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem;">
+            <!-- Chips de colores inyectados por admin.js -->
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; padding-top:0.65rem; border-top:1px dashed #E2DCD3;">
+            <input type="text" id="admin-new-color-name" class="admin-input" placeholder="Nuevo tono (ej: Lila Pastel)" style="flex:1; min-width:150px; padding:0.4rem 0.65rem; font-size:0.78rem;" />
+            <input type="color" id="admin-new-color-hex" value="#D8B4C8" title="Elegir tono de color" style="width:38px; height:34px; border:1px solid #DCD6CE; border-radius:6px; cursor:pointer; padding:2px; background:#FFF;" />
+            <button type="button" class="btn-admin-outline" id="btn-admin-add-color" style="padding:0.4rem 0.75rem; font-size:0.76rem;">+ Sumar Color</button>
+          </div>
+          <div style="margin-top:0.75rem; padding-top:0.65rem; border-top:1px dashed #E2DCD3;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.82rem; font-weight:600; color:#2B2625;">
+              <input type="checkbox" id="edit-allow-embroidery" checked style="width:16px; height:16px; accent-color:#A45A44;" />
+              <span>🪡 Permitir que la clienta pida Bordado a Mano (nombre o iniciales) en esta pieza</span>
+            </label>
+          </div>
+        </div>
+
         <!-- GALERÍA DE HASTA 4 FOTOS CON SUBIDA DESDE CELULAR / COMPU / GOOGLE DRIVE -->
         <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1rem;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
@@ -209,7 +232,7 @@
           </div>
           <p style="font-size:0.78rem; color:#7A726D; margin:0 0 0.85rem 0;">Podés elegir fotos directo desde tu celular o computadora, o pegar el enlace de la imagen.</p>
           <div id="admin-edit-images-list" style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-            <!-- Inyectado dinámicamente por admin.js?v=20261114v5 -->
+            <!-- Inyectado dinámicamente por admin.js?v=20261114v7 -->
           </div>
         </div>
 
@@ -226,8 +249,8 @@
     </div>
   </div>
 
-  <script src="products-data.js?v=20261114v5"></script>
-  <script src="workshop-db.js?v=20261114v5"></script>
-  <script src="admin.js?v=20261114v5"></script>
+  <script src="products-data.js?v=20261114v7"></script>
+  <script src="workshop-db.js?v=20261114v7"></script>
+  <script src="admin.js?v=20261114v7"></script>
 </body>
 </html>

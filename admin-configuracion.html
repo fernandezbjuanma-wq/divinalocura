@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=20261114v5">
-  <link rel="stylesheet" href="admin.css?v=20261114v5">
+  <link rel="stylesheet" href="style.css?v=20261114v7">
+  <link rel="stylesheet" href="admin.css?v=20261114v7">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="configuracion">
@@ -158,40 +158,224 @@
       </section>
 
       <form id="form-admin-settings">
-        
-        <!-- Bloque 1: Mensajes Destacados & Hero -->
-        <section class="admin-card">
+
+        <!-- Bloque 0.5: Interruptores de Secciones y Funciones (Decisión de Elena) -->
+        <section class="admin-card" style="border:2px solid rgba(164, 90, 68, 0.3); background:linear-gradient(180deg, #FAF8F5 0%, #FFFFFF 100%);">
           <div class="admin-card__header">
             <div>
-              <h3 class="admin-card__title">Portada &amp; Frases Principales (Hero)</h3>
-              <div class="admin-card__subtitle">Ajustá la primera impresión visual inspirada en marcas de lujo como Anthropologie</div>
+              <span class="admin-page-kicker">Control de Tienda &middot; Decisión de Elena</span>
+              <h3 class="admin-card__title">🎛️ ¿Qué Secciones y Funciones Querés Mostrar en la Página?</h3>
+              <div class="admin-card__subtitle">Activá o desactivá con un clic el sistema de Cajas de Regalo, el Diseñador a Medida, el Muestrario de Telas o los Cupones</div>
             </div>
           </div>
 
-          <div class="admin-form-group">
-            <label class="admin-label">Cinta Superior de Anuncios</label>
-            <input type="text" id="cfg-announcement" class="admin-input" placeholder="Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena" />
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; background:#FFFFFF; border:1px solid #E5DFD7; border-radius:10px; padding:1rem; cursor:pointer;">
+              <input type="checkbox" id="cfg-show-gift-boxes" checked style="width:18px; height:18px; margin-top:2px; accent-color:#A45A44;" />
+              <div>
+                <div style="font-weight:700; color:#2B2625; font-size:0.9rem;">🎁 Sistema de Cajas de Regalo &amp; Sets</div>
+                <div style="font-size:0.78rem; color:#6E655F; margin-top:0.2rem; line-height:1.4;">Elena decide si se muestra o se oculta la sección de Cajas de Regalo con 10% OFF en la página principal.</div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; background:#FFFFFF; border:1px solid #E5DFD7; border-radius:10px; padding:1rem; cursor:pointer;">
+              <input type="checkbox" id="cfg-show-custom-builder" checked style="width:18px; height:18px; margin-top:2px; accent-color:#A45A44;" />
+              <div>
+                <div style="font-weight:700; color:#2B2625; font-size:0.9rem;">✂️ Diseñador de Encargos a Medida + Subir Foto</div>
+                <div style="font-size:0.78rem; color:#6E655F; margin-top:0.2rem; line-height:1.4;">Permite que las clientas armen su propio diseño o suban una foto/idea para que Elena lo haga con la máquina.</div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; background:#FFFFFF; border:1px solid #E5DFD7; border-radius:10px; padding:1rem; cursor:pointer;">
+              <input type="checkbox" id="cfg-show-fabric-showcase" checked style="width:18px; height:18px; margin-top:2px; accent-color:#A45A44;" />
+              <div>
+                <div style="font-weight:700; color:#2B2625; font-size:0.9rem;">📖 Muestrario de Telas de Elena &amp; Especificaciones</div>
+                <div style="font-size:0.78rem; color:#6E655F; margin-top:0.2rem; line-height:1.4;">Muestra las telas que tiene Elena en el taller, sus cuidados de lavado y el botón para encargar con esa tela.</div>
+              </div>
+            </label>
+
+            <label style="display:flex; align-items:flex-start; gap:0.75rem; background:#FFFFFF; border:1px solid #E5DFD7; border-radius:10px; padding:1rem; cursor:pointer;">
+              <input type="checkbox" id="cfg-enable-coupons" style="width:18px; height:18px; margin-top:2px; accent-color:#A45A44;" />
+              <div>
+                <div style="font-weight:700; color:#2B2625; font-size:0.9rem;">🎟️ Campo de Cupones en la Bolsa de Pedidos</div>
+                <div style="font-size:0.78rem; color:#6E655F; margin-top:0.2rem; line-height:1.4;">Desactivado por defecto para que quede limpio el sistema <strong>50% Seña / 50% Entrega</strong>. Activalo solo si quieren usar códigos de descuento.</div>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <!-- Bloque 1: Editor Completo de Todos los Textos de la Página (Para Elena) -->
+        <section class="admin-card">
+          <div class="admin-card__header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <span class="admin-page-kicker">Textos de Toda la Web &middot; 100% Editables</span>
+              <h3 class="admin-card__title">✍️ Cambiar los Textos que Están en la Página</h3>
+              <div class="admin-card__subtitle">Acá Elena puede modificar con sus propias palabras cualquier título, subtítulo o frase de todas las secciones de la tienda</div>
+            </div>
+            <button type="button" class="btn-admin-outline" id="btn-cfg-reset-default-texts" style="font-size:0.78rem; padding:0.45rem 0.9rem;">
+              <span>🔄 Restaurar Textos Originales</span>
+            </button>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
+          <!-- 1A. Portada & Hero -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.15rem; margin-bottom:1.25rem;">
+            <h4 style="margin:0 0 0.85rem 0; font-size:0.95rem; color:#2B2625;">🏛️ 1. Portada Principal (Lo primero que se ve arriba)</h4>
             <div class="admin-form-group">
-              <label class="admin-label">Ceja del Hero (Kicker)</label>
-              <input type="text" id="cfg-hero-eyebrow" class="admin-input" placeholder="CONFECCIÓN ARTESANAL · BUENOS AIRES" />
+              <label class="admin-label">Cinta Superior de Anuncios</label>
+              <input type="text" id="cfg-announcement" class="admin-input" placeholder="Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena" />
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Frase Pequeña Arriba del Título (Ceja)</label>
+                <input type="text" id="cfg-hero-eyebrow" class="admin-input" placeholder="CONFECCIÓN ARTESANAL · BUENOS AIRES" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Texto del Botón Principal</label>
+                <input type="text" id="cfg-hero-cta" class="admin-input" placeholder="Explorar la Colección" />
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">Título Principal Grande de Portada</label>
+              <textarea id="cfg-hero-title" class="admin-textarea" rows="2" placeholder="El arte del detalle. Diseño hecho a mano para abrazar tu hogar."></textarea>
+            </div>
+
+            <div class="admin-form-group" style="margin-bottom:0;">
+              <label class="admin-label">Subtítulo / Frase Debajo del Título</label>
+              <textarea id="cfg-hero-tagline" class="admin-textarea" rows="2" placeholder="Textiles con alma. Organización y calidez para tu día a día."></textarea>
+            </div>
+          </div>
+
+          <!-- 1B. Categorías & Colección de Taller -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.15rem; margin-bottom:1.25rem;">
+            <h4 style="margin:0 0 0.85rem 0; font-size:0.95rem; color:#2B2625;">🛍️ 2. Sección Categorías &amp; Catálogo de Creaciones</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Ceja de Categorías</label>
+                <input type="text" id="cfg-cat-eyebrow" class="admin-input" placeholder="Explorar por Colección" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Título de Categorías</label>
+                <input type="text" id="cfg-cat-title" class="admin-input" placeholder="Categorías Artesanales" />
+              </div>
             </div>
             <div class="admin-form-group">
-              <label class="admin-label">Texto del Botón Principal (CTA)</label>
-              <input type="text" id="cfg-hero-cta" class="admin-input" placeholder="Explorar la Colección" />
+              <label class="admin-label">Descripción de Categorías</label>
+              <input type="text" id="cfg-cat-desc" class="admin-input" placeholder="Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena." />
+            </div>
+
+            <hr style="border:none; border-top:1px dashed #E2DCD3; margin:0.85rem 0;" />
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Ceja del Catálogo</label>
+                <input type="text" id="cfg-catalog-eyebrow" class="admin-input" placeholder="Confección Auténtica de Elena" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Título del Catálogo</label>
+                <input type="text" id="cfg-catalog-title" class="admin-input" placeholder="Colección de Taller" />
+              </div>
+            </div>
+            <div class="admin-form-group" style="margin-bottom:0;">
+              <label class="admin-label">Descripción del Catálogo</label>
+              <input type="text" id="cfg-catalog-desc" class="admin-input" placeholder="Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos." />
             </div>
           </div>
 
-          <div class="admin-form-group">
-            <label class="admin-label">Título Principal de Portada</label>
-            <textarea id="cfg-hero-title" class="admin-textarea" rows="2" placeholder="El arte del detalle. Diseño hecho a mano para abrazar tu hogar."></textarea>
+          <!-- 1C. Muestrario de Telas, Diseñador a Medida y Cajas de Regalo -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.15rem; margin-bottom:1.25rem;">
+            <h4 style="margin:0 0 0.85rem 0; font-size:0.95rem; color:#2B2625;">✂️ 3. Textos de Muestrario de Telas, Encargos a Medida &amp; Cajas de Regalo</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Título del Muestrario de Telas</label>
+                <input type="text" id="cfg-fabrics-title" class="admin-input" placeholder="Muestrario de Fibras Nobles & Cuidados" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Bajada del Muestrario de Telas</label>
+                <input type="text" id="cfg-fabrics-desc" class="admin-input" placeholder="Explorá las texturas seleccionadas y prelavadas en nuestro taller y encargá tu pieza a medida." />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Título del Diseñador de Encargos a Medida</label>
+                <input type="text" id="cfg-builder-title" class="admin-input" placeholder="Diseñá tu Pieza a Medida o Subí tu Idea" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Bajada del Diseñador a Medida</label>
+                <input type="text" id="cfg-builder-desc" class="admin-input" placeholder="Elegí la tela, el color y las medidas, o subí una foto de lo que te gustaría que Elena confeccione en su máquina." />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label class="admin-label">Título de Cajas de Regalo &amp; Sets</label>
+                <input type="text" id="cfg-gifts-title" class="admin-input" placeholder="Cajas de Regalo & Sets con 10% OFF" />
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label class="admin-label">Bajada de Cajas de Regalo</label>
+                <input type="text" id="cfg-gifts-desc" class="admin-input" placeholder="Combinaciones pensadas por Elena para agasajar o renovar tu hogar con tarjeta dedicatoria." />
+              </div>
+            </div>
           </div>
 
-          <div class="admin-form-group">
-            <label class="admin-label">Bajada / Eslogan Inspirador</label>
-            <textarea id="cfg-hero-tagline" class="admin-textarea" rows="2" placeholder="Textiles con alma. Organización y calidez para tu día a día."></textarea>
+          <!-- 1D. Historia de Elena (El Taller) & Espacios -->
+          <div style="background:#FAF8F5; border:1px solid #EFEAE4; border-radius:10px; padding:1.15rem;">
+            <h4 style="margin:0 0 0.85rem 0; font-size:0.95rem; color:#2B2625;">🌸 4. Historia de Elena, Espacios &amp; Pie de Página</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Ceja Sección Sobre Elena</label>
+                <input type="text" id="cfg-about-eyebrow" class="admin-input" placeholder="Manos Creadoras" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Título Sección Sobre Elena</label>
+                <input type="text" id="cfg-about-title" class="admin-input" placeholder="Confeccionado por Elena" />
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">Primer Párrafo de la Historia de Elena</label>
+              <textarea id="cfg-about-lead" class="admin-textarea" rows="2" placeholder="Detrás de cada dobladillo, cada cierre y cada elección de tela..."></textarea>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">Segundo Párrafo de la Historia de Elena</label>
+              <textarea id="cfg-about-body" class="admin-textarea" rows="2" placeholder="En Divina Locura Deco no creemos en la producción masiva..."></textarea>
+            </div>
+
+            <div style="display:grid; grid-template-columns:2fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Frase entre Comillas en la Foto de Elena</label>
+                <input type="text" id="cfg-about-quote" class="admin-input" placeholder="“Coser es una forma de cuidar a quienes habitan el hogar.”" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Firma de la Frase</label>
+                <input type="text" id="cfg-about-author" class="admin-input" placeholder="— Elena" />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group">
+                <label class="admin-label">Título Galería de Espacios</label>
+                <input type="text" id="cfg-spaces-title" class="admin-input" placeholder="Espacios que Inspiran Calma" />
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Descripción Galería de Espacios</label>
+                <input type="text" id="cfg-spaces-desc" class="admin-input" placeholder="Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa." />
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label class="admin-label">Frase en el Pie de Página</label>
+                <input type="text" id="cfg-footer-desc" class="admin-input" placeholder="Textiles artesanales y piezas utilitarias en tela por Elena." />
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0;">
+                <label class="admin-label">Texto de Derechos Reservados (Abajo del todo)</label>
+                <input type="text" id="cfg-footer-copy" class="admin-input" placeholder="© 2026 Divina Locura Deco — Confección artesanal por Elena." />
+              </div>
+            </div>
           </div>
         </section>
 
@@ -200,7 +384,7 @@
           <div class="admin-card__header">
             <div>
               <h3 class="admin-card__title">Canales de Contacto, Redes &amp; Mercado Pago</h3>
-              <div class="admin-card__subtitle">Coordinación de encargos por WhatsApp y cobro online desde la bolsa de pedidos</div>
+              <div class="admin-card__subtitle">Coordinación de encargos por WhatsApp y cobro online desde la bolsa de pedidos (50% Seña o 100% Total)</div>
             </div>
           </div>
 
@@ -221,8 +405,8 @@
               <input type="url" id="cfg-mp-link" class="admin-input" placeholder="https://link.mercadopago.com.ar/divinalocura" />
             </div>
             <div class="admin-form-group">
-              <label class="admin-label">Alias Bancario / Mercado Pago (para señas)</label>
-              <input type="text" id="cfg-mp-alias" class="admin-input" placeholder="Ej: divina.locura.deco.mp" />
+              <label class="admin-label">Alias Bancario / Mercado Pago (para señas 50%)</label>
+              <input type="text" id="cfg-mp-alias" class="admin-input" placeholder="Ej: DIVINA.LOCURA.DECO" />
             </div>
           </div>
 
@@ -239,7 +423,7 @@
 
           <div style="margin-top:1.5rem;">
             <button type="submit" class="btn-admin-cta" style="padding:0.85rem 1.75rem;">
-              <span>💾 Guardar Todos los Cambios de Tienda y Pagos</span>
+              <span>💾 Guardar Todos los Textos, Secciones y Pagos</span>
             </button>
           </div>
         </section>
@@ -336,8 +520,8 @@
 
   </main>
 
-  <script src="products-data.js?v=20261114v5"></script>
-  <script src="workshop-db.js?v=20261114v5"></script>
-  <script src="admin.js?v=20261114v5"></script>
+  <script src="products-data.js?v=20261114v7"></script>
+  <script src="workshop-db.js?v=20261114v7"></script>
+  <script src="admin.js?v=20261114v7"></script>
 </body>
 </html>
