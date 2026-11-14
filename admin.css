@@ -3,9 +3,9 @@
    Diseño de Panel de Control Exclusivo (Páginas Independientes)
    ========================================================================== */
 
-/* Layout Principal de Administración */
+/* Layout Principal de Administración (Estilo Cálido y Luminoso) */
 body.admin-body {
-  background-color: #F8F6F1;
+  background-color: #FAF8F5;
   color: #2B2625;
   font-family: var(--font-sans, 'Montserrat', -apple-system, sans-serif);
   margin: 0;
@@ -15,15 +15,15 @@ body.admin-body {
   flex-direction: column;
 }
 
-/* 1. BARRA DE NAVEGACIÓN SUPERIOR (TOP ADMIN NAV) */
+/* 1. BARRA DE NAVEGACIÓN SUPERIOR (TOP ADMIN NAV - ESTILO CÁLIDO EDITORIAL) */
 .admin-top-nav {
-  background: #231F1E;
-  color: #FAF8F5;
+  background: #FFFFFF;
+  color: #2B2625;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 14px rgba(164, 90, 68, 0.05);
+  border-bottom: 1px solid #E8DFD5;
 }
 
 .admin-top-nav__inner {
@@ -49,14 +49,14 @@ body.admin-body {
   font-family: var(--font-serif, 'Playfair Display', serif);
   font-size: 1.15rem;
   font-weight: 700;
-  color: #FAF8F5;
+  color: #2B2625;
   letter-spacing: 0.02em;
 }
 
 .admin-brand-badge {
-  background: rgba(164, 90, 68, 0.25);
-  color: #E29578;
-  border: 1px solid rgba(164, 90, 68, 0.45);
+  background: rgba(164, 90, 68, 0.08);
+  color: #A45A44;
+  border: 1px solid rgba(164, 90, 68, 0.25);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
@@ -72,8 +72,8 @@ body.admin-body {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4ADE80;
-  box-shadow: 0 0 6px #4ADE80;
+  background: #2E7D32;
+  box-shadow: 0 0 6px rgba(46, 125, 50, 0.4);
   animation: adminPulse 2s infinite;
 }
 
@@ -98,7 +98,7 @@ body.admin-body {
 }
 
 .admin-nav-link {
-  color: #C7BEB7;
+  color: #655E58;
   text-decoration: none;
   font-size: 0.82rem;
   font-weight: 600;
@@ -112,23 +112,29 @@ body.admin-body {
 }
 
 .admin-nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #FAF8F5;
+  background: #F3EFE8;
+  color: #2B2625;
 }
 
 .admin-nav-link.is-active {
   background: #A45A44;
   color: #FFFFFF;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.4);
+  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.25);
 }
 
 .admin-badge-count {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(164, 90, 68, 0.12);
+  color: #A45A44;
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+.admin-nav-link.is-active .admin-badge-count {
+  background: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
 }
 
 /* Acciones en la Cabecera Derecha */
@@ -140,9 +146,9 @@ body.admin-body {
 }
 
 .btn-admin-nav {
-  background: rgba(255, 255, 255, 0.08);
-  color: #FAF8F5;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #FFFFFF;
+  color: #4A4340;
+  border: 1px solid #DDD5CB;
   padding: 0.45rem 0.85rem;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -154,32 +160,35 @@ body.admin-body {
   gap: 0.4rem;
   transition: all 0.2s;
   font-family: inherit;
+  box-shadow: 0 1px 3px rgba(43, 38, 37, 0.04);
 }
 
 .btn-admin-nav:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.28);
+  background: #F3EFE8;
+  color: #2B2625;
+  border-color: #C7BEB7;
 }
 
 .btn-admin-nav--store {
-  background: #658572;
-  border-color: #658572;
+  background: #4A5548;
+  border-color: #4A5548;
   color: #FFFFFF;
 }
 
 .btn-admin-nav--store:hover {
-  background: #526f5e;
+  background: #3B4539;
 }
 
 .btn-admin-nav--logout {
-  background: rgba(220, 38, 38, 0.18);
-  border-color: rgba(220, 38, 38, 0.35);
-  color: #FCA5A5;
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.25);
+  color: #DC2626;
 }
 
 .btn-admin-nav--logout:hover {
   background: #DC2626;
   color: #FFFFFF;
+  border-color: #DC2626;
 }
 
 /* 2. CONTENEDOR GENERAL DE PÁGINA */
@@ -356,17 +365,123 @@ body.admin-body {
 }
 
 .admin-stat-card--accent {
-  background: linear-gradient(135deg, #2D2725 0%, #3B3330 100%);
-  color: #FAF8F5;
-  border-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #A45A44 0%, #BA6E58 100%);
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 8px 24px rgba(164, 90, 68, 0.22);
 }
 
 .admin-stat-card--accent .admin-stat-label {
-  color: #C7BEB7;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .admin-stat-card--accent .admin-stat-val {
-  color: #FAF8F5;
+  color: #FFFFFF;
+}
+
+.admin-stat-card--accent .admin-stat-sub {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Componentes del Dashboard Económico Completo para Elena */
+.fin-period-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #F3EFE8;
+  padding: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(43, 38, 37, 0.08);
+  flex-wrap: wrap;
+}
+
+.fin-period-btn {
+  background: transparent;
+  border: none;
+  color: #5F5852;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fin-period-btn:hover {
+  color: #2B2625;
+}
+
+.fin-period-btn.is-active {
+  background: #FFFFFF;
+  color: #A45A44;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(43, 38, 37, 0.08);
+}
+
+.fin-flow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 820px) {
+  .fin-flow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fin-flow-card {
+  background: #FFFFFF;
+  border: 1px solid #ECE4DA;
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.03);
+}
+
+.fin-flow-card--paid {
+  border-left: 4px solid #2E7D32;
+}
+
+.fin-flow-card--deposit {
+  border-left: 4px solid #F59E0B;
+}
+
+.fin-flow-card--pending {
+  border-left: 4px solid #3B82F6;
+}
+
+.fin-profit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fin-profit-table th {
+  background: #FAF7F2;
+  color: #5F5852;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ECE4DA;
+}
+
+.fin-profit-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #F3EFE8;
+  font-size: 0.86rem;
+}
+
+.fin-profit-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(46, 125, 50, 0.1);
+  color: #2E7D32;
 }
 
 .admin-stat-header {

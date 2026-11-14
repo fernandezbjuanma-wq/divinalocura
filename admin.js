@@ -652,84 +652,226 @@
   // =========================================================================
   // 5. PÁGINA: GANANCIAS & FINANZAS (admin-finances.html)
   // =========================================================================
+  // =========================================================================
+  // 5. PÁGINA: GANANCIAS & FINANZAS (admin-finances.html)
+  // =========================================================================
   function initFinancesPage() {
     if (!window.WorkshopDB) return;
 
+    let selectedPeriod = 'all';
+
+    function getPeriodFilterKey() {
+      const now = new Date();
+      if (selectedPeriod === 'current-month') {
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        return `${y}-${m}`;
+      }
+      if (selectedPeriod === 'prev-month') {
+        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const y = prev.getFullYear();
+        const m = String(prev.getMonth() + 1).padStart(2, '0');
+        return `${y}-${m}`;
+      }
+      return 'all';
+    }
+
     function renderFinances() {
-      const summary = window.WorkshopDB.getFinancialSummary();
+      const periodKey = getPeriodFilterKey();
+      const summary = window.WorkshopDB.getFinancialSummary(periodKey);
       const budget = window.WorkshopDB.getBudget();
 
+      // 1. KPIs Principales
       const elRev = document.getElementById('fin-revenue');
-      if (elRev) elRev.textContent = `$ ${summary.totalRevenue.toLocaleString('es-AR')}`;
+      if (elRev) elRev.textContent = `$ ${(summary.totalRevenue || 0).toLocaleString('es-AR')}`;
+
+      const elOrdersMeta = document.getElementById('fin-orders-meta');
+      if (elOrdersMeta) elOrdersMeta.textContent = `${summary.totalOrdersCount || 0} pedidos facturados`;
 
       const elExp = document.getElementById('fin-expenses');
-      if (elExp) elExp.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')}`;
+      if (elExp) elExp.textContent = `$ ${(summary.totalExpenses || 0).toLocaleString('es-AR')}`;
+
+      const elExpMeta = document.getElementById('fin-expenses-meta');
+      if (elExpMeta) elExpMeta.textContent = `${summary.totalExpensesCount || 0} compras registradas`;
 
       const elNet = document.getElementById('fin-profit');
-      if (elNet) elNet.textContent = `$ ${summary.netProfit.toLocaleString('es-AR')}`;
+      if (elNet) elNet.textContent = `$ ${(summary.netProfit || 0).toLocaleString('es-AR')}`;
 
+      const elProfitMeta = document.getElementById('fin-profit-meta');
+      if (elProfitMeta) elProfitMeta.textContent = `${summary.profitMargin || 0}% de margen neto en mano`;
+
+      const elMargin = document.getElementById('fin-margin');
+      if (elMargin) elMargin.textContent = `${summary.profitMargin || 0}%`;
+
+      const elFabricInvest = document.getElementById('fin-fabric-invest');
+      if (elFabricInvest) elFabricInvest.textContent = `$ ${(summary.fabricStockValue || 0).toLocaleString('es-AR')}`;
+
+      const elAvgTicket = document.getElementById('fin-avg-ticket');
+      if (elAvgTicket) elAvgTicket.textContent = `$ ${(summary.avgTicket || 0).toLocaleString('es-AR')}`;
+
+      // 2. Flujo de Cobros & Señas (Cashflow)
+      const elPaidTotal = document.getElementById('fin-paid-total');
+      if (elPaidTotal) elPaidTotal.textContent = `$ ${(summary.paidTotal || 0).toLocaleString('es-AR')}`;
+
+      const elPaidCount = document.getElementById('fin-paid-count');
+      if (elPaidCount) elPaidCount.textContent = `${summary.paidOrdersCount || 0} pedidos completamente cancelados`;
+
+      const elDepositTotal = document.getElementById('fin-deposit-total');
+      if (elDepositTotal) elDepositTotal.textContent = `$ ${(summary.depositTotal || 0).toLocaleString('es-AR')}`;
+
+      const elPendingBalance = document.getElementById('fin-pending-balance');
+      if (elPendingBalance) elPendingBalance.textContent = `$ ${(summary.pendingBalance || 0).toLocaleString('es-AR')}`;
+
+      const elPendingCount = document.getElementById('fin-pending-count');
+      if (elPendingCount) elPendingCount.textContent = `${summary.pendingOrdersCount || 0} pedidos con saldo a cobrar en entrega`;
+
+      // 3. Presupuesto Mensual & Diagnóstico
       const elBudget = document.getElementById('fin-budget-text');
-      if (elBudget) elBudget.textContent = `$ ${summary.totalExpenses.toLocaleString('es-AR')} gastados de $ ${budget.toLocaleString('es-AR')} presupuestados`;
+      if (elBudget) elBudget.textContent = `$ ${(summary.totalExpenses || 0).toLocaleString('es-AR')} gastados de $ ${budget.toLocaleString('es-AR')} presupuestados`;
+
+      const pct = budget > 0 ? Math.min(150, Math.round(((summary.totalExpenses || 0) / budget) * 100)) : 0;
+      const elBudgetPct = document.getElementById('fin-budget-pct');
+      if (elBudgetPct) elBudgetPct.textContent = `${pct}%`;
+
+      const remaining = Math.max(0, budget - (summary.totalExpenses || 0));
+      const elBudgetRemaining = document.getElementById('fin-budget-remaining');
+      if (elBudgetRemaining) elBudgetRemaining.textContent = `$ ${remaining.toLocaleString('es-AR')}`;
 
       const bar = document.getElementById('fin-budget-bar');
       if (bar) {
-        const pct = Math.min(100, Math.round((summary.totalExpenses / (budget || 1)) * 100));
-        bar.style.width = `${pct}%`;
-        bar.style.backgroundColor = pct > 90 ? '#DC2626' : '#658572';
+        bar.style.width = `${Math.min(100, pct)}%`;
+        bar.style.backgroundColor = pct > 100 ? '#DC2626' : (pct >= 80 ? '#D97706' : '#4A5548');
       }
 
-      // Distribución de Gastos
+      const elBudgetBadge = document.getElementById('fin-budget-badge');
+      if (elBudgetBadge) {
+        if (pct > 100) {
+          elBudgetBadge.className = 'admin-badge admin-badge--alert';
+          elBudgetBadge.textContent = '🚨 Límite Superado';
+        } else if (pct >= 80) {
+          elBudgetBadge.className = 'admin-badge admin-badge--pending';
+          elBudgetBadge.textContent = '⚠️ Cerca del Tope';
+        } else {
+          elBudgetBadge.className = 'admin-badge admin-badge--delivered';
+          elBudgetBadge.textContent = '🌿 Presupuesto Saludable';
+        }
+      }
+
+      // 4. Distribución de Gastos por Rubro
       const distContainer = document.getElementById('fin-dist-container');
       if (distContainer) {
         const catMap = summary.expensesByCategory || {};
         const catKeys = Object.keys(catMap);
+        const totalExp = summary.totalExpenses || 1;
         distContainer.innerHTML = catKeys.map(cat => {
-          const amt = catMap[cat];
-          const pct = Math.round((amt / (summary.totalExpenses || 1)) * 100);
+          const amt = catMap[cat] || 0;
+          const p = Math.round((amt / totalExp) * 100);
           return `
             <div style="margin-bottom:0.75rem;">
               <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
                 <span><strong>${cat}</strong></span>
-                <span>$ ${amt.toLocaleString('es-AR')} (${pct}%)</span>
+                <span>$ ${amt.toLocaleString('es-AR')} (${p}%)</span>
               </div>
-              <div style="height:6px; background:#EAE3D8; border-radius:999px; overflow:hidden;">
-                <div style="width:${pct}%; height:100%; background:#A45A44;"></div>
+              <div style="height:7px; background:#ECE4DA; border-radius:999px; overflow:hidden;">
+                <div style="width:${p}%; height:100%; background:#A45A44; border-radius:999px;"></div>
               </div>
             </div>
           `;
         }).join('');
       }
 
-      // Tabla de Gastos
-      const expensesTbody = document.getElementById('expenses-table-tbody');
-      if (expensesTbody) {
-        const expenses = window.WorkshopDB.getExpenses();
-        expensesTbody.innerHTML = expenses.map(exp => `
-          <tr data-exp-id="${exp.id}">
-            <td>${exp.date}</td>
-            <td><strong>${exp.description}</strong></td>
-            <td><span class="admin-badge admin-badge--production">${exp.category}</span></td>
-            <td><strong>$ ${(exp.amount || 0).toLocaleString('es-AR')}</strong></td>
-            <td>
-              <button type="button" class="btn-admin-outline btn-del-exp" style="color:#DC2626; padding:0.3rem 0.6rem;" title="Borrar">✕</button>
-            </td>
-          </tr>
-        `).join('');
-
-        expensesTbody.querySelectorAll('.btn-del-exp').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const expId = btn.closest('[data-exp-id]').getAttribute('data-exp-id');
-            if (confirm('¿Eliminar este registro de gasto?')) {
-              window.WorkshopDB.deleteExpense(expId);
-              adminToast('Gasto eliminado.');
-              renderFinances();
-            }
-          });
-        });
+      // 5. Rentabilidad por Creación Textil
+      const starTbody = document.getElementById('fin-star-products-tbody');
+      if (starTbody) {
+        const starItems = summary.starProductsProfit || [];
+        starTbody.innerHTML = starItems.map(item => {
+          const profit = item.price - item.cost;
+          return `
+            <tr>
+              <td><strong>${item.name}</strong></td>
+              <td><span style="font-size:0.78rem; color:#6A635B;">${item.category}</span></td>
+              <td style="color:#DC2626;">$ ${item.cost.toLocaleString('es-AR')}</td>
+              <td><strong>$ ${item.price.toLocaleString('es-AR')}</strong></td>
+              <td style="color:#2E7D32; font-weight:700;">+ $ ${profit.toLocaleString('es-AR')}</td>
+              <td><strong>${item.margin}%</strong></td>
+              <td><span class="fin-profit-badge">${item.badge}</span></td>
+            </tr>
+          `;
+        }).join('');
       }
+
+      // 6. Tabla de Gastos con Búsqueda
+      renderExpensesTable();
     }
 
-    renderFinances();
+    function renderExpensesTable() {
+      const expensesTbody = document.getElementById('expenses-table-tbody');
+      if (!expensesTbody) return;
+
+      const allExpenses = window.WorkshopDB.getExpenses();
+      const searchVal = (document.getElementById('exp-search-input') ? document.getElementById('exp-search-input').value : '').toLowerCase().trim();
+
+      const normalize = str => (str || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const sVal = normalize(searchVal);
+
+      const filtered = allExpenses.filter(exp => {
+        if (!sVal) return true;
+        const text = normalize(exp.description || exp.concept);
+        const cat = normalize(exp.category);
+        const d = normalize(exp.date);
+        return text.includes(sVal) || cat.includes(sVal) || d.includes(sVal);
+      });
+
+      const countLabel = document.getElementById('exp-count-label');
+      if (countLabel) {
+        countLabel.textContent = `Mostrando ${filtered.length} de ${allExpenses.length} compras`;
+      }
+
+      if (filtered.length === 0) {
+        expensesTbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1.5rem; color:#8A837A;">No se encontraron movimientos con ese criterio.</td></tr>';
+        return;
+      }
+
+      expensesTbody.innerHTML = filtered.map(exp => `
+        <tr data-exp-id="${exp.id}">
+          <td style="color:#6A635B; font-size:0.84rem;">${exp.date}</td>
+          <td><strong>${exp.description || exp.concept || 'Gasto de taller'}</strong></td>
+          <td><span class="admin-badge admin-badge--production">${exp.category}</span></td>
+          <td><strong style="color:#DC2626;">$ ${(exp.amount || 0).toLocaleString('es-AR')}</strong></td>
+          <td>
+            <button type="button" class="btn-admin-outline btn-del-exp" style="color:#DC2626; padding:0.3rem 0.65rem;" title="Eliminar este gasto">✕</button>
+          </td>
+        </tr>
+      `).join('');
+
+      expensesTbody.querySelectorAll('.btn-del-exp').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const expId = btn.closest('[data-exp-id]').getAttribute('data-exp-id');
+          if (confirm('¿Eliminar este registro de gasto?')) {
+            window.WorkshopDB.deleteExpense(expId);
+            adminToast('Gasto eliminado.');
+            renderFinances();
+          }
+        });
+      });
+    }
+
+    // Configurar Selector de Períodos
+    const periodButtons = document.querySelectorAll('#fin-period-selector .fin-period-btn');
+    periodButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        periodButtons.forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        selectedPeriod = btn.getAttribute('data-period');
+        renderFinances();
+      });
+    });
+
+    // Buscador en Vivo
+    const searchInput = document.getElementById('exp-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', renderExpensesTable);
+    }
 
     // Formulario de Gasto
     const formExp = document.getElementById('form-add-expense');
@@ -767,6 +909,8 @@
         }
       });
     }
+
+    renderFinances();
   }
 
   // =========================================================================

@@ -749,19 +749,65 @@
         budgetBadgeText = '🌿 Consumo controlado & saludable';
       }
 
+      // Valor del inventario de materiales en taller (metros * costo promedio estimado $3.500)
+      const materials = this.getMaterials();
+      const fabricStockValue = materials.reduce((sum, m) => sum + ((m.qty || 0) * 3500), 0);
+
+      // Flujo de cobros: Cobrado 100% vs Señas 50% vs Saldo a cobrar
+      let paidTotal = 0;
+      let depositTotal = 0;
+      let pendingBalance = 0;
+      let paidOrdersCount = 0;
+      let pendingOrdersCount = 0;
+
+      filteredOrders.forEach(ord => {
+        const amt = ord.totalAmount || 0;
+        if (ord.status === 'Entregado') {
+          paidTotal += amt;
+          paidOrdersCount++;
+        } else {
+          // Pedido en confección: seña del 50% cobrada, saldo del 50% a cobrar contra entrega
+          const deposit = Math.round(amt * 0.5);
+          depositTotal += deposit;
+          pendingBalance += (amt - deposit);
+          pendingOrdersCount++;
+        }
+      });
+
+      const avgTicket = filteredOrders.length > 0 ? Math.round(totalIncome / filteredOrders.length) : 0;
+
+      // Rentabilidad por producto estrella de Elena
+      const starProductsProfit = [
+        { name: 'Almohadón Tusor & Lino con Vivos', category: 'Almohadones', cost: 4200, price: 14500, margin: 71, badge: '⭐ Alta Demanda' },
+        { name: 'Bata Kimono Satén Seda Champán', category: 'Batas & Relax', cost: 8500, price: 28000, margin: 70, badge: '⭐ Producto Estrella' },
+        { name: 'Juego de Cama Waffle Honeycomb', category: 'Dormitorio', cost: 11000, price: 36000, margin: 69, badge: '⭐ Mayor Facturación' },
+        { name: 'Mantel Puro Lino Crudo Deshilachado', category: 'Mesa', cost: 7200, price: 24000, margin: 70, badge: '🌿 Clásico Noble' },
+        { name: 'Nécessaire Impermeable con Cierre', category: 'Accesorios', cost: 2800, price: 9500, margin: 71, badge: '🌿 Rotación Rápida' }
+      ];
+
       // Consumo estimado de insumos y telas en el período
       const fabricConsumption = this.getFabricConsumption(selectedMonth);
 
       return {
         selectedMonth,
         totalIncome,
+        totalRevenue: totalIncome,
         totalExpenses,
         netProfit,
         profitMargin,
+        avgTicket,
+        fabricStockValue,
+        paidTotal,
+        paidOrdersCount,
+        depositTotal,
+        pendingBalance,
+        pendingOrdersCount,
+        starProductsProfit,
         totalOrdersCount: filteredOrders.length,
         totalExpensesCount: filteredExpenses.length,
         filteredOrders,
         filteredExpenses,
+        expensesByCategory: categoryTotals,
         categoryPercentages,
         budgetLimit,
         budgetPercent,

@@ -90,51 +90,133 @@
       </div>
     </div>
 
-    <!-- CONTENIDO FINANZAS -->
+    <!-- CONTENIDO FINANZAS AMPLIADO & COMPLETO PARA ELENA -->
     <div class="admin-content-area" id="admin-content-area">
       
+      <!-- HÉROE DE LA PÁGINA CON SELECTOR DE PERÍODO TEMPORAL -->
       <section class="admin-page-hero">
         <div class="admin-page-hero__info">
-          <span class="admin-page-kicker">Economía &middot; Taller de Confección</span>
-          <h1 class="admin-page-title">Ganancias &amp; Balance Financiero</h1>
+          <span class="admin-page-kicker">Economía &middot; Taller Textil de Elena</span>
+          <h1 class="admin-page-title">Tablero de Control Financiero &amp; Ganancias</h1>
           <p class="admin-page-desc">
-            Seguimiento de ingresos por ventas, egresos en compra de telas y packaging, rentabilidad neta y control de presupuesto mensual.
+            Monitoreo en tiempo real de ingresos por confección, balance de costos de telas nobles, margen neto limpio, rentabilidad por creación y control presupuestario.
           </p>
         </div>
         <div class="admin-page-hero__actions">
-          <button type="button" class="btn-admin-outline" id="btn-set-budget">
-            <span>✏️ Editar Presupuesto Mensual</span>
+          <!-- Selector de Período Temporal -->
+          <div class="fin-period-bar" id="fin-period-selector" role="tablist">
+            <button type="button" class="fin-period-btn is-active" data-period="all">Histórico General</button>
+            <button type="button" class="fin-period-btn" data-period="current-month">Este Mes</button>
+            <button type="button" class="fin-period-btn" data-period="prev-month">Mes Anterior</button>
+            <button type="button" class="fin-period-btn" data-period="year-2026">Año 2026</button>
+          </div>
+
+          <button type="button" class="btn-admin-outline" id="btn-set-budget" title="Ajustar tope de compras mensual">
+            <span>✏️ Presupuesto</span>
           </button>
         </div>
       </section>
 
-      <!-- 3 KPIS FINANCIEROS -->
+      <!-- 6 KPIS FINANCIEROS DE ALTO IMPACTO -->
       <section class="admin-grid-3" style="margin-bottom:2rem;">
+        
+        <!-- KPI 1: Ingresos Totales -->
         <div class="admin-stat-card">
           <div class="admin-stat-header">
-            <span class="admin-stat-label">Ingresos por Pedidos</span>
+            <span class="admin-stat-label">Ingresos por Confección</span>
             <span class="admin-stat-icon">💵</span>
           </div>
           <div class="admin-stat-val" id="fin-revenue">$ 0</div>
-          <p class="admin-stat-sub">Facturación de piezas encargadas</p>
+          <p class="admin-stat-sub" id="fin-orders-meta">0 pedidos facturados</p>
         </div>
 
+        <!-- KPI 2: Gastos Totales de Taller -->
         <div class="admin-stat-card">
           <div class="admin-stat-header">
-            <span class="admin-stat-label">Gastos Totales</span>
+            <span class="admin-stat-label">Gastos Totales de Taller</span>
             <span class="admin-stat-icon">🧾</span>
           </div>
           <div class="admin-stat-val" id="fin-expenses" style="color:#DC2626;">$ 0</div>
-          <p class="admin-stat-sub">Telas, mercería, empaque y envíos</p>
+          <p class="admin-stat-sub" id="fin-expenses-meta">Telas, hilos, packaging y envíos</p>
         </div>
 
+        <!-- KPI 3: Ganancia Neta Real (Tarjeta Terracota Cálida Destacada) -->
         <div class="admin-stat-card admin-stat-card--accent">
           <div class="admin-stat-header">
-            <span class="admin-stat-label">Ganancia Neta Real</span>
+            <span class="admin-stat-label">Ganancia Neta en Bolsillo</span>
             <span class="admin-stat-icon">💎</span>
           </div>
-          <div class="admin-stat-val" id="fin-profit" style="color:#4ADE80;">$ 0</div>
-          <p class="admin-stat-sub">Ingresos netos tras descontar costos</p>
+          <div class="admin-stat-val" id="fin-profit">$ 0</div>
+          <p class="admin-stat-sub" id="fin-profit-meta">Ganancia limpia tras descontar costos</p>
+        </div>
+
+        <!-- KPI 4: Margen de Rentabilidad % -->
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Margen de Rentabilidad</span>
+            <span class="admin-stat-icon">📈</span>
+          </div>
+          <div class="admin-stat-val" id="fin-margin" style="color:#2E7D32;">0%</div>
+          <p class="admin-stat-sub">Porcentaje de ganancia sobre ventas</p>
+        </div>
+
+        <!-- KPI 5: Inversión en Stock de Telas -->
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Valor en Telas Nobles</span>
+            <span class="admin-stat-icon">🧵</span>
+          </div>
+          <div class="admin-stat-val" id="fin-fabric-invest">$ 0</div>
+          <p class="admin-stat-sub">Stock de satén, lino, gasa y waffle</p>
+        </div>
+
+        <!-- KPI 6: Ticket Promedio por Clienta -->
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Ticket Promedio</span>
+            <span class="admin-stat-icon">🛍️</span>
+          </div>
+          <div class="admin-stat-val" id="fin-avg-ticket">$ 0</div>
+          <p class="admin-stat-sub">Gasto promedio por cada encargo</p>
+        </div>
+
+      </section>
+
+      <!-- FLUJO DE COBROS Y SEÑAS (CASHFLOW DE CONFECCIÓN) -->
+      <section style="margin-bottom:2rem;">
+        <div class="admin-card__header" style="margin-bottom:1rem; border-bottom:none; padding-bottom:0;">
+          <div>
+            <h3 class="admin-card__title">Flujo de Cobros &amp; Señas de Clientas</h3>
+            <div class="admin-card__subtitle">Estado del dinero: señas del 50% cobradas vs saldos pendientes a cobrar contra entrega</div>
+          </div>
+        </div>
+
+        <div class="fin-flow-grid">
+          
+          <div class="fin-flow-card fin-flow-card--paid">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#2E7D32; letter-spacing:0.06em; margin-bottom:0.35rem;">
+              ✓ 100% Cobrado &middot; Pedidos Entregados
+            </div>
+            <div style="font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:#2B2625; margin-bottom:0.25rem;" id="fin-paid-total">$ 0</div>
+            <p style="font-size:0.8rem; color:#5F5852; margin:0;" id="fin-paid-count">0 pedidos completamente cancelados</p>
+          </div>
+
+          <div class="fin-flow-card fin-flow-card--deposit">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#D97706; letter-spacing:0.06em; margin-bottom:0.35rem;">
+              ⏳ Señas Cobradas (50% de Anticipo)
+            </div>
+            <div style="font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:#2B2625; margin-bottom:0.25rem;" id="fin-deposit-total">$ 0</div>
+            <p style="font-size:0.8rem; color:#5F5852; margin:0;">Anticipos para comprar rollos de tela e insumos</p>
+          </div>
+
+          <div class="fin-flow-card fin-flow-card--pending">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#2563EB; letter-spacing:0.06em; margin-bottom:0.35rem;">
+              📦 Saldo Pendiente a Cobrar en Entrega
+            </div>
+            <div style="font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:#2B2625; margin-bottom:0.25rem;" id="fin-pending-balance">$ 0</div>
+            <p style="font-size:0.8rem; color:#5F5852; margin:0;" id="fin-pending-count">Dinero que ingresa al entregar las piezas</p>
+          </div>
+
         </div>
       </section>
 
@@ -148,12 +230,19 @@
               <h3 class="admin-card__title">Presupuesto Mensual de Taller</h3>
               <div class="admin-card__subtitle" id="fin-budget-text">$ 0 gastados de presupuesto</div>
             </div>
+            <span class="admin-badge admin-badge--ready" id="fin-budget-badge">Presupuesto Activo</span>
           </div>
 
-          <div style="height:14px; background:#F3EFE8; border-radius:999px; overflow:hidden; margin:1.5rem 0 1rem 0; border:1px solid rgba(43,38,37,0.1);">
-            <div id="fin-budget-bar" style="height:100%; width:0%; background:#658572; border-radius:999px; transition:width 0.4s ease;"></div>
+          <div style="height:14px; background:#F3EFE8; border-radius:999px; overflow:hidden; margin:1.5rem 0 0.85rem 0; border:1px solid #ECE4DA;">
+            <div id="fin-budget-bar" style="height:100%; width:0%; background:#4A5548; border-radius:999px; transition:width 0.4s ease;"></div>
           </div>
-          <p style="font-size:0.8rem; color:#8A837A; margin:0;">
+          
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#6A635B; margin-bottom:0.5rem;">
+            <span>Consumido: <strong id="fin-budget-pct">0%</strong></span>
+            <span>Disponible: <strong id="fin-budget-remaining">$ 0</strong></span>
+          </div>
+
+          <p style="font-size:0.8rem; color:#8A837A; margin:0;" id="fin-budget-msg">
             Mantén los costos bajo control para asegurar un margen saludable en cada confección artesanal.
           </p>
         </div>
@@ -162,8 +251,8 @@
         <div class="admin-card">
           <div class="admin-card__header">
             <div>
-              <h3 class="admin-card__title">Distribución de Gastos</h3>
-              <div class="admin-card__subtitle">Proporción de inversión por categoría de insumo</div>
+              <h3 class="admin-card__title">Distribución de Gastos por Rubro</h3>
+              <div class="admin-card__subtitle">Inversión detallada en telas, mercería y empaque</div>
             </div>
           </div>
 
@@ -174,30 +263,60 @@
 
       </section>
 
-      <!-- REGISTRO DE GASTOS Y TABLA DE MOVIMIENTOS -->
+      <!-- RENTABILIDAD POR CREACIÓN TEXTIL (PRODUCTOS ESTRELLA) -->
+      <section class="admin-card" style="margin-bottom:2rem;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Rentabilidad por Creación Textil de Elena</h3>
+            <div class="admin-card__subtitle">Comparación de costo de confección vs precio de venta y margen de ganancia neto</div>
+          </div>
+          <span class="admin-badge admin-badge--ready">Margen Promedio ~70%</span>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="fin-profit-table">
+            <thead>
+              <tr>
+                <th>Creación Textil</th>
+                <th>Rubro</th>
+                <th>Costo Confección &amp; Tela</th>
+                <th>Precio Venta</th>
+                <th>Ganancia Neta / Pieza</th>
+                <th>Margen %</th>
+                <th>Rendimiento</th>
+              </tr>
+            </thead>
+            <tbody id="fin-star-products-tbody">
+              <!-- Inyectado por JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REGISTRO DE MOVIMIENTOS Y TABLA HISTÓRICA -->
       <section class="admin-card">
         <div class="admin-card__header">
           <div>
-            <h3 class="admin-card__title">Registrar Nuevo Gasto de Taller</h3>
-            <div class="admin-card__subtitle">Anota compras de rollos de tela, hilos, etiquetas, cajas o envíos</div>
+            <h3 class="admin-card__title">Registro de Gastos &amp; Compras de Taller</h3>
+            <div class="admin-card__subtitle">Anota compras de rollos de tela, hilos, etiquetas, packaging o envíos</div>
           </div>
         </div>
 
-        <form id="form-add-expense" style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:1rem; align-items:flex-end; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid rgba(43,38,37,0.08);">
+        <form id="form-add-expense" style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:1rem; align-items:flex-end; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid #ECE4DA;">
           <div>
-            <label class="admin-label">Descripción del Gasto</label>
+            <label class="admin-label">Descripción del Gasto / Compra</label>
             <input type="text" id="exp-desc" class="admin-input" placeholder="Ej: Rollo Satén Seda Champán 15m (Once)" required />
           </div>
 
           <div>
             <label class="admin-label">Rubro / Categoría</label>
             <select id="exp-category" class="admin-select">
-              <option value="Telas">Telas</option>
-              <option value="Mercería">Mercería (Hilos, elásticos)</option>
-              <option value="Packaging">Packaging &amp; Cajas</option>
+              <option value="Telas">Telas Nobles (Satén, Lino, Waffle)</option>
+              <option value="Mercería">Mercería (Hilos, elásticos, cierres)</option>
+              <option value="Packaging">Packaging &amp; Cajas ecológicas</option>
               <option value="Envíos">Envíos &amp; Logística</option>
-              <option value="Herramientas">Herramientas / Máquina</option>
-              <option value="Varios">Varios</option>
+              <option value="Herramientas">Herramientas / Service Máquina</option>
+              <option value="Varios">Varios de Taller</option>
             </select>
           </div>
 
@@ -212,6 +331,16 @@
             </button>
           </div>
         </form>
+
+        <!-- Barra de Búsqueda y Filtro de Movimientos -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+          <div style="display:flex; gap:0.5rem; align-items:center; flex:1; max-width:400px;">
+            <input type="text" id="exp-search-input" class="admin-input" placeholder="🔍 Buscar por concepto o fecha..." style="padding:0.5rem 0.85rem;" />
+          </div>
+          <div style="font-size:0.84rem; color:#6A635B;" id="exp-count-label">
+            Mostrando todos los registros
+          </div>
+        </div>
 
         <!-- Historial de Movimientos -->
         <div class="admin-table-wrap">

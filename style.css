@@ -1391,16 +1391,16 @@ ul, ol {
   transform: rotate(180deg);
 }
 
-/* Hub del Panel de Control en el Footer (Ordenado en 3 columnas) */
+/* Hub del Panel de Control en el Footer (Cálido, Acorde al Estilo de la Tienda) */
 .footer-admin-dock {
-  background: #1C1918;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  background: #FAF7F2;
+  border: 1px solid #E2D9CE;
+  border-radius: 12px;
   margin-top: 1.25rem;
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  padding: 1.35rem 1.6rem;
+  box-shadow: 0 10px 30px rgba(164, 90, 68, 0.08), 0 2px 6px rgba(43, 38, 37, 0.04);
   animation: footerDockSlide 0.25s ease-out;
-  color: #FAF8F5;
+  color: #2B2625;
 }
 
 @keyframes footerDockSlide {
@@ -1412,7 +1412,7 @@ ul, ol {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid #ECE4DA;
   padding-bottom: 0.85rem;
   margin-bottom: 1rem;
 }
@@ -1421,13 +1421,18 @@ ul, ol {
   font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #D3CBC4;
+  letter-spacing: 0.06em;
+  color: #A45A44;
+  background: rgba(164, 90, 68, 0.08);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(164, 90, 68, 0.2);
 }
 
 .footer-admin-status {
   font-size: 0.72rem;
-  color: #4ADE80;
+  font-weight: 600;
+  color: #2E7D32;
   margin-left: 0.6rem;
 }
 
@@ -1438,32 +1443,36 @@ ul, ol {
 }
 
 .btn-dock-direct {
-  color: #E29578;
+  color: #A45A44;
+  background: #FFFFFF;
   font-size: 0.76rem;
   font-weight: 600;
   text-decoration: none;
-  border: 1px solid rgba(226, 149, 120, 0.4);
-  padding: 0.25rem 0.65rem;
-  border-radius: 4px;
-  transition: all 0.2s;
+  border: 1px solid rgba(164, 90, 68, 0.35);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(164, 90, 68, 0.06);
 }
 
 .btn-dock-direct:hover {
-  background: rgba(226, 149, 120, 0.15);
-  color: #FAF8F5;
+  background: #A45A44;
+  color: #FFFFFF;
+  border-color: #A45A44;
 }
 
 .btn-dock-close {
   background: transparent;
   border: none;
-  color: #8A827B;
-  font-size: 0.9rem;
+  color: #8A837A;
+  font-size: 1.1rem;
   cursor: pointer;
   padding: 0.2rem 0.4rem;
+  transition: color 0.2s;
 }
 
 .btn-dock-close:hover {
-  color: #FAF8F5;
+  color: #2B2625;
 }
 
 .footer-admin-dock__grid {
@@ -1481,26 +1490,27 @@ ul, ol {
 }
 
 .footer-dock-card {
-  background: #24201F;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-  padding: 0.9rem 1rem;
+  background: #FFFFFF;
+  border: 1px solid #ECE4DA;
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 2px 8px rgba(43, 38, 37, 0.03);
 }
 
 .footer-dock-card__header {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  margin-bottom: 0.65rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 0.45rem;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #F3EFE8;
+  padding-bottom: 0.5rem;
 }
 
 .footer-dock-card__header h4 {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: #E29578;
+  color: #A45A44;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -1511,37 +1521,40 @@ ul, ol {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .footer-dock-list a {
-  color: #C7BEB7;
+  color: #4A4340;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.35rem 0.5rem;
-  border-radius: 4px;
-  transition: all 0.15s;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .footer-dock-list a:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #FAF8F5;
+  background: #F4EFEB;
+  color: #A45A44;
+  font-weight: 600;
 }
 
 .dock-badge {
-  background: rgba(164, 90, 68, 0.35);
-  color: #E29578;
-  font-size: 0.68rem;
+  background: rgba(164, 90, 68, 0.12);
+  color: #A45A44;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.1rem 0.45rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
+  border: 1px solid rgba(164, 90, 68, 0.2);
 }
 
 .footer-admin-dock__footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid #ECE4DA;
   padding-top: 0.85rem;
   display: flex;
   justify-content: flex-end;
@@ -1555,34 +1568,38 @@ ul, ol {
 }
 
 .btn-dock-action {
-  background: #2D2726;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #C7BEB7;
+  background: #FFFFFF;
+  border: 1px solid #DDD5CB;
+  color: #4A4340;
   font-family: var(--font-sans);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  padding: 0.35rem 0.75rem;
-  border-radius: 4px;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(43, 38, 37, 0.04);
 }
 
 .btn-dock-action:hover {
-  background: #3A3231;
-  color: #FAF8F5;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #F3EFE8;
+  color: #2B2625;
+  border-color: #C7BEB7;
 }
 
 .btn-dock-action--logout {
-  color: #E57373;
+  color: #DC2626;
+  border-color: rgba(220, 38, 38, 0.25);
+  background: rgba(220, 38, 38, 0.04);
 }
 
 .btn-dock-action--logout:hover {
-  background: rgba(229, 115, 115, 0.15);
-  border-color: rgba(229, 115, 115, 0.3);
+  background: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
 }
 
 /* --------------------------------------------------------------------------
