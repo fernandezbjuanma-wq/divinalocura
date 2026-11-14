@@ -71,6 +71,7 @@
   /* --- Estructura y Layout --- */
   --container-max-width: 1240px;
   --container-gutter: 1.5rem;
+  color-scheme: only light;
 }
 
 /* --------------------------------------------------------------------------
@@ -85,6 +86,7 @@
 }
 
 html {
+  color-scheme: only light;
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -4318,77 +4320,134 @@ body.admin-mode-active .catalog-item__admin-bar {
   letter-spacing: 0.04em;
 }
 
-/* Columna Derecha: Información & Compra */
+/* Columna Derecha: Información & Compra (Inspiración Zara Home & Anthropologie) */
 .pdp-details {
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: 1.25rem;
+  padding-top: 0.25rem;
+}
+
+.pdp-header-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .pdp-eyebrow {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--accent-terracotta);
+  letter-spacing: 0.16em;
+  color: #A45A44;
 }
 
 .pdp-title {
-  font-family: var(--font-serif);
-  font-size: 2.35rem;
-  line-height: 1.15;
-  color: var(--text-primary);
-  margin-top: -0.4rem;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.18;
+  color: #2B2625 !important;
+  letter-spacing: -0.01em;
+  margin: 0;
 }
 
 .pdp-rating-summary {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  color: #5F5852;
+  margin-top: 0.2rem;
 }
 
 .pdp-stars {
-  color: #E29578;
-  letter-spacing: 0.1em;
-  font-size: 0.95rem;
+  color: #C2745A;
+  letter-spacing: 0.12em;
+  font-size: 0.9rem;
 }
 
 .pdp-rating-count {
   text-decoration: underline;
+  text-underline-offset: 3px;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: #6E655E;
+  font-size: 0.78rem;
 }
 
 .pdp-rating-count:hover {
-  color: var(--accent-terracotta);
+  color: #A45A44;
 }
 
-/* Caja de Precio */
+/* Fila Editorial de Precio & Disponibilidad (Líneas Finas estilo Zara Home) */
 .pdp-price-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  padding: 1.25rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #DFD7CC;
+  border-bottom: 1px solid #DFD7CC;
+  border-radius: 0;
+  padding: 1.15rem 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
+.pdp-price-card__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
 .pdp-price-amount {
-  font-family: var(--font-serif);
-  font-size: 1.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: #2B2625 !important;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
 }
 
 .pdp-price-note {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  font-size: 0.73rem;
+  color: #7D746C;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+}
+
+.pdp-price-card__right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.22rem;
+}
+
+.pdp-availability-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8A8178;
+}
+
+.pdp-availability-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #355E43;
+  background: rgba(53, 94, 67, 0.08);
+  border: 1px solid rgba(53, 94, 67, 0.2);
+  padding: 0.24rem 0.68rem;
+  border-radius: 999px;
+}
+
+.pdp-availability-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #355E43;
 }
 
 /* Píldora de Textura & Material */
@@ -4396,65 +4455,68 @@ body.admin-mode-active .catalog-item__admin-bar {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(184, 107, 82, 0.08);
-  border: 1px solid rgba(184, 107, 82, 0.2);
-  color: #8F4F3D;
-  padding: 0.55rem 1rem;
-  border-radius: 30px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  background: #FAF8F4;
+  border: 1px solid #DED4C7;
+  color: #5C4940;
+  padding: 0.48rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   align-self: flex-start;
 }
 
 /* Descripción & Historia */
-.pdp-story-box {
-  line-height: 1.7;
-  color: var(--text-secondary);
-  font-size: 0.92rem;
-  border-left: 2px solid var(--accent-terracotta);
-  font-style: italic;
-  background: rgba(250, 248, 244, 0.7);
-  padding: 0.85rem 1.25rem;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-}
-
 .pdp-description-text {
-  line-height: 1.65;
-  color: var(--text-secondary);
+  line-height: 1.72;
+  color: #4A433E;
   font-size: 0.92rem;
 }
 
-/* Acciones de Compra */
+.pdp-story-box {
+  line-height: 1.65;
+  color: #5F564F;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 0.98rem;
+  border-left: 2px solid #B87B65;
+  font-style: italic;
+  background: rgba(250, 248, 244, 0.78);
+  padding: 0.85rem 1.2rem;
+  border-radius: 0 4px 4px 0;
+  margin: 0;
+}
+
+/* Acciones de Compra Editoriales */
 .pdp-purchase-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  margin-top: 0.5rem;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
 }
 
 .pdp-qty-and-cart {
   display: flex;
   gap: 0.75rem;
-  align-items: center;
+  align-items: stretch;
 }
 
 .pdp-qty-control {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  background: #FFFFFF;
+  border: 1px solid #CFC5B9;
+  border-radius: 4px;
+  background: #FAF8F4;
   overflow: hidden;
-  height: 48px;
+  height: 50px;
 }
 
 .pdp-qty-btn {
-  width: 40px;
+  width: 38px;
   height: 100%;
   border: none;
   background: transparent;
-  color: var(--text-primary);
-  font-size: 1.1rem;
+  color: #2B2625;
+  font-size: 1.05rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -4463,81 +4525,149 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 .pdp-qty-btn:hover {
-  background: var(--bg-surface);
+  background: #EAE3D8;
 }
 
 .pdp-qty-input {
-  width: 42px;
+  width: 40px;
   height: 100%;
   border: none;
   text-align: center;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  color: #2B2625;
   background: transparent;
 }
 
 .btn--pdp-add-bag {
   flex: 1;
-  height: 48px;
-  background: var(--text-primary);
-  color: #FFFFFF;
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  height: 50px;
+  background: #2B2625;
+  color: #FAF8F5;
+  border: 1px solid #2B2625;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.25s ease;
 }
 
 .btn--pdp-add-bag:hover {
-  background: #000000;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  background: #1A1716;
+  border-color: #1A1716;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(43, 38, 37, 0.16);
 }
 
-.btn--pdp-wa {
+/* Fila Secundaria Armónica: WhatsApp + Instagram (Sin verde flúor invasivo) */
+.pdp-secondary-actions {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0.65rem;
+}
+
+.btn--pdp-wa,
+.btn--pdp-ig {
   height: 46px;
-  background: #25D366;
-  color: #FFFFFF;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  background: #FAF8F4;
+  color: #2B2625 !important;
+  border: 1px solid #CFC5B9;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   cursor: pointer;
   text-decoration: none;
-  transition: background var(--transition-fast);
+  transition: all 0.22s ease;
+  padding: 0 0.85rem;
+  text-align: center;
+}
+
+.btn--pdp-wa svg {
+  color: #356847;
+  flex-shrink: 0;
 }
 
 .btn--pdp-wa:hover {
-  background: #1EBE5D;
+  background: #EFF5F1;
+  border-color: #6B9479;
+  color: #1F422B !important;
+  transform: translateY(-1px);
+}
+
+.btn--pdp-ig svg {
+  color: #A45A44;
+  flex-shrink: 0;
+}
+
+.btn--pdp-ig:hover {
+  background: #F6ECE7;
+  border-color: #B87964;
+  color: #7E3D2B !important;
+  transform: translateY(-1px);
+}
+
+.btn--pdp-admin-edit {
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  color: #7D6E65;
+  border: 1px dashed #C7B9AC;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.btn--pdp-admin-edit:hover {
+  background: #FAF8F4;
+  color: #2B2625;
+  border-color: #A45A44;
 }
 
 /* Garantías del Taller */
 .pdp-guarantees {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.85rem;
-  border-top: 1px solid var(--border-medium);
-  padding-top: 1.25rem;
-  margin-top: 0.5rem;
+  gap: 0.8rem 1rem;
+  border-top: 1px solid #DFD7CC;
+  padding-top: 1.2rem;
+  margin-top: 0.35rem;
 }
 
 .pdp-guarantee-item {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  gap: 0.55rem;
+  font-size: 0.78rem;
+  color: #5F5852;
+  line-height: 1.35;
+}
+
+@media (max-width: 600px) {
+  .pdp-secondary-actions {
+    grid-template-columns: 1fr;
+  }
+  .pdp-guarantees {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* SECCIÓN DE RESEÑAS & COMENTARIOS */
@@ -6732,83 +6862,335 @@ body.admin-mode-active .catalog-item__admin-bar {
 }
 
 /* ==========================================================================
-   BOTÓN FLOTANTE DE WHATSAPP DIRECTO CON ELENA
+   HUB FLOTANTE DESPLAZANTE UNIFICADO: INSTAGRAM, WHATSAPP & ASISTENTE
+   (Inspiración Editorial Zara Home & Anthropologie)
    ========================================================================== */
-.floating-whatsapp {
+.floating-concierge {
   position: fixed;
-  bottom: 5.75rem;
-  right: 2rem;
-  z-index: 10007;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 10010;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
 }
 
-.floating-whatsapp__btn {
-  background-color: #25D366;
-  color: #FFFFFF !important;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.7rem 1.15rem;
+/* Botón Principal Disparador (Píldora Desplazante) */
+.concierge-fab-toggle {
+  background: #2B2625;
+  color: #FAF8F5 !important;
+  border: 1px solid rgba(250, 248, 245, 0.2);
+  padding: 0.72rem 1.2rem;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.38);
-  transition: all 0.25s ease;
-  position: relative;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   cursor: pointer;
+  box-shadow: 0 10px 28px rgba(43, 38, 37, 0.24);
+  transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
 }
 
-.floating-whatsapp__btn:hover {
-  background-color: #20BA5A;
-  color: #FFFFFF !important;
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+.concierge-fab-toggle:hover {
+  background: #A45A44;
+  border-color: #A45A44;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(164, 90, 68, 0.32);
 }
 
-.floating-whatsapp__icon {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  fill: currentColor;
+.floating-concierge.is-expanded .concierge-fab-toggle {
+  background: #1E1A19;
+  border-color: rgba(164, 90, 68, 0.55);
 }
 
-.floating-whatsapp__pulse {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  background-color: #A7F3D0;
-  border: 2px solid #FFFFFF;
+.concierge-fab-toggle__pulse {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  animation: waPulse 1.8s infinite;
+  background: #52946B;
+  box-shadow: 0 0 0 3px rgba(82, 148, 107, 0.24);
+  flex-shrink: 0;
 }
 
-@keyframes waPulse {
-  0% { transform: scale(0.95); opacity: 0.9; }
-  50% { transform: scale(1.3); opacity: 0.4; }
-  100% { transform: scale(0.95); opacity: 0.9; }
+.concierge-fab-toggle__icons {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.concierge-icon-open,
+.concierge-icon-close {
+  position: absolute;
+  transition: transform 0.26s ease, opacity 0.22s ease;
+}
+
+.concierge-icon-close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.7);
+}
+
+.floating-concierge.is-expanded .concierge-icon-open {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.7);
+}
+
+.floating-concierge.is-expanded .concierge-icon-close {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.concierge-fab-toggle__chevron {
+  font-size: 0.72rem;
+  opacity: 0.75;
+  transition: transform 0.26s ease;
+}
+
+.floating-concierge.is-expanded .concierge-fab-toggle__chevron {
+  transform: rotate(180deg);
+}
+
+/* Menú Deslizante de Acciones (Instagram, WhatsApp y Asistente) */
+.concierge-fab-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(14px) scale(0.96);
+  transform-origin: bottom right;
+  transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.floating-concierge.is-expanded .concierge-fab-menu {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.concierge-fab-item {
+  background: rgba(252, 250, 246, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #2B2625 !important;
+  border: 1px solid #DFD6CA;
+  border-radius: 999px;
+  padding: 0.45rem 0.5rem 0.45rem 1.05rem;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(43, 38, 37, 0.12);
+  transition: all 0.22s ease;
+}
+
+.concierge-fab-item:hover {
+  transform: translateX(-4px);
+  border-color: #B87964;
+  background: #FFFFFF;
+  box-shadow: 0 12px 26px rgba(43, 38, 37, 0.18);
+}
+
+.concierge-fab-item__label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2B2625;
+  line-height: 1.2;
+}
+
+.concierge-fab-item__label em {
+  font-style: normal;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: #7D726A;
+}
+
+.concierge-fab-item__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  transition: transform 0.22s ease;
+}
+
+.concierge-fab-item:hover .concierge-fab-item__icon {
+  transform: scale(1.06);
+}
+
+.concierge-fab-item--ig .concierge-fab-item__icon {
+  background: linear-gradient(135deg, #F6ECE6 0%, #EFE0D7 100%);
+  color: #A45A44;
+  border: 1px solid rgba(164, 90, 68, 0.25);
+}
+
+.concierge-fab-item--wa .concierge-fab-item__icon {
+  background: #EAF4ED;
+  color: #2E6F46;
+  border: 1px solid rgba(46, 111, 70, 0.24);
+}
+
+.concierge-fab-item--bot .concierge-fab-item__icon {
+  background: #F4EFE8;
+  color: #2B2625;
+  border: 1px solid #DED4C7;
+}
+
+/* Ventana de Chat Anclada sobre el Hub Desplazante */
+.floating-concierge .chatbot-window {
+  position: absolute;
+  bottom: 4.1rem;
+  right: 0;
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   BOTONES ESTRATÉGICOS DE INSTAGRAM (CABECERA, DRAWER, BANNER & FOOTER)
+   ========================================================================== */
+.header-social-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 0.32rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(43, 38, 37, 0.14);
+  background: rgba(250, 248, 244, 0.65);
+  transition: all 0.2s ease;
+}
+
+.header-social-icon:hover {
+  color: #A45A44;
+  border-color: #A45A44;
+  background: #FAF8F4;
+  transform: translateY(-1px);
+}
+
+.drawer-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2B2625;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: #F3EFE8;
+  border: 1px solid #DED5C9;
+  margin-bottom: 0.65rem;
+  transition: all 0.2s ease;
+}
+
+.drawer-social-link:hover {
+  background: #2B2625;
+  color: #FAF8F5;
+  border-color: #2B2625;
+}
+
+.whatsapp-banner__action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn--ig-banner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.88rem 1.45rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #BFB3A4;
+  background: #FCFAF7;
+  color: #2B2625 !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 8px rgba(43, 38, 37, 0.05);
+}
+
+.btn--ig-banner svg {
+  color: #A45A44;
+}
+
+.btn--ig-banner:hover {
+  background: #2B2625;
+  color: #FAF8F4 !important;
+  border-color: #2B2625;
+  transform: translateY(-1px);
+}
+
+.btn--ig-banner:hover svg {
+  color: #FAF8F4;
+}
+
+.footer-ig-pill {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.34rem 0.82rem;
+  border-radius: 999px;
+  border: 1px solid #C8BEB2;
+  background: #FCFAF7;
+  color: #2B2625 !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+
+.footer-ig-pill svg {
+  color: #A45A44;
+}
+
+.footer-ig-pill:hover {
+  background: #A45A44;
+  border-color: #A45A44;
+  color: #FFFFFF !important;
+}
+
+.footer-ig-pill:hover svg {
+  color: #FFFFFF;
 }
 
 @media (max-width: 768px) {
-  .floating-whatsapp {
-    bottom: 5.25rem;
-    right: 1.25rem;
-  }
-  .floating-whatsapp__label {
-    display: none;
-  }
-  .floating-whatsapp__btn {
-    padding: 0.75rem;
-    border-radius: 50%;
-  }
-  .boutique-chatbot {
+  .floating-concierge {
     bottom: 1.25rem;
     right: 1.25rem;
+  }
+  .header-social-icon__label {
+    display: none;
+  }
+  .header-social-icon {
+    padding: 0.36rem;
   }
   .subfloor-bar {
     padding-right: 0;

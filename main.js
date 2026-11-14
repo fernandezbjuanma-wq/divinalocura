@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (settings.instagram_user) {
       const igUser = settings.instagram_user.replace(/^@/, '');
       const igUrl = `https://www.instagram.com/${igUser}`;
-      document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
+      document.querySelectorAll('a[href*="instagram.com"], [data-ig-link]').forEach(a => {
         a.href = igUrl;
       });
     }
@@ -784,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Menú Lateral Desplegable (Drawer Estilo Zara Home)
   const sideDrawer = document.getElementById('side-drawer');
-  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const hamburgerBtn = document.getElementById('hamburger-btn') || document.getElementById('header-menu-btn');
   const drawerCloseBtn = document.getElementById('drawer-close-btn');
   const drawerBackdrop = document.getElementById('drawer-backdrop');
   const drawerAdminBtn = document.getElementById('drawer-admin-btn');
@@ -2709,9 +2709,12 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   refreshMercadoPagoButtonVisibility();
 
   // =========================================================================
-  // 13. CHATBOT CONCIERGE ("ELENA ASISTENTE DEL TALLER")
+  // 13. HUB FLOTANTE DESPLAZANTE & CHATBOT CONCIERGE ("ELENA ASISTENTE DEL TALLER")
   // =========================================================================
-  const chatbotTriggerBtn = document.getElementById('chatbot-trigger-btn');
+  const floatingConcierge = document.getElementById('floating-concierge');
+  const conciergeFabToggle = document.getElementById('concierge-fab-toggle');
+  const conciergeFabMenu = document.getElementById('concierge-fab-menu');
+  const chatbotTriggerBtn = document.getElementById('chatbot-trigger-btn') || document.getElementById('chatbot-trigger');
   const chatbotWindow = document.getElementById('chatbot-window');
   const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
   const chatbotMessages = document.getElementById('chatbot-messages');
@@ -2719,7 +2722,32 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const chatbotInput = document.getElementById('chatbot-input');
   const chatbotSuggestions = document.getElementById('chatbot-suggestions');
 
+  function syncInstagramLinks() {
+    const rawUser = (settings && settings.instagram_user ? settings.instagram_user : 'divina.locura.deco')
+      .replace(/^@/, '')
+      .trim() || 'divina.locura.deco';
+    const igUrl = `https://www.instagram.com/${rawUser}/`;
+    document.querySelectorAll('[data-ig-link]').forEach(el => {
+      el.setAttribute('href', igUrl);
+    });
+  }
+  syncInstagramLinks();
+
+  function setConciergeExpanded(expanded) {
+    if (!floatingConcierge || !conciergeFabToggle) return;
+    if (expanded) {
+      floatingConcierge.classList.add('is-expanded');
+      conciergeFabToggle.setAttribute('aria-expanded', 'true');
+      if (conciergeFabMenu) conciergeFabMenu.setAttribute('aria-hidden', 'false');
+    } else {
+      floatingConcierge.classList.remove('is-expanded');
+      conciergeFabToggle.setAttribute('aria-expanded', 'false');
+      if (conciergeFabMenu) conciergeFabMenu.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   function openChatbot() {
+    setConciergeExpanded(false);
     if (chatbotWindow) {
       chatbotWindow.classList.add('is-open');
       chatbotWindow.setAttribute('aria-hidden', 'false');
@@ -2734,8 +2762,22 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     }
   }
 
+  if (conciergeFabToggle) {
+    conciergeFabToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isChatOpen = chatbotWindow && chatbotWindow.classList.contains('is-open');
+      if (isChatOpen) {
+        closeChatbot();
+        return;
+      }
+      const isExpanded = floatingConcierge && floatingConcierge.classList.contains('is-expanded');
+      setConciergeExpanded(!isExpanded);
+    });
+  }
+
   if (chatbotTriggerBtn) {
-    chatbotTriggerBtn.addEventListener('click', () => {
+    chatbotTriggerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isOpen = chatbotWindow && chatbotWindow.classList.contains('is-open');
       if (isOpen) closeChatbot();
       else openChatbot();
@@ -2743,6 +2785,12 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   if (chatbotCloseBtn) chatbotCloseBtn.addEventListener('click', closeChatbot);
+
+  document.addEventListener('click', (e) => {
+    if (floatingConcierge && !floatingConcierge.contains(e.target)) {
+      setConciergeExpanded(false);
+    }
+  });
 
   function appendChatMessage(text, sender = 'bot', actionButton = null) {
     if (!chatbotMessages) return;

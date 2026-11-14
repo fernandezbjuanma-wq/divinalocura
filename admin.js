@@ -83,7 +83,14 @@
 
   // Inyectar accesos destacados para volver al inicio de la tienda + indicador de Google Sheets
   function injectBackToStoreElements() {
-    // 1. Botón flotante permanente en toda la administración
+    if (document.head && !document.querySelector('meta[name="color-scheme"]')) {
+      const metaScheme = document.createElement('meta');
+      metaScheme.name = 'color-scheme';
+      metaScheme.content = 'only light';
+      document.head.appendChild(metaScheme);
+    }
+
+    // 1. Botón flotante discreto en toda la administración (abajo a la izquierda)
     if (!document.getElementById('floating-back-store-btn')) {
       const floatBtn = document.createElement('a');
       floatBtn.id = 'floating-back-store-btn';
@@ -91,47 +98,41 @@
       floatBtn.href = 'index.html';
       floatBtn.title = 'Volver al inicio de la página principal donde está toda la tienda';
       floatBtn.innerHTML = `
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        <span>← Volver al Inicio (Tienda)</span>
+        <span>Volver a la Tienda</span>
       `;
       document.body.appendChild(floatBtn);
     }
 
-    // 2. Botón explícito al comienzo de la barra superior
-    const topNavInner = document.querySelector('.admin-top-nav__inner');
-    if (topNavInner && !document.querySelector('.admin-top-back-link')) {
-      const backLink = document.createElement('a');
-      backLink.href = 'index.html';
-      backLink.className = 'admin-top-back-link';
-      backLink.title = 'Volver al inicio de la tienda donde está todo';
-      backLink.innerHTML = `
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    // Eliminar cualquier enlace duplicado antiguo en el extremo izquierdo
+    const oldBackLink = document.querySelector('.admin-top-back-link');
+    if (oldBackLink && oldBackLink.parentNode) {
+      oldBackLink.parentNode.removeChild(oldBackLink);
+    }
+
+    // 2. Unificar el botón de retorno a la tienda en las acciones superiores derechas
+    const storeBtn = document.querySelector('.btn-admin-nav--store');
+    if (storeBtn) {
+      storeBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        <span>Volver al Inicio</span>
+        <span>Volver a la Tienda</span>
       `;
-      topNavInner.insertBefore(backLink, topNavInner.firstChild);
+      storeBtn.setAttribute('title', 'Volver al inicio de la tienda principal');
     }
 
-    // 3. Mejorar el botón de la tienda en las acciones de la derecha
-    const storeBtn = document.querySelector('.btn-admin-nav--store');
-    if (storeBtn) {
-      storeBtn.innerHTML = '<span>🏠 Ir al Inicio</span>';
-      storeBtn.setAttribute('title', 'Volver al inicio de la tienda (donde está todo)');
-    }
-
-    // 4. Indicador de conexión a Google Sheets en la cabecera
+    // 3. Indicador de conexión a Google Sheets en la cabecera
     const topActions = document.querySelector('.admin-top-actions');
     if (topActions && !document.getElementById('admin-cloud-pill')) {
       const cloudPill = document.createElement('a');
       cloudPill.id = 'admin-cloud-pill';
       cloudPill.href = 'admin-configuracion.html';
-      cloudPill.className = 'btn-admin-nav';
-      cloudPill.style.cssText = 'font-size:0.75rem; padding:0.38rem 0.7rem; text-decoration:none;';
+      cloudPill.className = 'btn-admin-nav admin-cloud-pill';
       topActions.insertBefore(cloudPill, topActions.firstChild);
     }
     refreshCloudPill();
@@ -142,15 +143,13 @@
     if (!pill) return;
     const isCloud = window.WorkshopDB && window.WorkshopDB.isCloudConfigured && window.WorkshopDB.isCloudConfigured();
     if (isCloud) {
-      pill.innerHTML = '<span>☁️ Google Sheets Activo</span>';
-      pill.style.borderColor = 'rgba(101, 133, 114, 0.45)';
-      pill.style.color = '#3B5946';
+      pill.innerHTML = '<span class="cloud-dot cloud-dot--ok"></span><span>Google Sheets Activo</span>';
+      pill.classList.add('is-connected');
       pill.title = 'Conectado en tiempo real con la planilla de Google de Elena';
     } else {
-      pill.innerHTML = '<span>☁️ Conectar Base de Datos</span>';
-      pill.style.borderColor = 'rgba(164, 90, 68, 0.35)';
-      pill.style.color = '#A45A44';
-      pill.title = 'Hacé clic para conectar la planilla de Google Sheets gratis';
+      pill.innerHTML = '<span class="cloud-dot"></span><span>Google Sheets</span>';
+      pill.classList.remove('is-connected');
+      pill.title = 'Hacé clic para vincular o revisar la planilla de Google Sheets';
     }
   }
 

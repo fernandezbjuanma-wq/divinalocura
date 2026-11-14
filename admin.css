@@ -3,9 +3,17 @@
    Diseño de Panel de Control Exclusivo (Páginas Independientes)
    ========================================================================== */
 
-/* Layout Principal de Administración (Estilo Cálido y Luminoso) */
+/* Layout Principal de Administración (Estilo Cálido, Luminoso y Editorial) */
+:root,
+html,
 body.admin-body {
-  background-color: #FAF8F5;
+  color-scheme: only light;
+}
+
+body.admin-body {
+  background-color: #F6F3EC;
+  background-image: radial-gradient(circle at 20% 0%, #FAF8F4 0%, #F3EFE8 55%, #EDE6DC 100%);
+  background-attachment: fixed;
   color: #2B2625;
   font-family: var(--font-sans, 'Montserrat', -apple-system, sans-serif);
   margin: 0;
@@ -13,84 +21,107 @@ body.admin-body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* 1. BARRA DE NAVEGACIÓN SUPERIOR (TOP ADMIN NAV - ESTILO CÁLIDO EDITORIAL) */
+/* 1. BARRA DE NAVEGACIÓN SUPERIOR (DOS NIVELES EDITORIALES — CERO RECORTES) */
 .admin-top-nav {
-  background: #FFFFFF;
+  background: rgba(252, 250, 247, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: #2B2625;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 14px rgba(164, 90, 68, 0.05);
-  border-bottom: 1px solid #E8DFD5;
+  box-shadow: 0 4px 20px rgba(43, 38, 37, 0.04);
+  border-bottom: 1px solid #E3DAD0;
 }
 
 .admin-top-nav__inner {
-  max-width: 1500px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0.65rem 1.5rem;
+  padding: 0.75rem 2rem 0.6rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  row-gap: 0.6rem;
+  column-gap: 1.5rem;
 }
 
 .admin-brand-wrap {
+  order: 1;
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.9rem;
   text-decoration: none;
   color: inherit;
   flex-shrink: 0;
 }
 
 .admin-brand-title {
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.22rem;
+  font-weight: 600;
   color: #2B2625;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .admin-brand-badge {
-  background: rgba(164, 90, 68, 0.08);
-  color: #A45A44;
-  border: 1px solid rgba(164, 90, 68, 0.25);
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
+  background: #F4ECE6;
+  color: #8E4A38;
+  border: 1px solid rgba(164, 90, 68, 0.22);
+  font-size: 0.66rem;
+  font-weight: 600;
+  padding: 0.24rem 0.7rem;
   border-radius: 999px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .admin-dot-pulse {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #2E7D32;
-  box-shadow: 0 0 6px rgba(46, 125, 50, 0.4);
-  animation: adminPulse 2s infinite;
+  background: #3B6E4C;
+  box-shadow: 0 0 0 3px rgba(59, 110, 76, 0.16);
+  animation: adminPulse 2.4s infinite;
 }
 
 @keyframes adminPulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  50% { opacity: 0.55; transform: scale(0.88); }
 }
 
-/* Enlaces de Páginas del Panel */
-.admin-nav-links {
+/* Acciones en la Cabecera Superior Derecha (Fila 1) */
+.admin-top-actions {
+  order: 2;
+  margin-left: auto;
   display: flex;
   align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* Segunda Fila Dedicada a las 9 Secciones del Taller (Visibilidad 100% Completa) */
+.admin-nav-links {
+  order: 3;
+  flex: 1 1 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   gap: 0.35rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #ECE5DC;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
-  padding: 0.2rem 0;
 }
 
 .admin-nav-links::-webkit-scrollbar {
@@ -98,208 +129,231 @@ body.admin-body {
 }
 
 .admin-nav-link {
-  color: #655E58;
+  color: #5C534E;
   text-decoration: none;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 0.5rem 0.85rem;
-  border-radius: 8px;
+  font-size: 0.79rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.46rem 0.85rem;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.42rem;
   transition: all 0.2s ease;
   position: relative;
+  border: 1px solid transparent;
 }
 
 .admin-nav-link:hover {
-  background: #F3EFE8;
+  background: #EFEAE2;
   color: #2B2625;
 }
 
 .admin-nav-link.is-active {
-  background: #A45A44;
-  color: #FFFFFF;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.25);
+  background: #2B2625;
+  color: #FAF8F5;
+  font-weight: 600;
+  border-color: #2B2625;
+  box-shadow: 0 2px 8px rgba(43, 38, 37, 0.14);
 }
 
 .admin-badge-count {
-  background: rgba(164, 90, 68, 0.12);
-  color: #A45A44;
-  padding: 0.15rem 0.45rem;
+  background: rgba(164, 90, 68, 0.14);
+  color: #9C4F3B;
+  padding: 0.12rem 0.45rem;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
 .admin-nav-link.is-active .admin-badge-count {
-  background: rgba(255, 255, 255, 0.3);
+  background: #B86B52;
   color: #FFFFFF;
-}
-
-/* Acciones en la Cabecera Derecha */
-.admin-top-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-shrink: 0;
 }
 
 .btn-admin-nav {
   background: #FFFFFF;
-  color: #4A4340;
-  border: 1px solid #DDD5CB;
-  padding: 0.45rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
+  color: #3D3633;
+  border: 1px solid #DED5CA;
+  padding: 0.42rem 0.82rem;
+  border-radius: 6px;
+  font-size: 0.76rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   font-family: inherit;
-  box-shadow: 0 1px 3px rgba(43, 38, 37, 0.04);
 }
 
 .btn-admin-nav:hover {
   background: #F3EFE8;
   color: #2B2625;
-  border-color: #C7BEB7;
+  border-color: #C4B8AA;
+}
+
+.admin-cloud-pill .cloud-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #B86B52;
+  display: inline-block;
+}
+
+.admin-cloud-pill.is-connected {
+  background: #F4F8F5;
+  border-color: rgba(59, 110, 76, 0.3);
+  color: #2F573D;
+}
+
+.admin-cloud-pill.is-connected .cloud-dot--ok {
+  background: #3B6E4C;
 }
 
 .btn-admin-nav--store {
-  background: #4A5548;
-  border-color: #4A5548;
-  color: #FFFFFF;
+  background: #FAF7F2;
+  border-color: #C9BBAE;
+  color: #2B2625;
+  font-weight: 600;
 }
 
 .btn-admin-nav--store:hover {
-  background: #3B4539;
+  background: #2B2625;
+  border-color: #2B2625;
+  color: #FFFFFF;
 }
 
 .btn-admin-nav--logout {
-  background: rgba(220, 38, 38, 0.06);
-  border-color: rgba(220, 38, 38, 0.25);
-  color: #DC2626;
+  background: transparent;
+  border-color: rgba(185, 64, 56, 0.28);
+  color: #A63A32;
 }
 
 .btn-admin-nav--logout:hover {
-  background: #DC2626;
+  background: #A63A32;
   color: #FFFFFF;
-  border-color: #DC2626;
+  border-color: #A63A32;
 }
 
 /* 2. CONTENEDOR GENERAL DE PÁGINA */
 .admin-shell {
   flex: 1;
-  max-width: 1500px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem 1.5rem;
+  padding: 2.25rem 2rem 4.5rem 2rem;
   box-sizing: border-box;
 }
 
-/* Encabezado de Página */
+/* Encabezado de Página Editorial */
 .admin-page-hero {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #E3DAD0;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .admin-page-hero__info {
-  max-width: 800px;
+  max-width: 760px;
 }
 
 .admin-page-kicker {
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.16em;
   color: #A45A44;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
   display: block;
 }
 
 .admin-page-title {
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 2rem;
-  margin: 0 0 0.5rem 0;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+  font-weight: 500;
+  margin: 0 0 0.45rem 0;
   color: #2B2625;
-  line-height: 1.2;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 .admin-page-desc {
   margin: 0;
   color: #5F5852;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .admin-page-hero__actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   flex-wrap: wrap;
 }
 
 /* Botones Estándar del Panel */
 .btn-admin-cta {
-  background: #A45A44;
-  color: #FFFFFF;
-  border: none;
-  padding: 0.7rem 1.25rem;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.86rem;
+  background: #2B2625;
+  color: #FAF8F5;
+  border: 1px solid #2B2625;
+  padding: 0.65rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(164, 90, 68, 0.25);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(43, 38, 37, 0.12);
   font-family: inherit;
 }
 
 .btn-admin-cta:hover {
-  background: #8C4733;
+  background: #A45A44;
+  border-color: #A45A44;
   transform: translateY(-1px);
 }
 
 .btn-admin-outline {
-  background: #FFFFFF;
+  background: #FAF8F4;
   color: #2B2625;
-  border: 1px solid rgba(43, 38, 37, 0.2);
-  padding: 0.7rem 1.25rem;
-  border-radius: 8px;
+  border: 1px solid #D5CBBF;
+  padding: 0.62rem 1.1rem;
+  border-radius: 6px;
   font-weight: 600;
-  font-size: 0.86rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .btn-admin-outline:hover {
-  background: #F3EFE8;
+  background: #EFEAE2;
   border-color: #2B2625;
 }
 
 /* 3. TARJETAS & CONTENEDORES */
 .admin-card {
-  background: #FFFFFF;
-  border-radius: 12px;
-  border: 1px solid rgba(43, 38, 37, 0.1);
+  background: #FCFAF7;
+  border-radius: 8px;
+  border: 1px solid #E3DAD0;
   padding: 1.5rem 1.75rem;
-  box-shadow: 0 6px 20px rgba(43, 38, 37, 0.04);
+  box-shadow: 0 6px 22px rgba(43, 38, 37, 0.03);
   margin-bottom: 1.75rem;
 }
 
@@ -311,18 +365,19 @@ body.admin-body {
   flex-wrap: wrap;
   gap: 0.75rem;
   padding-bottom: 0.85rem;
-  border-bottom: 1px solid rgba(43, 38, 37, 0.08);
+  border-bottom: 1px solid #EBE3DA;
 }
 
 .admin-card__title {
-  font-family: var(--font-serif, 'Playfair Display', serif);
-  font-size: 1.25rem;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.22rem;
+  font-weight: 500;
   margin: 0;
   color: #2B2625;
 }
 
 .admin-card__subtitle {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #8A837A;
   margin-top: 0.2rem;
 }
@@ -337,7 +392,7 @@ body.admin-body {
 .admin-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .admin-grid-4 {
@@ -348,12 +403,12 @@ body.admin-body {
 
 /* 4. TARJETAS DE KPIS */
 .admin-stat-card {
-  background: #FFFFFF;
-  border: 1px solid rgba(43, 38, 37, 0.1);
-  border-radius: 12px;
+  background: #FCFAF7;
+  border: 1px solid #E3DAD0;
+  border-radius: 8px;
   padding: 1.35rem 1.5rem;
-  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.04);
-  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(43, 38, 37, 0.03);
+  transition: all 0.22s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -361,37 +416,38 @@ body.admin-body {
 
 .admin-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(43, 38, 37, 0.08);
+  border-color: #C9BBAE;
+  box-shadow: 0 10px 26px rgba(43, 38, 37, 0.06);
 }
 
 .admin-stat-card--accent {
-  background: linear-gradient(135deg, #A45A44 0%, #BA6E58 100%);
-  color: #FFFFFF;
-  border: none;
-  box-shadow: 0 8px 24px rgba(164, 90, 68, 0.22);
+  background: linear-gradient(135deg, #2B2625 0%, #3F3735 100%);
+  color: #FAF8F5;
+  border: 1px solid #2B2625;
+  box-shadow: 0 10px 26px rgba(43, 38, 37, 0.16);
 }
 
 .admin-stat-card--accent .admin-stat-label {
-  color: rgba(255, 255, 255, 0.88);
+  color: #D8CBC0;
 }
 
 .admin-stat-card--accent .admin-stat-val {
-  color: #FFFFFF;
+  color: #FAF8F5;
 }
 
 .admin-stat-card--accent .admin-stat-sub {
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(250, 248, 245, 0.85);
 }
 
 /* Componentes del Dashboard Económico Completo para Elena */
 .fin-period-bar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  background: #F3EFE8;
-  padding: 0.3rem;
-  border-radius: 999px;
-  border: 1px solid rgba(43, 38, 37, 0.08);
+  gap: 0.25rem;
+  background: #EFEAE2;
+  padding: 0.28rem;
+  border-radius: 8px;
+  border: 1px solid #DFD6CA;
   flex-wrap: wrap;
 }
 
@@ -400,10 +456,10 @@ body.admin-body {
   border: none;
   color: #5F5852;
   font-family: inherit;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
+  padding: 0.42rem 0.88rem;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -413,8 +469,8 @@ body.admin-body {
 }
 
 .fin-period-btn.is-active {
-  background: #FFFFFF;
-  color: #A45A44;
+  background: #FCFAF7;
+  color: #2B2625;
   font-weight: 700;
   box-shadow: 0 2px 6px rgba(43, 38, 37, 0.08);
 }
