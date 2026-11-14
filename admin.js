@@ -93,14 +93,15 @@
       function doLogin() {
         const p = (passInput ? passInput.value : '').trim().toLowerCase();
         if (PASSWORDS.includes(p) || p === '') {
-          localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
+          const role = (p === 'elena' || p === 'mama') ? 'elena' : 'juanma';
+          localStorage.setItem(STORAGE_KEY_ROLE, role);
           if (guardEl) guardEl.style.display = 'none';
           if (contentEl) contentEl.style.display = 'block';
-          adminToast('💻 ¡Bienvenido al Panel de Control de Divina Locura Deco!');
+          adminToast(role === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control!');
           setupNavCounts();
           initActivePage();
         } else {
-          alert('Clave incorrecta. (Clave por defecto: admin o juanma)');
+          alert('Clave incorrecta. (Claves por defecto: elena o juanma)');
         }
       }
 

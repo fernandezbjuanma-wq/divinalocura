@@ -779,35 +779,50 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateAdminUi() {
     document.body.classList.remove('admin-mode-active', 'role-elena', 'role-juanma');
 
-    if (currentRole) {
+    const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+
+    if (currentRole === 'elena') {
+      document.body.classList.add('admin-mode-active', 'role-elena');
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<span>🔒 Administración · Elena 🌸 ▾</span>';
+        toggleBtn.setAttribute('title', 'Sesión activa: Elena (Taller Textil). Clic para desplegar / ocultar el Panel de Control');
+      }
+    } else if (currentRole === 'juanma' || currentRole === 'admin') {
       document.body.classList.add('admin-mode-active', 'role-juanma');
-      if (adminBar) adminBar.classList.remove('is-hidden');
-      if (adminBarUnified) adminBarUnified.style.display = 'flex';
-      if (adminBarElena) adminBarElena.style.display = 'none';
-      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<span>🔒 Administración · Juanma 💻 ▾</span>';
+        toggleBtn.setAttribute('title', 'Sesión activa: Juanma (Negocio & Finanzas). Clic para desplegar / ocultar el Panel de Control');
+      }
     } else {
-      if (adminBar) adminBar.classList.add('is-hidden');
-      if (adminBarUnified) adminBarUnified.style.display = 'none';
-      if (adminBarElena) adminBarElena.style.display = 'none';
-      if (adminBarJuanma) adminBarJuanma.style.display = 'none';
+      if (toggleBtn) {
+        toggleBtn.innerHTML = '<span>🔒 Administración ▾</span>';
+        toggleBtn.setAttribute('title', 'Acceso para Administradores (Elena & Juanma)');
+      }
     }
+
+    if (adminBar) adminBar.classList.add('is-hidden');
+    if (adminBarUnified) adminBarUnified.style.display = 'none';
+    if (adminBarElena) adminBarElena.style.display = 'none';
+    if (adminBarJuanma) adminBarJuanma.style.display = 'none';
 
     renderCatalog();
     if (typeof updateClientUi === 'function') updateClientUi();
     if (typeof updateCartUi === 'function') updateCartUi();
     if (typeof updateElenaOrdersBadge === 'function') updateElenaOrdersBadge();
     if (typeof updateWorkshopCounters === 'function') updateWorkshopCounters();
+    if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
   }
 
   function openTeamAdminLogin() {
     if (teamAdminModal) {
       teamAdminModal.classList.add('is-open');
-      if (passAdminInput) {
-        passAdminInput.value = '';
-        setTimeout(() => passAdminInput.focus(), 50);
-      }
       if (passElenaInput) passElenaInput.value = '';
       if (passJuanmaInput) passJuanmaInput.value = '';
+      if (passAdminInput) passAdminInput.value = '';
+      setTimeout(() => {
+        if (passElenaInput) passElenaInput.focus();
+        else if (passAdminInput) passAdminInput.focus();
+      }, 100);
     }
   }
 
@@ -826,13 +841,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (openAdminBtn) openAdminBtn.addEventListener('click', openTeamAdminLogin);
   if (teamAdminCancelBtn) teamAdminCancelBtn.addEventListener('click', closeTeamAdminLogin);
 
-  // Login de Administrador Unificado
-  function handleAdminLogin() {
-    const pass = (passAdminInput ? passAdminInput.value : '').trim().toLowerCase();
-    const valid = (PASSWORDS.admin && PASSWORDS.admin.includes(pass)) || pass === '' || pass === 'admin' || pass === 'juanma' || pass === 'elena';
+  // Login de Elena (Taller Textil & Confección)
+  function handleElenaLogin() {
+    const pass = (passElenaInput ? passElenaInput.value : '').trim().toLowerCase();
+    const valid = (PASSWORDS.elena && PASSWORDS.elena.includes(pass)) || pass === '' || pass === 'elena' || pass === 'mama' || pass === 'admin';
     if (valid) {
-      currentRole = 'admin';
-      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
+      currentRole = 'elena';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'elena');
       closeTeamAdminLogin();
       updateAdminUi();
 
@@ -842,12 +857,77 @@ document.addEventListener('DOMContentLoaded', () => {
         dockEl.style.display = 'block';
         if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
         if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
+        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
-      showToast('💻 ¡Modo Administrador Activado! Panel de control disponible al pie de página.');
+      showToast('🌸 ¡Bienvenida Elena! Panel de Taller y Control activado.');
     } else {
-      alert('Clave de administrador incorrecta. (Clave por defecto: admin o juanma)');
+      alert('Clave incorrecta para Elena. (Podés ingresar con: elena)');
     }
+  }
+
+  // Login de Juanma (Administración & Finanzas)
+  function handleJuanmaLogin() {
+    const pass = (passJuanmaInput ? passJuanmaInput.value : '').trim().toLowerCase();
+    const valid = (PASSWORDS.juanma && PASSWORDS.juanma.includes(pass)) || pass === '' || pass === 'juanma' || pass === 'admin';
+    if (valid) {
+      currentRole = 'juanma';
+      localStorage.setItem(STORAGE_KEY_ROLE, 'juanma');
+      closeTeamAdminLogin();
+      updateAdminUi();
+
+      const dockEl = document.getElementById('footer-admin-dock');
+      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+      if (dockEl) {
+        dockEl.style.display = 'block';
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
+        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      showToast('💻 ¡Bienvenido Juanma! Panel de Gestión y Control activado.');
+    } else {
+      alert('Clave incorrecta para Juanma. (Podés ingresar con: juanma o admin)');
+    }
+  }
+
+  // Login Unificado de Respaldo
+  function handleAdminLogin() {
+    const pass = (passAdminInput ? passAdminInput.value : '').trim().toLowerCase();
+    const valid = (PASSWORDS.admin && PASSWORDS.admin.includes(pass)) || pass === '' || pass === 'admin' || pass === 'juanma' || pass === 'elena';
+    if (valid) {
+      currentRole = (pass === 'elena' || pass === 'mama') ? 'elena' : 'juanma';
+      localStorage.setItem(STORAGE_KEY_ROLE, currentRole);
+      closeTeamAdminLogin();
+      updateAdminUi();
+
+      const dockEl = document.getElementById('footer-admin-dock');
+      const toggleBtn = document.getElementById('btn-toggle-footer-admin');
+      if (dockEl) {
+        dockEl.style.display = 'block';
+        if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+        if (typeof updateFooterDockBadges === 'function') updateFooterDockBadges();
+        dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      showToast(currentRole === 'elena' ? '🌸 ¡Bienvenida Elena! Panel activado.' : '💻 ¡Bienvenido Juanma! Panel activado.');
+    } else {
+      alert('Clave incorrecta. (Claves por defecto: elena o juanma)');
+    }
+  }
+
+  if (btnLoginElena) btnLoginElena.addEventListener('click', handleElenaLogin);
+  if (passElenaInput) {
+    passElenaInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleElenaLogin();
+    });
+  }
+
+  if (btnLoginJuanma) btnLoginJuanma.addEventListener('click', handleJuanmaLogin);
+  if (passJuanmaInput) {
+    passJuanmaInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleJuanmaLogin();
+    });
   }
 
   if (btnLoginAdmin) btnLoginAdmin.addEventListener('click', handleAdminLogin);
@@ -863,26 +943,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Compatibilidad retroactiva con botones Elena / Juanma
-  if (btnLoginElena) {
-    btnLoginElena.addEventListener('click', () => {
-      currentRole = 'admin';
-      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
-      closeTeamAdminLogin();
-      updateAdminUi();
-      showToast('🌸 ¡Modo Administrador Activado! Todas las herramientas listas.');
-    });
-  }
-  if (btnLoginJuanma) {
-    btnLoginJuanma.addEventListener('click', () => {
-      currentRole = 'admin';
-      localStorage.setItem(STORAGE_KEY_ROLE, 'admin');
-      closeTeamAdminLogin();
-      updateAdminUi();
-      showToast('💻 ¡Modo Administrador Activado! Todas las herramientas listas.');
-    });
-  }
-
   // Cierre de Sesión Unificado
   function logoutAdmin() {
     currentRole = null;
@@ -892,7 +952,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dockEl = document.getElementById('footer-admin-dock');
     const toggleBtn = document.getElementById('btn-toggle-footer-admin');
     if (dockEl) dockEl.style.display = 'none';
-    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.innerHTML = '<span>🔒 Administración ▾</span>';
+    }
 
     showToast('Sesión de administración cerrada.');
   }
@@ -964,11 +1027,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (toggleBtn && dockEl) {
       toggleBtn.addEventListener('click', (e) => {
         if (e) e.preventDefault();
+
+        // Si NO hay sesión iniciada (Elena o Juanma), abrir el modal de login y NUNCA el panel directamente
+        if (!currentRole) {
+          dockEl.style.display = 'none';
+          toggleBtn.setAttribute('aria-expanded', 'false');
+          openTeamAdminLogin();
+          return;
+        }
+
+        // Si está autenticado, alternar la visualización del panel
         const isHidden = dockEl.style.display === 'none' || !dockEl.style.display;
         if (isHidden) {
           dockEl.style.display = 'block';
           toggleBtn.setAttribute('aria-expanded', 'true');
           updateFooterDockBadges();
+          dockEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
           dockEl.style.display = 'none';
           toggleBtn.setAttribute('aria-expanded', 'false');

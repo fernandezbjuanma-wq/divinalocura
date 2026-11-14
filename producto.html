@@ -600,27 +600,52 @@
     </div>
   </div>
 
-  <!-- MODAL: ACCESO ADMINISTRACIÓN (SÓLO ACCESIBLE DESDE EL FOOTER ABAJO DEL TODO) -->
+  <!-- MODAL: ACCESO Y SELECCIÓN DE PERFIL DE ADMINISTRACIÓN (ELENA VS JUANMA) -->
   <div class="admin-modal" id="team-admin-modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="admin-modal__card" style="max-width:440px;">
-      <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
-        <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración</span>
-        <h3 class="admin-modal__title" style="margin-top:0.25rem;">Acceso al Taller &amp; Sistema</h3>
-        <p class="admin-modal__desc">Ingresá para gestionar el panel de control, pedidos, producción, stock, economía y catálogo web.</p>
+    <div class="admin-modal__card admin-modal__card--profiles">
+      <div class="admin-modal__header" style="text-align:center; margin-bottom:1.5rem;">
+        <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración &middot; Divina Locura</span>
+        <h3 class="admin-modal__title" style="margin-top:0.25rem;">¿Quién ingresa al Panel de Control?</h3>
+        <p class="admin-modal__desc" style="margin-bottom:0;">Seleccioná tu perfil para ingresar con todas las opciones de gestión, taller y finanzas:</p>
       </div>
 
-      <form id="form-admin-login" class="admin-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:0.9rem;">
-        <div class="admin-form-group">
-          <label for="pass-admin" class="admin-label">Clave de Administrador</label>
-          <input type="password" id="pass-admin" class="admin-input" placeholder="Ingresá tu clave (admin o juanma)" autocomplete="current-password" autofocus />
+      <!-- Selector de 2 Perfiles: Elena vs Juanma -->
+      <div class="profile-cards-grid">
+        <!-- PERFIL 1: ELENA (TALLER & CONFECCIÓN) -->
+        <div class="profile-card profile-card--elena" id="profile-card-elena">
+          <div class="profile-card__badge">🌸 Perfil de Mamá</div>
+          <div class="profile-card__icon">🧵</div>
+          <h4 class="profile-card__name">Elena</h4>
+          <span class="profile-card__role">Taller Textil &amp; Confección</span>
+          <p class="profile-card__desc">Gestión de pedidos, corte de telas nobles, avance de confección, chat directo con clientas y subida de nuevas creaciones.</p>
+          
+          <div class="profile-card__form" id="form-role-elena">
+            <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (elena)" autocomplete="current-password" />
+            <button type="button" class="btn--profile btn--profile-elena" id="btn-login-elena">
+              <span>Ingresar al Taller de Elena 🌸</span>
+            </button>
+          </div>
         </div>
-        <button type="button" class="btn btn--primary" id="btn-login-admin" style="width:100%; justify-content:center; padding:0.8rem; font-weight:700;">
-          <span>Ingresar como Administrador 💻</span>
-        </button>
-      </form>
 
-      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.25rem;">
-        <button type="button" class="btn btn--secondary" id="team-admin-cancel-btn">Cerrar</button>
+        <!-- PERFIL 2: JUANMA (ADMINISTRACIÓN & FINANZAS) -->
+        <div class="profile-card profile-card--juanma" id="profile-card-juanma">
+          <div class="profile-card__badge">💻 Perfil Técnico &amp; Finanzas</div>
+          <div class="profile-card__icon">📊</div>
+          <h4 class="profile-card__name">Juanma</h4>
+          <span class="profile-card__role">Economía, Negocio &amp; Sistema</span>
+          <p class="profile-card__desc">Control de gastos, balance y finanzas de confección, límites de presupuesto, sincronización con GitHub, copias de seguridad y catálogo.</p>
+          
+          <div class="profile-card__form" id="form-role-juanma">
+            <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (juanma)" autocomplete="current-password" />
+            <button type="button" class="btn--profile btn--profile-juanma" id="btn-login-juanma">
+              <span>Ingresar como Juanma 💻</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
+        <button type="button" class="btn btn--secondary" id="team-admin-cancel-btn">Volver a la Tienda</button>
       </div>
     </div>
   </div>
