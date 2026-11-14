@@ -2777,6 +2777,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
   }
 
+  document.querySelectorAll('a[href="#contacto"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setConciergeExpanded(true);
+    });
+  });
+
   if (chatbotTriggerBtn) {
     chatbotTriggerBtn.addEventListener('click', (e) => {
       e.stopPropagation();
