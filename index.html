@@ -99,38 +99,95 @@
 
   <!-- Contenedor Principal -->
   <main id="main-content">
-    <!-- SECCIÓN HERO CINEMÁTICA (INSPIRACIÓN ZARA HOME) -->
+    <!-- SECCIÓN HERO CINEMÁTICA CON SLIDER EDITORIAL (INSPIRACIÓN ZARA HOME) -->
     <section class="hero hero--zarahome" id="hero">
       <div class="hero__background">
-        <img 
-          src="assets/images/hero-textile.jpg" 
-          alt="Atmósfera artesanal y serena de Divina Locura Deco por Elena" 
-          class="hero__bg-img"
-          loading="eager"
-        />
+        <div class="hero__slides" id="hero-slides">
+          <div class="hero__slide is-active" data-slide="0">
+            <img 
+              src="assets/images/hero-textile.jpg" 
+              alt="Colección Taller y Blanquería de Divina Locura Deco por Elena" 
+              class="hero__bg-img"
+              loading="eager"
+            />
+          </div>
+          <div class="hero__slide" data-slide="1">
+            <img 
+              src="assets/images/models/model-satin-skincare.jpg" 
+              alt="Línea Satén Antifrizz, Cofias y Bienestar de Divina Locura" 
+              class="hero__bg-img"
+              loading="lazy"
+            />
+          </div>
+          <div class="hero__slide" data-slide="2">
+            <img 
+              src="assets/images/models/model-waffle-kitchen.jpg" 
+              alt="Repasadores Waffle Nido de Abeja y Textiles de Cocina" 
+              class="hero__bg-img"
+              loading="lazy"
+            />
+          </div>
+          <div class="hero__slide" data-slide="3">
+            <img 
+              src="assets/images/catalog/hanging-wall-organizer-in-room.jpg" 
+              alt="Organizadores Textiles de Pared, Cestos y Neceseres" 
+              class="hero__bg-img"
+              loading="lazy"
+            />
+          </div>
+          <div class="hero__slide" data-slide="4">
+            <img 
+              src="assets/images/models/model-baby-nursery.jpg" 
+              alt="Línea Bebés, Maternidad y Organizador Conejito de Elena" 
+              class="hero__bg-img"
+              loading="lazy"
+            />
+          </div>
+          <div class="hero__slide" data-slide="5">
+            <img 
+              src="assets/images/cat-bedding.jpg" 
+              alt="Atmósferas Cálidas, Almohadones y Estilismo para el Hogar" 
+              class="hero__bg-img"
+              loading="lazy"
+            />
+          </div>
+        </div>
         <div class="hero__overlay"></div>
       </div>
+
+      <!-- Flechas sutiles de navegación editorial Zara Home -->
+      <button type="button" class="hero-arrow hero-arrow--prev" id="hero-arrow-prev" aria-label="Foto anterior" title="Foto anterior">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button type="button" class="hero-arrow hero-arrow--next" id="hero-arrow-next" aria-label="Foto siguiente" title="Foto siguiente">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
 
       <!-- Contenido Editorial Central -->
       <div class="hero__editorial-content">
         <span class="hero__eyebrow-zh" id="hero-eyebrow">CONFECCIÓN ARTESANAL &middot; BUENOS AIRES</span>
         <h1 class="hero__title-zh" id="hero-title">El arte del detalle. Diseño hecho a mano para abrazar tu hogar.</h1>
         <p class="hero__tagline-zh" id="hero-tagline">Textiles con alma. Organización y calidez para tu día a día.</p>
-        <a href="#catalogo" class="btn btn--hero-zh">
+        <a href="#catalogo" class="btn btn--hero-zh" id="hero-cta-btn">
           <span id="hero-cta-text">Explorar la Colección</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </a>
       </div>
 
       <!-- Barra de Navegación de Categorías Inferior (Exacta a Zara Home) -->
-      <nav class="hero__bottom-nav" aria-label="Categorías principales">
-        <a href="#catalogo" class="hero-nav-pill is-active" data-hero-filter="todos">COLECCIÓN TALLER</a>
-        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="cuidado-personal">DORMITORIO &amp; SATÉN</a>
-        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="hogar">COCINA &amp; WAFFLE</a>
-        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="organizacion">ORGANIZACIÓN</a>
-        <a href="#catalogo" class="hero-nav-pill" data-hero-filter="infantil">BEBÉS &amp; INFANTIL</a>
-        <a href="#espacios" class="hero-nav-pill">ATMÓSFERAS</a>
+      <nav class="hero__bottom-nav" id="hero-bottom-nav" aria-label="Categorías principales">
+        <button type="button" class="hero-nav-pill is-active" data-hero-slide="0" data-hero-filter="todos">COLECCIÓN TALLER</button>
+        <button type="button" class="hero-nav-pill" data-hero-slide="1" data-hero-filter="cuidado-personal">DORMITORIO &amp; SATÉN</button>
+        <button type="button" class="hero-nav-pill" data-hero-slide="2" data-hero-filter="hogar">COCINA &amp; WAFFLE</button>
+        <button type="button" class="hero-nav-pill" data-hero-slide="3" data-hero-filter="organizacion">ORGANIZACIÓN</button>
+        <button type="button" class="hero-nav-pill" data-hero-slide="4" data-hero-filter="infantil">BEBÉS &amp; INFANTIL</button>
+        <button type="button" class="hero-nav-pill" data-hero-slide="5" data-hero-filter="espacios">ATMÓSFERAS</button>
       </nav>
+
+      <!-- Barra de progreso sutil de rotación automática -->
+      <div class="hero-progress-bar" id="hero-progress-bar">
+        <div class="hero-progress-fill" id="hero-progress-fill"></div>
+      </div>
     </section>
 
     <!-- FASE 3 (PARTE A): CUADROS DE VISTA PREVIA POR CATEGORÍA (Inspiración directa Anthropologie) -->

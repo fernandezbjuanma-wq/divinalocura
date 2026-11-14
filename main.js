@@ -157,6 +157,64 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = text;
   }
 
+  // Configuración de Diapositivas Temáticas para el Hero
+  let HERO_SLIDES_DATA = [
+    {
+      index: 0,
+      filter: 'todos',
+      eyebrow: settings.hero_eyebrow || 'CONFECCIÓN ARTESANAL · BUENOS AIRES',
+      title: settings.hero_title || 'El arte del detalle. Diseño hecho a mano para abrazar tu hogar.',
+      tagline: settings.hero_tagline || 'Textiles con alma. Organización y calidez para tu día a día.',
+      cta: settings.hero_cta || 'Explorar la Colección',
+      targetHref: '#catalogo'
+    },
+    {
+      index: 1,
+      filter: 'cuidado-personal',
+      eyebrow: 'LÍNEA SATÉN ANTIFRIZZ · BIENESTAR & DESCANSO',
+      title: 'Suavidad y cuidado para tus noches y tu rutina.',
+      tagline: 'Cofias, fundas y antifaces en satén premium para cuidar tu piel y cabello.',
+      cta: 'Ver Línea Satén',
+      targetHref: '#catalogo'
+    },
+    {
+      index: 2,
+      filter: 'hogar',
+      eyebrow: 'BLANQUERÍA & TEXTILES DE COCINA · PURO ALGODÓN',
+      title: 'Calidez rústica para los rincones de tu mesa.',
+      tagline: 'Repasadores nido de abeja, manteles y paneras en lino y puro algodón.',
+      cta: 'Ver Colección Cocina',
+      targetHref: '#catalogo'
+    },
+    {
+      index: 3,
+      filter: 'organizacion',
+      eyebrow: 'ORGANIZACIÓN CON ENCANTO · PIEZAS UTILITARIAS',
+      title: 'Espacios ordenados con texturas nobles y artesanales.',
+      tagline: 'Organizadores colgantes, cestos y neceseres diseñados para acompañarte.',
+      cta: 'Ver Organizadores',
+      targetHref: '#catalogo'
+    },
+    {
+      index: 4,
+      filter: 'infantil',
+      eyebrow: 'LÍNEA BEBÉ & NACIMIENTO · HIPOALERGÉNICO',
+      title: 'Ternura y dedicación en cada puntada para tu bebé.',
+      tagline: 'Organizadores conejito, ajuares y toallitas personalizadas con amor.',
+      cta: 'Ver Línea Infantil',
+      targetHref: '#catalogo'
+    },
+    {
+      index: 5,
+      filter: 'espacios',
+      eyebrow: 'INSPIRACIÓN DECORATIVA · ESPACIOS VIVOS',
+      title: 'Cada detalle cuenta una historia en tu hogar.',
+      tagline: 'Almohadones, mantas de gasa y combinaciones que transmiten serenidad.',
+      cta: 'Ver Galería de Espacios',
+      targetHref: '#espacios'
+    }
+  ];
+
   // Aplicar ajustes visuales y textos en toda la web
   function applySystemSettings() {
     setElText('top-announcement-text', settings.announcement);
@@ -166,6 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setElText('hero-title', settings.hero_title);
     setElText('hero-tagline', settings.hero_tagline);
     setElText('hero-cta-text', settings.hero_cta);
+    if (HERO_SLIDES_DATA && HERO_SLIDES_DATA[0]) {
+      HERO_SLIDES_DATA[0].eyebrow = settings.hero_eyebrow;
+      HERO_SLIDES_DATA[0].title = settings.hero_title;
+      HERO_SLIDES_DATA[0].tagline = settings.hero_tagline;
+      HERO_SLIDES_DATA[0].cta = settings.hero_cta;
+    }
 
     // Categorías
     setElText('categories-eyebrow', settings.categories_eyebrow);
@@ -446,8 +510,197 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 4. FILTROS DE CATEGORÍAS & NAVEGACIÓN ZARA HOME
+  // 4. SLIDER HERO MULTI-FOTO & MENÚS INTERACTIVOS (INSPIRACIÓN ZARA HOME)
   // =========================================================================
+  let currentHeroSlideIndex = 0;
+  let heroAutoplayTimer = null;
+  let isHeroPaused = false;
+  const HERO_AUTOPLAY_DURATION = 6000;
+
+  function switchHeroVisuals(index) {
+    const total = HERO_SLIDES_DATA.length;
+    currentHeroSlideIndex = ((index % total) + total) % total;
+    const slide = HERO_SLIDES_DATA[currentHeroSlideIndex];
+
+    // 1. Cambiar slide activa de fondo (Crossfade)
+    const slideEls = document.querySelectorAll('.hero__slide');
+    slideEls.forEach((el, idx) => {
+      if (idx === currentHeroSlideIndex) {
+        el.classList.add('is-active');
+      } else {
+        el.classList.remove('is-active');
+      }
+    });
+
+    // 2. Cambiar pastilla de navegación inferior del hero
+    const navPills = document.querySelectorAll('.hero-nav-pill');
+    navPills.forEach((pill, idx) => {
+      if (idx === currentHeroSlideIndex) {
+        pill.classList.add('is-active');
+        if (typeof pill.scrollIntoView === 'function') {
+          pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      } else {
+        pill.classList.remove('is-active');
+      }
+    });
+
+    // 3. Transición suave de textos editoriales
+    const editorialContent = document.querySelector('.hero__editorial-content');
+    if (editorialContent) {
+      editorialContent.style.opacity = '0';
+      editorialContent.style.transform = 'translateY(6px)';
+      setTimeout(() => {
+        setElText('hero-eyebrow', slide.eyebrow);
+        setElText('hero-title', slide.title);
+        setElText('hero-tagline', slide.tagline);
+        setElText('hero-cta-text', slide.cta);
+        const ctaBtn = document.getElementById('hero-cta-btn');
+        if (ctaBtn) {
+          ctaBtn.setAttribute('href', slide.targetHref);
+          ctaBtn.setAttribute('data-target-filter', slide.filter);
+        }
+        editorialContent.style.opacity = '1';
+        editorialContent.style.transform = 'translateY(0)';
+      }, 160);
+    }
+  }
+
+  function startHeroProgress() {
+    const fillEl = document.getElementById('hero-progress-fill');
+    if (!fillEl) return;
+    fillEl.classList.add('is-reset');
+    fillEl.style.width = '0%';
+    void fillEl.offsetWidth; // Force reflow
+    fillEl.classList.remove('is-reset');
+    fillEl.style.transition = `width ${HERO_AUTOPLAY_DURATION}ms linear`;
+    fillEl.style.width = '100%';
+  }
+
+  function stopHeroProgress() {
+    const fillEl = document.getElementById('hero-progress-fill');
+    if (!fillEl) return;
+    const computedWidth = window.getComputedStyle(fillEl).width;
+    fillEl.classList.add('is-reset');
+    fillEl.style.width = computedWidth;
+  }
+
+  function scheduleHeroAutoplay() {
+    if (heroAutoplayTimer) clearTimeout(heroAutoplayTimer);
+    if (isHeroPaused) return;
+
+    startHeroProgress();
+
+    heroAutoplayTimer = setTimeout(() => {
+      if (!isHeroPaused) {
+        goToHeroSlide(currentHeroSlideIndex + 1, false);
+      }
+    }, HERO_AUTOPLAY_DURATION);
+  }
+
+  function goToHeroSlide(index, isUserAction = false) {
+    switchHeroVisuals(index);
+    const slide = HERO_SLIDES_DATA[currentHeroSlideIndex];
+
+    // Sincronizar filtro de catálogo sólo si no es "espacios"
+    if (slide.filter && slide.filter !== 'espacios' && currentCategory !== slide.filter) {
+      currentCategory = slide.filter;
+      filterBtns.forEach(btn => {
+        if (btn.getAttribute('data-filter') === slide.filter) {
+          btn.classList.add('is-active');
+        } else {
+          btn.classList.remove('is-active');
+        }
+      });
+      renderCatalog();
+    }
+
+    scheduleHeroAutoplay();
+  }
+
+  function setupHeroSlider() {
+    const heroEl = document.getElementById('hero');
+    if (!heroEl) return;
+
+    // Flechas de navegación
+    const prevBtn = document.getElementById('hero-arrow-prev');
+    const nextBtn = document.getElementById('hero-arrow-next');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToHeroSlide(currentHeroSlideIndex - 1, true);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        goToHeroSlide(currentHeroSlideIndex + 1, true);
+      });
+    }
+
+    // Pastillas del menú inferior del Hero
+    document.querySelectorAll('.hero-nav-pill').forEach((pill, idx) => {
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Si el usuario hace clic en la pastilla ya activa, desplazarse hacia el catálogo o espacios
+        if (currentHeroSlideIndex === idx) {
+          const filter = pill.getAttribute('data-hero-filter');
+          if (filter === 'espacios') {
+            const espSection = document.getElementById('espacios');
+            if (espSection) espSection.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            const catSection = document.getElementById('catalogo');
+            if (catSection) catSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        } else {
+          // Cambiar de foto principal y contenido de inmediato
+          goToHeroSlide(idx, true);
+        }
+      });
+    });
+
+    // Botón de llamado a la acción (CTA)
+    const ctaBtn = document.getElementById('hero-cta-btn');
+    if (ctaBtn) {
+      ctaBtn.addEventListener('click', (e) => {
+        const targetHref = ctaBtn.getAttribute('href');
+        if (targetHref && targetHref.startsWith('#')) {
+          e.preventDefault();
+          const targetEl = document.querySelector(targetHref);
+          if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    // Pausar rotación en hover / touch
+    heroEl.addEventListener('mouseenter', () => {
+      isHeroPaused = true;
+      if (heroAutoplayTimer) clearTimeout(heroAutoplayTimer);
+      stopHeroProgress();
+    });
+
+    heroEl.addEventListener('mouseleave', () => {
+      isHeroPaused = false;
+      scheduleHeroAutoplay();
+    });
+
+    heroEl.addEventListener('touchstart', () => {
+      isHeroPaused = true;
+      if (heroAutoplayTimer) clearTimeout(heroAutoplayTimer);
+      stopHeroProgress();
+    }, { passive: true });
+
+    heroEl.addEventListener('touchend', () => {
+      setTimeout(() => {
+        isHeroPaused = false;
+        scheduleHeroAutoplay();
+      }, 3000);
+    }, { passive: true });
+
+    // Iniciar temporizador de rotación inicial
+    scheduleHeroAutoplay();
+  }
+
   function applyFilter(category) {
     currentCategory = category;
     filterBtns.forEach(btn => {
@@ -466,6 +719,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Si coincide con alguna diapositiva del hero y fue llamada fuera del slider, sincronizar foto
+    const matchingIdx = HERO_SLIDES_DATA.findIndex(s => s.filter === category);
+    if (matchingIdx > -1 && matchingIdx !== currentHeroSlideIndex) {
+      switchHeroVisuals(matchingIdx);
+    }
+
     renderCatalog();
   }
 
@@ -475,18 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Pills de navegación inferior del Hero (Exactas a Zara Home)
-  document.querySelectorAll('[data-hero-filter]').forEach(pill => {
-    pill.addEventListener('click', (e) => {
-      e.preventDefault();
-      const cat = pill.getAttribute('data-hero-filter');
-      applyFilter(cat);
-      const catalogSection = document.getElementById('catalogo');
-      if (catalogSection) {
-        catalogSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
+  setupHeroSlider();
 
   categoryTiles.forEach(tile => {
     tile.addEventListener('click', (e) => {
