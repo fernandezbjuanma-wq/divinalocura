@@ -1278,13 +1278,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sessionIcon) sessionIcon.textContent = isElena ? '🌸' : '💻';
         if (sessionTitle) {
           sessionTitle.textContent = isElena 
-            ? 'Sesión activa de Elena (Taller Textil)' 
-            : 'Sesión activa de Juanma (Gestión & Finanzas)';
+            ? 'Sesión activa de Elena (Taller Textil & Confección)' 
+            : 'Sesión activa de Juanma (Super Administrador)';
         }
         if (sessionDesc) {
           sessionDesc.textContent = isElena
-            ? 'Tenés acceso directo al taller, pedidos de clientas, stock de telas y balance.'
-            : 'Tenés acceso directo a finanzas, economía, métricas y configuración integral.';
+            ? 'Tenés acceso al taller, pedidos de clientas, stock de telas, colores y balance.'
+            : 'Tenés acceso total como Super Administrador a todas las áreas: taller, confección, pedidos, colores de telas, editor de textos de la web, finanzas y respaldo.';
         }
 
         const roleRadio = document.querySelector(`input[name="pass-role-target"][value="${activeRole}"]`);
@@ -2293,7 +2293,7 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       if (currentRole === 'elena') {
         headerUserLabel.textContent = 'ELENA · TALLER 🌸';
       } else if (currentRole === 'juanma' || currentRole === 'admin') {
-        headerUserLabel.textContent = 'JUANMA · ADMIN 💻';
+        headerUserLabel.textContent = 'JUANMA · SUPER ADMIN 💻';
       } else if (currentCustomer && currentCustomer.name) {
         const firstName = currentCustomer.name.trim().split(' ')[0];
         headerUserLabel.textContent = `HOLA, ${firstName.toUpperCase()} 🌸`;

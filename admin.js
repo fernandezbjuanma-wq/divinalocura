@@ -255,7 +255,7 @@
           localStorage.setItem(STORAGE_KEY_ROLE, targetRole);
           if (guardEl) guardEl.style.display = 'none';
           if (contentEl) contentEl.style.display = 'block';
-          adminToast(targetRole === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control!');
+          adminToast(targetRole === 'elena' ? '🌸 ¡Bienvenida Elena al Panel de Control!' : '💻 ¡Bienvenido Juanma al Panel de Control Total!');
           setupNavCounts();
           initActivePage();
           triggerBackgroundCloudPull();
