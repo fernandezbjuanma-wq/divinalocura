@@ -1109,6 +1109,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+
+    // Botones para subir de inmediato al inicio de la página desde el dock
+    const scrollTopBtn = document.getElementById('btn-dock-scroll-top');
+    const homeScrollBtn = document.getElementById('btn-dock-home-scroll');
+    const handleScrollToTop = (e) => {
+      if (window.location.pathname.includes('producto.html')) {
+        if (e && e.currentTarget && e.currentTarget.tagName !== 'A') {
+          e.preventDefault();
+          window.location.href = 'index.html';
+        }
+        return;
+      }
+      if (e) e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    if (scrollTopBtn) scrollTopBtn.addEventListener('click', handleScrollToTop);
+    if (homeScrollBtn) homeScrollBtn.addEventListener('click', handleScrollToTop);
   }
 
   setupFooterAdminHub();

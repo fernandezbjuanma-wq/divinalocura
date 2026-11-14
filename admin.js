@@ -68,13 +68,59 @@
     }, 400);
   }
 
+  // Inyectar accesos destacados para volver al inicio de la tienda
+  function injectBackToStoreElements() {
+    // 1. Botón flotante permanente en toda la administración
+    if (!document.getElementById('floating-back-store-btn')) {
+      const floatBtn = document.createElement('a');
+      floatBtn.id = 'floating-back-store-btn';
+      floatBtn.className = 'floating-back-store-btn';
+      floatBtn.href = 'index.html';
+      floatBtn.title = 'Volver al inicio de la página principal donde está toda la tienda';
+      floatBtn.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>← Volver al Inicio (Tienda)</span>
+      `;
+      document.body.appendChild(floatBtn);
+    }
+
+    // 2. Botón explícito al comienzo de la barra superior
+    const topNavInner = document.querySelector('.admin-top-nav__inner');
+    if (topNavInner && !document.querySelector('.admin-top-back-link')) {
+      const backLink = document.createElement('a');
+      backLink.href = 'index.html';
+      backLink.className = 'admin-top-back-link';
+      backLink.title = 'Volver al inicio de la tienda donde está todo';
+      backLink.innerHTML = `
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Volver al Inicio</span>
+      `;
+      topNavInner.insertBefore(backLink, topNavInner.firstChild);
+    }
+
+    // 3. Mejorar el botón de la tienda en las acciones de la derecha
+    const storeBtn = document.querySelector('.btn-admin-nav--store');
+    if (storeBtn) {
+      storeBtn.innerHTML = '<span>🏠 Ir al Inicio</span>';
+      storeBtn.setAttribute('title', 'Volver al inicio de la tienda (donde está todo)');
+    }
+  }
+
   // Comprobar Sesión y Configurar Navegación Superior
   function initAdminShell(activeSectionKey) {
     const role = localStorage.getItem(STORAGE_KEY_ROLE);
     const guardEl = document.getElementById('admin-login-guard');
     const contentEl = document.getElementById('admin-content-area');
 
-    // Conectar botones de cabecera siempre
+    // Conectar botones y enlaces de retorno a tienda
+    injectBackToStoreElements();
+
     const backupBtn = document.getElementById('admin-backup-btn');
     if (backupBtn) backupBtn.addEventListener('click', downloadWorkshopBackup);
 
