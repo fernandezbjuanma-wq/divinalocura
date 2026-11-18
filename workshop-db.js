@@ -26,6 +26,8 @@
   const KEY_KNOWN_IDS = 'divinalocura_known_ids';
   const KEY_SHOWCASE_FABRICS = 'divinalocura_showcase_fabrics_db';
   const KEY_COLOR_PALETTE = 'divinalocura_color_palette_db';
+  const KEY_CATALOG_VER = 'divinalocura_catalog_ver';
+  const KEY_IMAGE_BANK = 'divinalocura_image_bank';
 
   // URL de Google Apps Script (si se pega acá queda fija para todos los dispositivos;
   // también se puede pegar desde Configuración de la Tienda sin tocar código).
@@ -561,24 +563,117 @@
     // PRODUCTOS DEL CATÁLOGO (UNIFICADOS ENTRE TIENDA Y PANEL)
     // -----------------------------------------------------------------------
     getProducts: function () {
-      const saved = getJson(KEY_PRODUCTS, null);
-      if (Array.isArray(saved) && saved.length > 0) return saved;
-      const legacy = getJson(KEY_PRODUCTS_LEGACY, null);
-      if (Array.isArray(legacy) && legacy.length > 0) {
-        setJson(KEY_PRODUCTS, legacy, true);
-        return legacy;
+      const initialList = (typeof INITIAL_PRODUCTS !== 'undefined' && Array.isArray(INITIAL_PRODUCTS))
+        ? INITIAL_PRODUCTS
+        : ((typeof window.INITIAL_PRODUCTS !== 'undefined' && Array.isArray(window.INITIAL_PRODUCTS)) ? window.INITIAL_PRODUCTS : []);
+      const targetVer = (typeof CATALOG_SCHEMA_VERSION !== 'undefined' && CATALOG_SCHEMA_VERSION)
+        ? CATALOG_SCHEMA_VERSION
+        : ((typeof window.CATALOG_SCHEMA_VERSION !== 'undefined' && window.CATALOG_SCHEMA_VERSION) ? window.CATALOG_SCHEMA_VERSION : '20261118_v2_16posts');
+
+      let saved = getJson(KEY_PRODUCTS, null);
+      if (!Array.isArray(saved) || saved.length === 0) {
+        const legacy = getJson(KEY_PRODUCTS_LEGACY, null);
+        if (Array.isArray(legacy) && legacy.length > 0) {
+          saved = legacy;
+          setJson(KEY_PRODUCTS, saved, true);
+        }
       }
-      if (typeof INITIAL_PRODUCTS !== 'undefined' && Array.isArray(INITIAL_PRODUCTS)) {
-        return JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
+
+      let savedVer = '';
+      try { savedVer = localStorage.getItem(KEY_CATALOG_VER) || ''; } catch (e) {}
+
+      if (!Array.isArray(saved) || saved.length === 0) {
+        if (initialList.length > 0) {
+          const cloned = JSON.parse(JSON.stringify(initialList));
+          setJson(KEY_PRODUCTS, cloned, true);
+          try { localStorage.setItem(KEY_CATALOG_VER, targetVer); } catch (e) {}
+          return cloned;
+        }
+        return [];
       }
-      if (typeof window.INITIAL_PRODUCTS !== 'undefined' && Array.isArray(window.INITIAL_PRODUCTS)) {
-        return JSON.parse(JSON.stringify(window.INITIAL_PRODUCTS));
+
+      // Migración no destructiva cuando crece INITIAL_PRODUCTS o se actualizan fotos Google Flow
+      const hasBrokenLegacy = saved.some(p =>
+        !p || !p.price || !String(p.price).includes('$') ||
+        (p.images || []).some(img => img && ((img.src || '').includes('real-') || (img.src || '').includes('/instagram/')))
+      );
+
+      if ((savedVer !== targetVer || hasBrokenLegacy) && initialList.length > 0) {
+        const initialMap = new Map(initialList.map(p => [p.id, p]));
+        const hasCustomPhoto = (prod) => Array.isArray(prod.images) && prod.images.some(
+          img => img && img.src && (img.src.startsWith('data:') || img.src.startsWith('http'))
+        );
+
+        const merged = [];
+        const seenIds = new Set();
+
+        saved.forEach(sp => {
+          if (!sp || !sp.id) return;
+          seenIds.add(sp.id);
+          const def = initialMap.get(sp.id);
+          if (def) {
+            const spHasCustom = hasCustomPhoto(sp);
+            const mergeComments = (defComments, spComments) => {
+              const base = Array.isArray(defComments) ? JSON.parse(JSON.stringify(defComments)) : [];
+              if (!Array.isArray(spComments)) return base;
+              const seenTxt = new Set(base.map(c => `${c.user}:${c.text}`));
+              spComments.forEach(c => {
+                if (c && c.text && !seenTxt.has(`${c.user}:${c.text}`)) {
+                  base.push(c);
+                }
+              });
+              return base;
+            };
+
+            const isLegacyV1Upgrade = !savedVer || hasBrokenLegacy;
+            const migrated = {
+              ...def,
+              ...sp,
+              title: (isLegacyV1Upgrade && !spHasCustom) ? def.title : (sp.title || def.title),
+              texture: (isLegacyV1Upgrade && !spHasCustom) ? def.texture : (sp.texture || def.texture),
+              desc: (isLegacyV1Upgrade && !spHasCustom) ? def.desc : (sp.desc || def.desc),
+              tag: (isLegacyV1Upgrade && !spHasCustom) ? def.tag : (sp.tag || def.tag),
+              availableColors: (Array.isArray(sp.availableColors) && sp.availableColors.length > 0) ? sp.availableColors : def.availableColors,
+              cost: sp.cost !== undefined ? sp.cost : def.cost,
+              meters: sp.meters !== undefined ? sp.meters : (sp.metersPerUnit !== undefined ? sp.metersPerUnit : def.meters),
+              allowEmbroidery: sp.allowEmbroidery !== undefined ? sp.allowEmbroidery : def.allowEmbroidery,
+              images: spHasCustom ? sp.images : JSON.parse(JSON.stringify(def.images || [])),
+              instagram: (isLegacyV1Upgrade && !spHasCustom)
+                ? {
+                    ...def.instagram,
+                    comments: mergeComments(def.instagram && def.instagram.comments, sp.instagram && sp.instagram.comments)
+                  }
+                : (sp.instagram || def.instagram)
+            };
+            if (!migrated.price || !String(migrated.price).includes('$')) {
+              migrated.price = def.price;
+            }
+            merged.push(migrated);
+          } else {
+            merged.push(sp);
+          }
+        });
+
+        initialList.forEach(def => {
+          if (!seenIds.has(def.id)) {
+            merged.push(JSON.parse(JSON.stringify(def)));
+          }
+        });
+
+        setJson(KEY_PRODUCTS, merged, true);
+        try { localStorage.setItem(KEY_CATALOG_VER, targetVer); } catch (e) {}
+        return merged;
       }
-      return [];
+
+      return saved;
     },
 
     saveProducts: function (productsList) {
       if (!Array.isArray(productsList)) return [];
+      const targetVer = (typeof CATALOG_SCHEMA_VERSION !== 'undefined' && CATALOG_SCHEMA_VERSION)
+        ? CATALOG_SCHEMA_VERSION
+        : ((typeof window.CATALOG_SCHEMA_VERSION !== 'undefined' && window.CATALOG_SCHEMA_VERSION) ? window.CATALOG_SCHEMA_VERSION : '20261118_v2_16posts');
+      try { localStorage.setItem(KEY_CATALOG_VER, targetVer); } catch (e) {}
       setJson(KEY_PRODUCTS, productsList);
       return productsList;
     },
@@ -934,10 +1029,21 @@
         { name: 'Blanco Lino', hex: '#FAF8F5' },
         { name: 'Celeste Bebé', hex: '#C8DCE8' },
         { name: 'Vichy Arena', hex: '#D4C3AE' },
-        { name: 'Chocolate', hex: '#6D4C41' }
+        { name: 'Chocolate', hex: '#6D4C41' },
+        { name: 'Gris Topo', hex: '#7A7671' },
+        { name: 'Verde Esmeralda', hex: '#4D7C6F' }
       ];
       const saved = getJson(KEY_COLOR_PALETTE, null);
-      if (Array.isArray(saved) && saved.length > 0) return saved;
+      if (Array.isArray(saved) && saved.length > 0) {
+        const merged = saved.slice();
+        const seen = new Set(merged.map(c => String(c && c.name || '').toLowerCase()));
+        defaultPalette.forEach(def => {
+          if (!seen.has(def.name.toLowerCase())) {
+            merged.push(def);
+          }
+        });
+        return merged;
+      }
       return defaultPalette;
     },
 
@@ -1072,6 +1178,71 @@
       let list = this.getShowcaseFabrics();
       list = list.filter(f => f.id !== fabricId);
       setJson(KEY_SHOWCASE_FABRICS, list);
+      return list;
+    },
+
+    // -----------------------------------------------------------------------
+    // BANCO VISUAL DE IMÁGENES DEL TALLER (GOOGLE FLOW + SUBIDAS DE TALLER)
+    // -----------------------------------------------------------------------
+    getImageBank: function () {
+      const initialBank = (typeof INITIAL_IMAGE_BANK !== 'undefined' && Array.isArray(INITIAL_IMAGE_BANK))
+        ? INITIAL_IMAGE_BANK
+        : ((typeof window.INITIAL_IMAGE_BANK !== 'undefined' && Array.isArray(window.INITIAL_IMAGE_BANK)) ? window.INITIAL_IMAGE_BANK : []);
+
+      const saved = getJson(KEY_IMAGE_BANK, null);
+      if (!Array.isArray(saved) || saved.length === 0) {
+        if (initialBank.length > 0) {
+          const cloned = JSON.parse(JSON.stringify(initialBank));
+          setJson(KEY_IMAGE_BANK, cloned, true);
+          return cloned;
+        }
+        return [];
+      }
+
+      if (initialBank.length > 0) {
+        const merged = saved.slice();
+        const seenSrc = new Set(merged.map(it => String(it && it.src || '').trim()));
+        let changed = false;
+        initialBank.forEach(def => {
+          if (def && def.src && !seenSrc.has(String(def.src).trim())) {
+            merged.push(JSON.parse(JSON.stringify(def)));
+            changed = true;
+          }
+        });
+        if (changed) setJson(KEY_IMAGE_BANK, merged, true);
+        return merged;
+      }
+
+      return saved;
+    },
+
+    saveImageBank: function (bankList) {
+      if (!Array.isArray(bankList)) return [];
+      setJson(KEY_IMAGE_BANK, bankList);
+      return bankList;
+    },
+
+    addImageToBank: function (item) {
+      if (!item || !item.src) return null;
+      const list = this.getImageBank();
+      const entry = {
+        id: item.id || ('b_custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000)),
+        title: String(item.title || 'Foto del Taller').trim(),
+        category: String(item.category || 'Subidas del Taller').trim(),
+        src: String(item.src).trim(),
+        usedIn: item.usedIn || '',
+        custom: true,
+        addedAt: new Date().toISOString()
+      };
+      list.unshift(entry);
+      setJson(KEY_IMAGE_BANK, list);
+      return entry;
+    },
+
+    removeImageFromBank: function (id) {
+      let list = this.getImageBank();
+      list = list.filter(it => it && it.id !== id);
+      setJson(KEY_IMAGE_BANK, list);
       return list;
     },
 
@@ -1688,7 +1859,10 @@
         production: this.getProductionQueue(),
         analytics: this.getAnalytics(),
         expenses: this.getExpenses(),
-        budget: this.getBudget()
+        budget: this.getBudget(),
+        colorPalette: this.getColorPalette(),
+        showcaseFabrics: this.getShowcaseFabrics(),
+        imageBank: this.getImageBank()
       };
 
       return JSON.stringify(backupData, null, 2);
@@ -1710,6 +1884,9 @@
         if (data.analytics && typeof data.analytics === 'object') setJson(KEY_ANALYTICS, data.analytics, true);
         if (Array.isArray(data.expenses)) setJson(KEY_EXPENSES, data.expenses);
         if (typeof data.budget === 'number') this.setBudget(data.budget);
+        if (Array.isArray(data.colorPalette)) setJson(KEY_COLOR_PALETTE, data.colorPalette);
+        if (Array.isArray(data.showcaseFabrics)) setJson(KEY_SHOWCASE_FABRICS, data.showcaseFabrics);
+        if (Array.isArray(data.imageBank)) setJson(KEY_IMAGE_BANK, data.imageBank);
 
         return { success: true, message: 'Respaldo restaurado con éxito' };
       } catch (err) {

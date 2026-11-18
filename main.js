@@ -128,34 +128,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn('Error leyendo pedidos:', e);
   }
 
-  // Cargar Productos
+  // Cargar Productos (unificado con WorkshopDB + migración v2)
   let products = [];
-  try {
-    const savedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-    if (savedProducts) {
-      products = JSON.parse(savedProducts);
+  if (window.WorkshopDB && typeof window.WorkshopDB.getProducts === 'function') {
+    products = window.WorkshopDB.getProducts();
+  } else {
+    try {
+      const savedProducts = localStorage.getItem(STORAGE_KEY_PRODUCTS);
+      if (savedProducts) products = JSON.parse(savedProducts);
+    } catch (err) {
+      console.warn('Error leyendo productos:', err);
     }
-  } catch (err) {
-    console.warn('Error leyendo productos:', err);
-  }
-
-  if (!products || products.length === 0) {
-    if (typeof INITIAL_PRODUCTS !== 'undefined') {
-      products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
-    } else {
-      products = [];
-    }
-  } else if (typeof INITIAL_PRODUCTS !== 'undefined') {
-    // Migración automática: si el navegador tenía en caché fotos antiguas o precios sin formato numérico, actualizar a los valores estándar de taller
-    const hasLegacyImages = products.some(p =>
-      (p.images || []).some(img => (img.src || '').includes('real-') || (img.src || '').includes('/instagram/'))
-    );
-    const hasLegacyPrices = products.some(p => !p.price || !p.price.includes('$'));
-    if (hasLegacyImages || hasLegacyPrices) {
-      products = JSON.parse(JSON.stringify(INITIAL_PRODUCTS));
-      try {
-        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
-      } catch (e) {}
+    if (!products || products.length === 0) {
+      products = (typeof INITIAL_PRODUCTS !== 'undefined') ? JSON.parse(JSON.stringify(INITIAL_PRODUCTS)) : [];
     }
   }
 
@@ -390,9 +375,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    filtered.forEach(product => {
+    // Balancear las filas a exactamente 12 columnas en desktop para evitar huecos o bordes desparejos
+    const rowSpans = [];
+    for (let i = 0; i < filtered.length; i += 2) {
+      if (i + 1 >= filtered.length) {
+        rowSpans.push('catalog-item--w12');
+      } else {
+        const aLarge = filtered[i].size === 'large';
+        const bLarge = filtered[i + 1].size === 'large';
+        if (aLarge && !bLarge) {
+          rowSpans.push('catalog-item--w7', 'catalog-item--w5');
+        } else if (!aLarge && bLarge) {
+          rowSpans.push('catalog-item--w5', 'catalog-item--w7');
+        } else {
+          rowSpans.push('catalog-item--w6', 'catalog-item--w6');
+        }
+      }
+    }
+
+    filtered.forEach((product, idx) => {
+      const spanClass = rowSpans[idx] || (product.size === 'large' ? 'catalog-item--large' : 'catalog-item--medium');
       const card = document.createElement('article');
-      card.className = `catalog-item ${product.size === 'large' ? 'catalog-item--large' : 'catalog-item--medium'}`;
+      card.className = `catalog-item ${product.size === 'large' ? 'catalog-item--large' : 'catalog-item--medium'} ${spanClass}`;
       card.setAttribute('data-category', product.category);
       card.setAttribute('data-id', product.id);
 
@@ -428,12 +432,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const palette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
         ? window.WorkshopDB.getColorPalette()
         : [
-            { name: 'Champán Seda', hex: '#F3EAE0' },
-            { name: 'Rosa Viejo', hex: '#D8B4A6' },
-            { name: 'Arena Tostada', hex: '#C6B39E' },
-            { name: 'Salvia Suave', hex: '#A9B7A0' },
-            { name: 'Terracota Suave', hex: '#C27D66' },
-            { name: 'Blanco Nube', hex: '#FFFFFF' }
+            { name: 'Champán Seda', hex: '#E8DAC8' },
+            { name: 'Crudo Natural', hex: '#F3EFE8' },
+            { name: 'Rosa Viejo', hex: '#DFBDB5' },
+            { name: 'Vichy Arena', hex: '#D4C3AE' },
+            { name: 'Verde Salvia', hex: '#A6B5A7' },
+            { name: 'Terracota Suave', hex: '#C87D69' },
+            { name: 'Blanco Lino', hex: '#FAF8F5' },
+            { name: 'Celeste Bebé', hex: '#C8DCE8' },
+            { name: 'Gris Perla', hex: '#D3D1CE' },
+            { name: 'Chocolate', hex: '#6D4C41' },
+            { name: 'Gris Topo', hex: '#7A7671' },
+            { name: 'Verde Esmeralda', hex: '#4D7C6F' }
           ];
       const availColorNames = (Array.isArray(product.availableColors) && product.availableColors.length > 0)
         ? product.availableColors
@@ -1008,12 +1018,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const palette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
         ? window.WorkshopDB.getColorPalette()
         : [
-            { name: 'Champán Seda', hex: '#F3EAE0' },
-            { name: 'Rosa Viejo', hex: '#D8B4A6' },
-            { name: 'Arena Tostada', hex: '#C6B39E' },
-            { name: 'Salvia Suave', hex: '#A9B7A0' },
-            { name: 'Terracota Suave', hex: '#C27D66' },
-            { name: 'Blanco Nube', hex: '#FFFFFF' }
+            { name: 'Champán Seda', hex: '#E8DAC8' },
+            { name: 'Crudo Natural', hex: '#F3EFE8' },
+            { name: 'Rosa Viejo', hex: '#DFBDB5' },
+            { name: 'Vichy Arena', hex: '#D4C3AE' },
+            { name: 'Verde Salvia', hex: '#A6B5A7' },
+            { name: 'Terracota Suave', hex: '#C87D69' },
+            { name: 'Blanco Lino', hex: '#FAF8F5' },
+            { name: 'Celeste Bebé', hex: '#C8DCE8' },
+            { name: 'Gris Perla', hex: '#D3D1CE' },
+            { name: 'Chocolate', hex: '#6D4C41' },
+            { name: 'Gris Topo', hex: '#7A7671' },
+            { name: 'Verde Esmeralda', hex: '#4D7C6F' }
           ];
       const availNames = (Array.isArray(product.availableColors) && product.availableColors.length > 0)
         ? product.availableColors
@@ -1674,12 +1690,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const palette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
       ? window.WorkshopDB.getColorPalette()
       : [
-          { name: 'Champán Seda', hex: '#F3EAE0' },
-          { name: 'Rosa Viejo', hex: '#D8B4A6' },
-          { name: 'Arena Tostada', hex: '#C6B39E' },
-          { name: 'Salvia Suave', hex: '#A9B7A0' },
-          { name: 'Terracota Suave', hex: '#C27D66' },
-          { name: 'Blanco Nube', hex: '#FFFFFF' }
+          { name: 'Champán Seda', hex: '#E8DAC8' },
+          { name: 'Crudo Natural', hex: '#F3EFE8' },
+          { name: 'Rosa Viejo', hex: '#DFBDB5' },
+          { name: 'Vichy Arena', hex: '#D4C3AE' },
+          { name: 'Verde Salvia', hex: '#A6B5A7' },
+          { name: 'Terracota Suave', hex: '#C87D69' },
+          { name: 'Blanco Lino', hex: '#FAF8F5' },
+          { name: 'Celeste Bebé', hex: '#C8DCE8' },
+          { name: 'Gris Perla', hex: '#D3D1CE' },
+          { name: 'Chocolate', hex: '#6D4C41' },
+          { name: 'Gris Topo', hex: '#7A7671' },
+          { name: 'Verde Esmeralda', hex: '#4D7C6F' }
         ];
     const activeSet = new Set(
       (Array.isArray(selectedColors) && selectedColors.length > 0
@@ -2611,7 +2633,15 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     'p5': 11500,
     'p6': 13200,
     'p7': 24500,
-    'p8': 15800
+    'p8': 15800,
+    'p9': 26800,
+    'p10': 32500,
+    'p11': 19500,
+    'p12': 28900,
+    'p13': 17400,
+    'p14': 14200,
+    'p15': 54000,
+    'p16': 16500
   };
 
   function parseItemUnitPrice(item) {
@@ -3860,24 +3890,24 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   const GIFT_BOXES_CATALOG = {
     gift_saten: {
       id: 'gift_saten',
-      title: 'Caja Regalo · Ritual Descanso & Satén Antifrizz (-10%)',
+      title: 'Caja Regalo · Mandala Calada & Blanquería Blanco Lino (-10%)',
       price: '$ 36.000 ARS',
       categoryName: 'Regalería de Autor · 10% OFF',
-      img: 'assets/images/catalog/sleep-bonnet-and-mask-on.jpg'
+      img: 'assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg'
     },
     gift_bebe: {
       id: 'gift_bebe',
-      title: 'Caja Regalo · Ajuar Bienvenida Recién Nacido Bordado (-10%)',
-      price: '$ 41.850 ARS',
-      categoryName: 'Regalería Bebés · 10% OFF',
-      img: 'assets/images/catalog/embroidered-bunny-fabric-organiz.jpg'
+      title: 'Caja Regalo · Ajuar Rosa Viejo, Broderie & Volados (-10%)',
+      price: '$ 34.920 ARS',
+      categoryName: 'Regalería Rosa & Broderie · 10% OFF',
+      img: 'assets/images/banco/cajas-regalo/caja-set-rosa-volados.jpg'
     },
     gift_hogar: {
       id: 'gift_hogar',
-      title: 'Caja Regalo · Set Anfitriona Cocina & Tocador Orgánico (-10%)',
-      price: '$ 34.920 ARS',
-      categoryName: 'Regalería Hogar · 10% OFF',
-      img: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg'
+      title: 'Caja Regalo · Set Anfitriona Terracota & Pasamanería Dorada (-10%)',
+      price: '$ 38.700 ARS',
+      categoryName: 'Regalería Premium · 10% OFF',
+      img: 'assets/images/banco/cajas-regalo/caja-toalla-terracota-dorada.jpg'
     }
   };
 

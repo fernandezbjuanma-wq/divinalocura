@@ -343,6 +343,9 @@
       case 'productos':
         initProductosPage();
         break;
+      case 'banco':
+        initBancoPage();
+        break;
       case 'configuracion':
         initConfiguracionPage();
         break;
@@ -1691,6 +1694,106 @@
     const btnCancel = document.getElementById('edit-cancel-btn');
     const imagesListEl = document.getElementById('admin-edit-images-list');
 
+    function ensureBankPickerModal() {
+      let picker = document.getElementById('bank-picker-modal');
+      if (picker) return picker;
+      picker = document.createElement('div');
+      picker.id = 'bank-picker-modal';
+      picker.className = 'admin-modal';
+      picker.setAttribute('role', 'dialog');
+      picker.setAttribute('aria-modal', 'true');
+      picker.innerHTML = `
+        <div class="admin-modal__card" style="max-width:740px; width:94%; max-height:88vh; display:flex; flex-direction:column; gap:0.85rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem;">
+            <div>
+              <span class="admin-page-kicker">Banco Visual del Taller</span>
+              <h3 class="admin-modal__title" style="margin:0;">Elegir Foto para esta Vista</h3>
+            </div>
+            <button type="button" class="btn-admin-outline" id="bank-picker-close" style="padding:0.35rem 0.7rem;">✕ Cerrar</button>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
+            <input type="search" id="bank-picker-search" class="admin-input" placeholder="🔍 Filtrar por nombre o tela (ej: mandala, tote, toalla)..." style="flex:1; min-width:200px;" />
+            <select id="bank-picker-cat" class="admin-select" style="width:auto; min-width:170px;">
+              <option value="all">Todas las colecciones</option>
+              <option value="Blanquería & Toallas">Blanquería &amp; Toallas</option>
+              <option value="Cajas de Regalo">Cajas de Regalo</option>
+              <option value="Bolsos & Tote Bags">Bolsos &amp; Tote Bags</option>
+              <option value="Neceseres & Organizadores">Neceseres &amp; Organizadores</option>
+              <option value="Descanso & Satén">Descanso &amp; Satén</option>
+              <option value="Infantil & Hogar">Infantil &amp; Hogar</option>
+              <option value="Subidas del Taller">Subidas del Taller</option>
+            </select>
+          </div>
+          <div id="bank-picker-grid" class="bank-picker-grid"></div>
+        </div>
+      `;
+      document.body.appendChild(picker);
+      const closeBtn = document.getElementById('bank-picker-close');
+      if (closeBtn) closeBtn.addEventListener('click', () => picker.classList.remove('is-open'));
+      picker.addEventListener('click', (e) => {
+        if (e.target === picker) picker.classList.remove('is-open');
+      });
+      return picker;
+    }
+
+    function openBankPickerForSlot(srcInput, previewImg) {
+      const picker = ensureBankPickerModal();
+      const grid = document.getElementById('bank-picker-grid');
+      const searchEl = document.getElementById('bank-picker-search');
+      const catEl = document.getElementById('bank-picker-cat');
+      const bankItems = (window.WorkshopDB && typeof window.WorkshopDB.getImageBank === 'function')
+        ? window.WorkshopDB.getImageBank()
+        : [];
+
+      function renderPickerGrid() {
+        const q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+        const cat = catEl ? catEl.value : 'all';
+        const filtered = bankItems.filter(it => {
+          const matchCat = cat === 'all' || it.category === cat;
+          if (!matchCat) return false;
+          if (!q) return true;
+          return (
+            (it.title && it.title.toLowerCase().includes(q)) ||
+            (it.category && it.category.toLowerCase().includes(q)) ||
+            (it.src && it.src.toLowerCase().includes(q))
+          );
+        });
+        if (!filtered.length) {
+          grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:2rem; color:#7A726D;">No hay fotos en esta colección que coincidan con tu búsqueda.</p>';
+          return;
+        }
+        grid.innerHTML = filtered.slice(0, 120).map(it => `
+          <button type="button" class="bank-picker-item" data-pick-src="${esc(it.src)}" title="${esc(it.title)} (${esc(it.category)})">
+            <img src="${esc(it.src)}" alt="${esc(it.title)}" loading="lazy" />
+            <span>${esc(it.title)}</span>
+          </button>
+        `).join('');
+        grid.querySelectorAll('.bank-picker-item').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const chosenSrc = btn.getAttribute('data-pick-src');
+            if (chosenSrc && srcInput && previewImg) {
+              srcInput.value = chosenSrc;
+              previewImg.src = chosenSrc;
+              previewImg.style.opacity = '1';
+              adminToast('🖼️ Foto cargada desde el Banco Visual.');
+            }
+            picker.classList.remove('is-open');
+          });
+        });
+      }
+
+      if (searchEl) {
+        searchEl.value = '';
+        searchEl.oninput = renderPickerGrid;
+      }
+      if (catEl) {
+        catEl.value = 'all';
+        catEl.onchange = renderPickerGrid;
+      }
+      renderPickerGrid();
+      picker.classList.add('is-open');
+    }
+
     function renderImageSlots(imagesArray) {
       if (!imagesListEl) return;
       const defaultLabels = ['Foto Principal', 'Detalle Textura', 'En Uso / Ambiente', 'Presentación'];
@@ -1708,10 +1811,13 @@
             <img src="${esc(slot.src || 'assets/images/hero-textile.jpg')}" class="slot-preview-img" alt="Vista ${idx + 1}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; border:1px solid #EFEAE4; opacity:${slot.src ? '1' : '0.35'};" />
             <div style="flex:1; min-width:0;">
               <input type="text" class="admin-input slot-label-input" value="${esc(slot.label)}" placeholder="Etiqueta vista ${idx + 1}" style="padding:0.3rem 0.5rem; font-size:0.76rem; margin-bottom:0.25rem;" />
-              <label class="btn-admin-outline" style="padding:0.22rem 0.55rem; font-size:0.72rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.25rem; margin:0;">
-                <span class="slot-upload-text">📁 Subir foto</span>
-                <input type="file" accept="image/*" class="slot-file-input" style="display:none;" />
-              </label>
+              <div style="display:flex; flex-wrap:wrap; gap:0.25rem;">
+                <label class="btn-admin-outline" style="padding:0.22rem 0.5rem; font-size:0.71rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.2rem; margin:0;">
+                  <span class="slot-upload-text">📁 Subir</span>
+                  <input type="file" accept="image/*" class="slot-file-input" style="display:none;" />
+                </label>
+                <button type="button" class="btn-admin-outline btn-slot-pick-bank" style="padding:0.22rem 0.5rem; font-size:0.71rem;">🖼️ Banco</button>
+              </div>
             </div>
           </div>
           <input type="text" class="admin-input slot-src-input" value="${esc(slot.src)}" placeholder="O pegá ruta / URL de foto..." style="padding:0.3rem 0.5rem; font-size:0.74rem;" />
@@ -1723,6 +1829,7 @@
         const srcInput = slotEl.querySelector('.slot-src-input');
         const fileInput = slotEl.querySelector('.slot-file-input');
         const uploadText = slotEl.querySelector('.slot-upload-text');
+        const pickBankBtn = slotEl.querySelector('.btn-slot-pick-bank');
 
         if (srcInput && previewImg) {
           srcInput.addEventListener('input', () => {
@@ -1732,17 +1839,23 @@
           });
         }
 
+        if (pickBankBtn) {
+          pickBankBtn.addEventListener('click', () => {
+            openBankPickerForSlot(srcInput, previewImg);
+          });
+        }
+
         if (fileInput) {
           fileInput.addEventListener('change', async (e) => {
             const file = e.target.files && e.target.files[0];
             if (!file) return;
-            if (uploadText) uploadText.textContent = '⏳ Subiendo...';
+            if (uploadText) uploadText.textContent = '⏳...';
             try {
               let resultUrl = '';
               if (window.WorkshopDB && typeof window.WorkshopDB.processAndUploadImage === 'function') {
-                const up = await window.WorkshopDB.processAndUploadImage(file, file.name);
+                const up = await window.WorkshopDB.processAndUploadImage(file, 1200, 0.84);
                 resultUrl = up.url || '';
-                if (up.cloud) {
+                if (up.uploaded) {
                   adminToast('☁️ Foto subida a Google Drive y lista para publicar.');
                 } else {
                   adminToast('📸 Foto optimizada y cargada con éxito.');
@@ -1756,7 +1869,7 @@
             } catch (err) {
               alert('No se pudo procesar la imagen seleccionada.');
             } finally {
-              if (uploadText) uploadText.textContent = '📁 Subir foto';
+              if (uploadText) uploadText.textContent = '📁 Subir';
             }
           });
         }
@@ -1774,13 +1887,14 @@
       const palette = (window.WorkshopDB && window.WorkshopDB.getColorPalette)
         ? window.WorkshopDB.getColorPalette()
         : [
-            { name: 'Crudo Natural', hex: '#F3EFEA' },
-            { name: 'Rosa Viejo', hex: '#C87D69' },
-            { name: 'Verde Salvia', hex: '#8A9A86' },
-            { name: 'Terracota Suave', hex: '#A45A44' },
-            { name: 'Avellana / Arena', hex: '#D8C8B8' },
-            { name: 'Gris Perla', hex: '#C5C6C7' },
-            { name: 'Celeste Bruma', hex: '#B8C9D4' }
+            { name: 'Champán Seda', hex: '#E8DAC8' },
+            { name: 'Crudo Natural', hex: '#F3EFE8' },
+            { name: 'Rosa Viejo', hex: '#DFBDB5' },
+            { name: 'Terracota Suave', hex: '#C87D69' },
+            { name: 'Gris Perla', hex: '#D3D1CE' },
+            { name: 'Verde Salvia', hex: '#A6B5A7' },
+            { name: 'Gris Topo', hex: '#7A7671' },
+            { name: 'Verde Esmeralda', hex: '#4D7C6F' }
           ];
 
       const selectedSet = new Set(
@@ -1837,7 +1951,8 @@
       if (!tbody) return;
       const catNames = {
         'cuidado-personal': 'Cuidado Personal & Descanso',
-        'organizacion': 'Organización & Hogar',
+        'hogar': 'Hogar, Cocina & Baño',
+        'organizacion': 'Organización & Bolsos',
         'infantil': 'Infantil & Bebés'
       };
       const palette = (window.WorkshopDB && window.WorkshopDB.getColorPalette) ? window.WorkshopDB.getColorPalette() : [];
@@ -1920,7 +2035,7 @@
         document.getElementById('edit-tag').value = prod.tag || '';
         document.getElementById('edit-desc').value = prod.desc || '';
         if (costInput) costInput.value = prod.cost || '';
-        if (metersInput) metersInput.value = prod.metersPerUnit || '';
+        if (metersInput) metersInput.value = prod.metersPerUnit || prod.meters || '';
         if (allowEmbroideryCheckbox) allowEmbroideryCheckbox.checked = prod.allowEmbroidery !== false;
         renderColorCheckboxes(prod.availableColors);
         renderImageSlots(prod.images || []);
@@ -1973,7 +2088,8 @@
 
         const catMap = {
           'cuidado-personal': 'Cuidado Personal & Descanso',
-          'organizacion': 'Organización & Hogar',
+          'hogar': 'Hogar, Cocina & Baño',
+          'organizacion': 'Organización & Bolsos',
           'infantil': 'Infantil & Bebés'
         };
 
@@ -2039,6 +2155,36 @@
     }
 
     renderProductsTable();
+
+    // Si llega desde el Banco de Imágenes (?img=...&title=...), abrir modal pre-cargado
+    try {
+      const pParams = new URLSearchParams(window.location.search);
+      const bankImg = pParams.get('img');
+      if (bankImg) {
+        const bankTitle = pParams.get('title') || '';
+        const bankCat = pParams.get('cat') || '';
+        openEditor(null);
+        const titleInput = document.getElementById('edit-title');
+        const catSelect = document.getElementById('edit-category');
+        if (bankTitle && titleInput) titleInput.value = bankTitle;
+        if (catSelect) {
+          if (bankCat.includes('Blanquería') || bankCat.includes('Cajas') || bankImg.includes('blanqueria') || bankImg.includes('cajas-regalo')) {
+            catSelect.value = 'hogar';
+          } else if (bankCat.includes('Descanso') || bankImg.includes('descanso-saten')) {
+            catSelect.value = 'cuidado-personal';
+          } else if (bankCat.includes('Infantil') || bankImg.includes('muneco')) {
+            catSelect.value = 'infantil';
+          } else if (bankCat.includes('Bolsos') || bankCat.includes('Neceseres')) {
+            catSelect.value = 'organizacion';
+          }
+        }
+        renderImageSlots([{ label: 'Foto Principal', src: bankImg }]);
+        adminToast('🖼️ Foto cargada desde el Banco. Completá precio e historia y publicá.');
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({}, document.title, 'admin-productos.html');
+        }
+      }
+    } catch (e) {}
   }
 
   // =========================================================================
@@ -2471,6 +2617,347 @@
         });
       });
     });
+  }
+
+  // =========================================================================
+  // 10. PÁGINA: BANCO VISUAL DE IMÁGENES (admin-banco.html)
+  // =========================================================================
+  function initBancoPage() {
+    const gridEl = document.getElementById('admin-bank-grid');
+    if (!gridEl) return;
+
+    const searchInput = document.getElementById('bank-search-input');
+    const pillsWrap = document.getElementById('bank-filter-pills');
+    const countSummary = document.getElementById('bank-count-summary');
+
+    const toggleUploadBtn = document.getElementById('btn-bank-toggle-upload');
+    const closeUploadBtn = document.getElementById('btn-bank-close-upload');
+    const uploadPanel = document.getElementById('bank-upload-panel');
+    const uploadForm = document.getElementById('bank-upload-form');
+    const uploadTitle = document.getElementById('bank-upload-title');
+    const uploadCat = document.getElementById('bank-upload-category');
+    const uploadFile = document.getElementById('bank-upload-file');
+    const submitUploadBtn = document.getElementById('btn-bank-submit-upload');
+
+    const lightbox = document.getElementById('bank-lightbox-modal');
+    const lightboxClose = document.getElementById('bank-lightbox-close');
+    const lightboxImg = document.getElementById('bank-lightbox-img');
+    const lightboxTitle = document.getElementById('bank-lightbox-title');
+    const lightboxCat = document.getElementById('bank-lightbox-cat');
+    const lightboxUsage = document.getElementById('bank-lightbox-usage');
+    const lightboxCopy = document.getElementById('bank-lightbox-copy');
+    const lightboxCreate = document.getElementById('bank-lightbox-create');
+
+    let activeFilter = 'all';
+    let currentLightboxSrc = '';
+
+    function normalizeSrc(s) {
+      return String(s || '').trim().replace(/^\.\//, '');
+    }
+
+    function getUsageMap() {
+      const map = {};
+      const products = (window.WorkshopDB && typeof window.WorkshopDB.getProducts === 'function')
+        ? window.WorkshopDB.getProducts()
+        : (typeof INITIAL_PRODUCTS !== 'undefined' ? INITIAL_PRODUCTS : []);
+
+      (products || []).forEach(prod => {
+        if (!prod) return;
+        const imgs = Array.isArray(prod.images) ? prod.images : (prod.img ? [{ src: prod.img }] : []);
+        imgs.forEach(imgObj => {
+          const key = normalizeSrc(typeof imgObj === 'string' ? imgObj : (imgObj && imgObj.src));
+          if (!key) return;
+          if (!map[key]) map[key] = [];
+          if (!map[key].some(u => u.id === prod.id)) {
+            map[key].push({ id: prod.id, title: prod.title || prod.id });
+          }
+        });
+      });
+      return map;
+    }
+
+    function buildCreateUrl(item) {
+      return `admin-productos.html?img=${encodeURIComponent(item.src)}&title=${encodeURIComponent(item.title || '')}&cat=${encodeURIComponent(item.category || '')}`;
+    }
+
+    async function copyPathToClipboard(src) {
+      const cleanSrc = String(src || '').trim();
+      if (!cleanSrc) return;
+      try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(cleanSrc);
+        } else {
+          const tmp = document.createElement('textarea');
+          tmp.value = cleanSrc;
+          tmp.style.position = 'fixed';
+          tmp.style.opacity = '0';
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand('copy');
+          document.body.removeChild(tmp);
+        }
+        adminToast('📋 Ruta copiada al portapapeles.');
+      } catch (e) {
+        adminToast('📋 Ruta: ' + cleanSrc);
+      }
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+    }
+
+    function openLightbox(item, usages) {
+      if (!lightbox || !item) return;
+      currentLightboxSrc = item.src || '';
+      if (lightboxCat) lightboxCat.textContent = item.category || 'Taller';
+      if (lightboxTitle) lightboxTitle.textContent = item.title || 'Foto del Banco';
+      if (lightboxImg) {
+        lightboxImg.src = item.src || '';
+        lightboxImg.alt = item.title || 'Vista ampliada';
+      }
+      if (lightboxUsage) {
+        if (usages && usages.length > 0) {
+          lightboxUsage.innerHTML = `📌 Publicada actualmente en: <strong>${usages.map(u => esc(u.title)).join(', ')}</strong>`;
+        } else {
+          lightboxUsage.innerHTML = '✨ Foto <strong>disponible</strong> para crear un nuevo producto en 1 clic.';
+        }
+      }
+      if (lightboxCreate) {
+        lightboxCreate.href = buildCreateUrl(item);
+      }
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+    }
+
+    function renderBank() {
+      const items = (window.WorkshopDB && typeof window.WorkshopDB.getImageBank === 'function')
+        ? window.WorkshopDB.getImageBank()
+        : (typeof INITIAL_IMAGE_BANK !== 'undefined' ? INITIAL_IMAGE_BANK : []);
+
+      const usageMap = getUsageMap();
+      const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      const preferredOrder = [
+        'Blanquería & Toallas',
+        'Cajas de Regalo',
+        'Bolsos & Tote Bags',
+        'Neceseres & Organizadores',
+        'Descanso & Satén',
+        'Infantil & Hogar',
+        'Subidas del Taller'
+      ];
+      const catCounts = {};
+      let availableCount = 0;
+
+      items.forEach(it => {
+        if (!it) return;
+        const cat = it.category || 'Subidas del Taller';
+        catCounts[cat] = (catCounts[cat] || 0) + 1;
+        const usages = usageMap[normalizeSrc(it.src)] || [];
+        if (usages.length === 0) availableCount++;
+      });
+
+      const extraCats = Object.keys(catCounts).filter(c => !preferredOrder.includes(c));
+      const allCats = preferredOrder.filter(c => catCounts[c] > 0).concat(extraCats);
+
+      if (pillsWrap) {
+        const pillsHtml = [
+          `<button type="button" class="bank-filter-pill ${activeFilter === 'all' ? 'is-active' : ''}" data-bank-filter="all">Todas (${items.length})</button>`,
+          `<button type="button" class="bank-filter-pill ${activeFilter === 'available' ? 'is-active' : ''}" data-bank-filter="available">Disponibles ✨ (${availableCount})</button>`
+        ].concat(allCats.map(c => `
+          <button type="button" class="bank-filter-pill ${activeFilter === c ? 'is-active' : ''}" data-bank-filter="${esc(c)}">${esc(c)} (${catCounts[c]})</button>
+        `));
+        pillsWrap.innerHTML = pillsHtml.join('');
+
+        pillsWrap.querySelectorAll('.bank-filter-pill').forEach(pill => {
+          pill.addEventListener('click', () => {
+            activeFilter = pill.getAttribute('data-bank-filter') || 'all';
+            renderBank();
+          });
+        });
+      }
+
+      const filtered = items.filter(it => {
+        if (!it) return false;
+        const usages = usageMap[normalizeSrc(it.src)] || [];
+        if (activeFilter === 'available' && usages.length > 0) return false;
+        if (activeFilter !== 'all' && activeFilter !== 'available' && (it.category || 'Subidas del Taller') !== activeFilter) return false;
+        if (!q) return true;
+
+        const usageMatch = usages.some(u => (u.title || '').toLowerCase().includes(q));
+        return (
+          (it.title && it.title.toLowerCase().includes(q)) ||
+          (it.category && it.category.toLowerCase().includes(q)) ||
+          (it.src && it.src.toLowerCase().includes(q)) ||
+          usageMatch
+        );
+      });
+
+      if (countSummary) {
+        countSummary.textContent = `Mostrando ${filtered.length} de ${items.length} fotos · ${availableCount} disponibles`;
+      }
+
+      if (!filtered.length) {
+        gridEl.innerHTML = `
+          <div style="grid-column:1/-1; background:#FFFFFF; border:1px solid #EAE2D7; border-radius:10px; padding:2.5rem 1.5rem; text-align:center; color:#7A726D;">
+            <p style="margin:0 0 0.75rem 0; font-size:0.95rem;">No encontramos fotos con ese filtro o búsqueda.</p>
+            <button type="button" class="btn-admin-outline" id="btn-bank-reset-filters">Mostrar todas las fotos</button>
+          </div>
+        `;
+        const resetBtn = document.getElementById('btn-bank-reset-filters');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            activeFilter = 'all';
+            if (searchInput) searchInput.value = '';
+            renderBank();
+          });
+        }
+        return;
+      }
+
+      gridEl.innerHTML = filtered.map(item => {
+        const usages = usageMap[normalizeSrc(item.src)] || [];
+        const badgeHtml = usages.length > 0
+          ? `<span class="bank-card__badge bank-card__badge--used" title="Publicada en ${esc(usages.map(u => u.title).join(', '))}">📌 En: ${esc(usages[0].title)}${usages.length > 1 ? ` (+${usages.length - 1})` : ''}</span>`
+          : `<span class="bank-card__badge bank-card__badge--available">✨ Disponible</span>`;
+
+        const delBtnHtml = item.custom
+          ? `<button type="button" class="btn-admin-outline btn-bank-del" data-del-id="${esc(item.id)}" style="color:#DC2626;" title="Quitar del banco">🗑️</button>`
+          : '';
+
+        return `
+          <article class="bank-card" data-bank-id="${esc(item.id)}">
+            <div class="bank-card__media" data-zoom-id="${esc(item.id)}" title="Clic para ampliar foto">
+              <img src="${esc(item.src)}" alt="${esc(item.title || 'Foto del Taller')}" loading="lazy" />
+              ${badgeHtml}
+            </div>
+            <div class="bank-card__body">
+              <span class="bank-card__cat">${esc(item.category || 'Taller')}</span>
+              <h4 class="bank-card__title">${esc(item.title || 'Foto del Taller')}</h4>
+              <div class="bank-card__actions">
+                <a href="${buildCreateUrl(item)}" class="btn-admin-cta" title="Armar un producto nuevo con esta foto">✨ Crear Producto</a>
+                <button type="button" class="btn-admin-outline btn-bank-copy" data-copy-src="${esc(item.src)}" title="Copiar ruta de imagen">📋</button>
+                <button type="button" class="btn-admin-outline btn-bank-zoom" data-zoom-id="${esc(item.id)}" title="Ampliar foto">🔍</button>
+                ${delBtnHtml}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      gridEl.querySelectorAll('[data-zoom-id]').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = el.getAttribute('data-zoom-id');
+          const found = items.find(x => x && x.id === id);
+          if (found) openLightbox(found, usageMap[normalizeSrc(found.src)] || []);
+        });
+      });
+
+      gridEl.querySelectorAll('.btn-bank-copy').forEach(btn => {
+        btn.addEventListener('click', () => {
+          copyPathToClipboard(btn.getAttribute('data-copy-src'));
+        });
+      });
+
+      gridEl.querySelectorAll('.btn-bank-del').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-del-id');
+          if (confirm('¿Quitar esta foto subida del Banco de Imágenes?')) {
+            if (window.WorkshopDB && typeof window.WorkshopDB.removeImageFromBank === 'function') {
+              window.WorkshopDB.removeImageFromBank(id);
+            }
+            adminToast('🗑️ Foto quitada del banco.');
+            renderBank();
+          }
+        });
+      });
+    }
+
+    if (searchInput && !searchInput.dataset.wired) {
+      searchInput.dataset.wired = '1';
+      searchInput.addEventListener('input', renderBank);
+    }
+
+    if (toggleUploadBtn && uploadPanel && !toggleUploadBtn.dataset.wired) {
+      toggleUploadBtn.dataset.wired = '1';
+      toggleUploadBtn.addEventListener('click', () => {
+        const isHidden = uploadPanel.style.display === 'none' || !uploadPanel.style.display;
+        uploadPanel.style.display = isHidden ? 'block' : 'none';
+        if (isHidden && uploadTitle) uploadTitle.focus();
+      });
+    }
+
+    if (closeUploadBtn && uploadPanel && !closeUploadBtn.dataset.wired) {
+      closeUploadBtn.dataset.wired = '1';
+      closeUploadBtn.addEventListener('click', () => {
+        uploadPanel.style.display = 'none';
+      });
+    }
+
+    if (uploadForm && !uploadForm.dataset.wired) {
+      uploadForm.dataset.wired = '1';
+      uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = uploadFile && uploadFile.files && uploadFile.files[0];
+        if (!file) {
+          adminToast('⚠️ Seleccioná una foto desde tu celular o computadora.');
+          return;
+        }
+        const title = (uploadTitle ? uploadTitle.value : '').trim() || file.name.replace(/\.[^.]+$/, '') || 'Foto del Taller';
+        const category = (uploadCat ? uploadCat.value : '') || 'Subidas del Taller';
+
+        if (submitUploadBtn) {
+          submitUploadBtn.disabled = true;
+          submitUploadBtn.innerHTML = '<span>⏳ Optimizando foto...</span>';
+        }
+
+        try {
+          let finalUrl = '';
+          let uploadedCloud = false;
+          if (window.WorkshopDB && typeof window.WorkshopDB.processAndUploadImage === 'function') {
+            const up = await window.WorkshopDB.processAndUploadImage(file, 1200, 0.84);
+            finalUrl = up && up.url ? up.url : '';
+            uploadedCloud = !!(up && up.uploaded);
+          }
+
+          if (finalUrl && window.WorkshopDB && typeof window.WorkshopDB.addImageToBank === 'function') {
+            window.WorkshopDB.addImageToBank({ title, category, src: finalUrl });
+          }
+
+          uploadForm.reset();
+          if (uploadPanel) uploadPanel.style.display = 'none';
+          activeFilter = 'all';
+          if (searchInput) searchInput.value = '';
+          renderBank();
+          adminToast(uploadedCloud ? '☁️ Foto guardada en Google Drive y sumada al Banco.' : '📸 Foto optimizada y sumada al Banco del Taller.');
+        } catch (err) {
+          alert('No se pudo subir la foto: ' + (err && err.message ? err.message : 'Error'));
+        } finally {
+          if (submitUploadBtn) {
+            submitUploadBtn.disabled = false;
+            submitUploadBtn.innerHTML = '<span>☁️ Guardar en Banco</span>';
+          }
+        }
+      });
+    }
+
+    if (lightbox && !lightbox.dataset.wired) {
+      lightbox.dataset.wired = '1';
+      if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      if (lightboxCopy) {
+        lightboxCopy.addEventListener('click', () => copyPathToClipboard(currentLightboxSrc));
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+      });
+    }
+
+    renderBank();
   }
 
   // Exponer API y ejecutar al cargar

@@ -140,7 +140,15 @@ document.addEventListener('DOMContentLoaded', () => {
     'p5': '$ 11.500 ARS',
     'p6': '$ 13.200 ARS',
     'p7': '$ 24.500 ARS',
-    'p8': '$ 15.800 ARS'
+    'p8': '$ 15.800 ARS',
+    'p9': '$ 26.800 ARS',
+    'p10': '$ 32.500 ARS',
+    'p11': '$ 19.500 ARS',
+    'p12': '$ 28.900 ARS',
+    'p13': '$ 17.400 ARS',
+    'p14': '$ 14.200 ARS',
+    'p15': '$ 54.000 ARS',
+    'p16': '$ 16.500 ARS'
   };
 
   let displayPrice = product.price || standardPrices[product.id] || '$ 16.500 ARS';
@@ -195,18 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const colorPalette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
     ? window.WorkshopDB.getColorPalette()
     : [
-        { name: 'Crudo Natural', hex: '#F3EFEA' },
+        { name: 'Crudo Natural', hex: '#F3EFE8' },
         { name: 'Champán Seda', hex: '#E8DAC8' },
-        { name: 'Rosa Viejo', hex: '#C87D69' },
-        { name: 'Verde Salvia', hex: '#8A9A86' },
-        { name: 'Terracota Suave', hex: '#A45A44' },
-        { name: 'Gris Perla', hex: '#C5C6C7' }
+        { name: 'Rosa Viejo', hex: '#DFBDB5' },
+        { name: 'Verde Salvia', hex: '#A6B5A7' },
+        { name: 'Terracota Suave', hex: '#C87D69' },
+        { name: 'Gris Perla', hex: '#D3D1CE' },
+        { name: 'Blanco Lino', hex: '#FAF8F5' },
+        { name: 'Celeste Bebé', hex: '#C8DCE8' },
+        { name: 'Vichy Arena', hex: '#D4C3AE' },
+        { name: 'Chocolate', hex: '#6D4C41' },
+        { name: 'Gris Topo', hex: '#7A7671' },
+        { name: 'Verde Esmeralda', hex: '#4D7C6F' }
       ];
 
   const defaultColorsByCategory = {
     'cuidado-personal': ['Champán Seda', 'Crudo Natural', 'Rosa Viejo', 'Gris Perla'],
-    'infantil': ['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Celeste Bruma'],
-    'organizacion': ['Crudo Natural', 'Avellana / Arena', 'Verde Salvia', 'Terracota Suave'],
+    'infantil': ['Crudo Natural', 'Rosa Viejo', 'Verde Salvia', 'Celeste Bebé'],
+    'organizacion': ['Crudo Natural', 'Vichy Arena', 'Verde Salvia', 'Terracota Suave'],
     'hogar': ['Crudo Natural', 'Terracota Suave', 'Verde Salvia', 'Rosa Viejo']
   };
 
