@@ -292,10 +292,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (giftBoxesSec) {
       giftBoxesSec.style.display = settings.show_gift_boxes !== false ? '' : 'none';
     }
+    const showBuilder = settings.show_custom_builder !== false;
+    const atelierBannerSec = document.getElementById('atelier-a-medida');
+    if (atelierBannerSec) {
+      atelierBannerSec.style.display = showBuilder ? '' : 'none';
+    }
     const customBuilderSec = document.getElementById('disenador-a-medida');
     if (customBuilderSec) {
-      customBuilderSec.style.display = settings.show_custom_builder !== false ? '' : 'none';
+      customBuilderSec.style.display = showBuilder ? '' : 'none';
     }
+    const disabledNoticeSec = document.getElementById('disenar-disabled-notice');
+    if (disabledNoticeSec) {
+      disabledNoticeSec.style.display = showBuilder ? 'none' : 'block';
+    }
+    document.querySelectorAll('[data-atelier-link], a[href*="disenar.html"]').forEach(link => {
+      const listItem = link.closest('.side-drawer__list li');
+      if (listItem) {
+        listItem.style.display = showBuilder ? '' : 'none';
+      }
+      link.style.display = showBuilder ? '' : 'none';
+    });
     const fabricShowcaseSec = document.getElementById('muestrario-telas');
     if (fabricShowcaseSec) {
       fabricShowcaseSec.style.display = settings.show_fabric_showcase !== false ? '' : 'none';
@@ -951,6 +967,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentLookbookProduct = null;
   let currentSlideIndex = 0;
   let totalSlides = 0;
+  let lookbookSelectedTone = 'Champán Seda';
 
   function openLookbookModal(productId) {
     const product = products.find(p => p.id === productId);
@@ -1037,15 +1054,16 @@ document.addEventListener('DOMContentLoaded', () => {
       lookbookSelectedTone = availNames[0] || 'Champán Seda';
       if (lbActiveToneEl) lbActiveToneEl.textContent = lookbookSelectedTone;
 
-      lbSwatchesBar.innerHTML = availNames.map((cName, idx) => {
+      const lbSwatchesList = lbSwatchesBar.querySelector('.lookbook-swatches-list') || lbSwatchesBar;
+      lbSwatchesList.innerHTML = availNames.map((cName, idx) => {
         const found = palette.find(c => c.name.toLowerCase() === String(cName).toLowerCase());
         const hex = found ? found.hex : '#DFD3C3';
         return `<button type="button" class="pdp-swatch-dot ${idx === 0 ? 'is-active' : ''}" data-lb-tone="${cName}" style="--swatch-hex: ${hex};" title="${cName}"></button>`;
       }).join('');
 
-      lbSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(btn => {
+      lbSwatchesList.querySelectorAll('[data-lb-tone]').forEach(btn => {
         btn.addEventListener('click', () => {
-          lbSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(b => b.classList.remove('is-active'));
+          lbSwatchesList.querySelectorAll('[data-lb-tone]').forEach(b => b.classList.remove('is-active'));
           btn.classList.add('is-active');
           lookbookSelectedTone = btn.getAttribute('data-lb-tone') || 'Champán Seda';
           if (lbActiveToneEl) lbActiveToneEl.textContent = lookbookSelectedTone;
@@ -1635,7 +1653,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollTopBtn = document.getElementById('btn-dock-scroll-top');
     const homeScrollBtn = document.getElementById('btn-dock-home-scroll');
     const handleScrollToTop = (e) => {
-      if (window.location.pathname.includes('producto.html')) {
+      const targetHref = e && e.currentTarget && e.currentTarget.tagName === 'A'
+        ? e.currentTarget.getAttribute('href')
+        : '';
+      if (targetHref && !targetHref.startsWith('#')) {
+        return;
+      }
+      if (window.location.pathname.includes('producto.html') || window.location.pathname.includes('disenar.html')) {
         if (e && e.currentTarget && e.currentTarget.tagName !== 'A') {
           e.preventDefault();
           window.location.href = 'index.html';
@@ -3185,16 +3209,16 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   // Selector de Tono de Tela en el Modal Lookbook + Agregar a la Bolsa
-  let lookbookSelectedTone = 'Champán Seda';
   const lookbookSwatchesBar = document.getElementById('lookbook-swatches-bar');
   const lookbookActiveToneEl = document.getElementById('lookbook-active-tone');
   const lookbookAddBagBtn = document.getElementById('lookbook-add-bag-btn');
   const lookbookCustomNote = document.getElementById('lookbook-custom-note');
 
   if (lookbookSwatchesBar) {
-    lookbookSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(btn => {
+    const staticSwatchesRoot = lookbookSwatchesBar.querySelector('.lookbook-swatches-list') || lookbookSwatchesBar;
+    staticSwatchesRoot.querySelectorAll('[data-lb-tone]').forEach(btn => {
       btn.addEventListener('click', () => {
-        lookbookSwatchesBar.querySelectorAll('[data-lb-tone]').forEach(b => b.classList.remove('is-active'));
+        staticSwatchesRoot.querySelectorAll('[data-lb-tone]').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         lookbookSelectedTone = btn.getAttribute('data-lb-tone') || 'Champán Seda';
         if (lookbookActiveToneEl) lookbookActiveToneEl.textContent = lookbookSelectedTone;
@@ -3537,6 +3561,13 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       });
     }
 
+    const idealFallback = {
+      saten: 'Fundas de almohada, cofias nocturnas, antifaces acolchados, scrunchies y bolsas de descanso a medida.',
+      waffle: 'Toallas de mano y cuerpo, manteles, caminos de mesa, repasadores, batas livianas y cestos textiles.',
+      lino: 'Organizadores de pared, canastas reforzadas, neceseres de viaje, mantelería rústica y fundas de sillón.',
+      bebe: 'Ajuares de nacimiento, toallones con capucha, babitas, mantitas de apego y cambiadores portátiles.'
+    };
+
     const imgEl = document.getElementById('fabric-showcase-img');
     const badgeEl = document.getElementById('fabric-showcase-badge');
     const kickerEl = document.getElementById('fabric-showcase-kicker');
@@ -3544,6 +3575,8 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     const descEl = document.getElementById('fabric-showcase-desc');
     const touchEl = document.getElementById('fabric-showcase-touch');
     const careEl = document.getElementById('fabric-showcase-care');
+    const idealEl = document.getElementById('fabric-showcase-ideal');
+    const colorsListEl = document.getElementById('fabric-showcase-colors-text');
     const btnLblEl = document.getElementById('fabric-showcase-btn-label');
 
     if (imgEl) imgEl.src = info.img || 'assets/images/hero-textile.jpg';
@@ -3553,35 +3586,43 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     if (descEl) descEl.textContent = info.desc || '';
     if (touchEl) touchEl.textContent = info.touch || '';
     if (careEl) careEl.textContent = info.care || '';
-    if (btnLblEl) btnLblEl.textContent = info.btnLabel || `Ver Creaciones →`;
-    if (fabricFilterBtn) fabricFilterBtn.setAttribute('data-fabric-filter', info.filter || 'todos');
-
-    // Mostrar colores disponibles de esta tela en el muestrario
-    let colorsRow = document.getElementById('fabric-showcase-colors-row');
-    const specsGrid = document.querySelector('.fabric-showcase-specs');
-    if (specsGrid && !colorsRow) {
-      colorsRow = document.createElement('div');
-      colorsRow.id = 'fabric-showcase-colors-row';
-      colorsRow.className = 'fabric-spec-item';
-      colorsRow.style.gridColumn = '1 / -1';
-      specsGrid.appendChild(colorsRow);
+    if (idealEl) {
+      idealEl.textContent = info.ideal || idealFallback[info.id] || 'Piezas textiles confeccionadas a pedido y medidas especiales en el taller.';
     }
-    if (colorsRow) {
+    if (btnLblEl) btnLblEl.textContent = info.btnLabel || 'Ver Catálogo →';
+    if (fabricFilterBtn) fabricFilterBtn.setAttribute('data-fabric-filter', info.filter || 'todos');
+    if (btnOrderWithThisFabric) {
+      btnOrderWithThisFabric.setAttribute('href', `disenar.html?fabric=${encodeURIComponent(info.id)}`);
+    }
+
+    if (colorsListEl) {
       const palette = (window.WorkshopDB && typeof window.WorkshopDB.getColorPalette === 'function')
         ? window.WorkshopDB.getColorPalette()
         : [];
+      const fallbackHexMap = {
+        'champán seda': '#E8DAC8',
+        'crudo natural': '#F3EFE8',
+        'rosa viejo': '#DFBDB5',
+        'terracota suave': '#C87D69',
+        'gris perla': '#D3D1CE',
+        'verde salvia': '#A6B5A7',
+        'blanco lino': '#FAF8F5',
+        'celeste bebé': '#C8DCE8',
+        'vichy arena': '#D4C3AE',
+        'arena tostada': '#D4C3AE',
+        'salvia suave': '#A6B5A7',
+        'blanco nube': '#FAF8F5'
+      };
       const colorsArr = Array.isArray(info.colors) && info.colors.length > 0
         ? info.colors
-        : ['Champán Seda', 'Rosa Viejo', 'Arena Tostada', 'Blanco Nube'];
-      const pills = colorsArr.map(cName => {
-        const found = palette.find(p => p.name.toLowerCase() === String(cName).toLowerCase());
-        const hex = found ? found.hex : '#DFD3C3';
-        return `<span style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.2rem 0.55rem; background:#FFFFFF; border:1px solid #E5DDD3; border-radius:999px; font-size:0.75rem;"><span style="width:10px; height:10px; border-radius:50%; background:${hex}; border:1px solid rgba(0,0,0,0.18);"></span>${cName}</span>`;
-      }).join(' ');
-      colorsRow.innerHTML = `
-        <span class="fabric-spec-label">🎨 TONOS DISPONIBLES EN TALLER PARA ENCARGOS</span>
-        <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.35rem;">${pills}</div>
-      `;
+        : ['Champán Seda', 'Rosa Viejo', 'Crudo Natural', 'Verde Salvia'];
+
+      colorsListEl.innerHTML = colorsArr.map(cName => {
+        const key = String(cName).toLowerCase();
+        const found = palette.find(p => String(p.name || '').toLowerCase() === key);
+        const hex = (found && found.hex) || fallbackHexMap[key] || '#DFD3C3';
+        return `<span class="fabric-tone-pill"><span class="fabric-tone-dot" style="background:${hex};"></span><span>${cName}</span></span>`;
+      }).join('');
     }
   }
 
@@ -3589,11 +3630,23 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     const list = getActiveShowcaseFabrics();
     if (!fabricTabsNav || list.length === 0) return;
 
-    fabricTabsNav.innerHTML = list.map((f, idx) => `
-      <button type="button" class="fabric-tab-btn ${idx === 0 ? 'is-active' : ''}" data-fabric-key="${f.id}" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
-        ${f.tabLabel || `🧵 ${f.heading || f.name}`}
-      </button>
-    `).join('');
+    const swatchFallbacks = {
+      saten: 'linear-gradient(135deg,#EFE4D4,#D8C2A8)',
+      waffle: 'linear-gradient(135deg,#F5F1EA,#DED5C6)',
+      lino: 'linear-gradient(135deg,#DFD6C7,#BFA992)',
+      bebe: 'linear-gradient(135deg,#F3E6E1,#DAB7AC)'
+    };
+
+    fabricTabsNav.innerHTML = list.map((f, idx) => {
+      const bg = f.swatchHex || swatchFallbacks[f.id] || '#DFCFB9';
+      const label = f.tabLabel || f.heading || f.name || 'Tela de Taller';
+      return `
+        <button type="button" class="fabric-tab-btn ${idx === 0 ? 'is-active' : ''}" data-fabric-key="${f.id}" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+          <span class="fabric-tab-swatch" style="background:${bg};"></span>
+          <span class="fabric-tab-name">${label}</span>
+        </button>
+      `;
+    }).join('');
 
     fabricTabsNav.querySelectorAll('.fabric-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3606,10 +3659,15 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   renderFabricShowcaseTabs();
 
   if (fabricFilterBtn) {
-    fabricFilterBtn.addEventListener('click', () => {
+    fabricFilterBtn.addEventListener('click', (e) => {
       const cat = fabricFilterBtn.getAttribute('data-fabric-filter') || 'todos';
       const targetFilterBtn = document.querySelector(`.catalog-filters .filter-btn[data-filter="${cat}"]`);
-      if (targetFilterBtn) targetFilterBtn.click();
+      if (targetFilterBtn) {
+        e.preventDefault();
+        targetFilterBtn.click();
+        const catalogSec = document.getElementById('catalogo');
+        if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   }
 
@@ -3728,6 +3786,22 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
 
   populateCustomBuilderFabricsAndColors();
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectedFabricId = urlParams.get('fabric');
+    if (preselectedFabricId && cbFabricSelect) {
+      const matchedOpt = Array.from(cbFabricSelect.options).find(opt =>
+        opt.getAttribute('data-fabric-id') === preselectedFabricId ||
+        opt.value.toLowerCase().includes(preselectedFabricId.toLowerCase())
+      );
+      if (matchedOpt) {
+        cbFabricSelect.value = matchedOpt.value;
+        cbState.fabricName = matchedOpt.value;
+      }
+    }
+  } catch (err) {
+    console.warn('Error leyendo parámetro fabric:', err);
+  }
   if (cbPieceGrid) {
     const firstPiece = cbPieceGrid.querySelector('.cb-piece-btn.is-active');
     if (firstPiece) {
@@ -3737,13 +3811,17 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
   }
   updateCustomBuilderLiveCard();
 
-  // Botón en el Muestrario de Telas: "✂️ Encargar Diseño a Medida con esta Tela"
+  // Botón en el Muestrario de Telas: navega a disenar.html?fabric=... o scrollea si el módulo está en esta página
   if (btnOrderWithThisFabric) {
-    btnOrderWithThisFabric.addEventListener('click', () => {
+    btnOrderWithThisFabric.addEventListener('click', (e) => {
+      const builderSec = document.getElementById('disenador-a-medida');
+      if (!builderSec) return;
+
+      e.preventDefault();
       if (currentShowcaseFabric && cbFabricSelect) {
         const targetOpt = Array.from(cbFabricSelect.options).find(opt =>
           opt.getAttribute('data-fabric-id') === currentShowcaseFabric.id ||
-          opt.value.toLowerCase().includes((currentShowcaseFabric.heading || '').toLowerCase())
+          opt.value.toLowerCase().includes((currentShowcaseFabric.heading || currentShowcaseFabric.name || '').toLowerCase())
         );
         if (targetOpt) {
           cbFabricSelect.value = targetOpt.value;
@@ -3751,12 +3829,9 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
           updateCustomBuilderLiveCard();
         }
       }
-      const builderSec = document.getElementById('disenador-a-medida');
-      if (builderSec) {
-        builderSec.style.display = '';
-        builderSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      showToast(`✂️ Tela "${currentShowcaseFabric ? currentShowcaseFabric.heading : 'de taller'}" seleccionada en el Diseñador a Medida.`);
+      builderSec.style.display = '';
+      builderSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast(`✂️ Tela "${currentShowcaseFabric ? (currentShowcaseFabric.heading || currentShowcaseFabric.name) : 'de taller'}" seleccionada en el Diseñador a Medida.`);
     });
   }
 

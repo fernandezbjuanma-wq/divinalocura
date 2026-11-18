@@ -15,13 +15,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 
   <!-- Hoja de Estilos Principal -->
-  <link rel="stylesheet" href="style.css?v=20261114v9">
+  <link rel="stylesheet" href="style.css?v=20261118v10">
 
   <!-- Scripts de Datos e Interactividad (Vanilla JS) -->
-  <script src="banco-data.js?v=20261114v9" defer></script>
-  <script src="products-data.js?v=20261114v9" defer></script>
-  <script src="workshop-db.js?v=20261114v9" defer></script>
-  <script src="main.js?v=20261114v9" defer></script>
+  <script src="banco-data.js?v=20261118v10" defer></script>
+  <script src="products-data.js?v=20261118v10" defer></script>
+  <script src="workshop-db.js?v=20261118v10" defer></script>
+  <script src="main.js?v=20261118v10" defer></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -50,7 +50,7 @@
           <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
           <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
           <li><a href="#muestrario-telas" class="side-drawer__link" data-close-drawer>Muestrario de Telas de Elena</a></li>
-          <li><a href="#disenador-a-medida" class="side-drawer__link" data-close-drawer>✂️ Diseñá tu Pieza a Medida</a></li>
+          <li><a href="disenar.html" class="side-drawer__link" data-close-drawer data-atelier-link>✂️ Diseñá tu Pieza a Medida</a></li>
           <li><a href="#armador-regalos" class="side-drawer__link" data-close-drawer>Cajas de Regalo (-10% OFF)</a></li>
           <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
@@ -570,8 +570,8 @@
                 <span class="gift-box-card__old-price">$ 40.000 ARS</span>
                 <strong class="gift-box-card__new-price">$ 36.000 ARS</strong>
               </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_saten" style="width:100%;">
-                <span>🎁 Personalizar y Encargar esta Caja</span>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_saten">
+                <span>🎁 Personalizar esta Caja</span>
               </button>
             </div>
           </article>
@@ -595,8 +595,8 @@
                 <span class="gift-box-card__old-price">$ 38.800 ARS</span>
                 <strong class="gift-box-card__new-price">$ 34.920 ARS</strong>
               </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_bebe" style="width:100%;">
-                <span>🎁 Personalizar y Encargar esta Caja</span>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_bebe">
+                <span>🎁 Personalizar esta Caja</span>
               </button>
             </div>
           </article>
@@ -620,8 +620,8 @@
                 <span class="gift-box-card__old-price">$ 43.000 ARS</span>
                 <strong class="gift-box-card__new-price">$ 38.700 ARS</strong>
               </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_hogar" style="width:100%;">
-                <span>🎁 Personalizar y Encargar esta Caja</span>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_hogar">
+                <span>🎁 Personalizar esta Caja</span>
               </button>
             </div>
           </article>
@@ -725,15 +725,15 @@
               </div>
             </div>
 
-            <div class="fabric-showcase-footer" style="flex-wrap:wrap; gap:0.85rem;">
+            <div class="fabric-showcase-footer">
               <div class="fabric-tones-preview" id="fabric-tones-preview-wrap">
                 <span class="fabric-tones-label">Colores en taller:</span>
-                <strong id="fabric-showcase-colors-text" style="font-size:0.8rem; color:#4A433E;">Champán, Crudo Natural, Rosa Viejo, Gris Perla, Negro</strong>
+                <div class="fabric-tones-dots" id="fabric-showcase-colors-text">Champán Seda, Rosa Viejo, Crudo Natural, Gris Perla</div>
               </div>
 
-              <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
-                <a href="#disenador-a-medida" class="btn btn--primary" id="btn-order-with-this-fabric">
-                  <span>✂️ Encargar Diseño a Medida con esta Tela</span>
+              <div class="fabric-showcase-actions">
+                <a href="disenar.html?fabric=saten" class="btn btn--primary" id="btn-order-with-this-fabric" data-atelier-link>
+                  <span>✂️ Encargar Diseño con esta Tela</span>
                 </a>
                 <a href="#catalogo" class="btn btn--secondary" id="fabric-showcase-filter-btn" data-fabric-filter="cuidado-personal">
                   <span id="fabric-showcase-btn-label">Ver Catálogo &rarr;</span>
@@ -745,235 +745,47 @@
       </div>
     </section>
 
-    <!-- NUEVA SECCIÓN ESTRELLA: CONSTRUCTOR DE DISEÑO A MEDIDA + SUBIDA DE IMAGEN / BOCETO PARA LA MÁQUINA DE ELENA -->
-    <section class="custom-builder-section" id="disenador-a-medida" aria-labelledby="custom-builder-title">
+    <!-- MÓDULO EDITORIAL: INVITACIÓN AL DISEÑADOR A MEDIDA (disenar.html) -->
+    <section class="atelier-banner-section" id="atelier-a-medida" aria-labelledby="custom-builder-title">
       <div class="container">
-        <header class="section-header">
-          <span class="section-eyebrow" id="builder-eyebrow">Atelier a Medida &middot; Directo a la Máquina de Elena</span>
-          <h2 class="section-title" id="custom-builder-title">Diseñá tu Pieza a Medida o Subí tu Idea</h2>
-          <p class="section-desc" id="custom-builder-desc">
-            ¿Viste un diseño que te encantó o necesitás una medida especial con las telas de Elena? Armá acá paso a paso lo que querés hacer o subí una foto/boceto de referencia para que Elena lo confeccione en su máquina.
-          </p>
-        </header>
-
-        <div class="custom-builder-layout">
-          <!-- Columna Izquierda: Constructor Paso a Paso + Subida de Imagen -->
-          <div class="custom-builder-controls">
-            
-            <!-- PASO 1: ¿Qué pieza querés crear? -->
-            <div class="cb-step-block">
-              <div class="cb-step-header">
-                <span class="cb-step-num">PASO 1</span>
-                <h3 class="cb-step-title">¿Qué pieza querés que Elena confeccione?</h3>
+        <div class="atelier-card">
+          <div class="atelier-card__content">
+            <span class="section-eyebrow" id="builder-eyebrow">Atelier a Medida &middot; Directo a la Máquina de Elena</span>
+            <h2 class="section-title" id="custom-builder-title">Diseñá tu Pieza a Medida o Subí tu Idea</h2>
+            <p class="atelier-card__desc" id="custom-builder-desc">
+              ¿Viste un diseño que te encantó o necesitás una medida especial con las telas de Elena? Ingresá al módulo interactivo para armar tu ficha paso a paso o subir una foto o boceto para su máquina.
+            </p>
+            <div class="atelier-steps-mini">
+              <div class="atelier-mini-step">
+                <span>01</span>
+                <strong>Elegí pieza &amp; medidas</strong>
               </div>
-              <div class="cb-piece-grid" id="cb-piece-grid">
-                <button type="button" class="cb-piece-btn is-active" data-piece-name="Neceser / Cartuchera a Medida" data-piece-base="14500" data-piece-dims="24 x 16 x 8 cm">
-                  <span class="cb-piece-icon">👝</span>
-                  <strong>Neceser / Cartuchera</strong>
-                  <small>Desde $ 14.500</small>
-                </button>
-                <button type="button" class="cb-piece-btn" data-piece-name="Funda de Almohada o Almohadón" data-piece-base="16500" data-piece-dims="50 x 70 cm (o 45 x 45 cm)">
-                  <span class="cb-piece-icon">🛏️</span>
-                  <strong>Funda / Almohadón</strong>
-                  <small>Desde $ 16.500</small>
-                </button>
-                <button type="button" class="cb-piece-btn" data-piece-name="Organizador Colgante o Cesto Textil" data-piece-base="21000" data-piece-dims="60 x 35 cm con bolsillos">
-                  <span class="cb-piece-icon">🧺</span>
-                  <strong>Organizador / Cesto</strong>
-                  <small>Desde $ 21.000</small>
-                </button>
-                <button type="button" class="cb-piece-btn" data-piece-name="Camino de Mesa / Mantel / Individuales" data-piece-base="22500" data-piece-dims="180 x 45 cm">
-                  <span class="cb-piece-icon">🍽️</span>
-                  <strong>Mesa &amp; Cocina</strong>
-                  <small>Desde $ 22.500</small>
-                </button>
-                <button type="button" class="cb-piece-btn" data-piece-name="Ajuar de Bebé / Toallón / Babita" data-piece-base="19500" data-piece-dims="80 x 80 cm con capucha">
-                  <span class="cb-piece-icon">🍼</span>
-                  <strong>Ajuar &amp; Bebés</strong>
-                  <small>Desde $ 19.500</small>
-                </button>
-                <button type="button" class="cb-piece-btn" data-piece-name="Diseño Especial (Según tu Foto o Idea)" data-piece-base="18500" data-piece-dims="A medida según indicación">
-                  <span class="cb-piece-icon">✨</span>
-                  <strong>Otro Diseño / Tu Idea</strong>
-                  <small>A cotizar / Base $ 18.500</small>
-                </button>
+              <div class="atelier-mini-step">
+                <span>02</span>
+                <strong>Tela, tono &amp; detalles</strong>
+              </div>
+              <div class="atelier-mini-step">
+                <span>03</span>
+                <strong>Subí tu foto o boceto</strong>
               </div>
             </div>
-
-            <!-- PASO 2: Elegí la Tela de Elena y el Color -->
-            <div class="cb-step-block">
-              <div class="cb-step-header">
-                <span class="cb-step-num">PASO 2</span>
-                <h3 class="cb-step-title">Elegí la Tela del Taller de Elena y el Color</h3>
-              </div>
-              <div class="cb-row-2col">
-                <div>
-                  <label for="cb-fabric-select" class="admin-label">Tela disponible en el taller de Elena</label>
-                  <select id="cb-fabric-select" class="admin-select">
-                    <option value="Algodón Waffle Nido de Abeja">Algodón Waffle Nido de Abeja (100% Algodón)</option>
-                    <option value="Satén de Seda Antifrizz">Satén de Seda Antifrizz (120 g/m²)</option>
-                    <option value="Lino Rústico & Lienzo">Lino Rústico &amp; Lienzo Pesado</option>
-                    <option value="Tusor 100% Algodón Prelavado">Tusor 100% Algodón Prelavado</option>
-                    <option value="Gasa Pañalera & Doble Felpa">Gasa Pañalera &amp; Toalla Doble Felpa</option>
-                    <option value="A asesorar con Elena">Quiero que Elena me recomiende la mejor tela</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="admin-label">Color de tela (<strong id="cb-selected-color-lbl">Crudo Natural</strong>)</label>
-                  <div class="cb-color-swatches" id="cb-color-swatches">
-                    <!-- Renderizado dinámico con la paleta de colores de Elena -->
-                  </div>
-                </div>
-              </div>
+            <div class="atelier-card__actions">
+              <a href="disenar.html" class="btn btn--primary" id="btn-open-atelier" data-atelier-link>
+                <span>Abrir Diseñador a Medida &rarr;</span>
+              </a>
+              <a href="#muestrario-telas" class="btn btn--secondary">
+                <span>Explorar Telas del Taller</span>
+              </a>
             </div>
-
-            <!-- PASO 3: Medidas, Detalles de Máquina y Bordado -->
-            <div class="cb-step-block">
-              <div class="cb-step-header">
-                <span class="cb-step-num">PASO 3</span>
-                <h3 class="cb-step-title">Medidas, Terminaciones en Máquina &amp; Bordado</h3>
-              </div>
-              <div class="cb-row-2col" style="margin-bottom:0.85rem;">
-                <div>
-                  <label for="cb-dimensions-input" class="admin-label">Medidas aproximadas (o estándar)</label>
-                  <input type="text" id="cb-dimensions-input" class="admin-input" value="24 x 16 x 8 cm" placeholder="Ej: 40x40 cm / Estándar / Para colchón cuna" />
-                </div>
-                <div>
-                  <label for="cb-embroidery-input" class="admin-label">🪡 Nombre o Iniciales a Bordar (opcional)</label>
-                  <input type="text" id="cb-embroidery-input" class="admin-input" maxlength="24" placeholder="Ej: Olivia / Iniciales M.G. (Sin cargo extra)" />
-                </div>
-              </div>
-
-              <label class="admin-label" style="margin-bottom:0.4rem; display:block;">Detalles de confección en la máquina de Elena (podés marcar varios):</label>
-              <div class="cb-finishings-checks" id="cb-finishings-checks">
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Puntilla de algodón" checked />
-                  <span>🎀 Puntilla de algodón</span>
-                </label>
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Guarda cuadrillé Vichy" />
-                  <span>🏁 Guarda Vichy</span>
-                </label>
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Forro interior impermeable" />
-                  <span>💧 Interior impermeable</span>
-                </label>
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Relleno acolchado suave" />
-                  <span>☁️ Acolchado / Guata</span>
-                </label>
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Cierre reforzado con tirador" />
-                  <span>🤐 Cierre reforzado</span>
-                </label>
-                <label class="cb-check-pill">
-                  <input type="checkbox" value="Tiras para colgar / Moños" />
-                  <span>🎗️ Tiras / Moños</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- PASO 4: Subir Foto de Referencia, Captura o Boceto + Explicación -->
-            <div class="cb-step-block cb-step-block--upload">
-              <div class="cb-step-header">
-                <span class="cb-step-num">PASO 4</span>
-                <h3 class="cb-step-title">📸 Subí una Foto de Idea, Captura o Boceto para Elena (Opcional)</h3>
-              </div>
-              <p style="font-size:0.82rem; color:#5F5852; margin:0 0 0.75rem 0; line-height:1.45;">
-                Si viste una foto en Pinterest/Instagram, hiciste un dibujito en papel o querés mostrarle el rincón de tu casa para que combine, subila acá. Elena la recibe directo en la orden de su taller.
-              </p>
-
-              <div class="cb-upload-zone">
-                <label class="cb-upload-btn" for="cb-reference-file">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                  <span id="cb-upload-btn-text">📷 Subir Foto / Boceto desde mi Celular o Compu</span>
-                  <input type="file" id="cb-reference-file" accept="image/*" style="display:none;" />
-                </label>
-
-                <div id="cb-upload-preview-wrap" style="display:none; align-items:center; gap:0.75rem; background:#FFFFFF; padding:0.5rem 0.75rem; border-radius:8px; border:1px solid #D9C3B0;">
-                  <img id="cb-upload-preview-img" src="" alt="Foto de referencia subida" style="width:52px; height:52px; object-fit:cover; border-radius:6px; border:1px solid #A45A44;" />
-                  <div style="font-size:0.78rem; color:#2B2625;">
-                    <strong>¡Foto adjuntada a tu diseño!</strong><br>
-                    <span style="color:#658572;">Elena la verá en tu ficha de confección</span>
-                  </div>
-                  <button type="button" id="cb-clear-upload-btn" class="btn-admin-outline" style="padding:0.25rem 0.55rem; font-size:0.74rem; color:#C62828;">Quitar ✕</button>
-                </div>
-              </div>
-
-              <div style="margin-top:0.85rem;">
-                <label for="cb-extra-notes" class="admin-label">Contale a Elena cómo te gustaría que quede tu diseño:</label>
-                <textarea id="cb-extra-notes" class="admin-textarea" rows="2" placeholder="Ej: Hola Elena! Quiero que tenga dos bolsillos adentro y que combine con la foto que subí..."></textarea>
-              </div>
-            </div>
-
           </div>
 
-          <!-- Columna Derecha: Ficha Técnica en Vivo para la Máquina de Elena -->
-          <aside class="custom-builder-preview" aria-label="Vista previa de la ficha de confección">
-            <div class="cb-live-card" id="custom-builder-live-card">
-              <div class="cb-live-card__top">
-                <span class="cb-live-kicker">🪡 FICHA DE CONFECCIÓN EN VIVO &middot; TALLER ELENA</span>
-                <h4 class="cb-live-title" id="cb-live-piece-title">Neceser / Cartuchera a Medida</h4>
-              </div>
-
-              <!-- Canvas / Vista Previa de Tela + Foto Subida -->
-              <div class="cb-live-visual" id="cb-live-visual">
-                <div class="cb-live-swatch-circle" id="cb-live-swatch-circle" style="background:#F3EFEA;"></div>
-                <div class="cb-live-visual-info">
-                  <span class="cb-live-visual-fabric" id="cb-live-fabric-name">Algodón Waffle Nido de Abeja</span>
-                  <strong class="cb-live-visual-color" id="cb-live-color-name">Tono: Crudo Natural</strong>
-                </div>
-                <div class="cb-live-ref-thumb" id="cb-live-ref-thumb" style="display:none;">
-                  <img id="cb-live-ref-img" src="" alt="Tu foto de referencia" />
-                  <span>📸 Tu Idea</span>
-                </div>
-              </div>
-
-              <!-- Detalles Técnicos para la Máquina -->
-              <ul class="cb-live-specs">
-                <li>
-                  <span>📏 Medidas:</span>
-                  <strong id="cb-live-dims">24 x 16 x 8 cm</strong>
-                </li>
-                <li>
-                  <span>✂️ Terminaciones en máquina:</span>
-                  <strong id="cb-live-finishings">Puntilla de algodón</strong>
-                </li>
-                <li>
-                  <span>🪡 Bordado artesanal:</span>
-                  <strong id="cb-live-embroidery">Sin bordado</strong>
-                </li>
-                <li id="cb-live-notes-row" style="display:none;">
-                  <span>💬 Indicaciones para Elena:</span>
-                  <strong id="cb-live-notes">-</strong>
-                </li>
-              </ul>
-
-              <!-- Valor Estimado + Seña 50% -->
-              <div class="cb-live-pricing">
-                <div class="cb-live-price-row">
-                  <span>Valor estimado de confección:</span>
-                  <strong class="cb-live-total" id="cb-live-price">$ 14.500 ARS</strong>
-                </div>
-                <div class="cb-live-deposit-row">
-                  <span>⏳ Seña 50% para iniciar en máquina:</span>
-                  <strong id="cb-live-deposit">$ 7.250 ARS</strong>
-                </div>
-              </div>
-
-              <div class="cb-live-actions">
-                <button type="button" class="btn btn--add-to-bag" id="btn-add-custom-design-to-cart" style="width:100%;">
-                  <span>🛍️ Sumar Mi Diseño a la Bolsa de Pedidos</span>
-                </button>
-                <button type="button" class="btn btn--whatsapp-order" id="btn-wa-custom-design" style="width:100%;">
-                  <span>💬 Consultar este Diseño a Elena por WhatsApp</span>
-                </button>
-              </div>
-              <p class="cb-live-footnote">
-                🌸 Elena revisa personalmente tu ficha y foto antes de cortar la tela para confirmarte todos los detalles.
-              </p>
+          <div class="atelier-card__media">
+            <img src="assets/images/banco/neceseres-organizadores/cesto-floral-bordado-ambiente.jpg" alt="Cesto bordado artesanal con etiqueta Divina Locura Deco en el taller de Elena" loading="lazy" />
+            <div class="atelier-card__media-badge">
+              <span>Confección Exclusiva</span>
+              <strong>Seña 50% &middot; Saldo contra entrega</strong>
             </div>
-          </aside>
+          </div>
         </div>
       </div>
     </section>
@@ -1088,13 +900,14 @@
           <div class="footer-col">
             <span class="footer-col__kicker">Colección</span>
             <div class="footer-links">
+              <a href="#hero">Inicio</a>
               <a href="#categorias">Categorías</a>
               <a href="#catalogo">Catálogo</a>
               <a href="#muestrario-telas">Muestrario de Telas</a>
-              <a href="#disenador-a-medida">✂️ Diseñá tu Pieza a Medida</a>
-              <a href="#armador-regalos">Cajas de Regalo (-10%)</a>
+              <a href="disenar.html" data-atelier-link>Diseño a Medida</a>
+              <a href="#armador-regalos">Cajas de Regalo</a>
               <a href="#espacios">Espacios &amp; Estilismo</a>
-              <a href="#sobre-elena">El Taller</a>
+              <a href="#sobre-elena">El Taller de Elena</a>
             </div>
           </div>
           <div class="footer-col">
@@ -2781,7 +2594,7 @@
             </label>
             <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
               <input type="checkbox" id="setting-show-custom-builder" checked style="width:17px; height:17px; accent-color:#A45A44;" />
-              <span>✂️ Mostrar Diseñador a Medida + Subir Foto</span>
+              <span>✂️ Mostrar Módulo Diseñador a Medida (disenar.html)</span>
             </label>
             <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
               <input type="checkbox" id="setting-show-fabric-showcase" checked style="width:17px; height:17px; accent-color:#A45A44;" />
