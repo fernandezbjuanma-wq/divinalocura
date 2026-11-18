@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (breadcrumbCategory) {
     const catLabel = product.categoryName || 'Colección Textil';
     breadcrumbCategory.textContent = catLabel;
-    breadcrumbCategory.href = `index.html#catalogo`;
+    breadcrumbCategory.href = `catalogo.html?categoria=${encodeURIComponent(product.category || 'todos')}`;
   }
   if (breadcrumbCurrent) {
     breadcrumbCurrent.textContent = product.title;

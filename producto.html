@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
   
-  <link rel="stylesheet" href="style.css?v=20261118v10" />
+  <link rel="stylesheet" href="style.css?v=20261118v11" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -38,14 +38,14 @@
       <nav class="side-drawer__nav">
         <ul class="side-drawer__list">
           <li><a href="index.html" class="side-drawer__link" data-close-drawer>Portada Principal</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer>Colección Completa</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="cuidado-personal">Dormitorio &amp; Satén</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
-          <li><a href="index.html#muestrario-telas" class="side-drawer__link" data-close-drawer>Muestrario de Telas de Elena</a></li>
+          <li><a href="catalogo.html" class="side-drawer__link" data-close-drawer>Colección Completa (16)</a></li>
+          <li><a href="catalogo.html?categoria=cuidado-personal" class="side-drawer__link" data-close-drawer>Dormitorio &amp; Satén</a></li>
+          <li><a href="catalogo.html?categoria=hogar" class="side-drawer__link" data-close-drawer>Cocina &amp; Waffle</a></li>
+          <li><a href="catalogo.html?categoria=organizacion" class="side-drawer__link" data-close-drawer>Organización &amp; Accesorios</a></li>
+          <li><a href="catalogo.html?categoria=infantil" class="side-drawer__link" data-close-drawer>Bebés &amp; Infantil</a></li>
+          <li><a href="disenar.html#muestrario-telas" class="side-drawer__link" data-close-drawer data-fabric-link>Muestrario de Telas de Elena</a></li>
           <li><a href="disenar.html" class="side-drawer__link" data-close-drawer data-atelier-link>✂️ Diseñá tu Pieza a Medida</a></li>
-          <li><a href="index.html#armador-regalos" class="side-drawer__link" data-close-drawer>Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="catalogo.html#armador-regalos" class="side-drawer__link" data-close-drawer data-gift-link>Cajas de Regalo (-10% OFF)</a></li>
           <li><a href="index.html#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="index.html#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; WhatsApp</a></li>
@@ -79,7 +79,7 @@
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
-        <a href="index.html#catalogo" class="header-text-btn header-nav-link">&larr; COLECCIÓN</a>
+        <a href="catalogo.html" class="header-text-btn header-nav-link">&larr; CATÁLOGO</a>
       </div>
 
       <!-- Centro: Logotipo Minimalista Tipográfico -->
@@ -112,9 +112,9 @@
       <nav class="pdp-breadcrumbs" aria-label="Ubicación en la tienda">
         <a href="index.html">Inicio</a>
         <span class="separator">/</span>
-        <a href="index.html#catalogo">Colección</a>
+        <a href="catalogo.html">Colección</a>
         <span class="separator">/</span>
-        <a href="index.html#catalogo" id="pdp-breadcrumb-category">Categoría</a>
+        <a href="catalogo.html" id="pdp-breadcrumb-category">Categoría</a>
         <span class="separator">/</span>
         <span class="current" id="pdp-breadcrumb-current">Cargando pieza...</span>
       </nav>
@@ -412,10 +412,10 @@
             <div class="footer-links">
               <a href="index.html">Inicio</a>
               <a href="index.html#categorias">Categorías</a>
-              <a href="index.html#catalogo">Catálogo</a>
-              <a href="index.html#muestrario-telas">Muestrario de Telas</a>
+              <a href="catalogo.html">Catálogo</a>
+              <a href="disenar.html#muestrario-telas" data-fabric-link>Muestrario de Telas</a>
               <a href="disenar.html" data-atelier-link>Diseño a Medida</a>
-              <a href="index.html#armador-regalos">Cajas de Regalo</a>
+              <a href="catalogo.html#armador-regalos" data-gift-link>Cajas de Regalo</a>
               <a href="index.html#espacios">Espacios &amp; Estilismo</a>
               <a href="index.html#sobre-elena">El Taller de Elena</a>
             </div>
@@ -1782,10 +1782,10 @@
   </div>
 
   <!-- Scripts -->
-  <script src="banco-data.js?v=20261118v10"></script>
-  <script src="products-data.js?v=20261118v10"></script>
-  <script src="workshop-db.js?v=20261118v10"></script>
-  <script src="main.js?v=20261118v10"></script>
-  <script src="producto.js?v=20261118v10"></script>
+  <script src="banco-data.js?v=20261118v11"></script>
+  <script src="products-data.js?v=20261118v11"></script>
+  <script src="workshop-db.js?v=20261118v11"></script>
+  <script src="main.js?v=20261118v11"></script>
+  <script src="producto.js?v=20261118v11"></script>
 </body>
 </html>

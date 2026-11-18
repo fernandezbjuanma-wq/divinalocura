@@ -1,0 +1,2577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Completo &amp; Cajas de Regalo — Divina Locura Deco</title>
+  
+  <meta name="description" content="Explorá el catálogo completo de 16 creaciones artesanales y cajas de regalo con 10% OFF confeccionadas a mano por Elena en Divina Locura Deco.">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#F3EFE8">
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- Hoja de Estilos Principal -->
+  <link rel="stylesheet" href="style.css?v=20261118v11">
+
+  <!-- Scripts de Datos e Interactividad (Vanilla JS) -->
+  <script src="banco-data.js?v=20261118v11" defer></script>
+  <script src="products-data.js?v=20261118v11" defer></script>
+  <script src="workshop-db.js?v=20261118v11" defer></script>
+  <script src="main.js?v=20261118v11" defer></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+  <!-- Barra de anuncio superior (Estilo Boutique) -->
+  <aside class="announcement-bar" aria-label="Aviso de la tienda">
+    <div class="container announcement-bar__content">
+      <span id="top-announcement-text">Confección artesanal &middot; Piezas únicas elaboradas a fuego lento por Elena</span>
+    </div>
+  </aside>
+
+  <!-- MENÚ LATERAL DESPLEGABLE (DRAWER ESTILO ZARA HOME) -->
+  <aside class="side-drawer" id="side-drawer" aria-hidden="true">
+    <div class="side-drawer__backdrop" id="drawer-backdrop"></div>
+    <div class="side-drawer__panel">
+      <div class="side-drawer__header">
+        <div class="side-drawer__brand">DIVINA LOCURA <span class="brand-tag">DECO</span></div>
+        <button type="button" class="side-drawer__close" id="drawer-close-btn" aria-label="Cerrar menú">✕</button>
+      </div>
+      <nav class="side-drawer__nav">
+        <ul class="side-drawer__list">
+          <li><a href="index.html" class="side-drawer__link" data-close-drawer>Portada Principal</a></li>
+          <li><a href="#catalogo" class="side-drawer__link is-current" data-close-drawer data-filter="todos">Colección Completa (16)</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="cuidado-personal">Dormitorio &amp; Satén</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
+          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
+          <li><a href="disenar.html#muestrario-telas" class="side-drawer__link" data-close-drawer data-fabric-link>Muestrario de Telas de Elena</a></li>
+          <li><a href="disenar.html" class="side-drawer__link" data-close-drawer data-atelier-link>✂️ Diseñá tu Pieza a Medida</a></li>
+          <li><a href="#armador-regalos" class="side-drawer__link" data-close-drawer data-gift-link>Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="index.html#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
+          <li><a href="index.html#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
+          <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
+        </ul>
+      </nav>
+      <div class="side-drawer__footer">
+        <div class="drawer-contact-block">
+          <span class="drawer-contact-kicker">ATENCIÓN PERSONALIZADA</span>
+          <a href="https://wa.me/5491136932471?text=Hola%20Elena%2C%20estoy%20en%20el%20Cat%C3%A1logo%20de%20Divina%20Locura%20Deco%20y%20quer%C3%ADa%20hacerte%20una%20consulta." target="_blank" rel="noopener noreferrer" class="drawer-editorial-link">
+            <span>WhatsApp &middot; Taller Elena</span>
+            <span class="drawer-editorial-arrow">&#8599;</span>
+          </a>
+          <a href="https://www.instagram.com/divina.locura.deco/" target="_blank" rel="noopener noreferrer" class="drawer-editorial-link" data-ig-link>
+            <span>Instagram &middot; @divina.locura.deco</span>
+            <span class="drawer-editorial-arrow">&#8599;</span>
+          </a>
+        </div>
+        <span class="side-drawer__brand-note">Confección artesanal &middot; Piezas únicas por Elena</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Navegación de Marca / Header Estilo Zara Home -->
+  <header class="site-header site-header--zarahome" id="header">
+    <div class="container-fluid site-header__inner">
+      <!-- Izquierda: Menú Hamburguesa + Enlace a Portada + Logotipo Didone -->
+      <div class="site-header__left">
+        <button type="button" class="btn-hamburger" id="hamburger-btn" aria-label="Abrir menú de navegación">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <a href="index.html" class="header-text-btn header-nav-link">&larr; PORTADA</a>
+        <a href="index.html" class="brand-link">
+          <span class="brand-name">DIVINA LOCURA</span>
+          <span class="brand-tag">DECO</span>
+        </a>
+      </div>
+
+      <!-- Centro: Buscador Minimalista Subrayado (Inspiración Zara Home) -->
+      <div class="site-header__center">
+        <div class="header-search">
+          <label for="header-search-input" class="header-search__label">BUSCAR</label>
+          <input type="text" id="header-search-input" class="header-search__input" placeholder="" autocomplete="off" aria-label="Buscar en catálogo" />
+          <button type="button" class="header-search__clear" id="header-search-clear" style="display:none;" aria-label="Limpiar búsqueda">✕</button>
+        </div>
+      </div>
+
+      <!-- Derecha: Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos y Contacto -->
+      <div class="site-header__right">
+        <button type="button" class="header-text-btn" id="header-login-btn">
+          <span id="header-user-label">MI CUENTA</span>
+        </button>
+        <button type="button" class="header-text-btn header-cart-btn" id="header-cart-btn" aria-label="Abrir bolsa de pedidos">
+          <span>BOLSA</span>
+          <span class="header-cart-badge" id="header-cart-count">0</span>
+        </button>
+        <a href="#contacto" class="header-text-btn header-help-link">CONTACTO</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal del Módulo Catálogo Completo & Regalería -->
+  <main class="catalog-page" id="main-content">
+    <div class="container atelier-page__breadcrumbs-wrap">
+      <nav class="pdp-breadcrumbs" aria-label="Ubicación en la tienda">
+        <a href="index.html">Inicio</a>
+        <span class="separator">/</span>
+        <span class="current" id="catalog-breadcrumb-current">Colección Completa</span>
+      </nav>
+    </div>
+
+    <!-- CATÁLOGO COMPLETO CON LAS 16 CREACIONES REALES DE ELENA -->
+    <section class="catalog-section catalog-section--module" id="catalogo" aria-labelledby="catalog-title">
+      <div class="container">
+        
+        <div class="catalog-header">
+          <div class="catalog-header__text">
+            <span class="section-eyebrow" id="catalog-eyebrow">Confección Auténtica de Elena &middot; 16 Creaciones</span>
+            <h1 class="section-title" id="catalog-title">Catálogo Completo del Taller</h1>
+            <p class="section-desc" id="catalog-desc">Recorré todas las líneas de blanquería, descanso, organización y bebés hechas a mano con telas nobles prelavadas.</p>
+          </div>
+
+          <!-- Botonera de Filtros Interactiva -->
+          <nav class="catalog-filters" aria-label="Filtros del catálogo">
+            <button class="filter-btn is-active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="cuidado-personal">Cuidado Personal</button>
+            <button class="filter-btn" data-filter="hogar">Hogar &amp; Cocina</button>
+            <button class="filter-btn" data-filter="organizacion">Organización</button>
+            <button class="filter-btn" data-filter="infantil">Bebés &amp; Infantil</button>
+          </nav>
+        </div>
+
+        <!-- Grilla Simétrica Lookbook con Todos los Productos de Elena -->
+        <div class="lookbook-grid lookbook-grid--full" id="products-grid" data-catalog-mode="full">
+
+          <!-- Producto 1: DESTACADO GRANDE (Línea Satén Antifrizz) -->
+          <article class="catalog-item catalog-item--large" data-category="cuidado-personal">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg" alt="Set Skincare &amp; Antifrizz de Satén" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Favorito Skincare &middot; Satén</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg">Con Modelo</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/sleep-bonnet-and-mask-on.jpg">Set Completo</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/models/model-satin-skincare.jpg">En Cama</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg">Detalle Satén</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Cuidado Personal</span>
+                <span class="catalog-item__texture">Satén de seda premium anti-frizz</span>
+              </div>
+              <h3 class="catalog-item__title">Set Skincare &amp; Antifrizz Completo</h3>
+              <p class="catalog-item__desc">
+                Cuidado integral para tu piel y cabello. Incluye funda de almohada de satén sedoso para evitar el quiebre y las marcas al dormir, cofia doble faz regulable, scrunchies y bolsita de lino artesanal.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Consultar Colores <small>/ kit completo</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Set Skincare & Antifrizz de Satén" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                  <svg class="btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 2: MEDIANO (Repasador Waffle con Guarda Vichy) -->
+          <article class="catalog-item catalog-item--medium" data-category="hogar">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg" alt="Repasador Waffle con Guarda Vichy" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Clásico del Taller</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg">En Banco</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/models/model-waffle-kitchen.jpg">En Cocina</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/cat-waffle.jpg">Pila Waffle</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/cat-table.jpg">Mesa &amp; Textura</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Hogar &amp; Cocina</span>
+                <span class="catalog-item__texture">Nido de abeja 100% puro algodón</span>
+              </div>
+              <h3 class="catalog-item__title">Repasador Waffle con Guarda Vichy</h3>
+              <p class="catalog-item__desc">
+                Tejido nido de abeja súper absorbente con detalle en cuadrillé mostaza, verde o chocolate y etiqueta artesanal de Divina Locura Deco.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Confección a Mano</span>
+                <button class="btn btn--whatsapp" data-product-name="Repasador Waffle con Guarda Vichy">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 3: MEDIANO (Organizador Colgante de Pared) -->
+          <article class="catalog-item catalog-item--medium" data-category="organizacion">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/hanging-wall-organizer-in-room.jpg" alt="Organizador Colgante de Pared" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Diseño Práctico</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/hanging-wall-organizer-in-room.jpg">En Habitación</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/fabric-wall-organizers-on-wall.jpg">En Pared</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/fabric-organizer-pockets-on-tabl.jpg">En Mesa</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/fabric-wall-organizer-hanging-on.jpg">Diseño Colgante</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Organización</span>
+                <span class="catalog-item__texture">Tela tramada, madera &amp; bolsillos</span>
+              </div>
+              <h3 class="catalog-item__title">Organizador Colgante de Pared Artesanal</h3>
+              <p class="catalog-item__desc">
+                Ideal para colgar en cuna, dormitorio, baño o taller. Cuenta con bolsillos reforzados para tener libros, accesorios o artículos diarios ordenados.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">A Medida</span>
+                <button class="btn btn--whatsapp" data-product-name="Organizador Colgante de Pared">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 4: DESTACADO GRANDE (Muñecas de Apego & Colección Bebés) -->
+          <article class="catalog-item catalog-item--large" data-category="infantil">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/plush-dolls-on-wooden-shelf.jpg" alt="Muñecos de Apego y Colección Bebés" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Bordado Personalizado</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/plush-dolls-on-wooden-shelf.jpg">En Repisa</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/models/model-baby-nursery.jpg">Con Bebé</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/nursery-products-displayed-on-shelf.jpg">Nursery</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/cat-bedding.jpg">Ajuar &amp; Cuna</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Bebés &amp; Infantil</span>
+                <span class="catalog-item__texture">Algodón suave &amp; bordado artesanal</span>
+              </div>
+              <h3 class="catalog-item__title">Muñecas de Apego Conejitas Personalizadas</h3>
+              <p class="catalog-item__desc">
+                Compañeras de sueños únicas para los más pequeños. Confeccionadas en suave liencillo de algodón con vestidos en rayas o flores, y el nombre de la niña o bebé bordado a mano con dedicación.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Personalizado <small>/ con nombre</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Muñecas de Apego Conejitas Personalizadas" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                  <svg class="btn__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 5: MEDIANO (Antifaces Acolchados) -->
+          <article class="catalog-item catalog-item--medium" data-category="cuidado-personal">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/satin-sleep-mask-on-marble.jpg" alt="Antifaces de Descanso Acolchados en Satén" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Descanso Sereno &middot; Satén</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/satin-sleep-mask-on-marble.jpg">En Mármol</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/woman-touching-satin-sleep-mask.jpg">Con Modelo</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/sleep-mask-on-wooden-surface.jpg">En Madera</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/satin-sleep-mask-on-block.jpg">En Pedestal</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Cuidado Personal</span>
+                <span class="catalog-item__texture">Satén premium, felpa suave &amp; elástico forrado</span>
+              </div>
+              <h3 class="catalog-item__title">Antifaces de Descanso Acolchados</h3>
+              <p class="catalog-item__desc">
+                Bloquean completamente la luz para un sueño profundo y reparador. Su elástico forrado en satén cuida el cabello y no deja marcas en el rostro.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Varios Tonos <small>/ hecho a mano</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Antifaz de Descanso Acolchado" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 6: MEDIANO (Neceseres & Cartucheras Artesanales) -->
+          <article class="catalog-item catalog-item--medium" data-category="organizacion">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg" alt="Neceseres y Cartucheras de Tela Rústica" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Básico Esencial &middot; Lino</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg">En Pedestal</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/woman-opening-cosmetic-bag.jpg">Con Modelo</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/cosmetic-bag-on-linen-surface.jpg">En Lino</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/models/model-bag-sanitizer.jpg">Portasani &amp; Bolso</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Organización &amp; Accesorios</span>
+                <span class="catalog-item__texture">Lino rústico, forro impermeable &amp; cierre reforzado</span>
+              </div>
+              <h3 class="catalog-item__title">Neceseres, Cartucheras &amp; Portasani</h3>
+              <p class="catalog-item__desc">
+                Confeccionados en telas tramadas con forro interior lavable para maquillaje, elementos de aseo o papelería. Incluye opción con mosquetón metálico para enganchar en el bolso.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Personalizado <small>/ varios tamaños</small></span>
+                <button class="btn btn--whatsapp" data-product-name="Neceseres y Cartucheras Artesanales" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 7: MEDIANO (Ajuar de Bebé & Organizador Conejito) -->
+          <article class="catalog-item catalog-item--medium" data-category="infantil">
+            <div class="catalog-item__media">
+              <img src="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg" alt="Ajuar Infantil y Organizador Conejito" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Ajuar de Nacimiento</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg">Conejito Ajuar</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/models/model-towel-baby.jpg">Con Bebé</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/nursery-products-displayed-on-shelf.jpg">Rincón Nursery</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/cat-baskets.jpg">Cesto Algodón</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Bebés &amp; Maternidad</span>
+                <span class="catalog-item__texture">Toalla doble felpa, algodón puro &amp; bordado</span>
+              </div>
+              <h3 class="catalog-item__title">Ajuar de Bebé &amp; Toallitas con Nombre</h3>
+              <p class="catalog-item__desc">
+                Piezas hipoalergénicas ultra suaves para la piel del bebé, organizadores bordados con orejitas de conejito y toallitas con nombre personalizado hecho a mano.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Bordado a Elección</span>
+                <button class="btn btn--whatsapp" data-product-name="Ajuar de Bebé y Toallitas Bordadas" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Producto 8: MEDIANO (Porta Rollos Cilíndrico con Cierre) -->
+          <article class="catalog-item catalog-item--medium" data-category="hogar">
+            <div class="catalog-item__media">
+              <img src="assets/images/models/model-bath-roll.jpg" alt="Porta Rollos Cilíndrico Acolchado" class="catalog-item__img" loading="lazy" />
+              <span class="catalog-item__tag">Detalle de Baño &middot; Exclusivo</span>
+              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
+                <button type="button" class="view-pill is-active" data-view-src="assets/images/models/model-bath-roll.jpg">En Baño</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/handcrafted-cosmetic-bag-fabric-.jpg">Cesto Textil</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg">Tocador Spa</button>
+                <button type="button" class="view-pill" data-view-src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg">Blanquería Algodón</button>
+              </div>
+            </div>
+            <div class="catalog-item__info">
+              <div class="catalog-item__meta">
+                <span class="catalog-item__category">Hogar &amp; Baño</span>
+                <span class="catalog-item__texture">Lino jaspeado, cierre y puntilla</span>
+              </div>
+              <h3 class="catalog-item__title">Porta Rollos Cilíndrico Acolchado</h3>
+              <p class="catalog-item__desc">
+                Dispenser de papel higiénico o pañuelos confeccionado en tela con cierre reforzado y aplique de pasamanería bordada dorada.
+              </p>
+              <div class="catalog-item__footer">
+                <span class="catalog-item__price">Diseño Exclusivo</span>
+                <button class="btn btn--whatsapp" data-product-name="Porta Rollos Cilíndrico Acolchado" aria-label="Pedir por WhatsApp">
+                  <span>Pedir por WhatsApp</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MEJORA 3: ARMADOR INTERACTIVO DE SETS & CAJAS DE REGALO CON 10% OFF AUTOMÁTICO -->
+    <section class="gift-builder-section" id="armador-regalos" aria-labelledby="gift-builder-title">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-eyebrow" id="gifts-eyebrow">Edición Especial &middot; Regalería de Autor</span>
+          <h2 class="section-title" id="gift-builder-title">Cajas de Regalo &amp; Sets con 10% OFF</h2>
+          <p class="section-desc" id="gift-builder-desc">
+            Combinaciones pensadas por Elena para agasajar o renovar tu hogar. Presentadas en bolsa de lino reutilizable perfumada con lavanda y tarjeta dedicatoria manuscrita sin cargo.
+          </p>
+        </header>
+
+        <div class="gift-boxes-grid">
+          <!-- Set 1: Caja Mandala Blanca & Blanquería -->
+          <article class="gift-box-card" data-gift-id="gift_saten" data-gift-title="Caja Regalo · Mandala Calada & Blanquería Blanco Lino (-10%)" data-gift-price="$ 36.000 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg" alt="Caja Regalo Mandala Calada Blanco Lino" loading="lazy" />
+              <span class="gift-box-card__badge">Ahorrás 10% &middot; Caja Calada</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Blanquería Bordada &middot; Regalo Estrella</span>
+              <h3 class="gift-box-card__title">Caja Mandala Calada &amp; Blanco Lino</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ 1 Toallón doble felpa crudo con mandala blanca bordada</li>
+                <li>✓ 1 Toalla de rostro a juego + etiqueta artesanal</li>
+                <li>✓ Caja rígida blanca con tapa ventana mandala calada</li>
+                <li>✓ Cinta raso + Tarjeta manuscrita por Elena</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 40.000 ARS</span>
+                <strong class="gift-box-card__new-price">$ 36.000 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_saten">
+                <span>🎁 Personalizar esta Caja</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Set 2: Caja Rosa Viejo, Broderie & Volados -->
+          <article class="gift-box-card" data-gift-id="gift_bebe" data-gift-title="Caja Regalo · Ajuar Rosa Viejo, Broderie & Volados (-10%)" data-gift-price="$ 34.920 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-set-rosa-volados.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/banco/cajas-regalo/caja-set-rosa-volados.jpg" alt="Caja Set Rosa Viejo Broderie y Volados" loading="lazy" />
+              <span class="gift-box-card__badge">Bordado Incluido &middot; -10%</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Rosa Viejo &middot; Baño o Nacimiento</span>
+              <h3 class="gift-box-card__title">Set Rosa Viejo, Broderie &amp; Volados</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ 1 Toalla rosa coral con guarda broderie y volado floral</li>
+                <li>✓ Detalle botón de madera natural &amp; lazo blanco</li>
+                <li>✓ Caja rígida blanca con tapa ventana mandala calada</li>
+                <li>✓ Perfumado lavanda + Tarjeta dedicatoria</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 38.800 ARS</span>
+                <strong class="gift-box-card__new-price">$ 34.920 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_bebe">
+                <span>🎁 Personalizar esta Caja</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Set 3: Caja Terracota & Pasamanería Dorada -->
+          <article class="gift-box-card" data-gift-id="gift_hogar" data-gift-title="Caja Regalo · Set Anfitriona Terracota & Pasamanería Dorada (-10%)" data-gift-price="$ 38.700 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-toalla-terracota-dorada.jpg">
+            <div class="gift-box-card__media">
+              <img src="assets/images/banco/cajas-regalo/caja-toalla-terracota-dorada.jpg" alt="Caja Regalo Terracota y Pasamaneria Dorada" loading="lazy" />
+              <span class="gift-box-card__badge">Ahorrás 10% &middot; Edición Premium</span>
+            </div>
+            <div class="gift-box-card__body">
+              <span class="gift-box-card__kicker">Terracota &amp; Dorado &middot; Iniciales Grabadas</span>
+              <h3 class="gift-box-card__title">Set Anfitriona Terracota &amp; Guarda Dorada</h3>
+              <ul class="gift-box-card__includes">
+                <li>✓ Dúo de toallas terracota y crudo con pasamanería dorada</li>
+                <li>✓ Etiqueta colgante de madera con iniciales grabadas</li>
+                <li>✓ Cordón trenzado dorado + Caja calada de regalo</li>
+                <li>✓ Tarjeta dedicatoria manuscrita sin cargo</li>
+              </ul>
+              <div class="gift-box-card__pricing">
+                <span class="gift-box-card__old-price">$ 43.000 ARS</span>
+                <strong class="gift-box-card__new-price">$ 38.700 ARS</strong>
+              </div>
+              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_hogar">
+                <span>🎁 Personalizar esta Caja</span>
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <!-- Barra Interactiva de Tarjeta Dedicatoria y Bordado para la Caja Seleccionada -->
+        <div class="gift-dedication-panel" id="gift-dedication-panel">
+          <div class="gift-dedication-panel__header">
+            <div>
+              <span class="gift-dedication-kicker">✨ PERSONALIZACIÓN DE TU CAJA DE REGALO</span>
+              <h4 class="gift-dedication-title" id="gift-active-box-name">Caja Regalo · Mandala Calada &amp; Blanquería Blanco Lino ($ 36.000 ARS)</h4>
+            </div>
+            <span class="gift-dedication-tag">10% OFF Aplicado</span>
+          </div>
+
+          <div class="gift-dedication-form-grid">
+            <div>
+              <label for="gift-input-recipient" class="admin-label">¿Para quién es el regalo? (o nombre a bordar)</label>
+              <input type="text" id="gift-input-recipient" class="admin-input" placeholder="Ej: Para Lucía / Bordar nombre: Olivia" />
+            </div>
+            <div>
+              <label for="gift-input-tone" class="admin-label">Paleta de color preferida</label>
+              <select id="gift-input-tone" class="admin-select">
+                <option value="Tonos Crudo & Champán">Tonos Crudo &amp; Champán</option>
+                <option value="Tonos Rosa Viejo & Tierra">Tonos Rosa Viejo &amp; Tierra</option>
+                <option value="Tonos Verde Salvia & Lino">Tonos Verde Salvia &amp; Lino</option>
+                <option value="A elección de Elena">A elección de Elena</option>
+              </select>
+            </div>
+            <div>
+              <label for="gift-input-message" class="admin-label">Dedicatoria en tarjeta manuscrita por Elena (opcional)</label>
+              <input type="text" id="gift-input-message" class="admin-input" placeholder="Ej: ¡Feliz cumple amiga! Con mucho amor..." />
+            </div>
+            <div class="gift-dedication-cta-col">
+              <button type="button" class="btn btn--add-to-bag" id="btn-add-gift-to-cart" style="width:100%; height:44px;">
+                <span>🛍️ Sumar Caja a la Bolsa (-10%)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVITACIÓN EDITORIAL AL MÓDULO DE DISEÑO A MEDIDA & MUESTRARIO DE TELAS -->
+    <section class="atelier-banner-section" id="atelier-a-medida" aria-labelledby="custom-builder-title">
+      <div class="container">
+        <div class="atelier-card">
+          <div class="atelier-card__content">
+            <span class="section-eyebrow" id="builder-eyebrow">Atelier a Medida &middot; Directo a la Máquina de Elena</span>
+            <h2 class="section-title" id="custom-builder-title">¿Buscás una Medida Especial o Querés Elegir la Tela?</h2>
+            <p class="atelier-card__desc" id="custom-builder-desc">
+              Pasá por nuestro módulo de Diseño a Medida y Muestrario de Telas para armar tu ficha técnica paso a paso, ver especificaciones de fibras o subir tu propia foto de referencia.
+            </p>
+            <div class="atelier-card__actions">
+              <a href="disenar.html" class="btn btn--primary" id="btn-open-atelier" data-atelier-link>
+                <span>✂️ Abrir Diseñador a Medida &rarr;</span>
+              </a>
+              <a href="disenar.html#muestrario-telas" class="btn btn--secondary" data-fabric-link>
+                <span>Explorar Muestrario de Telas</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="atelier-card__media">
+            <img src="assets/images/banco/neceseres-organizadores/cesto-floral-bordado-ambiente.jpg" alt="Cesto bordado artesanal con etiqueta Divina Locura Deco en el taller de Elena" loading="lazy" />
+            <div class="atelier-card__media-badge">
+              <span>Confección Exclusiva</span>
+              <strong>Seña 50% &middot; Saldo contra entrega</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pie de Página Editorial -->
+  <footer class="site-footer" id="contacto">
+    <div class="container site-footer__inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <span class="brand-name">Divina Locura</span>
+          <span class="brand-tag">DECO</span>
+          <p id="footer-brand-desc">Textiles artesanales y piezas utilitarias en tela por Elena.</p>
+        </div>
+        <div class="footer-columns">
+          <div class="footer-col">
+            <span class="footer-col__kicker">Colección</span>
+            <div class="footer-links">
+              <a href="index.html">Inicio</a>
+              <a href="index.html#categorias">Categorías</a>
+              <a href="catalogo.html">Catálogo</a>
+              <a href="disenar.html#muestrario-telas" data-fabric-link>Muestrario de Telas</a>
+              <a href="disenar.html" data-atelier-link>Diseño a Medida</a>
+              <a href="catalogo.html#armador-regalos" data-gift-link>Cajas de Regalo</a>
+              <a href="index.html#espacios">Espacios &amp; Estilismo</a>
+              <a href="index.html#sobre-elena">El Taller de Elena</a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <span class="footer-col__kicker">Atelier &amp; Contacto</span>
+            <div class="footer-contact-links">
+              <a href="https://wa.me/5491136932471?text=Hola%20Elena%2C%20estoy%20en%20la%20tienda%20Divina%20Locura%20Deco%20y%20quer%C3%ADa%20hacerte%20una%20consulta." target="_blank" rel="noopener noreferrer" class="footer-editorial-contact">
+                <span>WhatsApp &middot; Elena</span>
+                <span class="footer-editorial-arrow">&#8599;</span>
+              </a>
+              <a href="https://www.instagram.com/divina.locura.deco/" target="_blank" rel="noopener noreferrer" class="footer-editorial-contact" data-ig-link>
+                <span>Instagram &middot; @divina.locura.deco</span>
+                <span class="footer-editorial-arrow">&#8599;</span>
+              </a>
+              <a href="#contacto" class="footer-editorial-contact">
+                <span>Asistente Virtual</span>
+                <span class="footer-editorial-arrow">&rarr;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy" id="footer-copy-text">&copy; 2026 Divina Locura Deco &mdash; Confección artesanal por Elena. Diseñado con calidez &amp; dedicación.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SUBFLOOR DE ADMINISTRACIÓN (MÁS ABAJO, FUERA DE LA BARRA MARRÓN DEL SITIO) -->
+  <div class="site-subfloor" id="site-subfloor">
+    <div class="container site-subfloor__inner">
+      <div class="subfloor-bar">
+        <div class="subfloor-status">
+          <span class="subfloor-dot"></span>
+          <span>Taller Textil Divina Locura &middot; Área Interna de Gestión</span>
+        </div>
+        <button type="button" class="btn-subfloor-admin" id="btn-toggle-footer-admin" title="Abrir ventana flotante de acceso al Panel de Control">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span id="subfloor-btn-label">🔒 Panel de Control &middot; Elena &amp; Juanma</span>
+        </button>
+      </div>
+
+      <!-- PANEL DE CONTROL ORDENADO EN EL SUBFLOOR (Desplegable aquí abajo) -->
+      <section class="footer-admin-dock" id="footer-admin-dock" aria-label="Panel de Control de Administración" style="display:none;">
+        <div class="footer-admin-dock__header">
+          <div class="footer-admin-dock__title">
+            <span class="footer-admin-pill">💻 Panel de Control de Taller</span>
+            <span class="footer-admin-status">● Sistema en línea</span>
+          </div>
+          <div class="footer-admin-dock__tools">
+            <a href="index.html" class="btn-dock-scroll-top" id="btn-dock-scroll-top" title="Volver a la portada principal de la tienda">← Volver al Inicio</a>
+            <a href="admin.html" class="btn-dock-direct" title="Abrir portal de pantalla completa">Abrir Panel Completo ↗</a>
+            <button type="button" class="btn-dock-close" id="btn-dock-close" aria-label="Cerrar panel">✕</button>
+          </div>
+        </div>
+
+        <div class="footer-admin-dock__grid">
+          
+          <!-- Bloque 1: Ventas & Clientas -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">📋</span>
+              <h4>Ventas &amp; Clientas</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin-pedidos.html"><span>Pedidos &amp; Entregas</span> <small class="dock-badge" id="dock-orders-badge">0</small></a></li>
+              <li><a href="admin-pedidos.html#directorio"><span>Directorio de Clientas</span></a></li>
+              <li><a href="admin-chat.html"><span>Chat con Clientas</span> <small class="dock-badge" id="dock-chat-badge">0</small></a></li>
+            </ul>
+          </div>
+
+          <!-- Bloque 2: Producción & Telas -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">✂️</span>
+              <h4>Taller &amp; Producción</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin-produccion.html"><span>Pipeline Confección (5 Fases)</span> <small class="dock-badge" id="dock-prod-badge">0</small></a></li>
+              <li><a href="admin-stock.html"><span>Stock &amp; Muestrario de Telas</span></a></li>
+              <li><a href="admin-productos.html"><span>Catálogo, Fotos &amp; Colores</span></a></li>
+              <li><a href="admin-banco.html"><span>🖼️ Banco de Imágenes (105+ Fotos)</span></a></li>
+            </ul>
+          </div>
+
+          <!-- Bloque 3: Finanzas & Tienda -->
+          <div class="footer-dock-card">
+            <div class="footer-dock-card__header">
+              <span class="footer-dock-card__icon">💰</span>
+              <h4>Economía &amp; Textos</h4>
+            </div>
+            <ul class="footer-dock-list">
+              <li><a href="admin.html"><span>Tablero Resumen General</span></a></li>
+              <li><a href="admin-finances.html"><span>Ganancias &amp; Calculadora Costos</span></a></li>
+              <li><a href="admin-configuracion.html"><span>✍️ Cambiar Textos y Secciones</span></a></li>
+              <li><a href="admin-guia.html"><span>Guía Operativa de Taller (Elena &amp; Juanma)</span></a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Barra inferior de herramientas rápidas -->
+        <div class="footer-admin-dock__footer">
+          <div class="dock-footer-actions">
+            <a href="index.html" class="btn-dock-action btn-dock-action--home" id="btn-dock-home-scroll" title="Volver a la portada principal de la tienda">
+              <span>🏠 Volver al Inicio (Portada)</span>
+            </a>
+            <button type="button" class="btn-dock-action" id="btn-dock-edit-texts" title="Cambiar los textos de la página o activar/desactivar Cajas de Regalo">
+              <span>✍️ Cambiar Textos / Secciones</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="dock-backup-btn" title="Descargar copia de seguridad en JSON">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Descargar Respaldo JSON</span>
+            </button>
+            <button type="button" class="btn-dock-action" id="dock-github-btn" title="Publicar cambios a GitHub">
+              <span>🐙 Publicar GitHub</span>
+            </button>
+            <button type="button" class="btn-dock-action btn-dock-action--logout" id="dock-logout-btn">
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- El Panel de Control vive en su propia sección apartada e independiente: admin.html -->
+  <div id="admin-bar" class="is-hidden" style="display:none;" aria-hidden="true"></div>
+
+
+  <!-- MODAL EDITORIAL: Lookbook & Ficha de Creación (Inspiración Anthropologie) -->
+  <div class="lookbook-modal" id="lookbook-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lookbook-card">
+      <button type="button" class="lookbook-card__close" id="lookbook-close-btn" aria-label="Cerrar ficha">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+
+      <!-- Galería Lookbook Multivista (Izquierda) -->
+      <div class="lookbook-gallery">
+        <div class="lookbook-gallery__main">
+          <div class="lookbook-carousel-track" id="lookbook-carousel-track">
+            <!-- Diapositivas inyectadas por JavaScript -->
+          </div>
+
+          <!-- Botones de Navegación de Galería -->
+          <button type="button" class="lookbook-nav-btn lookbook-nav-btn--prev" id="lookbook-prev-btn" aria-label="Foto anterior">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button type="button" class="lookbook-nav-btn lookbook-nav-btn--next" id="lookbook-next-btn" aria-label="Siguiente foto">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <!-- Puntos indicadores -->
+          <div class="lookbook-dots" id="lookbook-dots"></div>
+        </div>
+
+        <!-- Tira de Miniaturas (Thumbnails) para cambiar de vista -->
+        <div class="lookbook-thumbs" id="lookbook-thumbs"></div>
+      </div>
+
+      <!-- Ficha Editorial & Detalles de Confección (Derecha) -->
+      <div class="lookbook-details">
+        <div class="lookbook-details__header">
+          <div class="lookbook-kicker" id="lookbook-kicker">EDICIÓN ARTESANAL &middot; TALLER DE ELENA</div>
+          <h2 class="lookbook-title" id="lookbook-title">Nombre del Producto</h2>
+          <div class="lookbook-price-row">
+            <span class="lookbook-price" id="lookbook-price">$12.500</span>
+            <span class="lookbook-badge" id="lookbook-texture-pill">Satén de Seda</span>
+          </div>
+        </div>
+
+        <div class="lookbook-details__content">
+          <!-- Historia de la Pieza -->
+          <div class="lookbook-section">
+            <h4 class="lookbook-section-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              <span>Historia de la Creación &middot; Elena en su Taller</span>
+            </h4>
+            <p class="lookbook-story-text" id="lookbook-story">Historia artesanal de la confección...</p>
+          </div>
+
+          <!-- Detalles & Confección -->
+          <div class="lookbook-section">
+            <h4 class="lookbook-section-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Detalles &amp; Propósito</span>
+            </h4>
+            <p class="lookbook-desc-text" id="lookbook-desc">Descripción técnica y materiales...</p>
+          </div>
+
+          <!-- Cuidados Slow-Fashion -->
+          <div class="lookbook-section lookbook-section--care">
+            <h4 class="lookbook-section-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span>Cuidados Textiles Recomendados</span>
+            </h4>
+            <p class="lookbook-care-text">Lavar con agua fría en ciclo delicado o a mano. No retorcer. Secar tendido a la sombra para conservar la pureza de las fibras nobles.</p>
+          </div>
+        </div>
+
+        <!-- Acciones: Personalización, Agregar a la Bolsa & Pedido por WhatsApp -->
+        <div class="lookbook-actions">
+          <div class="lookbook-custom-box">
+            <div class="lookbook-swatches-bar" id="lookbook-swatches-bar">
+              <span class="lookbook-swatches-label">Tono de Tela: <strong id="lookbook-active-tone">Champán Seda</strong></span>
+              <div class="lookbook-swatches-list">
+                <button type="button" class="pdp-swatch-btn is-active" data-lb-tone="Champán Seda" title="Champán Seda"><span class="pdp-swatch-circle" style="background:#E8DAC8;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Crudo Natural" title="Crudo Natural"><span class="pdp-swatch-circle" style="background:#F3EFE8;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Rosa Viejo" title="Rosa Viejo"><span class="pdp-swatch-circle" style="background:#D9B8AE;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Terracota Suave" title="Terracota Suave"><span class="pdp-swatch-circle" style="background:#B86B52;"></span></button>
+                <button type="button" class="pdp-swatch-btn" data-lb-tone="Verde Salvia" title="Verde Salvia"><span class="pdp-swatch-circle" style="background:#A2B2A4;"></span></button>
+              </div>
+            </div>
+            <label for="lookbook-custom-note" class="lookbook-custom-label" style="margin-top:0.5rem;">
+              <span>🪡 Bordado a mano o nota especial (opcional):</span>
+            </label>
+            <input type="text" id="lookbook-custom-note" class="lookbook-custom-input" placeholder="Ej: Bordar nombre 'Emma' en Hilo Dorado / Medida especial" />
+          </div>
+
+          <div class="lookbook-actions__buttons">
+            <button type="button" class="btn btn--add-to-bag" id="lookbook-add-bag-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+              <span>Agregar a mi Bolsa de Pedidos</span>
+            </button>
+            <button type="button" class="btn btn--whatsapp-order" id="lookbook-whatsapp-cta">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>Consultar a Elena por WhatsApp</span>
+            </button>
+          </div>
+
+          <div class="lookbook-guarantee" id="lookbook-guarantee">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Confección artesanal individual por Elena en su taller &middot; Buenos Aires</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MI CUENTA DE CLIENTA (INICIO DE SESIÓN & REGISTRO EXCLUSIVO CLIENTAS) -->
+  <div class="admin-modal" id="client-login-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--profiles">
+      
+      <!-- Estado NO Logueado: Registro / Inicio Rápido -->
+      <div id="client-view-logged-out" class="client-auth-box">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+          <span class="section-eyebrow" style="color:var(--accent-terracotta);">Bienvenida al Taller</span>
+          <h3 class="admin-modal__title" style="margin-top:0.25rem;">Mi Cuenta de Clienta</h3>
+          <p class="admin-modal__desc">Completá tus datos para agilizar tus pedidos de confección y recibir el seguimiento directo de Elena por WhatsApp o email.</p>
+        </div>
+
+        <form id="client-register-form" class="client-form" onsubmit="return false;">
+          <div class="client-form-grid">
+            <div class="admin-form-group">
+              <label for="reg-client-name" class="admin-label">Nombre y Apellido *</label>
+              <input type="text" id="reg-client-name" class="admin-input" placeholder="Ej: Mariana Gómez" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-phone" class="admin-label">WhatsApp / Teléfono *</label>
+              <input type="tel" id="reg-client-phone" class="admin-input" placeholder="Ej: 11 5555 5555" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-email" class="admin-label">Correo Electrónico (opcional)</label>
+              <input type="email" id="reg-client-email" class="admin-input" placeholder="ejemplo@correo.com" />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="reg-client-address" class="admin-label">Dirección o Localidad de Entrega</label>
+              <input type="text" id="reg-client-address" class="admin-input" placeholder="Ej: Palermo, CABA / Rosario, Santa Fe" />
+            </div>
+          </div>
+
+          <div class="client-form-footer">
+            <button type="button" class="btn btn--profile btn--profile-elena" id="btn-save-client-account" style="width:100%;">
+              <span>🌸 Guardar mis datos e Ingresar</span>
+            </button>
+            <p class="client-privacy-note">Tus datos se guardan de forma segura en tu navegador para autocompletar tus futuras compras con Elena.</p>
+            <div class="client-admin-switch-row">
+              <span>¿Pertenecés al equipo de taller?</span>
+              <button type="button" class="btn-link-admin-switch" id="btn-switch-to-team-modal">Ingresar como Elena o Juanma 🔐</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Estado LOGUEADO: Perfil, Pedidos Anteriores y Chat Directo con Elena -->
+      <div id="client-view-logged-in" class="client-auth-box" style="display:none;">
+        <div class="admin-modal__header" style="text-align:center; margin-bottom:1rem;">
+          <div class="profile-badge-inline" style="background:#F6EFEA; color:#8F4F3D;">🌸 Clienta Registrada</div>
+          <h3 class="admin-modal__title" id="logged-client-name" style="margin-top:0.35rem;">¡Hola, Mariana!</h3>
+          <p class="admin-modal__desc">Seguí el estado de tus piezas a medida, chateá directo con Elena y gestioná tus entregas.</p>
+        </div>
+
+        <!-- Resumen rápido de clienta -->
+        <div class="client-quick-kpis">
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" id="client-kpi-orders-count">0</span>
+            <span class="client-kpi-pill__lbl">Mis Pedidos</span>
+          </div>
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" id="client-kpi-active-count">0</span>
+            <span class="client-kpi-pill__lbl">En Confección</span>
+          </div>
+          <div class="client-kpi-pill">
+            <span class="client-kpi-pill__val" style="color:#2E7D32;">● En línea</span>
+            <span class="client-kpi-pill__lbl">Taller Elena</span>
+          </div>
+        </div>
+
+        <!-- Pestañas internas para la clienta -->
+        <nav class="client-tabs-nav" aria-label="Secciones de Mi Cuenta">
+          <button type="button" class="client-tab-btn is-active" id="btn-client-tab-orders" data-ctab="orders">
+            <span>📋 Mis Pedidos</span>
+          </button>
+          <button type="button" class="client-tab-btn" id="btn-client-tab-chat" data-ctab="chat">
+            <span>💬 Chat con Elena</span>
+          </button>
+          <button type="button" class="client-tab-btn" id="btn-client-tab-profile" data-ctab="profile">
+            <span>📍 Mis Datos</span>
+          </button>
+        </nav>
+
+        <!-- PANE 1: Mis Pedidos con Fecha Estimada y Mensaje de Elena -->
+        <div class="client-tab-pane" id="cpane-orders" style="display:block;">
+          <div id="client-orders-list" class="client-orders-list" style="max-height:260px;">
+            <p class="client-orders-empty">Aún no has enviado pedidos desde la web.</p>
+          </div>
+        </div>
+
+        <!-- PANE 2: Chat Directo con el Taller de Elena -->
+        <div class="client-tab-pane" id="cpane-chat" style="display:none;">
+          <div class="client-direct-chat-box">
+            <div style="font-size:0.78rem; color:var(--text-secondary); display:flex; justify-content:space-between; align-items:center;">
+              <span>🌸 Conversación con el taller</span>
+              <span style="color:#2E7D32; font-weight:600;">• Taller Activo</span>
+            </div>
+            <div class="client-chat-history" id="client-chat-history">
+              <p style="color:var(--text-muted); font-size:0.8rem; text-align:center; margin:auto;">Iniciá una conversación directa con Elena sobre tus pedidos o telas.</p>
+            </div>
+            <form id="client-direct-chat-form" style="display:flex; gap:0.4rem;">
+              <input type="text" id="client-chat-input" class="workshop-input" placeholder="Escribile tu consulta o mensaje a Elena..." required autocomplete="off" style="font-size:0.82rem; padding:0.5rem 0.75rem;" />
+              <button type="submit" class="btn-workshop-save" style="padding:0.5rem 0.9rem; font-size:0.8rem;">
+                <span>Enviar</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANE 3: Mis Datos de Envío -->
+        <div class="client-tab-pane" id="cpane-profile" style="display:none;">
+          <div class="client-profile-card">
+            <div class="client-profile-row">
+              <span class="client-profile-label">WhatsApp:</span>
+              <strong class="client-profile-val" id="logged-client-phone">-</strong>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Email:</span>
+              <span class="client-profile-val" id="logged-client-email">-</span>
+            </div>
+            <div class="client-profile-row">
+              <span class="client-profile-label">Dirección / Entrega:</span>
+              <span class="client-profile-val" id="logged-client-address">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="client-logged-actions">
+          <button type="button" class="btn btn--secondary" id="btn-open-cart-from-profile">
+            <span>🛍️ Ver mi Bolsa de Pedidos</span>
+          </button>
+          <button type="button" class="btn btn--admin-logout" id="btn-logout-client">
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
+        <button type="button" class="btn btn--secondary" id="client-login-cancel-btn">Volver a la Tienda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FLOTANTE CENTRADO: ACCESO Y GESTIÓN DE ADMINISTRADORES (ELENA & JUANMA) -->
+  <div class="admin-modal" id="team-admin-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--profiles">
+      
+      <!-- Encabezado con selector de pestañas (Ingreso vs Cambiar Contraseña) -->
+      <div class="admin-modal__header" style="text-align:center; margin-bottom:1.25rem;">
+        <span class="section-eyebrow" style="color:var(--accent-terracotta);">Área de Administración &middot; Divina Locura Deco</span>
+        <h3 class="admin-modal__title" id="auth-modal-title" style="margin-top:0.25rem;">Ingreso al Panel de Control</h3>
+        <p class="admin-modal__desc" id="auth-modal-desc" style="margin-bottom:1rem;">Ventana flotante de gestión interna para Elena y Juanma.</p>
+        
+        <!-- Pestañas de Navegación del Modal -->
+        <div class="admin-modal-tabs">
+          <button type="button" class="admin-modal-tab is-active" id="btn-tab-login">🔐 Iniciar Sesión</button>
+          <button type="button" class="admin-modal-tab" id="btn-tab-changepass">🔑 Cambiar Contraseña</button>
+        </div>
+      </div>
+
+      <!-- VISTA 1: INICIAR SESIÓN (Elena & Juanma) -->
+      <div id="auth-view-login">
+        
+        <!-- Estado con sesión ya iniciada (Acceso rápido directo al Panel) -->
+        <div class="admin-active-session-card" id="auth-active-session-box" style="display:none; margin-bottom:1rem;">
+          <div class="admin-active-session-icon" id="auth-session-icon">🌸</div>
+          <h4 class="admin-active-session-title" id="auth-session-title">Sesión activa de Elena</h4>
+          <p class="admin-active-session-desc" id="auth-session-desc">Ya tenés la sesión iniciada en este navegador.</p>
+          <div class="admin-active-session-actions">
+            <a href="admin.html" class="btn-admin-modal-direct" id="btn-session-go-admin">
+              <span>🚀 Abrir Panel de Control Completo &rarr;</span>
+            </a>
+            <button type="button" class="btn btn--secondary" id="btn-session-switch-pass" style="font-size:0.8rem; padding:0.5rem 1rem;">
+              <span>🔑 Cambiar mi Contraseña</span>
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-session-logout" style="color:#C62828; border-color:#FFCDD2; font-size:0.8rem; padding:0.5rem 1rem;">
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Selector de 2 Perfiles: Elena vs Juanma (Para iniciar sesión y redirigir al Panel) -->
+        <div class="profile-cards-grid" id="auth-profiles-grid">
+          <!-- PERFIL 1: ELENA (TALLER & CONFECCIÓN) -->
+          <div class="profile-card profile-card--elena" id="profile-card-elena">
+            <div class="profile-card__badge">🌸 Perfil de Mamá</div>
+            <div class="profile-card__icon">🧵</div>
+            <h4 class="profile-card__name">Elena</h4>
+            <span class="profile-card__role">Taller Textil &amp; Confección</span>
+            <p class="profile-card__desc">Gestión de pedidos, confección de piezas, stock de telas, chat con clientas y balance económico.</p>
+            
+            <div class="profile-card__form" id="form-role-elena">
+              <input type="password" id="pass-elena" class="admin-input" placeholder="Clave de Elena (def: elena)" autocomplete="current-password" />
+              <button type="button" class="btn--profile btn--profile-elena" id="btn-login-elena">
+                <span>Ingresar al Panel de Control ➔</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PERFIL 2: JUANMA (SUPER ADMINISTRADOR & FINANZAS) -->
+          <div class="profile-card profile-card--juanma" id="profile-card-juanma">
+            <div class="profile-card__badge">💻 Super Administrador &amp; Negocio</div>
+            <div class="profile-card__icon">📊</div>
+            <h4 class="profile-card__name">Juanma</h4>
+            <span class="profile-card__role">Administración General, Catálogo, Taller &amp; Finanzas</span>
+            <p class="profile-card__desc">Acceso total al sistema: pedidos, confección, colores de telas, editor de textos de la web, métricas, finanzas y respaldo integral.</p>
+            
+            <div class="profile-card__form" id="form-role-juanma">
+              <input type="password" id="pass-juanma" class="admin-input" placeholder="Clave de Juanma (def: juanma)" autocomplete="current-password" />
+              <button type="button" class="btn--profile btn--profile-juanma" id="btn-login-juanma">
+                <span>Ingresar al Panel de Control ➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA 2: CAMBIAR CONTRASEÑA -->
+      <div id="auth-view-changepass" style="display:none;">
+        <div class="admin-change-pass-form">
+          <div class="admin-pass-msg admin-pass-msg--success" id="pass-change-msg-success"></div>
+          <div class="admin-pass-msg admin-pass-msg--error" id="pass-change-msg-error"></div>
+
+          <div class="admin-form-group">
+            <label class="admin-label" style="font-weight:700; color:#2B2625;">¿A qué administrador le cambiás la clave?</label>
+            <div style="display:flex; gap:1.25rem; margin-top:0.4rem;">
+              <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.85rem; font-weight:600;">
+                <input type="radio" name="pass-role-target" value="elena" checked />
+                <span>🌸 Elena (Taller)</span>
+              </label>
+              <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.85rem; font-weight:600;">
+                <input type="radio" name="pass-role-target" value="juanma" />
+                <span>💻 Juanma (Gestión)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label" for="pass-current-input">Contraseña Actual *</label>
+            <input type="password" id="pass-current-input" class="admin-input" placeholder="Ingresá la clave actual (def: elena o juanma)" autocomplete="current-password" />
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label" for="pass-new-input">Nueva Contraseña * (mínimo 3 letras o números)</label>
+            <input type="password" id="pass-new-input" class="admin-input" placeholder="Escribí la nueva clave deseada" autocomplete="new-password" />
+          </div>
+
+          <div class="admin-form-group">
+            <label class="admin-label" for="pass-confirm-input">Repetir Nueva Contraseña *</label>
+            <input type="password" id="pass-confirm-input" class="admin-input" placeholder="Repetí la nueva clave para confirmar" autocomplete="new-password" />
+          </div>
+
+          <div style="display:flex; gap:0.75rem; margin-top:1.5rem; justify-content:flex-end;">
+            <button type="button" class="btn btn--secondary" id="btn-cancel-changepass">Volver al Login</button>
+            <button type="button" class="btn-admin-cta" id="btn-save-new-pass" style="padding:0.65rem 1.25rem;">
+              <span>💾 Guardar Nueva Clave</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie del Modal -->
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.25rem;">
+        <button type="button" class="btn btn--secondary" id="team-admin-cancel-btn">Volver a la Tienda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER LATERAL: BOLSA DE PEDIDOS (INSPIRACIÓN ZARA HOME & ANTHROPOLOGIE) -->
+  <aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
+    <div class="cart-drawer__backdrop" id="cart-drawer-backdrop"></div>
+    <div class="cart-drawer__panel">
+      
+      <div class="cart-drawer__header">
+        <div class="cart-drawer__title-wrap">
+          <span class="cart-drawer__eyebrow">CONFECCIÓN ARTESANAL</span>
+          <h3 class="cart-drawer__title">Bolsa de Pedidos</h3>
+        </div>
+        <button type="button" class="cart-drawer__close" id="cart-drawer-close" aria-label="Cerrar bolsa">✕</button>
+      </div>
+
+      <!-- Cuerpo del Carrito -->
+      <div class="cart-drawer__body" id="cart-drawer-body">
+        
+        <!-- Estado Vacío -->
+        <div class="cart-empty-state" id="cart-empty-state">
+          <div class="cart-empty-icon">🛍️</div>
+          <p class="cart-empty-title">Tu bolsa de pedidos está vacía</p>
+          <p class="cart-empty-desc">Elegí las piezas textiles confeccionadas a mano por Elena que desees encargar y sumalas aquí.</p>
+          <a href="#catalogo" class="btn btn--secondary" id="cart-empty-cta">Explorar la Colección &rarr;</a>
+        </div>
+
+        <!-- Lista Dinámica de Ítems -->
+        <div class="cart-items-list" id="cart-items-list" style="display:none;"></div>
+      </div>
+
+      <!-- Pie del Carrito: Datos de Envío & Botones de Finalización -->
+      <div class="cart-drawer__footer" id="cart-drawer-footer" style="display:none;">
+        <div class="cart-customer-box">
+          <div class="cart-customer-title-row">
+            <span class="cart-customer-heading">👤 Datos de la Clienta para Entrega</span>
+            <span class="cart-customer-badge" id="cart-customer-badge"></span>
+          </div>
+
+          <div class="cart-form-grid">
+            <input type="text" id="cart-input-name" class="cart-input" placeholder="Tu Nombre completo *" required />
+            <input type="tel" id="cart-input-phone" class="cart-input" placeholder="WhatsApp / Teléfono *" required />
+            <input type="email" id="cart-input-email" class="cart-input" placeholder="Correo electrónico (opcional)" />
+            <input type="text" id="cart-input-address" class="cart-input" placeholder="Dirección / Localidad de entrega" />
+          </div>
+        </div>
+
+        <div class="cart-taller-notice">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Cada pieza se corta y confecciona a mano por Elena a fuego lento.</span>
+        </div>
+
+        <div class="cart-actions-grid">
+          <button type="button" class="btn btn--checkout-whatsapp" id="cart-btn-whatsapp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Enviar Pedido a Elena por WhatsApp</span>
+          </button>
+          <button type="button" class="btn btn--checkout-email" id="cart-btn-email">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Enviar Pedido por Email</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- HUB FLOTANTE DESPLAZANTE UNIFICADO: INSTAGRAM, WHATSAPP & ASISTENTE DEL TALLER -->
+  <div class="floating-concierge" id="floating-concierge" aria-label="Menú flotante de contacto y asistencia">
+    
+    <!-- Ventana de Chat Desplegable (Elena Asistente del Taller) -->
+    <div class="chatbot-window" id="chatbot-window" aria-hidden="true">
+      <div class="chatbot-window__header">
+        <div class="chatbot-avatar-wrap">
+          <div class="chatbot-avatar">🌸</div>
+          <div class="chatbot-header-info">
+            <h4 class="chatbot-header-name">Elena &middot; Asistente del Taller</h4>
+            <span class="chatbot-status-online">
+              <span class="chatbot-status-dot"></span> En línea &middot; Divina Locura
+            </span>
+          </div>
+        </div>
+        <button type="button" class="chatbot-close-btn" id="chatbot-close-btn" aria-label="Minimizar chat">✕</button>
+      </div>
+
+      <!-- Área de Mensajes de Conversación -->
+      <div class="chatbot-messages" id="chatbot-messages">
+        <!-- Mensaje de bienvenida inicial -->
+        <div class="chat-msg chat-msg--bot">
+          <div class="chat-bubble">
+            ¡Hola! 🌸 Te doy la bienvenida al taller de <strong>Divina Locura Deco</strong>. Soy el asistente virtual para ayudarte a elegir tus piezas textiles, telas y pedidos personalizados. ¿En qué te puedo asesorar hoy?
+          </div>
+        </div>
+      </div>
+
+      <!-- Sugerencias Rápidas de Consulta (Chips) -->
+      <div class="chatbot-suggestions" id="chatbot-suggestions">
+        <button type="button" class="chat-suggestion-chip" data-query="personalizado">🧵 ¿Cómo encargar con nombre bordado?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="saten">🌸 ¿Beneficios del satén antifrizz?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="waffle">🧺 ¿Cómo lavar waffle y lino?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="envios">📦 ¿Tiempos de entrega y envíos?</button>
+        <button type="button" class="chat-suggestion-chip" data-query="pedido">🛍️ ¿Cómo hacer mi pedido por la web?</button>
+        <button type="button" class="chat-suggestion-chip chat-suggestion-chip--wa" data-query="whatsapp">💬 Hablar directo con Elena por WhatsApp</button>
+      </div>
+
+      <!-- Barra de Input para Escribir Preguntas -->
+      <form class="chatbot-input-bar" id="chatbot-form" onsubmit="return false;">
+        <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Escribí tu consulta aquí..." autocomplete="off" />
+        <button type="submit" class="chatbot-send-btn" id="chatbot-send-btn" aria-label="Enviar mensaje">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Panel Deslizante Editorial (WhatsApp, Instagram & Asistente) -->
+    <div class="concierge-fab-menu" id="concierge-fab-menu" aria-hidden="true">
+      <div class="concierge-menu-header">
+        <span class="concierge-menu-kicker">ATENCIÓN PERSONALIZADA</span>
+        <span class="concierge-menu-title">Canales del Taller</span>
+      </div>
+
+      <div class="concierge-menu-list">
+        <!-- 1. WhatsApp Directo con Elena -->
+        <a
+          href="https://wa.me/5491136932471?text=Hola%20Elena%2C%20estoy%20en%20la%20tienda%20Divina%20Locura%20Deco%20y%20quer%C3%ADa%20hacerte%20una%20consulta%20por%20confecci%C3%B3n%20a%20medida."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="concierge-fab-item concierge-fab-item--wa"
+          id="floating-whatsapp-btn"
+          aria-label="Escribir directamente a Elena por WhatsApp"
+        >
+          <span class="concierge-fab-item__icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </span>
+          <span class="concierge-fab-item__label">
+            <strong>WhatsApp Directo</strong>
+            <em>Hablar con Elena &middot; Medidas &amp; telas</em>
+          </span>
+          <span class="concierge-fab-item__arrow">&#8599;</span>
+        </a>
+
+        <!-- 2. Instagram Oficial -->
+        <a
+          href="https://www.instagram.com/divina.locura.deco/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="concierge-fab-item concierge-fab-item--ig"
+          id="floating-instagram-btn"
+          data-ig-link
+          aria-label="Visitar Instagram @divina.locura.deco"
+        >
+          <span class="concierge-fab-item__icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </span>
+          <span class="concierge-fab-item__label">
+            <strong>Instagram Oficial</strong>
+            <em>@divina.locura.deco</em>
+          </span>
+          <span class="concierge-fab-item__arrow">&#8599;</span>
+        </a>
+
+        <!-- 3. Asistente Virtual del Taller -->
+        <button
+          type="button"
+          class="concierge-fab-item concierge-fab-item--bot"
+          id="chatbot-trigger-btn"
+          aria-label="Abrir asistente virtual del taller"
+        >
+          <span class="concierge-fab-item__icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path>
+            </svg>
+          </span>
+          <span class="concierge-fab-item__label">
+            <strong>Asistente del Taller</strong>
+            <em>Consultas rápidas &amp; envíos</em>
+          </span>
+          <span class="concierge-fab-item__arrow">&rarr;</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón Principal Desplazante Minimalista (Estilo Zara Home) -->
+    <button
+      type="button"
+      class="concierge-fab-toggle"
+      id="concierge-fab-toggle"
+      aria-expanded="false"
+      aria-controls="concierge-fab-menu"
+      aria-label="Abrir menú de contacto: WhatsApp, Instagram y Asistente"
+    >
+      <span class="concierge-fab-toggle__icons">
+        <svg class="concierge-icon-open" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <svg class="concierge-icon-close" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </span>
+      <span class="concierge-fab-toggle__text">Atelier &amp; Contacto</span>
+      <span class="concierge-fab-toggle__sep" aria-hidden="true"></span>
+      <span class="concierge-fab-toggle__chevron">+</span>
+    </button>
+  </div>
+
+  <!-- MODAL: TUTORIAL INTERACTIVO PASO A PASO PARA ELENA -->
+  <div class="admin-modal" id="elena-tutorial-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--wide elena-tutorial-card">
+      <div class="admin-modal__header" style="text-align:center;">
+        <div class="profile-badge-inline">🌸 Guía Fácil para Elena</div>
+        <h3 class="admin-modal__title" style="margin-top:0.35rem;">Cómo usar tu taller web paso a paso</h3>
+        <p class="admin-modal__desc">Una guía simple y sin complicaciones para subir tus creaciones, cambiar precios y recibir pedidos.</p>
+      </div>
+
+      <!-- Pestañas del Tutorial -->
+      <div class="tutorial-tabs" role="tablist">
+        <button type="button" class="tutorial-tab is-active" data-tut-target="tut-step-1">1. 📸 Subir una Pieza Nueva</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-2">2. ✏️ Modificar Precios o Fotos</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-3">3. 📋 Cómo te llegan los Pedidos</button>
+        <button type="button" class="tutorial-tab" data-tut-target="tut-step-4">4. 🆘 Pedir Ayuda a Juanma</button>
+      </div>
+
+      <!-- Paso 1 -->
+      <div class="tutorial-step is-active" id="tut-step-1">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo publicar una nueva creación en la tienda?</h4>
+            <ol class="tutorial-step__list">
+              <li>Tocá el botón rosa <strong>"📸 Publicar Nueva Pieza"</strong> en tu barra inferior.</li>
+              <li>Escribí cómo se llama la pieza (por ejemplo: <em>Cofia de Satén Champán</em>) y cuánto cuesta.</li>
+              <li>Elegí la categoría: <em>Cuidado Personal</em>, <em>Hogar &amp; Cocina</em>, <em>Organización</em> o <em>Bebés</em>.</li>
+              <li>Tocá <strong>"Subir Foto desde mi Teléfono o Computadora"</strong> para elegir hasta 4 fotos (foto principal, en uso o de cerca).</li>
+              <li>Tocá el botón <strong>"✨ Guardar y Publicar en la Tienda"</strong>. ¡Listo! Ya aparece en la web para todas tus clientas.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">💡</span>
+            <p><strong>Consejo de Elena:</strong> Las fotos quedan más lindas con luz natural cerca de una ventana y mostrando los detalles de la costura.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="tutorial-step" id="tut-step-2" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo cambiar el precio o las fotos de una pieza ya publicada?</h4>
+            <ol class="tutorial-step__list">
+              <li>Cuando estás en tu <strong>Modo Taller 🌸</strong>, recorré el catálogo en la página.</li>
+              <li>En la parte de arriba de cada producto verás un botón rosa con un lápiz: <strong>"Editar esta pieza"</strong>.</li>
+              <li>Hacé clic en él: se abrirá la ventanita para cambiar el precio, agregar fotos nuevas o corregir el texto.</li>
+              <li>Tocá <strong>"Guardar"</strong> y los cambios se aplican al instante.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">🏷️</span>
+            <p>Si aún no tenés precio fijo porque la pieza es personalizada, podés poner <em>"Consultar / con nombre bordado"</em>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 3 -->
+      <div class="tutorial-step" id="tut-step-3" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Cómo te llegan los pedidos de tus clientas?</h4>
+            <ol class="tutorial-step__list">
+              <li>Tus clientas arman su <strong>Bolsa de Pedidos</strong> en la página eligiendo las piezas y escribiendo si quieren bordado con nombre.</li>
+              <li>Al confirmar, <strong>te llegará un mensaje a tu WhatsApp</strong> con el nombre de la clienta, su teléfono y la lista completa de lo que encargó.</li>
+              <li>También te llegará una copia por <strong>correo electrónico</strong> si la clienta eligió esa opción.</li>
+              <li>Además, podés tocar el botón <strong>"📋 Pedidos"</strong> en tu barra para ver la lista de todos los pedidos recibidos en la web con fecha y hora.</li>
+            </ol>
+          </div>
+          <div class="tutorial-step__card-callout">
+            <span class="callout-icon">💬</span>
+            <p>Desde la lista de pedidos podés tocar un botón verde para abrir el chat de WhatsApp con la clienta con un solo toque.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 4 -->
+      <div class="tutorial-step" id="tut-step-4" style="display:none;">
+        <div class="tutorial-step__content">
+          <div class="tutorial-step__text">
+            <h4>¿Tenés alguna duda o necesitás una mano técnica?</h4>
+            <p>Juanma preparó este botón para que puedas escribirle directo a su WhatsApp cuando necesites ayuda con la página o con alguna función nueva.</p>
+            <div style="margin-top:1.5rem;">
+              <a href="https://api.whatsapp.com/send?text=Hola%20Juanma!%20Te%20escribo%20desde%20el%20taller%20de%20Divina%20Locura,%20necesito%20una%20mano%20con%20la%20p%C3%A1gina%20web%20🌸" target="_blank" rel="noopener noreferrer" class="btn btn--profile btn--profile-juanma" style="display:inline-flex; width:auto; padding:0.85rem 1.75rem;">
+                <span>💬 Escribirle a Juanma por WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="justify-content:center; margin-top:1.5rem;">
+        <button type="button" class="btn btn--profile btn--profile-elena" id="elena-tutorial-close-btn">
+          <span>🌸 Entendido, volver a mi Taller</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CENTRO DE GESTIÓN DEL TALLER DE ELENA (PEDIDOS, CLIENTAS, CHAT, STOCK & GASTOS) -->
+  <div class="admin-modal" id="elena-orders-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--workshop">
+      <div class="admin-modal__header" style="margin-bottom:0.75rem;">
+        <div class="workshop-header-badge">🌸 Taller de Elena &middot; Gestión &amp; Producción</div>
+        <h3 class="admin-modal__title" style="font-size:1.45rem;">Mi Taller de Creaciones</h3>
+        <p class="admin-modal__desc">Base de datos de tus clientas, estado de pedidos, chat directo, stock de telas e insumos, y balance de producción.</p>
+      </div>
+
+      <!-- Barra de pestañas (Tabs) intuitivas para Elena y Juanma -->
+      <nav class="workshop-nav-tabs" aria-label="Secciones del taller">
+        <button type="button" class="workshop-tab-btn is-active" data-wtab="dashboard">
+          <span>📊 Panel de Control</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="orders">
+          <span>📋 Pedidos &amp; Entregas</span>
+          <span class="workshop-tab-badge" id="workshop-orders-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="production">
+          <span>✂️ Producción &amp; Taller</span>
+          <span class="workshop-tab-badge" id="workshop-production-count">4</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="stock">
+          <span>🧵 Stock &amp; Insumos</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="finances">
+          <span>💰 Economía &amp; Ganancias</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="clients">
+          <span>👥 Mis Clientas</span>
+          <span class="workshop-tab-badge" id="workshop-clients-count">0</span>
+        </button>
+        <button type="button" class="workshop-tab-btn" data-wtab="chat">
+          <span>💬 Chat con Clientas</span>
+          <span class="workshop-tab-badge" id="workshop-chat-unread-count">0</span>
+        </button>
+      </nav>
+
+      <!-- PANE 0: PANEL DE CONTROL CENTRALIZADO & GESTIÓN DEL NEGOCIO (MÉTRICAS, VISITAS, ECONOMÍA Y ACCESOS RÁPIDOS) -->
+      <div class="workshop-tab-pane is-active" id="wpane-dashboard">
+        <!-- Hero Ejecutivo: Métricas Clave del Negocio -->
+        <div class="biz-hero-card">
+          <div class="biz-hero-header">
+            <div class="biz-hero-tag">
+              <span class="biz-pulse-dot"></span>
+              <span>Tablero Ejecutivo &middot; Divina Locura Deco</span>
+            </div>
+            <div class="biz-hero-meta" id="biz-hero-timestamp">Actualizado en vivo</div>
+          </div>
+
+          <!-- 4 KPIs Clave -->
+          <div class="biz-kpi-grid">
+            <!-- KPI 1: Visitas & Tráfico -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Tráfico &amp; Visitas</span>
+                <span class="biz-kpi-icon">👁️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-visits">1.420</div>
+              <div class="biz-kpi-sub">
+                <span class="biz-trend-up">Hoy: <strong id="biz-kpi-today">64</strong></span> &middot; <span id="biz-kpi-uniques">985</span> únicas
+              </div>
+              <div class="biz-kpi-extra">Conversión: <strong id="biz-kpi-conv">0.4%</strong> a pedidos</div>
+            </div>
+
+            <!-- KPI 2: Pedidos & Facturación -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Pedidos &amp; Facturación</span>
+                <span class="biz-kpi-icon">🛍️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-revenue">$93.100</div>
+              <div class="biz-kpi-sub">
+                <strong id="biz-kpi-orders-count">5</strong> encargos registrados
+              </div>
+              <div class="biz-kpi-extra">Ticket promedio: <strong id="biz-kpi-avg-ticket">$18.620</strong></div>
+            </div>
+
+            <!-- KPI 3: Ganancia Neta & Rentabilidad -->
+            <div class="biz-kpi-card biz-kpi-card--highlight">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Ganancia Neta Real</span>
+                <span class="biz-kpi-icon">💰</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-netprofit">+$3.900</div>
+              <div class="biz-kpi-sub">
+                Margen operativo: <strong id="biz-kpi-margin">+4.2%</strong>
+              </div>
+              <div class="biz-kpi-extra" style="color:#A3E635;">✓ Taller con balance positivo</div>
+            </div>
+
+            <!-- KPI 4: Confección & Insumos -->
+            <div class="biz-kpi-card">
+              <div class="biz-kpi-top">
+                <span class="biz-kpi-label">Confección &amp; Taller</span>
+                <span class="biz-kpi-icon">✂️</span>
+              </div>
+              <div class="biz-kpi-val" id="biz-kpi-production">4 piezas</div>
+              <div class="biz-kpi-sub">
+                En taller activo actualmente
+              </div>
+              <div class="biz-kpi-extra" id="biz-kpi-stock-status">🧵 Stock de telas controlado</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fila de Analíticas: Gráfico Semanal + Canales de Origen -->
+        <div class="biz-analytics-row">
+          <!-- Gráfico Semanal Lun-Dom -->
+          <div class="biz-card-box">
+            <div class="biz-box-header">
+              <div>
+                <h4 class="biz-box-title">Flujo Semanal de Visitas &amp; Interacciones</h4>
+                <p class="biz-box-desc">Distribución de visitas recibidas en el Lookbook durante los últimos 7 días:</p>
+              </div>
+              <span class="biz-badge-soft">Última semana</span>
+            </div>
+            <div class="biz-bars-grid" id="biz-weekly-bars">
+              <!-- Renderizado dinámicamente con barras CSS -->
+            </div>
+          </div>
+
+          <!-- Fuentes de Tráfico -->
+          <div class="biz-card-box">
+            <div class="biz-box-header">
+              <div>
+                <h4 class="biz-box-title">Canales de Llegada de Clientas</h4>
+                <p class="biz-box-desc">Por dónde descubren las creaciones de Elena:</p>
+              </div>
+              <span class="biz-badge-soft">Orígenes</span>
+            </div>
+            <div class="biz-sources-list">
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>📸 Instagram &middot; @divinalocura.deco</span>
+                  <strong id="biz-source-ig-val">64%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--ig" style="width:64%;"></div>
+                </div>
+              </div>
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>💬 WhatsApp &middot; Recomendaciones &amp; Estados</span>
+                  <strong id="biz-source-wa-val">22%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--wa" style="width:22%;"></div>
+                </div>
+              </div>
+              <div class="biz-source-item">
+                <div class="biz-source-info">
+                  <span>🌐 Navegación Directa &middot; Tienda Web</span>
+                  <strong id="biz-source-direct-val">14%</strong>
+                </div>
+                <div class="biz-source-progress-bg">
+                  <div class="biz-source-progress-fill biz-source-progress-fill--direct" style="width:14%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ranking de Piezas Más Vistas en Lookbook -->
+        <div class="biz-card-box" style="margin-top:1.25rem;">
+          <div class="biz-box-header">
+            <div>
+              <h4 class="biz-box-title">Creaciones Más Visitadas &middot; Lookbook Anthropologie</h4>
+              <p class="biz-box-desc">Las piezas textiles que despiertan mayor interés y consultas en la boutique:</p>
+            </div>
+            <span class="biz-badge-soft">Ranking de Interés</span>
+          </div>
+          <div class="biz-top-products-grid" id="biz-top-products-container">
+            <!-- Renderizado dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Lanzador Central de Todas las Opciones de Administrador -->
+        <div class="biz-quick-actions-section">
+          <div class="biz-box-header" style="margin-bottom:1rem;">
+            <div>
+              <h4 class="biz-box-title" style="font-size:1.1rem;">Centro de Operaciones &middot; Todas las Opciones de Administración</h4>
+              <p class="biz-box-desc">Accedé con un solo clic a cualquiera de las herramientas del taller:</p>
+            </div>
+          </div>
+          <div class="biz-quick-actions-grid">
+            <button type="button" class="biz-action-card" id="bact-new-product">
+              <span class="biz-action-icon">📸</span>
+              <div class="biz-action-texts">
+                <strong>+ Publicar Pieza</strong>
+                <span>Cargar nueva creación al catálogo</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-orders">
+              <span class="biz-action-icon">📋</span>
+              <div class="biz-action-texts">
+                <strong>Pedidos &amp; Entregas</strong>
+                <span>Gestionar encargos de clientas</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-production">
+              <span class="biz-action-icon">✂️</span>
+              <div class="biz-action-texts">
+                <strong>Control de Producción</strong>
+                <span>Etapas de corte, costura y empaque</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-stock">
+              <span class="biz-action-icon">🧵</span>
+              <div class="biz-action-texts">
+                <strong>Control de Stock &amp; Telas</strong>
+                <span>Metraje de satén, lino y piezas listas</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-finances">
+              <span class="biz-action-icon">💰</span>
+              <div class="biz-action-texts">
+                <strong>Economía &amp; Ganancias</strong>
+                <span>Gastos, presupuesto y balance limpio</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-clients">
+              <span class="biz-action-icon">👥</span>
+              <div class="biz-action-texts">
+                <strong>Directorio de Clientas</strong>
+                <span>Teléfonos, emails y fichas personales</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-chat">
+              <span class="biz-action-icon">💬</span>
+              <div class="biz-action-texts">
+                <strong>Chat con Clientas</strong>
+                <span>Mensajes directos desde la tienda</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-settings">
+              <span class="biz-action-icon">⚙️</span>
+              <div class="biz-action-texts">
+                <strong>Configuración Web</strong>
+                <span>Modificar títulos, frases y WhatsApp</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-backup">
+              <span class="biz-action-icon">💾</span>
+              <div class="biz-action-texts">
+                <strong>Respaldo Integral JSON</strong>
+                <span>Exportar base de datos del taller</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-github">
+              <span class="biz-action-icon">🐙</span>
+              <div class="biz-action-texts">
+                <strong>Publicar en GitHub</strong>
+                <span>Sincronizar cambios a internet</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-tutorial">
+              <span class="biz-action-icon">📖</span>
+              <div class="biz-action-texts">
+                <strong>Guía del Taller</strong>
+                <span>Tutorial paso a paso para Elena</span>
+              </div>
+            </button>
+            <button type="button" class="biz-action-card" id="bact-switch-role">
+              <span class="biz-action-icon">🔄</span>
+              <div class="biz-action-texts">
+                <strong>Conmutar Perfil</strong>
+                <span>Alternar entre Elena y Juanma</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 1: PEDIDOS & ENTREGAS (ACTUALIZAR ESTADO, FECHA ESTIMADA Y NOTAS DE TALLER) -->
+      <div class="workshop-tab-pane" id="wpane-orders">
+        <div class="elena-orders-empty" id="elena-orders-empty" style="display:none;">
+          <p>Aún no hay pedidos registrados desde la tienda web.</p>
+        </div>
+        <div class="workshop-orders-grid" id="workshop-orders-list"></div>
+      </div>
+
+      <!-- PANE 1.5: CONTROL DE PRODUCCIÓN & CONFECCIÓN TEXTIL (PIPELINE DE COSTURA POR FASES) -->
+      <div class="workshop-tab-pane" id="wpane-production">
+        <!-- Overview del Pipeline de Confección -->
+        <div class="production-pipeline-card">
+          <div class="biz-box-header">
+            <div>
+              <h4 class="biz-box-title" style="font-size:1.15rem;">Pipeline de Confección Textil Artesanal</h4>
+              <p class="biz-box-desc">Monitoreo de cada pieza desde el corte de patrones hasta el empaque final:</p>
+            </div>
+            <button type="button" class="btn btn--secondary btn--sm" id="btn-toggle-add-production">+ Nueva Pieza a Producción</button>
+          </div>
+
+          <div class="production-phases-overview" id="production-phases-summary">
+            <!-- 5 Fases -->
+            <div class="phase-pill" data-phase="corte">
+              <span class="phase-pill__icon">✂️</span>
+              <div class="phase-pill__info">
+                <strong>1. Corte</strong>
+                <span class="phase-pill__count" id="phase-count-corte">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="costura">
+              <span class="phase-pill__icon">🪡</span>
+              <div class="phase-pill__info">
+                <strong>2. Costura</strong>
+                <span class="phase-pill__count" id="phase-count-costura">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="bordado">
+              <span class="phase-pill__icon">🧵</span>
+              <div class="phase-pill__info">
+                <strong>3. Bordado</strong>
+                <span class="phase-pill__count" id="phase-count-bordado">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="calidad">
+              <span class="phase-pill__icon">🔍</span>
+              <div class="phase-pill__info">
+                <strong>4. Calidad</strong>
+                <span class="phase-pill__count" id="phase-count-calidad">0</span>
+              </div>
+            </div>
+            <div class="phase-pill__arrow">➔</div>
+            <div class="phase-pill" data-phase="empaque">
+              <span class="phase-pill__icon">🎁</span>
+              <div class="phase-pill__info">
+                <strong>5. Empaque</strong>
+                <span class="phase-pill__count" id="phase-count-empaque">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario Ocultable para Ingresar Nueva Pieza a Producción -->
+        <div class="production-add-box" id="production-add-box" style="display:none; margin: 1.25rem 0;">
+          <h4 style="margin-top:0; margin-bottom:0.75rem; font-family:var(--font-serif); font-size:1.1rem; color:var(--text-primary);">Ingresar Pieza a la Cola de Confección</h4>
+          <form id="workshop-add-production-form" class="production-form-grid">
+            <div class="form-group">
+              <label for="prod-in-name">Pieza / Confección</label>
+              <input type="text" id="prod-in-name" class="form-input" placeholder="Ej: Gorro de Satén Champán" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-client">Clienta Destinataria</label>
+              <input type="text" id="prod-in-client" class="form-input" placeholder="Ej: Mariana Gómez" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-fabric">Tela / Insumo Requerido</label>
+              <input type="text" id="prod-in-fabric" class="form-input" placeholder="Ej: Satén Champán (1.2m)" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-phase">Fase Inicial</label>
+              <select id="prod-in-phase" class="form-input">
+                <option value="corte">1. Corte de Patrones</option>
+                <option value="costura">2. Costura &amp; Confección</option>
+                <option value="bordado">3. Bordado / Detalle</option>
+                <option value="calidad">4. Calidad &amp; Planchado</option>
+                <option value="empaque">5. Empaque &amp; Despacho</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="prod-in-target">Fecha Pactada de Entrega</label>
+              <input type="text" id="prod-in-target" class="form-input" placeholder="Ej: 18 de Noviembre">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label for="prod-in-notes">Notas de Taller / Indicaciones Especiales</label>
+              <input type="text" id="prod-in-notes" class="form-input" placeholder="Ej: Con elástico reforzado suave y moño en lino crudo">
+            </div>
+            <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+              <button type="button" class="btn btn--secondary btn--sm" id="btn-cancel-add-production">Cancelar</button>
+              <button type="submit" class="btn btn--primary btn--sm">+ Agregar a Producción</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Cola de Piezas en Taller -->
+        <div style="margin-top:1.5rem;">
+          <h4 style="font-family:var(--font-serif); font-size:1.1rem; margin-bottom:0.75rem; color:var(--text-primary);">Piezas en Confección Activa (<span id="prod-queue-total-count">0</span>)</h4>
+          <div class="production-items-grid" id="workshop-production-list">
+            <!-- Renderizado dinámicamente con cards -->
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 2: DIRECTORIO DE CLIENTAS -->
+      <div class="workshop-tab-pane" id="wpane-clients">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">Clientas registradas y que han realizado encargos desde la web:</p>
+        </div>
+        <div class="workshop-clients-grid" id="workshop-clients-list"></div>
+      </div>
+
+      <!-- PANE 3: CHAT INTERNO ENTRE CLIENTAS Y ELENA -->
+      <div class="workshop-tab-pane" id="wpane-chat">
+        <div class="workshop-chat-layout">
+          <!-- Lista lateral de clientas -->
+          <div class="workshop-chat-sidebar">
+            <div class="workshop-chat-sidebar-header">Conversaciones</div>
+            <div id="workshop-chat-conversations-list"></div>
+          </div>
+          <!-- Ventana de mensajes -->
+          <div class="workshop-chat-main">
+            <div class="workshop-chat-main-header">
+              <div>
+                <strong id="workshop-chat-active-name" style="font-size:0.95rem;">Seleccioná una clienta</strong>
+                <div id="workshop-chat-active-phone" style="font-size:0.75rem; color:var(--text-secondary);">-</div>
+              </div>
+              <a href="#" id="workshop-chat-wa-shortcut" target="_blank" rel="noopener noreferrer" class="btn btn--secondary" style="font-size:0.75rem; padding:0.35rem 0.65rem; display:none;">
+                📱 Abrir en WhatsApp
+              </a>
+            </div>
+            <div class="workshop-chat-messages-area" id="workshop-chat-messages">
+              <p style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:auto;">Seleccioná una conversación a la izquierda para ver los mensajes.</p>
+            </div>
+            <!-- Respuestas rápidas para facilitarle la vida a Elena -->
+            <div class="workshop-chat-quick-replies" id="workshop-quick-replies" style="display:none;">
+              <button type="button" class="btn-quick-reply" data-quick="¡Hola hermosa! Tu pedido ya está en confección a fuego lento 🌸">🌸 "Ya está en confección"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Telas listas! Ya están cortadas y prelavadas ✨">✨ "Telas cortadas"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Tu paquete artesanal ya está listo para retirar/despachar! 📦">📦 "Paquete listo"</button>
+              <button type="button" class="btn-quick-reply" data-quick="¡Muchísimas gracias por valorar el trabajo artesanal! 🤍">🤍 "Muchas gracias"</button>
+            </div>
+            <form class="workshop-chat-input-bar" id="workshop-chat-form" style="display:none;">
+              <input type="text" class="workshop-chat-input" id="workshop-chat-input" placeholder="Escribile un mensaje a la clienta..." required autocomplete="off" />
+              <button type="submit" class="btn-workshop-save">
+                <span>Enviar</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: CONTROL DE STOCK & TELAS -->
+      <div class="workshop-tab-pane" id="wpane-stock">
+        <!-- Stock de Piezas Confeccionadas -->
+        <h4 class="workshop-stock-section-title">📦 Piezas Terminadas Listas para Entrega</h4>
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Podés sumar o restar unidades a medida que vas terminando de coser en el taller:</p>
+        <div class="workshop-products-stock-grid" id="workshop-products-stock-list"></div>
+
+        <!-- Insumos & Telas -->
+        <h4 class="workshop-stock-section-title" style="margin-top:2rem;">🧵 Stock de Telas &amp; Mercería del Taller</h4>
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">Controlá cuántos metros de tela y accesorios tenés disponibles para tus próximas confecciones:</p>
+        <div style="overflow-x:auto;">
+          <table class="workshop-materials-table">
+            <thead>
+              <tr>
+                <th>Material / Insumo</th>
+                <th>Categoría</th>
+                <th>Cantidad Disponible</th>
+                <th>Ajuste Rápido</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="workshop-materials-list"></tbody>
+          </table>
+        </div>
+
+        <!-- Formulario para sumar nuevo material -->
+        <div class="workshop-add-material-box">
+          <strong style="font-size:0.88rem; display:block; margin-bottom:0.75rem;">+ Agregar Nueva Tela o Insumo al Taller</strong>
+          <form id="workshop-add-material-form" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:0.65rem; align-items:flex-end;">
+            <div>
+              <label class="workshop-field-label">Nombre del Material</label>
+              <input type="text" id="mat-add-name" class="workshop-input" placeholder="Ej: Lino Verde Salvia" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Categoría</label>
+              <select id="mat-add-category" class="workshop-select">
+                <option value="Telas">Telas</option>
+                <option value="Mercería">Mercería</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Herramientas">Herramientas</option>
+              </select>
+            </div>
+            <div>
+              <label class="workshop-field-label">Cantidad</label>
+              <input type="number" id="mat-add-qty" class="workshop-input" min="0" step="0.5" value="10" required />
+            </div>
+            <div>
+              <label class="workshop-field-label">Unidad</label>
+              <select id="mat-add-unit" class="workshop-select">
+                <option value="metros">Metros</option>
+                <option value="unidades">Unidades</option>
+                <option value="rollos">Rollos</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-workshop-save" style="height:38px;">
+              <span>+ Guardar Insumo</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PANE 5: GASTOS & ECONOMÍA DEL TALLER (BALANCE DE CONFECCIÓN PROPIO) -->
+      <div class="workshop-tab-pane" id="wpane-finances">
+        <div class="fjc-dashboard">
+
+          <!-- HERO PANEL EJECUTIVO CON SELECTOR DE MES Y BALANCE NETO -->
+          <div class="fjc-panel">
+            <div class="fjc-panel-top">
+              <div class="fjc-panel-title-box">
+                <span class="fjc-tagline">Economía de Taller &middot; Divina Locura Deco</span>
+                <h3 class="fjc-title">Balance de Confección &amp; Taller</h3>
+              </div>
+              <div class="fjc-period-control">
+                <label for="fjc-select-month" style="font-size:0.78rem; color:#94A3B8; font-weight:600;">Período:</label>
+                <select id="fjc-select-month" class="fjc-month-select" aria-label="Seleccionar mes de análisis">
+                  <!-- Opciones inyectadas por JS -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Cifra Principal: Balance Neto Real (Ingresos - Gastos) -->
+            <div class="fjc-balance-box">
+              <span class="fjc-balance-lbl">Balance Neto Real del Período</span>
+              <div class="fjc-cifra bien" id="fjc-net-balance">
+                <span id="fjc-net-symbol">$</span>
+                <span id="fjc-net-amount">0</span>
+                <span style="font-size:1.15rem; font-weight:600; opacity:0.85;">ARS</span>
+              </div>
+              <div class="fjc-chips-row">
+                <div class="fjc-chip fjc-chip--success" id="fjc-chip-margin">
+                  <span>📈 Margen Neto: <strong id="fjc-margin-val">0%</strong></span>
+                </div>
+                <div class="fjc-chip fjc-chip--info" id="fjc-chip-orders">
+                  <span>📋 <strong id="fjc-orders-count-val">0</strong> pedidos confeccionados</span>
+                </div>
+                <div class="fjc-chip fjc-chip--warning" id="fjc-chip-budget-status">
+                  <span id="fjc-budget-status-chip-text">🌿 Presupuesto: <strong>Controlado</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rejilla de 4 KPIs Propios del Taller -->
+            <div class="fjc-kpi-grid">
+              <!-- KPI 1: Ingresos de Pedidos -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Ingresos / Ventas</span>
+                  <span class="fjc-kpi-icon">🧺</span>
+                </div>
+                <div class="fjc-kpi-val" id="fjc-kpi-income">$ 0</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-income-sub">0 pedidos cobrados</div>
+              </div>
+
+              <!-- KPI 2: Consumo de Telas & Insumos -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Consumo de Telas</span>
+                  <span class="fjc-kpi-icon">✂️</span>
+                </div>
+                <div class="fjc-kpi-val" id="fjc-kpi-fabric">0 metros</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-fabric-sub">En piezas confeccionadas</div>
+              </div>
+
+              <!-- KPI 3: Gastos Registrados -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Gastos de Taller</span>
+                  <span class="fjc-kpi-icon">📉</span>
+                </div>
+                <div class="fjc-kpi-val" style="color:#FCA5A5;" id="fjc-kpi-expenses">$ 0</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-expenses-sub">Telas, hilos y fletes</div>
+              </div>
+
+              <!-- KPI 4: Rendimiento / Margen Operativo -->
+              <div class="fjc-kpi-card">
+                <div class="fjc-kpi-top">
+                  <span class="fjc-kpi-lbl">Rendimiento Operativo</span>
+                  <span class="fjc-kpi-icon">🌿</span>
+                </div>
+                <div class="fjc-kpi-val" style="color:#6EE7B7;" id="fjc-kpi-profit-ratio">0%</div>
+                <div class="fjc-kpi-sub" id="fjc-kpi-profit-sub">Razón ingreso / gasto</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LÍMITES DE CONSUMO & PRESUPUESTO MENSUAL DE CONFECCIÓN -->
+          <div class="fjc-section-card fjc-budget-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>🛡️ Presupuesto de Producción &amp; Límites del Taller</span>
+              </h4>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="font-size:0.85rem; color:var(--text-secondary);">Tope actual: <strong id="fjc-budget-display">$ 120.000 ARS</strong></span>
+                <button type="button" class="btn btn--secondary" id="btn-fjc-edit-budget" style="padding:0.25rem 0.65rem; font-size:0.75rem;">
+                  ✏️ Ajustar Tope
+                </button>
+              </div>
+            </div>
+
+            <div class="fjc-budget-info-row">
+              <div>
+                <span>Consumido: <strong id="fjc-budget-used">$ 0</strong> de <strong id="fjc-budget-total">$ 120.000</strong></span>
+              </div>
+              <div>
+                <strong id="fjc-budget-percentage" style="font-size:0.95rem;">0%</strong>
+              </div>
+            </div>
+
+            <div class="fjc-progress-track">
+              <div class="fjc-progress-fill fjc-progress-fill--ok" id="fjc-budget-bar" style="width:0%;"></div>
+            </div>
+
+            <div class="fjc-budget-foot">
+              <span id="fjc-budget-status-text">🌿 Consumo controlado &amp; saludable</span>
+              <span style="color:var(--text-muted); font-size:0.74rem;">Se emite alerta visual al superar el 80% y 100% del presupuesto</span>
+            </div>
+          </div>
+
+          <!-- REPARTO DE GASTOS POR CATEGORÍA DE TALLER -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📊 Distribución de Costos de Confección</span>
+              </h4>
+              <span style="font-size:0.78rem; color:var(--text-muted);" id="fjc-reparto-subtitle">Distribución porcentual de los costos</span>
+            </div>
+
+            <!-- Barra Segmentada Multicolor -->
+            <div class="fjc-segmented-bar" id="fjc-reparto-bar">
+              <!-- Segmentos inyectados por JS -->
+            </div>
+
+            <!-- Cuadrícula de Categorías con Montos y Porcentajes -->
+            <div class="fjc-categories-grid" id="fjc-categories-list">
+              <!-- Chips inyectados por JS -->
+            </div>
+          </div>
+
+          <!-- CONSUMO DE INSUMOS & TRAZABILIDAD TEXTIL -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>✂️ Trazabilidad de Telas &amp; Consumo en Pedidos</span>
+              </h4>
+              <span style="font-size:0.78rem; color:var(--text-muted);">Estimación de metraje utilizado por confección</span>
+            </div>
+            <div class="fjc-fabrics-summary-grid" id="fjc-fabrics-breakdown">
+              <!-- Tarjetas inyectadas por JS -->
+            </div>
+          </div>
+
+          <!-- REGISTRO RÁPIDO DE GASTOS / CONSUMOS -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📝 Anotar Nuevo Gasto o Consumo de Taller</span>
+              </h4>
+            </div>
+            <form id="workshop-add-expense-form" style="display:grid; grid-template-columns:1fr 2fr 1.5fr 1.5fr auto; gap:0.65rem; align-items:flex-end;">
+              <div>
+                <label class="workshop-field-label">Fecha</label>
+                <input type="date" id="exp-add-date" class="workshop-input" required />
+              </div>
+              <div>
+                <label class="workshop-field-label">Concepto / Detalle</label>
+                <input type="text" id="exp-add-concept" class="workshop-input" placeholder="Ej: Compra de 10m Lino en Once" required />
+              </div>
+              <div>
+                <label class="workshop-field-label">Categoría</label>
+                <select id="exp-add-category" class="workshop-select">
+                  <option value="Telas">Telas</option>
+                  <option value="Mercería">Mercería e Hilos</option>
+                  <option value="Packaging">Cajas &amp; Bolsas</option>
+                  <option value="Envíos">Fletes &amp; Envíos</option>
+                  <option value="Herramientas">Máquinas &amp; Tijeras</option>
+                  <option value="Varios">Otros gastos</option>
+                </select>
+              </div>
+              <div>
+                <label class="workshop-field-label">Monto ($ ARS)</label>
+                <input type="number" id="exp-add-amount" class="workshop-input" placeholder="Ej: 25000" min="1" required />
+              </div>
+              <button type="submit" class="btn-workshop-save" style="height:38px;">
+                <span>+ Anotar</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- HISTORIAL DE GASTOS Y MOVIMIENTOS -->
+          <div class="fjc-section-card">
+            <div class="fjc-section-header">
+              <h4 class="fjc-section-title">
+                <span>📋 Libro Diario de Taller &amp; Movimientos</span>
+              </h4>
+              <span style="font-size:0.8rem; color:var(--text-secondary);" id="fjc-expenses-count-badge">0 gastos</span>
+            </div>
+            <div class="fjc-table-container">
+              <table class="fjc-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Concepto</th>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="workshop-expenses-list"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- BANNER DE RESPALDO INTEGRAL DE SEGURIDAD (JSON) -->
+          <div class="fjc-backup-banner">
+            <div class="fjc-backup-banner__info">
+              <span class="fjc-backup-banner__title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Respaldo de Seguridad Divina Locura (JSON)</span>
+              </span>
+              <span class="fjc-backup-banner__desc">Copia de seguridad en un clic: resguarda clientas, pedidos, inventario textil, chats y balance.</span>
+            </div>
+            <div class="fjc-backup-actions">
+              <button type="button" class="btn-fjc-backup" id="btn-fjc-download-backup" title="Descargar archivo JSON completo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>📥 Descargar Respaldo JSON</span>
+              </button>
+              <label class="btn-fjc-restore" title="Restaurar base de datos desde un archivo JSON previo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <span>📤 Restaurar</span>
+                <input type="file" id="fjc-restore-file-input" accept=".json" style="display:none;" />
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="admin-modal__buttons" style="margin-top:1.75rem;">
+        <button type="button" class="btn btn--secondary" id="elena-orders-close-btn">Cerrar Taller</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Editor de Producto (Adaptado para Elena o Juanma) -->
+  <div class="admin-modal" id="product-edit-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--wide">
+      <div class="admin-modal__header">
+        <div class="profile-badge-inline" id="product-modal-badge">🌸 Modo Taller de Elena</div>
+        <h3 class="admin-modal__title" id="product-modal-title">Editar Creación</h3>
+        <p class="admin-modal__desc" id="product-modal-desc">Completá los datos de la pieza. Los cambios se verán inmediatamente en la tienda.</p>
+      </div>
+
+      <form id="product-edit-form">
+        <input type="hidden" id="edit-product-id" />
+
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="edit-title" class="admin-label" id="label-edit-title">¿Cómo se llama la pieza?</label>
+            <input type="text" id="edit-title" class="admin-input" placeholder="Ej: Set de Satén Antifrizz, Repasador Waffle" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="edit-category" class="admin-label" id="label-edit-category">¿En qué categoría va?</label>
+            <select id="edit-category" class="admin-select">
+              <option value="cuidado-personal">Cuidado Personal &amp; Descanso</option>
+              <option value="hogar">Hogar &amp; Cocina</option>
+              <option value="organizacion">Organización &amp; Accesorios</option>
+              <option value="infantil">Bebés &amp; Infantil</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label for="edit-price" class="admin-label" id="label-edit-price">Precio</label>
+            <input type="text" id="edit-price" class="admin-input" placeholder="Ej: $12.500 o Consultar Colores" />
+          </div>
+          <div class="admin-form-group">
+            <label for="edit-texture" class="admin-label" id="label-edit-texture">Telas &amp; Materiales</label>
+            <input type="text" id="edit-texture" class="admin-input" placeholder="Ej: Satén de seda premium anti-frizz, Puro algodón" />
+          </div>
+        </div>
+
+        <!-- Campos avanzados para Juanma (Ocultos para Elena) -->
+        <div class="admin-form-row dev-only-field" id="dev-fields-row" style="display:none;">
+          <div class="admin-form-group">
+            <label for="edit-tag" class="admin-label">Etiqueta Superior (Pill)</label>
+            <input type="text" id="edit-tag" class="admin-input" placeholder="Ej: Favorito Skincare &middot; Satén" />
+          </div>
+          <div class="admin-form-group">
+            <label for="edit-size" class="admin-label">Tamaño en Catálogo</label>
+            <select id="edit-size" class="admin-select">
+              <option value="medium">Mediano (Estándar)</option>
+              <option value="large">Destacado Grande</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="edit-desc" class="admin-label" id="label-edit-desc">Descripción (para qué sirve y qué incluye)</label>
+          <textarea id="edit-desc" class="admin-textarea" rows="2" placeholder="Escribe un breve resumen de la pieza y su uso..."></textarea>
+        </div>
+
+        <!-- Selector de Colores Disponibles para este Producto -->
+        <div class="admin-form-group" style="background:#FAF7F2; border:1px solid #E5DFD7; border-radius:10px; padding:1rem; margin-bottom:1.1rem;">
+          <label class="admin-label" style="margin-bottom:0.25rem;">🎨 ¿En qué Colores de Tela está Disponible este Producto?</label>
+          <p style="font-size:0.78rem; color:#5F5852; margin:0 0 0.7rem 0;">
+            Marcá los colores que tenés en el taller para esta pieza. Solo los colores marcados le van a aparecer a la clienta:
+          </p>
+          <div id="inline-edit-colors-list" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem;">
+            <!-- Checkboxes de colores generados por JS -->
+          </div>
+          <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap; padding-top:0.5rem; border-top:1px dashed rgba(43,38,37,0.12);">
+            <input type="text" id="inline-new-color-name" class="admin-input" placeholder="Nuevo color (ej: Lila Pastel)" style="max-width:190px; padding:0.35rem 0.6rem; font-size:0.78rem;" />
+            <input type="color" id="inline-new-color-hex" value="#D4A5A5" style="width:36px; height:32px; border:1px solid #D5CEC4; border-radius:6px; cursor:pointer; padding:2px; background:#FFF;" title="Elegir tono" />
+            <button type="button" class="btn btn--secondary" id="btn-inline-add-color" style="padding:0.35rem 0.75rem; font-size:0.76rem;">+ Sumar Color</button>
+            <label style="margin-left:auto; display:inline-flex; align-items:center; gap:0.35rem; font-size:0.78rem; color:#4A433E; cursor:pointer;">
+              <input type="checkbox" id="inline-allow-embroidery" checked />
+              <span>🪡 Ofrecer bordado a mano en esta pieza</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Gestor de Fotografías de la Creación (Máximo 4 fotos inspiradas en Zara Home & Anthropologie) -->
+        <div class="admin-form-group">
+          <label class="admin-label" id="label-edit-images">Fotografías de la Creación (De 1 a 4 fotos como máximo &middot; Ambiente, producto, detalle y en uso)</label>
+          <div class="admin-images-box" id="edit-images-list">
+            <!-- Filas inyectadas por JS -->
+          </div>
+          <div class="admin-upload-cta">
+            <label class="btn-add-img">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+              <span>📸 Elegir foto desde tu celular o compu (Máx 4)</span>
+              <input type="file" id="edit-file-input" accept="image/*" style="display:none;" />
+            </label>
+            <button type="button" class="btn-add-img" id="btn-add-image-url">
+              <span>+ Agregar por enlace</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Detalles de Confección & Telas -->
+        <div class="admin-form-group" style="border-top:1px dashed var(--border-medium); padding-top:1.2rem; margin-top:1.2rem;">
+          <label for="edit-ig-caption" class="admin-label" id="label-edit-story">Detalles de Confección &amp; Telas (Contá cómo la hiciste o qué telas usaste)</label>
+          <textarea id="edit-ig-caption" class="admin-textarea" rows="3" placeholder="Contá con tus palabras el proceso de costura, qué tela usaste o una recomendación para el hogar..."></textarea>
+        </div>
+
+        <div class="admin-modal__buttons">
+          <button type="button" class="btn btn--secondary" id="edit-cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn--primary" id="edit-save-btn">✨ Guardar en la Tienda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Configuración del Sitio & Editor de Textos para Elena y Juanma -->
+  <div class="admin-modal" id="dev-settings-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card admin-modal__card--wide">
+      <div class="admin-modal__header">
+        <div class="profile-badge-inline">🌸 Taller de Elena &middot; Textos y Secciones</div>
+        <h3 class="admin-modal__title">Cambiar los Textos y Secciones de la Página</h3>
+        <p class="admin-modal__desc">Acá podés activar o desactivar las Cajas de Regalo y cambiar con tus propias palabras cualquiera de los títulos o frases de toda la página.</p>
+      </div>
+
+      <form id="dev-settings-form">
+        <!-- 0. Interruptores de Secciones (Lo decide Elena) -->
+        <div class="admin-settings-section" style="background:#FAF6F1; border:1px solid rgba(164,90,68,0.25); padding:1rem; border-radius:10px; margin-bottom:1.25rem;">
+          <h4 class="admin-settings-section__title">🎛️ ¿Qué Secciones Querés Mostrar en la Página? (Decisión de Elena)</h4>
+          <p class="admin-settings-section__desc">Marcá o desmarcá según prefieras. La Bolsa de Pedidos con 50% Seña / 50% Entrega queda activa siempre.</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.5rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
+              <input type="checkbox" id="setting-show-gift-boxes" checked style="width:17px; height:17px; accent-color:#A45A44;" />
+              <span>🎁 Mostrar Cajas de Regalo &amp; Sets (-10% OFF)</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
+              <input type="checkbox" id="setting-show-custom-builder" checked style="width:17px; height:17px; accent-color:#A45A44;" />
+              <span>✂️ Mostrar Módulo Diseñador a Medida (disenar.html)</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
+              <input type="checkbox" id="setting-show-fabric-showcase" checked style="width:17px; height:17px; accent-color:#A45A44;" />
+              <span>📖 Mostrar Muestrario de Telas de Elena</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.84rem; font-weight:600; cursor:pointer;">
+              <input type="checkbox" id="setting-enable-coupons" style="width:17px; height:17px; accent-color:#A45A44;" />
+              <span>🏷️ Mostrar casilla de Cupones en la Bolsa (Opcional)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 1. Contacto & Redes -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">📱 Parámetros de Contacto &amp; Redes</h4>
+          <p class="admin-settings-section__desc">Configura los canales directos para la recepción de pedidos de clientes y enlaces sociales.</p>
+          
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-whatsapp" class="admin-label">WhatsApp Receptor de Pedidos</label>
+              <input type="text" id="setting-whatsapp" class="admin-input" placeholder="Ej: 5491100000000 (sin espacios ni guiones)" />
+              <small style="color:var(--text-muted); font-size:0.72rem;">Número al que se envían los pedidos desde la bolsa y botones directos.</small>
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-instagram" class="admin-label">Usuario de Instagram (@)</label>
+              <input type="text" id="setting-instagram" class="admin-input" placeholder="divina.locura.deco" />
+              <small style="color:var(--text-muted); font-size:0.72rem;">Actualiza automáticamente todos los links de Instagram de la web.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Portada & Hero (Zara Home inspiration) -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🏛️ Portada Principal &amp; Hero</h4>
+          <p class="admin-settings-section__desc">Títulos y frases de impacto al ingresar a la tienda.</p>
+          
+          <div class="admin-form-group">
+            <label for="setting-announcement" class="admin-label">Barra Superior de Anuncios</label>
+            <input type="text" id="setting-announcement" class="admin-input" placeholder="Confección artesanal · Piezas únicas elaboradas a fuego lento por Elena" />
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-hero-eyebrow" class="admin-label">Antetítulo / Eyebrow Hero</label>
+              <input type="text" id="setting-hero-eyebrow" class="admin-input" placeholder="CONFECCIÓN ARTESANAL · BUENOS AIRES" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-hero-cta" class="admin-label">Texto del Botón CTA Portada</label>
+              <input type="text" id="setting-hero-cta" class="admin-input" placeholder="Explorar la Colección" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-hero-title" class="admin-label">Título Principal (H1) Hero</label>
+            <input type="text" id="setting-hero-title" class="admin-input" placeholder="El arte del detalle. Diseño hecho a mano para abrazar tu hogar." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-hero-tagline" class="admin-label">Bajada / Frase Inspiracional Hero</label>
+            <input type="text" id="setting-hero-tagline" class="admin-input" placeholder="Textiles con alma. Organización y calidez para tu día a día." />
+          </div>
+        </div>
+
+        <!-- 3. Categorías, Catálogo, Muestrario, Diseñador a Medida y Regalos -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🧵 Categorías, Catálogo, Telas, Diseñador a Medida &amp; Regalos</h4>
+          <p class="admin-settings-section__desc">Cambiá los títulos y descripciones de las secciones principales.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-cat-eyebrow" class="admin-label">Antetítulo Categorías</label>
+              <input type="text" id="setting-cat-eyebrow" class="admin-input" placeholder="Explorar por Colección" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-cat-title" class="admin-label">Título Categorías</label>
+              <input type="text" id="setting-cat-title" class="admin-input" placeholder="Categorías Artesanales" />
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label for="setting-cat-desc" class="admin-label">Descripción Categorías</label>
+            <input type="text" id="setting-cat-desc" class="admin-input" placeholder="Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena." />
+          </div>
+
+          <hr style="border:0; border-top:1px dashed var(--border-medium); margin:1rem 0;" />
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-catalog-eyebrow" class="admin-label">Antetítulo Catálogo</label>
+              <input type="text" id="setting-catalog-eyebrow" class="admin-input" placeholder="Confección Auténtica de Elena" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-catalog-title" class="admin-label">Título Catálogo</label>
+              <input type="text" id="setting-catalog-title" class="admin-input" placeholder="Colección de Taller" />
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label for="setting-catalog-desc" class="admin-label">Descripción Catálogo</label>
+            <input type="text" id="setting-catalog-desc" class="admin-input" placeholder="Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos." />
+          </div>
+
+          <hr style="border:0; border-top:1px dashed var(--border-medium); margin:1rem 0;" />
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-fabrics-title" class="admin-label">Título Muestrario de Telas</label>
+              <input type="text" id="setting-fabrics-title" class="admin-input" placeholder="Muestrario de Fibras Nobles & Especificaciones" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-fabrics-desc" class="admin-label">Descripción Muestrario de Telas</label>
+              <input type="text" id="setting-fabrics-desc" class="admin-input" placeholder="Explorá las telas que Elena tiene en su taller listas para confeccionar..." />
+            </div>
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-builder-title" class="admin-label">Título Diseñador a Medida</label>
+              <input type="text" id="setting-builder-title" class="admin-input" placeholder="Diseñá tu Pieza a Medida o Subí tu Idea" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-builder-desc" class="admin-label">Descripción Diseñador a Medida</label>
+              <input type="text" id="setting-builder-desc" class="admin-input" placeholder="Armá acá paso a paso lo que querés hacer o subí una foto/boceto..." />
+            </div>
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-gifts-title" class="admin-label">Título Cajas de Regalo</label>
+              <input type="text" id="setting-gifts-title" class="admin-input" placeholder="Cajas de Regalo & Sets con 10% OFF" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-gifts-desc" class="admin-label">Descripción Cajas de Regalo</label>
+              <input type="text" id="setting-gifts-desc" class="admin-input" placeholder="Combinaciones pensadas por Elena para agasajar o renovar tu hogar..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Sección Sobre Elena (El Taller) -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🌸 El Taller de Elena (Historia de Marca)</h4>
+          <p class="admin-settings-section__desc">La narrativa artesanal y la filosofía de trabajo de Elena.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-about-eyebrow" class="admin-label">Antetítulo Sección</label>
+              <input type="text" id="setting-about-eyebrow" class="admin-input" placeholder="Manos Creadoras" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-about-title" class="admin-label">Título Sección</label>
+              <input type="text" id="setting-about-title" class="admin-input" placeholder="Confeccionado por Elena" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-lead" class="admin-label">Párrafo Principal (Destacado)</label>
+            <textarea id="setting-about-lead" class="admin-textarea" rows="2" placeholder="Detrás de cada dobladillo, cada cierre y cada elección de tela..."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-body" class="admin-label">Párrafo Secundario (Filosofía de Taller)</label>
+            <textarea id="setting-about-body" class="admin-textarea" rows="3" placeholder="En Divina Locura Deco no creemos en la producción masiva..."></textarea>
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-about-quote" class="admin-label">Frase / Cita Célebre</label>
+              <input type="text" id="setting-about-quote" class="admin-input" placeholder="“Coser es una forma de cuidar a quienes habitan el hogar.”" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-about-author" class="admin-label">Firma de la Cita</label>
+              <input type="text" id="setting-about-author" class="admin-input" placeholder="— Elena" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-about-cta" class="admin-label">Texto del Botón Explorar</label>
+            <input type="text" id="setting-about-cta" class="admin-input" placeholder="Explorar la Colección Completa" />
+          </div>
+        </div>
+
+        <!-- 5. Espacios & Estilismo -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">🌿 Espacios &amp; Estilismo (Atmósferas)</h4>
+          <p class="admin-settings-section__desc">Encabezado y llamado a la acción de la sección de lifestyle.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-spaces-eyebrow" class="admin-label">Antetítulo Espacios</label>
+              <input type="text" id="setting-spaces-eyebrow" class="admin-input" placeholder="Atmósferas &amp; Calidez · Inspiración Zara Home &amp; Anthropologie" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-spaces-title" class="admin-label">Título Espacios</label>
+              <input type="text" id="setting-spaces-title" class="admin-input" placeholder="Espacios que Inspiran Calma" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-spaces-desc" class="admin-label">Descripción Espacios</label>
+            <input type="text" id="setting-spaces-desc" class="admin-input" placeholder="Cómo conviven nuestras piezas textiles en dormitorios, baños y rincones cotidianos de la casa." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-spaces-cta" class="admin-label">Texto del Botón de Asesoramiento</label>
+            <input type="text" id="setting-spaces-cta" class="admin-input" placeholder="Consultar Asesoramiento Textil para tu Espacio →" />
+          </div>
+        </div>
+
+        <!-- 6. Banner WhatsApp & Footer -->
+        <div class="admin-settings-section">
+          <h4 class="admin-settings-section__title">💬 Banner WhatsApp &amp; Pie de Página</h4>
+          <p class="admin-settings-section__desc">Mensajes de cierre y textos del pie de página.</p>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="setting-wa-banner-eyebrow" class="admin-label">Antetítulo Banner WhatsApp</label>
+              <input type="text" id="setting-wa-banner-eyebrow" class="admin-input" placeholder="¿Tienes una medida especial o consulta?" />
+            </div>
+            <div class="admin-form-group">
+              <label for="setting-wa-banner-title" class="admin-label">Título Banner WhatsApp</label>
+              <input type="text" id="setting-wa-banner-title" class="admin-input" placeholder="Charlemos directamente por WhatsApp" />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-wa-banner-desc" class="admin-label">Descripción Banner WhatsApp</label>
+            <textarea id="setting-wa-banner-desc" class="admin-textarea" rows="2" placeholder="Te asesoramos personalmente con los colores de telas, combinaciones y confección personalizada para tu espacio."></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-wa-banner-btn" class="admin-label">Texto del Botón Banner WhatsApp</label>
+            <input type="text" id="setting-wa-banner-btn" class="admin-input" placeholder="Escribir a Elena" />
+          </div>
+
+          <hr style="border:0; border-top:1px dashed var(--border-medium); margin:1rem 0;" />
+
+          <div class="admin-form-group">
+            <label for="setting-footer-desc" class="admin-label">Descripción de Marca en el Pie de Página</label>
+            <input type="text" id="setting-footer-desc" class="admin-input" placeholder="Textiles artesanales y piezas utilitarias en tela por Elena." />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="setting-footer-copy" class="admin-label">Línea de Copyright &amp; Créditos</label>
+            <input type="text" id="setting-footer-copy" class="admin-input" placeholder="© 2026 Divina Locura Deco — Confección artesanal por Elena. Diseñado con calidez &amp; dedicación." />
+          </div>
+        </div>
+
+        <!-- 7. Sincronización con GitHub & PAT -->
+        <div style="background:var(--bg-surface); padding:1.25rem; border-radius:var(--radius-sm); border:1px solid var(--border-medium); margin:1.25rem 0;">
+          <h4 style="font-family:var(--font-serif); font-size:1.05rem; margin-bottom:0.4rem; color:var(--text-primary);">🚀 Sincronización Directa con GitHub Pages</h4>
+          <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.45; margin-bottom:0.75rem;">
+            Ingresa tu GitHub Personal Access Token (PAT) con permisos de <code>repo</code> para enviar los productos y configuración de textos directamente a <code>fernandezbjuanma-wq/divinalocura</code> (rama main).
+          </p>
+          <input type="password" id="setting-gh-token" class="admin-input" placeholder="github_pat_... o ghp_..." />
+          <div style="display:flex; gap:0.5rem; margin-top:0.6rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn--primary" id="btn-sync-github-direct" style="font-size:0.8rem; padding:0.5rem 1rem;">
+              <span>🚀 Enviar Commit a GitHub</span>
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-download-backup" style="font-size:0.8rem; padding:0.5rem 1rem;">
+              <span>📥 Descargar products-data.js</span>
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-reset-texts" style="font-size:0.8rem; padding:0.5rem 1rem; color:var(--accent-terracotta);">
+              <span>✍️ Restablecer Textos por Defecto</span>
+            </button>
+            <button type="button" class="btn btn--secondary" id="btn-reset-factory" style="font-size:0.8rem; padding:0.5rem 1rem; color:#ED4956; border-color:rgba(237,73,86,0.3);">
+              <span>🔄 Restablecer Catálogo Original</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-modal__buttons">
+          <button type="button" class="btn btn--secondary" id="dev-settings-close-btn">Cerrar</button>
+          <button type="submit" class="btn btn--primary" id="dev-settings-save-btn">Guardar Ajustes &amp; Textos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Publicar Cambios a GitHub Pages -->
+  <div class="admin-modal" id="github-sync-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="admin-modal__card">
+      <h3 class="admin-modal__title">Publicar Cambios en GitHub</h3>
+      <p class="admin-modal__desc">Tus cambios ya están guardados en tu navegador. Para que los vean todos los clientes en internet de forma permanente:</p>
+      
+      <div style="background:var(--bg-surface); padding:1rem; border-radius:6px; font-size:0.82rem; margin-bottom:1.2rem; line-height:1.5;">
+        <p><strong>Opción 1: Descargar Archivo</strong></p>
+        <p>Descarga el archivo <code>products-data.js</code> actualizado y súbelo al repositorio en GitHub.</p>
+        <button type="button" class="btn btn--secondary" id="modal-download-data-btn" style="margin-top:0.5rem; width:100%;">
+          <span>📥 Descargar products-data.js</span>
+        </button>
+      </div>
+
+      <div style="background:var(--bg-surface); padding:1rem; border-radius:6px; font-size:0.82rem; line-height:1.5;">
+        <p><strong>Opción 2: Sincronización Automática con Token</strong></p>
+        <p>Si tienes un Token de GitHub (PAT), ingrésalo aquí y la página enviará el commit automáticamente:</p>
+        <input type="password" id="gh-token-input" class="admin-input" placeholder="github_pat_..." style="margin-top:0.4rem;" />
+        <button type="button" class="btn btn--primary" id="gh-sync-submit-btn" style="margin-top:0.5rem; width:100%;">
+          <span>🚀 Enviar Commit a GitHub</span>
+        </button>
+      </div>
+
+      <div class="admin-modal__buttons">
+        <button type="button" class="btn btn--secondary" id="gh-sync-close-btn">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Alertas Toast -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+</body>
+</html>

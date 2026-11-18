@@ -287,12 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setElText('footer-brand-desc', settings.footer_desc);
     setElText('footer-copy-text', settings.footer_copy);
 
-    // Interruptores de Visibilidad de Secciones (Configurables por Elena)
+    // Interruptores de Visibilidad de Secciones (Configurables por Elena & Juanma)
+    const showGifts = settings.show_gift_boxes !== false;
+    const showBuilder = settings.show_custom_builder !== false;
+    const showFabrics = settings.show_fabric_showcase !== false;
+
     const giftBoxesSec = document.getElementById('armador-regalos');
     if (giftBoxesSec) {
-      giftBoxesSec.style.display = settings.show_gift_boxes !== false ? '' : 'none';
+      giftBoxesSec.style.display = showGifts ? '' : 'none';
     }
-    const showBuilder = settings.show_custom_builder !== false;
     const atelierBannerSec = document.getElementById('atelier-a-medida');
     if (atelierBannerSec) {
       atelierBannerSec.style.display = showBuilder ? '' : 'none';
@@ -305,17 +308,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (disabledNoticeSec) {
       disabledNoticeSec.style.display = showBuilder ? 'none' : 'block';
     }
-    document.querySelectorAll('[data-atelier-link], a[href*="disenar.html"]').forEach(link => {
-      const listItem = link.closest('.side-drawer__list li');
-      if (listItem) {
-        listItem.style.display = showBuilder ? '' : 'none';
-      }
-      link.style.display = showBuilder ? '' : 'none';
-    });
     const fabricShowcaseSec = document.getElementById('muestrario-telas');
     if (fabricShowcaseSec) {
-      fabricShowcaseSec.style.display = settings.show_fabric_showcase !== false ? '' : 'none';
+      fabricShowcaseSec.style.display = showFabrics ? '' : 'none';
     }
+    const experiencesSec = document.getElementById('experiencias-atelier');
+    if (experiencesSec) {
+      experiencesSec.style.display = (showGifts || showBuilder || showFabrics) ? '' : 'none';
+    }
+
+    document.querySelectorAll('[data-atelier-link]').forEach(link => {
+      const listItem = link.closest('.side-drawer__list li');
+      if (listItem) listItem.style.display = showBuilder ? '' : 'none';
+      link.style.display = showBuilder ? '' : 'none';
+    });
+    document.querySelectorAll('[data-fabric-link]').forEach(link => {
+      const listItem = link.closest('.side-drawer__list li');
+      if (listItem) listItem.style.display = showFabrics ? '' : 'none';
+      link.style.display = showFabrics ? '' : 'none';
+    });
+    document.querySelectorAll('[data-gift-link]').forEach(link => {
+      const listItem = link.closest('.side-drawer__list li');
+      if (listItem) listItem.style.display = showGifts ? '' : 'none';
+      link.style.display = showGifts ? '' : 'none';
+    });
+
     document.querySelectorAll('.cart-coupon-row').forEach(el => {
       el.style.display = settings.enable_coupons === true ? 'flex' : 'none';
     });
@@ -356,6 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!productsGrid) return;
     productsGrid.innerHTML = '';
 
+    const isPreviewMode = productsGrid.getAttribute('data-catalog-mode') === 'preview';
+    const previewLimit = parseInt(productsGrid.getAttribute('data-catalog-limit') || '4', 10) || 4;
+
     const query = (searchQuery || '').toLowerCase().trim();
     const filtered = products.filter(p => {
       const matchCat = currentCategory === 'todos' || p.category === currentCategory;
@@ -368,6 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
         (p.categoryName && p.categoryName.toLowerCase().includes(query))
       );
     });
+
+    const catalogBreadcrumbEl = document.getElementById('catalog-breadcrumb-current');
+    if (catalogBreadcrumbEl) {
+      catalogBreadcrumbEl.textContent = currentCategory === 'todos'
+        ? 'Colección Completa'
+        : getCategoryLabel(currentCategory);
+    }
 
     if (filtered.length === 0) {
       productsGrid.innerHTML = `
@@ -391,28 +418,43 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Balancear las filas a exactamente 12 columnas en desktop para evitar huecos o bordes desparejos
-    const rowSpans = [];
-    for (let i = 0; i < filtered.length; i += 2) {
-      if (i + 1 >= filtered.length) {
-        rowSpans.push('catalog-item--w12');
+    // En modo portada (preview) mostramos solo las 4 piezas destacadas de la categoría activa (salvo que haya búsqueda activa)
+    const displayList = (isPreviewMode && !query) ? filtered.slice(0, previewLimit) : filtered;
+    productsGrid.classList.toggle('lookbook-grid--preview', isPreviewMode && !query);
+
+    // Actualizar barra editorial de vista previa en index.html
+    const previewNoteEl = document.getElementById('catalog-preview-count-note');
+    const previewBtnEl = document.getElementById('btn-view-full-catalog');
+    const previewBtnLabelEl = document.getElementById('btn-view-full-catalog-label');
+    if (previewNoteEl) {
+      if (query) {
+        previewNoteEl.textContent = `Mostrando ${displayList.length} resultado${displayList.length === 1 ? '' : 's'} para "${searchQuery}" en el catálogo`;
+      } else if (currentCategory === 'todos') {
+        previewNoteEl.textContent = `Mostrando una selección de ${displayList.length} de las ${products.length} creaciones artesanales de Elena`;
       } else {
-        const aLarge = filtered[i].size === 'large';
-        const bLarge = filtered[i + 1].size === 'large';
-        if (aLarge && !bLarge) {
-          rowSpans.push('catalog-item--w7', 'catalog-item--w5');
-        } else if (!aLarge && bLarge) {
-          rowSpans.push('catalog-item--w5', 'catalog-item--w7');
-        } else {
-          rowSpans.push('catalog-item--w6', 'catalog-item--w6');
-        }
+        previewNoteEl.textContent = `Mostrando ${displayList.length} de ${filtered.length} creaciones en ${getCategoryLabel(currentCategory)}`;
+      }
+    }
+    if (previewBtnEl) {
+      if (query) {
+        previewBtnEl.href = `catalogo.html?q=${encodeURIComponent(searchQuery)}`;
+        if (previewBtnLabelEl) previewBtnLabelEl.textContent = `Abrir Búsqueda en el Catálogo Completo →`;
+      } else if (currentCategory === 'todos') {
+        previewBtnEl.href = `catalogo.html`;
+        if (previewBtnLabelEl) previewBtnLabelEl.textContent = `Explorar el Catálogo Completo (${products.length} Creaciones) →`;
+      } else {
+        previewBtnEl.href = `catalogo.html?categoria=${encodeURIComponent(currentCategory)}`;
+        if (previewBtnLabelEl) previewBtnLabelEl.textContent = `Ver Toda la Línea ${getCategoryLabel(currentCategory)} (${filtered.length}) →`;
       }
     }
 
-    filtered.forEach((product, idx) => {
-      const spanClass = rowSpans[idx] || (product.size === 'large' ? 'catalog-item--large' : 'catalog-item--medium');
+    // Grilla 100% simétrica: pares iguales de 6 columnas en catálogo completo, o tarjetas de 1 columna igual en grilla de 4 de portada
+    displayList.forEach((product) => {
+      const spanClass = (isPreviewMode && !query)
+        ? 'catalog-item--preview'
+        : (displayList.length === 1 ? 'catalog-item--w12' : 'catalog-item--w6');
       const card = document.createElement('article');
-      card.className = `catalog-item ${product.size === 'large' ? 'catalog-item--large' : 'catalog-item--medium'} ${spanClass}`;
+      card.className = `catalog-item catalog-item--symmetric ${spanClass}`;
       card.setAttribute('data-category', product.category);
       card.setAttribute('data-id', product.id);
 
@@ -850,6 +892,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   categoryTiles.forEach(tile => {
     tile.addEventListener('click', (e) => {
+      const href = tile.getAttribute('href') || '';
+      if (href && !href.startsWith('#')) {
+        // Dejar que navegue directamente a catalogo.html?categoria=...
+        return;
+      }
       e.preventDefault();
       const targetCat = tile.getAttribute('data-category-target');
       applyFilter(targetCat);
@@ -888,6 +935,25 @@ document.addEventListener('DOMContentLoaded', () => {
       headerSearchClear.style.display = 'none';
       renderCatalog();
     });
+  }
+
+  // Leer parámetros de URL (?categoria=... o ?q=...) al cargar la página
+  try {
+    const initParams = new URLSearchParams(window.location.search);
+    const paramCat = initParams.get('categoria') || initParams.get('filter');
+    const paramQuery = initParams.get('q');
+    if (paramQuery) {
+      searchQuery = paramQuery;
+      if (headerSearchInput) headerSearchInput.value = paramQuery;
+      if (headerSearchClear) headerSearchClear.style.display = 'inline-block';
+    }
+    if (paramCat && ['todos', 'cuidado-personal', 'hogar', 'organizacion', 'infantil'].includes(paramCat)) {
+      applyFilter(paramCat);
+    } else if (paramQuery) {
+      renderCatalog();
+    }
+  } catch (err) {
+    console.warn('Error leyendo parámetros de catálogo:', err);
   }
 
   // Menú Lateral Desplegable (Drawer Estilo Zara Home)
@@ -3590,9 +3656,14 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
       idealEl.textContent = info.ideal || idealFallback[info.id] || 'Piezas textiles confeccionadas a pedido y medidas especiales en el taller.';
     }
     if (btnLblEl) btnLblEl.textContent = info.btnLabel || 'Ver Catálogo →';
-    if (fabricFilterBtn) fabricFilterBtn.setAttribute('data-fabric-filter', info.filter || 'todos');
+    if (fabricFilterBtn) {
+      const catSlug = info.filter || 'todos';
+      fabricFilterBtn.setAttribute('data-fabric-filter', catSlug);
+      fabricFilterBtn.setAttribute('href', `catalogo.html?categoria=${encodeURIComponent(catSlug)}`);
+    }
     if (btnOrderWithThisFabric) {
-      btnOrderWithThisFabric.setAttribute('href', `disenar.html?fabric=${encodeURIComponent(info.id)}`);
+      const onBuilderPage = Boolean(document.getElementById('disenador-a-medida'));
+      btnOrderWithThisFabric.setAttribute('href', onBuilderPage ? '#disenador-a-medida' : `disenar.html?fabric=${encodeURIComponent(info.id)}`);
     }
 
     if (colorsListEl) {

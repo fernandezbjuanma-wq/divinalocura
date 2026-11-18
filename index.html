@@ -15,13 +15,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 
   <!-- Hoja de Estilos Principal -->
-  <link rel="stylesheet" href="style.css?v=20261118v10">
+  <link rel="stylesheet" href="style.css?v=20261118v11">
 
   <!-- Scripts de Datos e Interactividad (Vanilla JS) -->
-  <script src="banco-data.js?v=20261118v10" defer></script>
-  <script src="products-data.js?v=20261118v10" defer></script>
-  <script src="workshop-db.js?v=20261118v10" defer></script>
-  <script src="main.js?v=20261118v10" defer></script>
+  <script src="banco-data.js?v=20261118v11" defer></script>
+  <script src="products-data.js?v=20261118v11" defer></script>
+  <script src="workshop-db.js?v=20261118v11" defer></script>
+  <script src="main.js?v=20261118v11" defer></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -43,15 +43,15 @@
       </div>
       <nav class="side-drawer__nav">
         <ul class="side-drawer__list">
-          <li><a href="#hero" class="side-drawer__link" data-close-drawer>Inicio</a></li>
-          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="todos">Colección Completa</a></li>
-          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="cuidado-personal">Dormitorio &amp; Satén</a></li>
-          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
-          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
-          <li><a href="#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
-          <li><a href="#muestrario-telas" class="side-drawer__link" data-close-drawer>Muestrario de Telas de Elena</a></li>
+          <li><a href="#hero" class="side-drawer__link is-current" data-close-drawer>Portada Principal</a></li>
+          <li><a href="catalogo.html" class="side-drawer__link" data-close-drawer>Colección Completa (16)</a></li>
+          <li><a href="catalogo.html?categoria=cuidado-personal" class="side-drawer__link" data-close-drawer>Dormitorio &amp; Satén</a></li>
+          <li><a href="catalogo.html?categoria=hogar" class="side-drawer__link" data-close-drawer>Cocina &amp; Waffle</a></li>
+          <li><a href="catalogo.html?categoria=organizacion" class="side-drawer__link" data-close-drawer>Organización &amp; Accesorios</a></li>
+          <li><a href="catalogo.html?categoria=infantil" class="side-drawer__link" data-close-drawer>Bebés &amp; Infantil</a></li>
+          <li><a href="disenar.html#muestrario-telas" class="side-drawer__link" data-close-drawer data-fabric-link>Muestrario de Telas de Elena</a></li>
           <li><a href="disenar.html" class="side-drawer__link" data-close-drawer data-atelier-link>✂️ Diseñá tu Pieza a Medida</a></li>
-          <li><a href="#armador-regalos" class="side-drawer__link" data-close-drawer>Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="catalogo.html#armador-regalos" class="side-drawer__link" data-close-drawer data-gift-link>Cajas de Regalo (-10% OFF)</a></li>
           <li><a href="#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
@@ -99,8 +99,9 @@
         </div>
       </div>
 
-      <!-- Derecha: Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos y Contacto -->
+      <!-- Derecha: Catálogo, Mi Cuenta / Iniciar Sesión, Bolsa de Pedidos y Contacto -->
       <div class="site-header__right">
+        <a href="catalogo.html" class="header-text-btn header-help-link">CATÁLOGO</a>
         <button type="button" class="header-text-btn" id="header-login-btn">
           <span id="header-user-label">MI CUENTA</span>
         </button>
@@ -216,45 +217,45 @@
           <p class="section-desc" id="categories-desc">Selecciona un rincón para descubrir las piezas confeccionadas en telas nobles por Elena.</p>
         </header>
 
-        <!-- Cuadros con Imágenes de Vista Previa (Grid de 6 Columnas como en Anthropologie) -->
+        <!-- Cuadros con Imágenes de Vista Previa (Grid Simétrico de 6 Columnas) -->
         <div class="previews-grid">
           
-          <a href="#catalogo" class="preview-card" data-category-target="cuidado-personal">
+          <a href="catalogo.html?categoria=cuidado-personal" class="preview-card" data-category-target="cuidado-personal">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg" alt="Línea Satén Antifrizz de Elena" class="preview-card__img" loading="lazy" />
             </div>
             <span class="preview-card__link">satén antifrizz &amp; spa</span>
           </a>
 
-          <a href="#catalogo" class="preview-card" data-category-target="hogar">
+          <a href="catalogo.html?categoria=hogar" class="preview-card" data-category-target="hogar">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg" alt="Repasadores Waffle y Blanquería" class="preview-card__img" loading="lazy" />
             </div>
             <span class="preview-card__link">repasadores &amp; cocina</span>
           </a>
 
-          <a href="#catalogo" class="preview-card" data-category-target="organizacion">
+          <a href="catalogo.html?categoria=organizacion" class="preview-card" data-category-target="organizacion">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/hanging-wall-organizer-in-room.jpg" alt="Organizadores Colgantes de Tela" class="preview-card__img" loading="lazy" />
             </div>
             <span class="preview-card__link">organizadores de pared</span>
           </a>
 
-          <a href="#catalogo" class="preview-card" data-category-target="infantil">
+          <a href="catalogo.html?categoria=infantil" class="preview-card" data-category-target="infantil">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/plush-dolls-on-wooden-shelf.jpg" alt="Muñecos de Apego y Maternidad" class="preview-card__img" loading="lazy" />
             </div>
             <span class="preview-card__link">bebés &amp; muñecos de apego</span>
           </a>
 
-          <a href="#catalogo" class="preview-card" data-category-target="organizacion">
+          <a href="catalogo.html?categoria=organizacion" class="preview-card" data-category-target="organizacion">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg" alt="Neceseres y Cartucheras" class="preview-card__img" loading="lazy" />
             </div>
             <span class="preview-card__link">neceseres &amp; cartucheras</span>
           </a>
 
-          <a href="#catalogo" class="preview-card" data-category-target="cuidado-personal">
+          <a href="catalogo.html?categoria=cuidado-personal" class="preview-card" data-category-target="cuidado-personal">
             <div class="preview-card__image-box">
               <img src="assets/images/catalog/satin-sleep-mask-on-marble.jpg" alt="Antifaces y Descanso" class="preview-card__img" loading="lazy" />
             </div>
@@ -265,20 +266,20 @@
       </div>
     </section>
 
-    <!-- FASE 3 & 4: CATÁLOGO CON PRODUCTOS REALES DE ELENA (@divina.locura.deco) -->
-    <section class="catalog-section" id="catalogo" aria-labelledby="catalog-title">
+    <!-- PANTALLAZO EDITORIAL DE LA COLECCIÓN (4 PIEZAS DESTACADAS EN GRILLA SIMÉTRICA) -->
+    <section class="catalog-section catalog-section--preview" id="catalogo" aria-labelledby="catalog-title">
       <div class="container">
         
         <div class="catalog-header">
           <div class="catalog-header__text">
             <span class="section-eyebrow" id="catalog-eyebrow">Confección Auténtica de Elena</span>
             <h2 class="section-title" id="catalog-title">Colección de Taller</h2>
-            <p class="section-desc" id="catalog-desc">Artículos utilitarios y blanquería hechos a mano con telas nobles y detalles únicos.</p>
+            <p class="section-desc" id="catalog-desc">Un vistazo curado a nuestras piezas más queridas. Explorá el catálogo completo para descubrir todas las creaciones.</p>
           </div>
 
           <!-- Botonera de Filtros Interactiva -->
           <nav class="catalog-filters" aria-label="Filtros del catálogo">
-            <button class="filter-btn is-active" data-filter="todos">Todos</button>
+            <button class="filter-btn is-active" data-filter="todos">Destacados</button>
             <button class="filter-btn" data-filter="cuidado-personal">Cuidado Personal</button>
             <button class="filter-btn" data-filter="hogar">Hogar &amp; Cocina</button>
             <button class="filter-btn" data-filter="organizacion">Organización</button>
@@ -286,11 +287,11 @@
           </nav>
         </div>
 
-        <!-- Grilla Asimétrica Lookbook con Productos Reales de Elena -->
-        <div class="lookbook-grid" id="products-grid">
+        <!-- Grilla Simétrica de 4 Columnas (Pantallazo de Portada) -->
+        <div class="lookbook-grid lookbook-grid--preview" id="products-grid" data-catalog-mode="preview" data-catalog-limit="4">
 
-          <!-- Producto 1: DESTACADO GRANDE (Línea Satén Antifrizz) -->
-          <article class="catalog-item catalog-item--large" data-category="cuidado-personal">
+          <!-- Producto 1: DESTACADO (Línea Satén Antifrizz) -->
+          <article class="catalog-item catalog-item--preview" data-category="cuidado-personal">
             <div class="catalog-item__media">
               <img src="assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg" alt="Set Skincare &amp; Antifrizz de Satén" class="catalog-item__img" loading="lazy" />
               <span class="catalog-item__tag">Favorito Skincare &middot; Satén</span>
@@ -415,377 +416,112 @@
             </div>
           </article>
 
-          <!-- Producto 5: MEDIANO (Antifaces Acolchados) -->
-          <article class="catalog-item catalog-item--medium" data-category="cuidado-personal">
-            <div class="catalog-item__media">
-              <img src="assets/images/catalog/satin-sleep-mask-on-marble.jpg" alt="Antifaces de Descanso Acolchados en Satén" class="catalog-item__img" loading="lazy" />
-              <span class="catalog-item__tag">Descanso Sereno &middot; Satén</span>
-              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
-                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/satin-sleep-mask-on-marble.jpg">En Mármol</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/woman-touching-satin-sleep-mask.jpg">Con Modelo</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/sleep-mask-on-wooden-surface.jpg">En Madera</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/satin-sleep-mask-on-block.jpg">En Pedestal</button>
-              </div>
-            </div>
-            <div class="catalog-item__info">
-              <div class="catalog-item__meta">
-                <span class="catalog-item__category">Cuidado Personal</span>
-                <span class="catalog-item__texture">Satén premium, felpa suave &amp; elástico forrado</span>
-              </div>
-              <h3 class="catalog-item__title">Antifaces de Descanso Acolchados</h3>
-              <p class="catalog-item__desc">
-                Bloquean completamente la luz para un sueño profundo y reparador. Su elástico forrado en satén cuida el cabello y no deja marcas en el rostro.
-              </p>
-              <div class="catalog-item__footer">
-                <span class="catalog-item__price">Varios Tonos <small>/ hecho a mano</small></span>
-                <button class="btn btn--whatsapp" data-product-name="Antifaz de Descanso Acolchado" aria-label="Pedir por WhatsApp">
-                  <span>Pedir por WhatsApp</span>
-                </button>
-              </div>
-            </div>
-          </article>
+        </div>
 
-          <!-- Producto 6: MEDIANO (Neceseres & Cartucheras Artesanales) -->
-          <article class="catalog-item catalog-item--medium" data-category="organizacion">
-            <div class="catalog-item__media">
-              <img src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg" alt="Neceseres y Cartucheras de Tela Rústica" class="catalog-item__img" loading="lazy" />
-              <span class="catalog-item__tag">Básico Esencial &middot; Lino</span>
-              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
-                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg">En Pedestal</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/woman-opening-cosmetic-bag.jpg">Con Modelo</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/cosmetic-bag-on-linen-surface.jpg">En Lino</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/models/model-bag-sanitizer.jpg">Portasani &amp; Bolso</button>
-              </div>
-            </div>
-            <div class="catalog-item__info">
-              <div class="catalog-item__meta">
-                <span class="catalog-item__category">Organización &amp; Accesorios</span>
-                <span class="catalog-item__texture">Lino rústico, forro impermeable &amp; cierre reforzado</span>
-              </div>
-              <h3 class="catalog-item__title">Neceseres, Cartucheras &amp; Portasani</h3>
-              <p class="catalog-item__desc">
-                Confeccionados en telas tramadas con forro interior lavable para maquillaje, elementos de aseo o papelería. Incluye opción con mosquetón metálico para enganchar en el bolso.
-              </p>
-              <div class="catalog-item__footer">
-                <span class="catalog-item__price">Personalizado <small>/ varios tamaños</small></span>
-                <button class="btn btn--whatsapp" data-product-name="Neceseres y Cartucheras Artesanales" aria-label="Pedir por WhatsApp">
-                  <span>Pedir por WhatsApp</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Producto 7: MEDIANO (Ajuar de Bebé & Organizador Conejito) -->
-          <article class="catalog-item catalog-item--medium" data-category="infantil">
-            <div class="catalog-item__media">
-              <img src="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg" alt="Ajuar Infantil y Organizador Conejito" class="catalog-item__img" loading="lazy" />
-              <span class="catalog-item__tag">Ajuar de Nacimiento</span>
-              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
-                <button type="button" class="view-pill is-active" data-view-src="assets/images/catalog/embroidered-bunny-fabric-organiz.jpg">Conejito Ajuar</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/models/model-towel-baby.jpg">Con Bebé</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/nursery-products-displayed-on-shelf.jpg">Rincón Nursery</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/cat-baskets.jpg">Cesto Algodón</button>
-              </div>
-            </div>
-            <div class="catalog-item__info">
-              <div class="catalog-item__meta">
-                <span class="catalog-item__category">Bebés &amp; Maternidad</span>
-                <span class="catalog-item__texture">Toalla doble felpa, algodón puro &amp; bordado</span>
-              </div>
-              <h3 class="catalog-item__title">Ajuar de Bebé &amp; Toallitas con Nombre</h3>
-              <p class="catalog-item__desc">
-                Piezas hipoalergénicas ultra suaves para la piel del bebé, organizadores bordados con orejitas de conejito y toallitas con nombre personalizado hecho a mano.
-              </p>
-              <div class="catalog-item__footer">
-                <span class="catalog-item__price">Bordado a Elección</span>
-                <button class="btn btn--whatsapp" data-product-name="Ajuar de Bebé y Toallitas Bordadas" aria-label="Pedir por WhatsApp">
-                  <span>Pedir por WhatsApp</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Producto 8: MEDIANO (Porta Rollos Cilíndrico con Cierre) -->
-          <article class="catalog-item catalog-item--medium" data-category="hogar">
-            <div class="catalog-item__media">
-              <img src="assets/images/models/model-bath-roll.jpg" alt="Porta Rollos Cilíndrico Acolchado" class="catalog-item__img" loading="lazy" />
-              <span class="catalog-item__tag">Detalle de Baño &middot; Exclusivo</span>
-              <div class="catalog-item__views" aria-label="Cambiar vista del producto">
-                <button type="button" class="view-pill is-active" data-view-src="assets/images/models/model-bath-roll.jpg">En Baño</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/handcrafted-cosmetic-bag-fabric-.jpg">Cesto Textil</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/cosmetic-pouch-on-stone-pedestal.jpg">Tocador Spa</button>
-                <button type="button" class="view-pill" data-view-src="assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg">Blanquería Algodón</button>
-              </div>
-            </div>
-            <div class="catalog-item__info">
-              <div class="catalog-item__meta">
-                <span class="catalog-item__category">Hogar &amp; Baño</span>
-                <span class="catalog-item__texture">Lino jaspeado, cierre y puntilla</span>
-              </div>
-              <h3 class="catalog-item__title">Porta Rollos Cilíndrico Acolchado</h3>
-              <p class="catalog-item__desc">
-                Dispenser de papel higiénico o pañuelos confeccionado en tela con cierre reforzado y aplique de pasamanería bordada dorada.
-              </p>
-              <div class="catalog-item__footer">
-                <span class="catalog-item__price">Diseño Exclusivo</span>
-                <button class="btn btn--whatsapp" data-product-name="Porta Rollos Cilíndrico Acolchado" aria-label="Pedir por WhatsApp">
-                  <span>Pedir por WhatsApp</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
+        <!-- Barra Editorial de Enlace al Catálogo Completo (16 Creaciones) -->
+        <div class="catalog-preview-cta" id="catalog-preview-cta">
+          <div class="catalog-preview-cta__meta">
+            <span class="catalog-preview-kicker">VITRINA DESTACADA DEL TALLER</span>
+            <p class="catalog-preview-note" id="catalog-preview-count-note">Mostrando una selección de 4 de las 16 creaciones artesanales de Elena</p>
+          </div>
+          <div class="catalog-preview-cta__actions">
+            <a href="catalogo.html" class="btn btn--primary" id="btn-view-full-catalog">
+              <span id="btn-view-full-catalog-label">Explorar el Catálogo Completo (16 Creaciones) &rarr;</span>
+            </a>
+            <a href="disenar.html" class="btn btn--secondary" data-atelier-link>
+              <span>✂️ Diseñar Pieza a Medida</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- MEJORA 3: ARMADOR INTERACTIVO DE SETS & CAJAS DE REGALO CON 10% OFF AUTOMÁTICO -->
-    <section class="gift-builder-section" id="armador-regalos" aria-labelledby="gift-builder-title">
+    <!-- TRÍPTICO SIMÉTRICO: EXPERIENCIAS & MÓDULOS DEDICADOS DEL TALLER -->
+    <section class="atelier-experiences-section" id="experiencias-atelier" aria-labelledby="experiences-title">
       <div class="container">
         <header class="section-header">
-          <span class="section-eyebrow" id="gifts-eyebrow">Edición Especial &middot; Regalería de Autor</span>
-          <h2 class="section-title" id="gift-builder-title">Cajas de Regalo &amp; Sets con 10% OFF</h2>
-          <p class="section-desc" id="gift-builder-desc">
-            Combinaciones pensadas por Elena para agasajar o renovar tu hogar. Presentadas en bolsa de lino reutilizable perfumada con lavanda y tarjeta dedicatoria manuscrita sin cargo.
+          <span class="section-eyebrow">Atelier &amp; Servicios Exclusivos</span>
+          <h2 class="section-title" id="experiences-title">La Experiencia Divina Locura</h2>
+          <p class="section-desc">
+            Ingresá a nuestros módulos dedicados para diseñar una pieza desde cero, conocer las fibras nobles del taller o armar una caja de regalo con dedicatoria.
           </p>
         </header>
 
-        <div class="gift-boxes-grid">
-          <!-- Set 1: Caja Mandala Blanca & Blanquería -->
-          <article class="gift-box-card" data-gift-id="gift_saten" data-gift-title="Caja Regalo · Mandala Calada & Blanquería Blanco Lino (-10%)" data-gift-price="$ 36.000 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg">
-            <div class="gift-box-card__media">
-              <img src="assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg" alt="Caja Regalo Mandala Calada Blanco Lino" loading="lazy" />
-              <span class="gift-box-card__badge">Ahorrás 10% &middot; Caja Calada</span>
-            </div>
-            <div class="gift-box-card__body">
-              <span class="gift-box-card__kicker">Blanquería Bordada &middot; Regalo Estrella</span>
-              <h3 class="gift-box-card__title">Caja Mandala Calada &amp; Blanco Lino</h3>
-              <ul class="gift-box-card__includes">
-                <li>✓ 1 Toallón doble felpa crudo con mandala blanca bordada</li>
-                <li>✓ 1 Toalla de rostro a juego + etiqueta artesanal</li>
-                <li>✓ Caja rígida blanca con tapa ventana mandala calada</li>
-                <li>✓ Cinta raso + Tarjeta manuscrita por Elena</li>
+        <div class="atelier-triptych-grid">
+          <!-- Tarjeta 1: Diseñador a Medida -->
+          <article class="triptych-card" id="atelier-a-medida">
+            <a href="disenar.html" class="triptych-card__media" data-atelier-link aria-label="Abrir Diseñador a Medida">
+              <img src="assets/images/banco/neceseres-organizadores/cesto-floral-bordado-ambiente.jpg" alt="Cesto bordado artesanal con etiqueta Divina Locura Deco" loading="lazy" />
+              <span class="triptych-card__badge">Módulo Interactivo</span>
+            </a>
+            <div class="triptych-card__body">
+              <span class="triptych-card__kicker" id="builder-eyebrow">Atelier a Medida &middot; Máquina de Elena</span>
+              <h3 class="triptych-card__title" id="custom-builder-title">Diseñá tu Pieza a Medida</h3>
+              <p class="triptych-card__desc" id="custom-builder-desc">
+                Armá tu ficha técnica paso a paso eligiendo pieza, medidas, tela, detalles de costura o subiendo una foto o boceto de referencia.
+              </p>
+              <ul class="triptych-card__highlights">
+                <li>✓ 6 tipos de piezas y medidas especiales</li>
+                <li>✓ Bordado de nombre o iniciales a mano</li>
+                <li>✓ Subí tu foto o boceto &middot; Seña 50%</li>
               </ul>
-              <div class="gift-box-card__pricing">
-                <span class="gift-box-card__old-price">$ 40.000 ARS</span>
-                <strong class="gift-box-card__new-price">$ 36.000 ARS</strong>
-              </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_saten">
-                <span>🎁 Personalizar esta Caja</span>
-              </button>
-            </div>
-          </article>
-
-          <!-- Set 2: Caja Rosa Viejo, Broderie & Volados -->
-          <article class="gift-box-card" data-gift-id="gift_bebe" data-gift-title="Caja Regalo · Ajuar Rosa Viejo, Broderie & Volados (-10%)" data-gift-price="$ 34.920 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-set-rosa-volados.jpg">
-            <div class="gift-box-card__media">
-              <img src="assets/images/banco/cajas-regalo/caja-set-rosa-volados.jpg" alt="Caja Set Rosa Viejo Broderie y Volados" loading="lazy" />
-              <span class="gift-box-card__badge">Bordado Incluido &middot; -10%</span>
-            </div>
-            <div class="gift-box-card__body">
-              <span class="gift-box-card__kicker">Rosa Viejo &middot; Baño o Nacimiento</span>
-              <h3 class="gift-box-card__title">Set Rosa Viejo, Broderie &amp; Volados</h3>
-              <ul class="gift-box-card__includes">
-                <li>✓ 1 Toalla rosa coral con guarda broderie y volado floral</li>
-                <li>✓ Detalle botón de madera natural &amp; lazo blanco</li>
-                <li>✓ Caja rígida blanca con tapa ventana mandala calada</li>
-                <li>✓ Perfumado lavanda + Tarjeta dedicatoria</li>
-              </ul>
-              <div class="gift-box-card__pricing">
-                <span class="gift-box-card__old-price">$ 38.800 ARS</span>
-                <strong class="gift-box-card__new-price">$ 34.920 ARS</strong>
-              </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_bebe">
-                <span>🎁 Personalizar esta Caja</span>
-              </button>
-            </div>
-          </article>
-
-          <!-- Set 3: Caja Terracota & Pasamanería Dorada -->
-          <article class="gift-box-card" data-gift-id="gift_hogar" data-gift-title="Caja Regalo · Set Anfitriona Terracota & Pasamanería Dorada (-10%)" data-gift-price="$ 38.700 ARS" data-gift-img="assets/images/banco/cajas-regalo/caja-toalla-terracota-dorada.jpg">
-            <div class="gift-box-card__media">
-              <img src="assets/images/banco/cajas-regalo/caja-toalla-terracota-dorada.jpg" alt="Caja Regalo Terracota y Pasamaneria Dorada" loading="lazy" />
-              <span class="gift-box-card__badge">Ahorrás 10% &middot; Edición Premium</span>
-            </div>
-            <div class="gift-box-card__body">
-              <span class="gift-box-card__kicker">Terracota &amp; Dorado &middot; Iniciales Grabadas</span>
-              <h3 class="gift-box-card__title">Set Anfitriona Terracota &amp; Guarda Dorada</h3>
-              <ul class="gift-box-card__includes">
-                <li>✓ Dúo de toallas terracota y crudo con pasamanería dorada</li>
-                <li>✓ Etiqueta colgante de madera con iniciales grabadas</li>
-                <li>✓ Cordón trenzado dorado + Caja calada de regalo</li>
-                <li>✓ Tarjeta dedicatoria manuscrita sin cargo</li>
-              </ul>
-              <div class="gift-box-card__pricing">
-                <span class="gift-box-card__old-price">$ 43.000 ARS</span>
-                <strong class="gift-box-card__new-price">$ 38.700 ARS</strong>
-              </div>
-              <button type="button" class="btn btn--primary btn-select-gift-box" data-gift-select="gift_hogar">
-                <span>🎁 Personalizar esta Caja</span>
-              </button>
-            </div>
-          </article>
-        </div>
-
-        <!-- Barra Interactiva de Tarjeta Dedicatoria y Bordado para la Caja Seleccionada -->
-        <div class="gift-dedication-panel" id="gift-dedication-panel">
-          <div class="gift-dedication-panel__header">
-            <div>
-              <span class="gift-dedication-kicker">✨ PERSONALIZACIÓN DE TU CAJA DE REGALO</span>
-              <h4 class="gift-dedication-title" id="gift-active-box-name">Caja Regalo · Mandala Calada &amp; Blanquería Blanco Lino ($ 36.000 ARS)</h4>
-            </div>
-            <span class="gift-dedication-tag">10% OFF Aplicado</span>
-          </div>
-
-          <div class="gift-dedication-form-grid">
-            <div>
-              <label for="gift-input-recipient" class="admin-label">¿Para quién es el regalo? (o nombre a bordar)</label>
-              <input type="text" id="gift-input-recipient" class="admin-input" placeholder="Ej: Para Lucía / Bordar nombre: Olivia" />
-            </div>
-            <div>
-              <label for="gift-input-tone" class="admin-label">Paleta de color preferida</label>
-              <select id="gift-input-tone" class="admin-select">
-                <option value="Tonos Crudo & Champán">Tonos Crudo &amp; Champán</option>
-                <option value="Tonos Rosa Viejo & Tierra">Tonos Rosa Viejo &amp; Tierra</option>
-                <option value="Tonos Verde Salvia & Lino">Tonos Verde Salvia &amp; Lino</option>
-                <option value="A elección de Elena">A elección de Elena</option>
-              </select>
-            </div>
-            <div>
-              <label for="gift-input-message" class="admin-label">Dedicatoria en tarjeta manuscrita por Elena (opcional)</label>
-              <input type="text" id="gift-input-message" class="admin-input" placeholder="Ej: ¡Feliz cumple amiga! Con mucho amor..." />
-            </div>
-            <div class="gift-dedication-cta-col">
-              <button type="button" class="btn btn--add-to-bag" id="btn-add-gift-to-cart" style="width:100%; height:44px;">
-                <span>🛍️ Sumar Caja a la Bolsa (-10%)</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MEJORA 2: MUESTRARIO INTERACTIVO DE TELAS NOBLES DE ELENA & ENCARGOS POR TELA -->
-    <section class="fabric-swatch-section" id="muestrario-telas" aria-labelledby="fabric-swatch-title">
-      <div class="container">
-        <header class="section-header">
-          <span class="section-eyebrow" id="fabrics-eyebrow">Archivo Textil &middot; Telas Reales del Taller de Elena</span>
-          <h2 class="section-title" id="fabric-swatch-title">Muestrario de Fibras Nobles &amp; Especificaciones</h2>
-          <p class="section-desc" id="fabric-swatch-desc">
-            Explorá las telas que Elena tiene en su taller listas para confeccionar. Tocá cada género para ver sus especificaciones, colores disponibles y encargar cualquier pieza a medida con esa tela.
-          </p>
-        </header>
-
-        <!-- Selector de Pestañas de Telas (Sincronizado con el Stock de Elena) -->
-        <div class="fabric-tabs-nav" id="fabric-tabs-nav" role="tablist" aria-label="Seleccionar fibra textil">
-          <button type="button" class="fabric-tab-btn is-active" data-fabric-key="saten" role="tab" aria-selected="true">
-            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#EFE4D4,#D8C2A8);"></span>
-            <span class="fabric-tab-name">01. Satén de Seda Antifrizz</span>
-          </button>
-          <button type="button" class="fabric-tab-btn" data-fabric-key="waffle" role="tab" aria-selected="false">
-            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F5F1EA,#DED5C6);"></span>
-            <span class="fabric-tab-name">02. Algodón Waffle Nido de Abeja</span>
-          </button>
-          <button type="button" class="fabric-tab-btn" data-fabric-key="lino" role="tab" aria-selected="false">
-            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#DFD6C7,#BFA992);"></span>
-            <span class="fabric-tab-name">03. Lino Rústico &amp; Lienzo</span>
-          </button>
-          <button type="button" class="fabric-tab-btn" data-fabric-key="bebe" role="tab" aria-selected="false">
-            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F3E6E1,#DAB7AC);"></span>
-            <span class="fabric-tab-name">04. Gasa Pañalera &amp; Doble Felpa</span>
-          </button>
-        </div>
-
-        <!-- Panel Detallado de la Tela Activa -->
-        <div class="fabric-showcase-card" id="fabric-showcase-card">
-          <div class="fabric-showcase-card__media">
-            <img src="assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg" alt="Textura de Satén de Seda Antifrizz" id="fabric-showcase-img" loading="lazy" />
-            <span class="fabric-showcase-card__tag" id="fabric-showcase-badge">120 g/m² &middot; Brillo Perlado</span>
-          </div>
-
-          <div class="fabric-showcase-card__info">
-            <span class="section-eyebrow" id="fabric-showcase-kicker">Especificaciones Técnicas del Taller de Elena</span>
-            <h3 class="fabric-showcase-card__title" id="fabric-showcase-heading">Satén de Seda Antifrizz</h3>
-            <p class="fabric-showcase-card__desc" id="fabric-showcase-desc">
-              Tejido sedoso, hipoalergénico y termorregulador que evita la fricción capilar durante la noche. A diferencia del algodón convencional, no absorbe la hidratación natural de tu piel ni tus cremas nocturnas, previniendo el frizz, el quiebre y las marcas de expresión al despertar.
-            </p>
-
-            <div class="fabric-specs-grid">
-              <div class="fabric-spec-box">
-                <span class="fabric-spec-box__label">✨ Especificaciones &amp; Beneficios</span>
-                <p class="fabric-spec-box__text" id="fabric-showcase-touch">Caída fluida, superficie ultra lisa de baja fricción y frescura térmica todo el año.</p>
-              </div>
-              <div class="fabric-spec-box">
-                <span class="fabric-spec-box__label">🧺 Ritual de Lavado &amp; Cuidado</span>
-                <p class="fabric-spec-box__text" id="fabric-showcase-care">Lavar a mano o en ciclo delicado con agua fría (máx. 30°C) y jabón neutro. Secar tendido a la sombra sin retorcer.</p>
-              </div>
-              <div class="fabric-spec-box" style="grid-column: 1 / -1;">
-                <span class="fabric-spec-box__label">🛋️ Piezas que Elena Confecciona por Encargo con esta Tela</span>
-                <p class="fabric-spec-box__text" id="fabric-showcase-ideal">Fundas de almohada, cofias nocturnas, antifaces acolchados, scrunchies y bolsas de descanso a medida.</p>
-              </div>
-            </div>
-
-            <div class="fabric-showcase-footer">
-              <div class="fabric-tones-preview" id="fabric-tones-preview-wrap">
-                <span class="fabric-tones-label">Colores en taller:</span>
-                <div class="fabric-tones-dots" id="fabric-showcase-colors-text">Champán Seda, Rosa Viejo, Crudo Natural, Gris Perla</div>
-              </div>
-
-              <div class="fabric-showcase-actions">
-                <a href="disenar.html?fabric=saten" class="btn btn--primary" id="btn-order-with-this-fabric" data-atelier-link>
-                  <span>✂️ Encargar Diseño con esta Tela</span>
-                </a>
-                <a href="#catalogo" class="btn btn--secondary" id="fabric-showcase-filter-btn" data-fabric-filter="cuidado-personal">
-                  <span id="fabric-showcase-btn-label">Ver Catálogo &rarr;</span>
+              <div class="triptych-card__footer">
+                <a href="disenar.html" class="btn btn--primary" id="btn-open-atelier" data-atelier-link>
+                  <span>✂️ Abrir Diseñador a Medida &rarr;</span>
                 </a>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+          </article>
 
-    <!-- MÓDULO EDITORIAL: INVITACIÓN AL DISEÑADOR A MEDIDA (disenar.html) -->
-    <section class="atelier-banner-section" id="atelier-a-medida" aria-labelledby="custom-builder-title">
-      <div class="container">
-        <div class="atelier-card">
-          <div class="atelier-card__content">
-            <span class="section-eyebrow" id="builder-eyebrow">Atelier a Medida &middot; Directo a la Máquina de Elena</span>
-            <h2 class="section-title" id="custom-builder-title">Diseñá tu Pieza a Medida o Subí tu Idea</h2>
-            <p class="atelier-card__desc" id="custom-builder-desc">
-              ¿Viste un diseño que te encantó o necesitás una medida especial con las telas de Elena? Ingresá al módulo interactivo para armar tu ficha paso a paso o subir una foto o boceto para su máquina.
-            </p>
-            <div class="atelier-steps-mini">
-              <div class="atelier-mini-step">
-                <span>01</span>
-                <strong>Elegí pieza &amp; medidas</strong>
-              </div>
-              <div class="atelier-mini-step">
-                <span>02</span>
-                <strong>Tela, tono &amp; detalles</strong>
-              </div>
-              <div class="atelier-mini-step">
-                <span>03</span>
-                <strong>Subí tu foto o boceto</strong>
+          <!-- Tarjeta 2: Muestrario de Telas Nobles -->
+          <article class="triptych-card" id="muestrario-telas">
+            <a href="disenar.html#muestrario-telas" class="triptych-card__media" data-fabric-link aria-label="Ver Muestrario de Telas">
+              <img src="assets/images/cat-waffle.jpg" alt="Muestrario de fibras nobles y algodón waffle del taller de Elena" loading="lazy" />
+              <span class="triptych-card__badge">4 Fibras Prelavadas</span>
+            </a>
+            <div class="triptych-card__body">
+              <span class="triptych-card__kicker" id="fabrics-eyebrow">Archivo Textil &middot; Telas Reales</span>
+              <h3 class="triptych-card__title" id="fabric-swatch-title">Muestrario de Telas &amp; Cuidados</h3>
+              <p class="triptych-card__desc" id="fabric-swatch-desc">
+                Conocé el gramaje, ritual de lavado y paleta de tonos disponibles de cada tela noble que Elena selecciona y prelava en el taller.
+              </p>
+              <ul class="triptych-card__highlights">
+                <li>✓ Satén de Seda Antifrizz (120 g/m²)</li>
+                <li>✓ Algodón Waffle Nido de Abeja (280 g/m²)</li>
+                <li>✓ Lino Rústico, Tusor &amp; Gasa Doble Felpa</li>
+              </ul>
+              <div class="triptych-card__footer">
+                <a href="disenar.html#muestrario-telas" class="btn btn--secondary" data-fabric-link>
+                  <span>Explorar Muestrario de Telas &rarr;</span>
+                </a>
               </div>
             </div>
-            <div class="atelier-card__actions">
-              <a href="disenar.html" class="btn btn--primary" id="btn-open-atelier" data-atelier-link>
-                <span>Abrir Diseñador a Medida &rarr;</span>
-              </a>
-              <a href="#muestrario-telas" class="btn btn--secondary">
-                <span>Explorar Telas del Taller</span>
-              </a>
-            </div>
-          </div>
+          </article>
 
-          <div class="atelier-card__media">
-            <img src="assets/images/banco/neceseres-organizadores/cesto-floral-bordado-ambiente.jpg" alt="Cesto bordado artesanal con etiqueta Divina Locura Deco en el taller de Elena" loading="lazy" />
-            <div class="atelier-card__media-badge">
-              <span>Confección Exclusiva</span>
-              <strong>Seña 50% &middot; Saldo contra entrega</strong>
+          <!-- Tarjeta 3: Cajas de Regalo con 10% OFF -->
+          <article class="triptych-card" id="armador-regalos">
+            <a href="catalogo.html#armador-regalos" class="triptych-card__media" data-gift-link aria-label="Ver Cajas de Regalo con 10% OFF">
+              <img src="assets/images/banco/cajas-regalo/caja-toalla-mandala-blanca.jpg" alt="Caja de regalo calada con toallas bordadas Divina Locura Deco" loading="lazy" />
+              <span class="triptych-card__badge">Ahorrás 10% OFF</span>
+            </a>
+            <div class="triptych-card__body">
+              <span class="triptych-card__kicker" id="gifts-eyebrow">Edición Especial &middot; Regalería de Autor</span>
+              <h3 class="triptych-card__title" id="gift-builder-title">Cajas de Regalo &amp; Sets (-10%)</h3>
+              <p class="triptych-card__desc" id="gift-builder-desc">
+                Sets curados en caja rígida con tapa mandala calada, perfumados con lavanda y tarjeta dedicatoria manuscrita por Elena sin cargo.
+              </p>
+              <ul class="triptych-card__highlights">
+                <li>✓ Caja Mandala Calada &amp; Blanco Lino</li>
+                <li>✓ Set Rosa Viejo, Broderie &amp; Volados</li>
+                <li>✓ Set Anfitriona Terracota &amp; Guarda Dorada</li>
+              </ul>
+              <div class="triptych-card__footer">
+                <a href="catalogo.html#armador-regalos" class="btn btn--secondary" data-gift-link>
+                  <span>🎁 Armar Caja de Regalo (-10%) &rarr;</span>
+                </a>
+              </div>
             </div>
-          </div>
+          </article>
         </div>
       </div>
     </section>
@@ -803,7 +539,7 @@
             En <strong>Divina Locura Deco</strong> no creemos en la producción masiva. Cada pieza se confecciona individualmente en nuestro taller, prelavando las telas para garantizar que mantengan su textura y dimensión original lavado tras lavado.
           </p>
           <div class="about__cta">
-            <a href="#catalogo" class="btn btn--secondary">
+            <a href="catalogo.html" class="btn btn--secondary">
               <span id="about-cta-text">Explorar la Colección Completa</span>
             </a>
           </div>
@@ -902,10 +638,10 @@
             <div class="footer-links">
               <a href="#hero">Inicio</a>
               <a href="#categorias">Categorías</a>
-              <a href="#catalogo">Catálogo</a>
-              <a href="#muestrario-telas">Muestrario de Telas</a>
+              <a href="catalogo.html">Catálogo</a>
+              <a href="disenar.html#muestrario-telas" data-fabric-link>Muestrario de Telas</a>
               <a href="disenar.html" data-atelier-link>Diseño a Medida</a>
-              <a href="#armador-regalos">Cajas de Regalo</a>
+              <a href="catalogo.html#armador-regalos" data-gift-link>Cajas de Regalo</a>
               <a href="#espacios">Espacios &amp; Estilismo</a>
               <a href="#sobre-elena">El Taller de Elena</a>
             </div>

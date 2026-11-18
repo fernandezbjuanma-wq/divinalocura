@@ -15,13 +15,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
 
   <!-- Hoja de Estilos Principal -->
-  <link rel="stylesheet" href="style.css?v=20261118v10">
+  <link rel="stylesheet" href="style.css?v=20261118v11">
 
   <!-- Scripts de Datos e Interactividad (Vanilla JS) -->
-  <script src="banco-data.js?v=20261118v10" defer></script>
-  <script src="products-data.js?v=20261118v10" defer></script>
-  <script src="workshop-db.js?v=20261118v10" defer></script>
-  <script src="main.js?v=20261118v10" defer></script>
+  <script src="banco-data.js?v=20261118v11" defer></script>
+  <script src="products-data.js?v=20261118v11" defer></script>
+  <script src="workshop-db.js?v=20261118v11" defer></script>
+  <script src="main.js?v=20261118v11" defer></script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -43,15 +43,15 @@
       </div>
       <nav class="side-drawer__nav">
         <ul class="side-drawer__list">
-          <li><a href="index.html" class="side-drawer__link" data-close-drawer>Inicio</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer>Colección Completa</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="cuidado-personal">Dormitorio &amp; Satén</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="hogar">Cocina &amp; Waffle</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="organizacion">Organización &amp; Accesorios</a></li>
-          <li><a href="index.html#catalogo" class="side-drawer__link" data-close-drawer data-filter="infantil">Bebés &amp; Infantil</a></li>
-          <li><a href="index.html#muestrario-telas" class="side-drawer__link" data-close-drawer>Muestrario de Telas de Elena</a></li>
+          <li><a href="index.html" class="side-drawer__link" data-close-drawer>Portada Principal</a></li>
+          <li><a href="catalogo.html" class="side-drawer__link" data-close-drawer>Colección Completa (16)</a></li>
+          <li><a href="catalogo.html?categoria=cuidado-personal" class="side-drawer__link" data-close-drawer>Dormitorio &amp; Satén</a></li>
+          <li><a href="catalogo.html?categoria=hogar" class="side-drawer__link" data-close-drawer>Cocina &amp; Waffle</a></li>
+          <li><a href="catalogo.html?categoria=organizacion" class="side-drawer__link" data-close-drawer>Organización &amp; Accesorios</a></li>
+          <li><a href="catalogo.html?categoria=infantil" class="side-drawer__link" data-close-drawer>Bebés &amp; Infantil</a></li>
+          <li><a href="#muestrario-telas" class="side-drawer__link" data-close-drawer data-fabric-link>Muestrario de Telas de Elena</a></li>
           <li><a href="disenar.html" class="side-drawer__link is-current" data-close-drawer data-atelier-link>✂️ Diseñá tu Pieza a Medida</a></li>
-          <li><a href="index.html#armador-regalos" class="side-drawer__link" data-close-drawer>Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="catalogo.html#armador-regalos" class="side-drawer__link" data-close-drawer data-gift-link>Cajas de Regalo (-10% OFF)</a></li>
           <li><a href="index.html#espacios" class="side-drawer__link" data-close-drawer>Espacios &amp; Estilismo</a></li>
           <li><a href="index.html#sobre-elena" class="side-drawer__link" data-close-drawer>El Taller de Elena</a></li>
           <li><a href="#contacto" class="side-drawer__link" data-close-drawer>Contacto &amp; Asesoramiento</a></li>
@@ -83,7 +83,7 @@
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
         </button>
-        <a href="index.html#catalogo" class="header-text-btn header-nav-link">&larr; COLECCIÓN</a>
+        <a href="catalogo.html" class="header-text-btn header-nav-link">&larr; CATÁLOGO</a>
       </div>
 
       <div class="site-header__center site-header__center--brand">
@@ -112,7 +112,7 @@
       <nav class="pdp-breadcrumbs" aria-label="Ubicación en la tienda">
         <a href="index.html">Inicio</a>
         <span class="separator">/</span>
-        <span class="current">Diseñador a Medida</span>
+        <span class="current">Diseñador a Medida &amp; Telas</span>
       </nav>
     </div>
 
@@ -124,7 +124,7 @@
           <h2>Agenda de encargos a medida pausada momentáneamente</h2>
           <p>En este momento el módulo de encargos personalizados se encuentra en pausa temporal. Podés recorrer el catálogo completo o consultar con Elena por WhatsApp para evaluar disponibilidad.</p>
           <div class="atelier-disabled-card__actions">
-            <a href="index.html#catalogo" class="btn btn--primary">Ver Colección Disponible</a>
+            <a href="catalogo.html" class="btn btn--primary">Ver Catálogo Disponible</a>
             <a href="https://wa.me/5491136932471" target="_blank" rel="noopener noreferrer" class="btn btn--secondary">Consultar a Elena por WhatsApp</a>
           </div>
         </div>
@@ -362,6 +362,86 @@
         </div>
       </div>
     </section>
+
+    <!-- MUESTRARIO INTERACTIVO DE TELAS NOBLES DE ELENA & ESPECIFICACIONES -->
+    <section class="fabric-swatch-section" id="muestrario-telas" aria-labelledby="fabric-swatch-title">
+      <div class="container">
+        <header class="section-header">
+          <span class="section-eyebrow" id="fabrics-eyebrow">Archivo Textil &middot; Telas Reales del Taller de Elena</span>
+          <h2 class="section-title" id="fabric-swatch-title">Muestrario de Fibras Nobles &amp; Especificaciones</h2>
+          <p class="section-desc" id="fabric-swatch-desc">
+            Explorá las telas que Elena tiene en su taller listas para confeccionar. Tocá cada género para ver sus especificaciones, colores disponibles y seleccionarla arriba en tu diseño a medida.
+          </p>
+        </header>
+
+        <!-- Selector de Pestañas de Telas (Sincronizado con el Stock de Elena) -->
+        <div class="fabric-tabs-nav" id="fabric-tabs-nav" role="tablist" aria-label="Seleccionar fibra textil">
+          <button type="button" class="fabric-tab-btn is-active" data-fabric-key="saten" role="tab" aria-selected="true">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#EFE4D4,#D8C2A8);"></span>
+            <span class="fabric-tab-name">01. Satén de Seda Antifrizz</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="waffle" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F5F1EA,#DED5C6);"></span>
+            <span class="fabric-tab-name">02. Algodón Waffle Nido de Abeja</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="lino" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#DFD6C7,#BFA992);"></span>
+            <span class="fabric-tab-name">03. Lino Rústico &amp; Lienzo</span>
+          </button>
+          <button type="button" class="fabric-tab-btn" data-fabric-key="bebe" role="tab" aria-selected="false">
+            <span class="fabric-tab-swatch" style="background:linear-gradient(135deg,#F3E6E1,#DAB7AC);"></span>
+            <span class="fabric-tab-name">04. Gasa Pañalera &amp; Doble Felpa</span>
+          </button>
+        </div>
+
+        <!-- Panel Detallado de la Tela Activa -->
+        <div class="fabric-showcase-card" id="fabric-showcase-card">
+          <div class="fabric-showcase-card__media">
+            <img src="assets/images/catalog/sleep-mask-satin-fabric-closeup.jpg" alt="Textura de Satén de Seda Antifrizz" id="fabric-showcase-img" loading="lazy" />
+            <span class="fabric-showcase-card__tag" id="fabric-showcase-badge">120 g/m² &middot; Brillo Perlado</span>
+          </div>
+
+          <div class="fabric-showcase-card__info">
+            <span class="section-eyebrow" id="fabric-showcase-kicker">Especificaciones Técnicas del Taller de Elena</span>
+            <h3 class="fabric-showcase-card__title" id="fabric-showcase-heading">Satén de Seda Antifrizz</h3>
+            <p class="fabric-showcase-card__desc" id="fabric-showcase-desc">
+              Tejido sedoso, hipoalergénico y termorregulador que evita la fricción capilar durante la noche. A diferencia del algodón convencional, no absorbe la hidratación natural de tu piel ni tus cremas nocturnas, previniendo el frizz, el quiebre y las marcas de expresión al despertar.
+            </p>
+
+            <div class="fabric-specs-grid">
+              <div class="fabric-spec-box">
+                <span class="fabric-spec-box__label">✨ Especificaciones &amp; Beneficios</span>
+                <p class="fabric-spec-box__text" id="fabric-showcase-touch">Caída fluida, superficie ultra lisa de baja fricción y frescura térmica todo el año.</p>
+              </div>
+              <div class="fabric-spec-box">
+                <span class="fabric-spec-box__label">🧺 Ritual de Lavado &amp; Cuidado</span>
+                <p class="fabric-spec-box__text" id="fabric-showcase-care">Lavar a mano o en ciclo delicado con agua fría (máx. 30°C) y jabón neutro. Secar tendido a la sombra sin retorcer.</p>
+              </div>
+              <div class="fabric-spec-box" style="grid-column: 1 / -1;">
+                <span class="fabric-spec-box__label">🛋️ Piezas que Elena Confecciona por Encargo con esta Tela</span>
+                <p class="fabric-spec-box__text" id="fabric-showcase-ideal">Fundas de almohada, cofias nocturnas, antifaces acolchados, scrunchies y bolsas de descanso a medida.</p>
+              </div>
+            </div>
+
+            <div class="fabric-showcase-footer">
+              <div class="fabric-tones-preview" id="fabric-tones-preview-wrap">
+                <span class="fabric-tones-label">Colores en taller:</span>
+                <div class="fabric-tones-dots" id="fabric-showcase-colors-text">Champán Seda, Rosa Viejo, Crudo Natural, Gris Perla</div>
+              </div>
+
+              <div class="fabric-showcase-actions">
+                <a href="#disenador-a-medida" class="btn btn--primary" id="btn-order-with-this-fabric" data-atelier-link>
+                  <span>✂️ Usar esta Tela en el Diseñador</span>
+                </a>
+                <a href="catalogo.html?categoria=cuidado-personal" class="btn btn--secondary" id="fabric-showcase-filter-btn" data-fabric-filter="cuidado-personal">
+                  <span id="fabric-showcase-btn-label">Ver Catálogo &rarr;</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Pie de Página Editorial -->
@@ -379,10 +459,10 @@
             <div class="footer-links">
               <a href="index.html">Inicio</a>
               <a href="index.html#categorias">Categorías</a>
-              <a href="index.html#catalogo">Catálogo</a>
-              <a href="index.html#muestrario-telas">Muestrario de Telas</a>
+              <a href="catalogo.html">Catálogo</a>
+              <a href="#muestrario-telas" data-fabric-link>Muestrario de Telas</a>
               <a href="disenar.html" data-atelier-link>Diseño a Medida</a>
-              <a href="index.html#armador-regalos">Cajas de Regalo</a>
+              <a href="catalogo.html#armador-regalos" data-gift-link>Cajas de Regalo</a>
               <a href="index.html#espacios">Espacios &amp; Estilismo</a>
               <a href="index.html#sobre-elena">El Taller de Elena</a>
             </div>

@@ -9186,5 +9186,384 @@ body.admin-mode-active .catalog-item__admin-bar {
   }
 }
 
+/* ==========================================================================
+   PANTALLAZO EDITORIAL (INDEX.HTML) & MÓDULO CATÁLOGO (CATALOGO.HTML)
+   ========================================================================== */
+
+/* 1. Módulo Catálogo Dedicado (catalogo.html) */
+.catalog-page {
+  min-height: 75vh;
+  background-color: var(--color-bg-light, #F7F3ED);
+}
+
+.catalog-section--module {
+  padding-top: 1.5rem !important;
+  padding-bottom: 3.25rem !important;
+}
+
+.lookbook-grid--full {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.65rem;
+  align-items: stretch;
+}
+
+.lookbook-grid--full .catalog-item {
+  height: 100%;
+  margin: 0;
+}
+
+.lookbook-grid--full .catalog-item__media {
+  height: 315px !important;
+}
+
+/* 2. Pantallazo de Colección en Portada (4 Columnas Simétricas) */
+.catalog-section--preview {
+  padding-top: 3rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.lookbook-grid--preview {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 1.35rem !important;
+  align-items: stretch !important;
+}
+
+.lookbook-grid--preview .catalog-item,
+.lookbook-grid--preview .catalog-item--preview {
+  grid-column: span 1 !important;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lookbook-grid--preview .catalog-item__media {
+  height: 235px !important;
+}
+
+.lookbook-grid--preview .catalog-item__views {
+  gap: 0.3rem;
+}
+
+.lookbook-grid--preview .catalog-item__views .view-pill {
+  font-size: 0.56rem;
+  padding: 0.24rem 0.52rem;
+}
+
+.lookbook-grid--preview .catalog-item__views .view-pill:nth-child(n+3) {
+  display: none;
+}
+
+.lookbook-grid--preview .catalog-item__info {
+  padding: 1rem 1.05rem 1.1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lookbook-grid--preview .catalog-item__meta {
+  min-height: 2.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.lookbook-grid--preview .catalog-item__texture {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.72rem;
+}
+
+.lookbook-grid--preview .catalog-item__title {
+  font-size: 1rem;
+  line-height: 1.26;
+  margin-bottom: 0.35rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.52em;
+}
+
+.lookbook-grid--preview .catalog-item__desc {
+  font-size: 0.76rem;
+  line-height: 1.46;
+  margin-bottom: 0.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.92em;
+}
+
+.lookbook-grid--preview .catalog-item__colors-strip {
+  margin-bottom: 0.65rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.lookbook-grid--preview .catalog-item__colors-names {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.68rem;
+}
+
+.lookbook-grid--preview .catalog-item__footer {
+  margin-top: auto;
+  padding-top: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+}
+
+.lookbook-grid--preview .catalog-item__price {
+  font-size: 0.94rem !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.lookbook-grid--preview .catalog-item__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.lookbook-grid--preview .catalog-item__actions .btn,
+.lookbook-grid--preview .catalog-item__actions a,
+.lookbook-grid--preview .catalog-item__actions button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 0.46rem 0.35rem !important;
+  font-size: 0.64rem !important;
+  white-space: nowrap;
+}
+
+/* Barra Editorial de Acción bajo el Pantallazo (Ver Catálogo Completo) */
+.catalog-preview-cta {
+  margin-top: 2rem;
+  padding: 1.45rem 1.75rem;
+  background: linear-gradient(135deg, #FAF7F2 0%, #F3ECE2 100%);
+  border: 1px solid rgba(196, 167, 125, 0.32);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: 0 10px 26px rgba(44, 38, 34, 0.04);
+}
+
+.catalog-preview-cta__line {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.catalog-preview-cta__kicker {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #8A5A44;
+}
+
+.catalog-preview-cta__note {
+  font-size: 0.88rem;
+  color: #4A3F39;
+  margin: 0;
+  font-weight: 500;
+}
+
+.catalog-preview-cta__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* 3. Tríptico Simétrico: Experiencias del Atelier (index.html) */
+.atelier-experiences-section {
+  padding: 3.25rem 0;
+  background: linear-gradient(180deg, rgba(244, 238, 229, 0.5) 0%, rgba(250, 247, 242, 0.85) 100%);
+  border-top: 1px solid rgba(196, 167, 125, 0.22);
+  border-bottom: 1px solid rgba(196, 167, 125, 0.22);
+}
+
+.atelier-triptych-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+  margin-top: 1.5rem;
+}
+
+.triptych-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(196, 167, 125, 0.28);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 12px 30px rgba(44, 38, 34, 0.05);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.triptych-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(44, 38, 34, 0.09);
+  border-color: rgba(138, 90, 68, 0.42);
+}
+
+.triptych-card__media {
+  position: relative;
+  display: block;
+  height: 225px;
+  overflow: hidden;
+  background: #EFE9E0;
+}
+
+.triptych-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.triptych-card:hover .triptych-card__media img {
+  transform: scale(1.04);
+}
+
+.triptych-card__badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  background: rgba(250, 247, 242, 0.94);
+  backdrop-filter: blur(6px);
+  color: #2C2623;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 167, 125, 0.35);
+}
+
+.triptych-card__badge--accent {
+  background: #2C2623;
+  color: #FAF7F2;
+  border-color: #2C2623;
+}
+
+.triptych-card__body {
+  padding: 1.35rem 1.45rem 1.45rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.triptych-card__kicker {
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #8A5A44;
+  margin-bottom: 0.35rem;
+}
+
+.triptych-card__title {
+  font-family: var(--font-heading, 'Cormorant Garamond', serif);
+  font-size: 1.42rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #2C2623;
+  margin: 0 0 0.55rem;
+}
+
+.triptych-card__desc {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #5C524B;
+  margin: 0 0 1rem;
+}
+
+.triptych-card__highlights {
+  list-style: none;
+  padding: 0.75rem 0.85rem;
+  margin: 0 0 1.15rem;
+  background: #FAF7F2;
+  border: 1px solid rgba(196, 167, 125, 0.24);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.triptych-card__highlights li {
+  font-size: 0.76rem;
+  color: #3D3530;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.triptych-card__footer {
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+.triptych-card__btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 0.72rem 1rem !important;
+  font-size: 0.76rem !important;
+}
+
+@media (max-width: 1140px) {
+  .lookbook-grid--preview {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .lookbook-grid--preview .catalog-item__media {
+    height: 270px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .catalog-preview-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+  }
+  .catalog-preview-cta__actions {
+    width: 100%;
+  }
+  .catalog-preview-cta__actions .btn {
+    flex: 1 1 220px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .lookbook-grid--preview {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .lookbook-grid--preview .catalog-item__media {
+    height: 250px !important;
+  }
+  .atelier-triptych-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 
 
