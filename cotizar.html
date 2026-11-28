@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armá tu Presupuesto en PDF — Divina Locura Deco</title>
+  <meta name="description" content="Cotizá al instante tus creaciones artesanales favoritas del catálogo o a medida en Divina Locura Deco. Descargá tu presupuesto oficial en PDF, imprimilo o envialo por WhatsApp.">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#F3EFE8">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261128v3">
+  <link rel="stylesheet" href="admin.css?v=20261128v3">
+  <link rel="stylesheet" href="presupuestos.css?v=20261128v3">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body data-client-quote-builder="1" data-q-mobile-view="editor">
+
+  <!-- Barra de anuncio superior (Estilo Boutique) -->
+  <aside class="announcement-bar" aria-label="Aviso de la tienda">
+    <div class="container announcement-bar__content">
+      <span id="top-announcement-text">Confección artesanal &middot; Piezas únicas elaboradas a fuego lento por Elena</span>
+    </div>
+  </aside>
+
+  <!-- MENÚ LATERAL DESPLEGABLE (DRAWER ESTILO ZARA HOME) -->
+  <aside class="side-drawer" id="side-drawer" aria-hidden="true">
+    <div class="side-drawer__backdrop" id="drawer-backdrop"></div>
+    <div class="side-drawer__panel">
+      <div class="side-drawer__header">
+        <div class="side-drawer__brand">DIVINA LOCURA <span class="brand-tag">DECO</span></div>
+        <button type="button" class="side-drawer__close" id="drawer-close-btn" aria-label="Cerrar menú">✕</button>
+      </div>
+      <nav class="side-drawer__nav">
+        <ul class="side-drawer__list">
+          <li><a href="index.html" class="side-drawer__link">Portada Principal</a></li>
+          <li><a href="catalogo.html" class="side-drawer__link">Colección Completa (16)</a></li>
+          <li><a href="cotizar.html" class="side-drawer__link is-current">📑 Armá tu Presupuesto en PDF</a></li>
+          <li><a href="disenar.html" class="side-drawer__link">✂️ Diseñá tu Pieza a Medida</a></li>
+          <li><a href="disenar.html#muestrario-telas" class="side-drawer__link">Muestrario de Telas de Elena</a></li>
+          <li><a href="catalogo.html#armador-regalos" class="side-drawer__link">Cajas de Regalo (-10% OFF)</a></li>
+          <li><a href="index.html#sobre-elena" class="side-drawer__link">El Taller de Elena</a></li>
+          <li><a href="index.html#contacto" class="side-drawer__link">Contacto &amp; Asesoramiento</a></li>
+        </ul>
+      </nav>
+      <div class="side-drawer__footer">
+        <div class="drawer-contact-block">
+          <span class="drawer-contact-kicker">ATENCIÓN PERSONALIZADA</span>
+          <a href="https://wa.me/5491136932471?text=Hola%20Elena%2C%20estoy%20armando%20un%20presupuesto%20en%20Divina%20Locura%20Deco%20y%20quer%C3%ADa%20hacerte%20una%20consulta." target="_blank" rel="noopener noreferrer" class="drawer-editorial-link">
+            <span>WhatsApp &middot; Taller Elena</span>
+            <span class="drawer-editorial-arrow">&#8599;</span>
+          </a>
+          <a href="https://www.instagram.com/divina.locura.deco/" target="_blank" rel="noopener noreferrer" class="drawer-editorial-link">
+            <span>Instagram &middot; @divina.locura.deco</span>
+            <span class="drawer-editorial-arrow">&#8599;</span>
+          </a>
+        </div>
+        <span class="side-drawer__brand-note">Confección artesanal &middot; Piezas únicas por Elena</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Cabecera Principal Estilo Zara Home -->
+  <header class="site-header site-header--zarahome" id="header">
+    <div class="container-fluid site-header__inner">
+      <div class="site-header__left">
+        <button type="button" class="btn-hamburger" id="hamburger-btn" aria-label="Abrir menú de navegación">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+        <a href="catalogo.html" class="header-text-btn header-nav-link">&larr; CATÁLOGO</a>
+      </div>
+
+      <div class="site-header__center site-header__center--brand">
+        <a href="index.html" class="brand-link" aria-label="Volver a la portada de Divina Locura Deco">
+          <span class="brand-name">DIVINA LOCURA</span>
+          <span class="brand-tag">DECO</span>
+        </a>
+      </div>
+
+      <div class="site-header__right">
+        <a href="disenar.html" class="header-text-btn header-help-link">A MEDIDA</a>
+        <a href="catalogo.html" class="header-text-btn header-help-link">TIENDA</a>
+        <a href="https://wa.me/5491136932471" target="_blank" rel="noopener noreferrer" class="header-text-btn header-help-link">WHATSAPP</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL DEL COTIZADOR DE CLIENTAS -->
+  <main class="client-quote-page" id="main-content">
+    <div class="container atelier-page__breadcrumbs-wrap">
+      <nav class="pdp-breadcrumbs" aria-label="Ubicación en la tienda">
+        <a href="index.html">Inicio</a>
+        <span class="separator">/</span>
+        <span class="current">Armá tu Presupuesto en PDF</span>
+      </nav>
+    </div>
+
+    <div class="container" style="max-width:1380px;">
+
+      <!-- Encabezado Editorial -->
+      <header class="client-quote-hero">
+        <span class="section-eyebrow">Cotizador Interactivo &middot; Precios Oficiales de Taller</span>
+        <h1 class="section-title">Armá tu Presupuesto al Instante</h1>
+        <p class="section-desc">
+          Elegí cualquier creación de nuestro catálogo o sumá piezas personalizadas a medida con las telas de Elena. Tu hoja A4 se genera en vivo lista para descargar en PDF, imprimir o enviar por WhatsApp.
+        </p>
+      </header>
+
+      <!-- Aviso automático si la clienta ya tiene productos en su Bolsa -->
+      <div class="cq-cart-banner" id="cq-cart-banner" style="display:none;">
+        <div>
+          <strong style="color:#2B2625; font-size:0.9rem;">🛍️ Tenés <span id="cq-cart-banner-count">0</span> pieza(s) guardadas en tu Bolsa de Pedidos</strong>
+          <div style="font-size:0.8rem; color:#5F5852; margin-top:2px;">¿Querés traerlas automáticamente para descargar tu presupuesto en PDF?</div>
+        </div>
+        <button type="button" class="btn-admin-cta" id="btn-cq-import-cart">
+          <span>✨ Traer productos de mi Bolsa</span>
+        </button>
+      </div>
+
+      <!-- Pestañas Móviles (En celulares permite alternar cómodo entre Armar y Ver Hoja PDF) -->
+      <div class="quotes-mobile-tabs" role="tablist" aria-label="Vistas del Cotizador">
+        <button type="button" class="quotes-mobile-tab is-active" data-cq-mob-tab="editor">
+          ✏️ 1. Elegir mis Piezas
+        </button>
+        <button type="button" class="quotes-mobile-tab" data-cq-mob-tab="preview">
+          📄 2. Ver y Bajar PDF (<span id="cq-mob-pages-count">1 pág</span>)
+        </button>
+      </div>
+
+      <!-- ESPACIO DIVIDIDO: ELECCIÓN DE LA CLIENTA (IZQ) + HOJA A4 EN VIVO (DER) -->
+      <div class="quotes-workspace">
+
+        <!-- COLUMNA IZQUIERDA: CONTROLES SIMPLES Y CÁLIDOS PARA LA CLIENTA -->
+        <div class="quotes-builder-col">
+
+          <!-- PASO 1: TUS DATOS PARA EL ENCABEZADO -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">1</span>
+                <h2 class="q-section-title">¿A nombre de quién armamos el presupuesto?</h2>
+              </div>
+              <div class="q-theme-pills" title="Elegí el color de tu hoja PDF">
+                <button type="button" class="q-theme-pill is-active" data-cq-theme="terracota">
+                  <span class="q-theme-swatch" style="background:#A45A44;"></span> Terracota
+                </button>
+                <button type="button" class="q-theme-pill" data-cq-theme="carbon">
+                  <span class="q-theme-swatch" style="background:#2B2625;"></span> Carbón
+                </button>
+                <button type="button" class="q-theme-pill" data-cq-theme="salvia">
+                  <span class="q-theme-swatch" style="background:#557361;"></span> Salvia
+                </button>
+              </div>
+            </div>
+
+            <div class="q-form-grid-2" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="cq-inp-name">Tu Nombre o Empresa / Institución</label>
+                <input type="text" id="cq-inp-name" class="q-input" placeholder="Ej: María Fernanda / Hotel Boutique..." />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="cq-inp-atte">Atte. / Para quién es (opcional)</label>
+                <input type="text" id="cq-inp-atte" class="q-input" placeholder="Opcional (ej: Área Compras / Regalo)" />
+              </div>
+            </div>
+
+            <div class="q-form-grid-2">
+              <div class="q-field">
+                <label class="q-label" for="cq-inp-phone">Tu WhatsApp (opcional)</label>
+                <input type="tel" id="cq-inp-phone" class="q-input" placeholder="Ej: 11 4567 8901" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="cq-inp-location">Localidad / Ciudad de entrega</label>
+                <input type="text" id="cq-inp-location" class="q-input" placeholder="Ej: CABA / Tucumán / Rosario..." />
+              </div>
+            </div>
+          </section>
+
+          <!-- PASO 2: ELEGIR CREACIONES DEL CATÁLOGO O A MEDIDA -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">2</span>
+                <h2 class="q-section-title">Seleccioná tus Creaciones</h2>
+              </div>
+            </div>
+
+            <div class="q-add-buttons-bar">
+              <button type="button" class="btn-q-add-catalog" id="btn-cq-open-catalog">
+                <span>🛍️ + Elegir del Catálogo</span>
+              </button>
+              <button type="button" class="btn-q-add-custom" id="btn-cq-open-bespoke">
+                <span>✂️ + Sumar Pieza a Medida</span>
+              </button>
+            </div>
+
+            <div class="q-editor-items-list" id="cq-items-list">
+              <!-- Tarjetas de productos elegidos -->
+            </div>
+          </section>
+
+          <!-- PASO 3: OPCIONES DE RESERVA & CONSULTA -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">3</span>
+                <h2 class="q-section-title">Opciones de Reserva &amp; Comentarios</h2>
+              </div>
+            </div>
+
+            <div style="margin-bottom:0.85rem; padding:0.65rem 0.85rem; background:#FAF6F0; border-radius:7px; border:1px solid #EAE0D4;">
+              <label style="display:inline-flex; align-items:center; gap:0.5rem; font-size:0.82rem; font-weight:600; color:#2B2625; cursor:pointer;">
+                <input type="checkbox" id="cq-chk-deposit" checked />
+                <span>Mostrar en el PDF el cálculo de Seña 50% (inicio confección) y Saldo 50%</span>
+              </label>
+            </div>
+
+            <div class="q-field">
+              <label class="q-label" for="cq-inp-note">¿Tenés alguna fecha especial, regalo o consulta para Elena? (opcional)</label>
+              <input type="text" id="cq-inp-note" class="q-input" placeholder="Ej: Lo necesito para un baby shower el 15 del mes que viene..." />
+            </div>
+          </section>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: DESCARGA PDF + ENVÍO A ELENA + VISTA PREVIA A4 -->
+        <div class="quotes-preview-col">
+
+          <div class="q-export-bar">
+            <div class="q-export-primary-row" style="grid-template-columns:1fr 1.15fr;">
+              <button type="button" class="btn-q-pdf js-cq-download-pdf">
+                <span>📥 Descargar Presupuesto PDF</span>
+              </button>
+              <button type="button" class="btn-q-whatsapp js-cq-send-elena-wa">
+                <span>💬 Consultar / Confirmar por WhatsApp</span>
+              </button>
+            </div>
+
+            <div class="q-export-secondary-row">
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button type="button" class="q-mini-btn" id="btn-cq-share-pdf" title="Compartir el archivo PDF directo desde tu celular">
+                  <span>📲 Compartir PDF</span>
+                </button>
+                <button type="button" class="q-mini-btn js-cq-print" title="Imprimir hoja A4">
+                  <span>🖨️ Imprimir A4</span>
+                </button>
+                <button type="button" class="q-mini-btn" id="btn-cq-push-to-cart" title="Llevar todos estos artículos directo a tu Bolsa de Pedidos para comprar">
+                  <span>🛍️ Pasar todo a mi Bolsa</span>
+                </button>
+              </div>
+              <span style="font-size:0.72rem; color:#7A7067; font-weight:600;">Hoja Oficial A4</span>
+            </div>
+          </div>
+
+          <div class="q-stage-viewport" id="cq-stage-viewport">
+            <div class="q-stage-scale-wrap" id="cq-stage-scale-wrap">
+              <!-- Hojas A4 en vivo -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1 CLIENTAS: ELEGIR CREACIONES DEL CATÁLOGO OFICIAL
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="cq-catalog-modal" role="dialog" aria-modal="true" aria-labelledby="cq-cat-title">
+    <div class="q-modal-dialog">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px;">Colección Artesanal de Elena</span>
+          <h3 class="q-modal-title" id="cq-cat-title">Elegí Creaciones del Catálogo</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+          <input type="text" id="cq-catalog-search" class="q-input" placeholder="🔍 Buscar cofia, repasador, neceser, muñeca, ajuar..." style="max-width:340px;" />
+          <div class="bank-filter-pills">
+            <button type="button" class="bank-filter-pill is-active" data-cq-cat-pill="todos">Todos</button>
+            <button type="button" class="bank-filter-pill" data-cq-cat-pill="cuidado-personal">Satén &amp; Skincare</button>
+            <button type="button" class="bank-filter-pill" data-cq-cat-pill="hogar">Hogar &amp; Cocina</button>
+            <button type="button" class="bank-filter-pill" data-cq-cat-pill="organizacion">Organización</button>
+            <button type="button" class="bank-filter-pill" data-cq-cat-pill="infantil">Bebés &amp; Infantil</button>
+          </div>
+        </div>
+
+        <div class="q-catalog-grid" id="cq-catalog-grid"></div>
+      </div>
+      <div class="q-modal-footer">
+        <button type="button" class="btn-admin-cta" data-q-close-modal>
+          <span>Ver mi presupuesto actualizado &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2 CLIENTAS: SUMAR PIEZA PERSONALIZADA / A MEDIDA
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="cq-bespoke-modal" role="dialog" aria-modal="true" aria-labelledby="cq-bespoke-title">
+    <div class="q-modal-dialog q-modal-dialog--narrow">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px;">Atelier a Medida &middot; Telas Nobles</span>
+          <h3 class="q-modal-title" id="cq-bespoke-title">Sumar Confección Personalizada a Medida</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <label class="q-label" style="display:block; margin-bottom:0.45rem;">1. ¿Qué tipo de pieza te gustaría cotizar?</label>
+        <div class="cq-bespoke-grid" id="cq-bespoke-type-grid"></div>
+
+        <div class="q-form-grid-2" style="margin-bottom:0.8rem;">
+          <div class="q-field">
+            <label class="q-label" for="cq-bespoke-fabric">2. Tela del Taller de Elena</label>
+            <select id="cq-bespoke-fabric" class="q-select">
+              <option value="Algodón Waffle Nido de Abeja">Algodón Waffle Nido de Abeja (100% Algodón)</option>
+              <option value="Satén de Seda Antifrizz">Satén de Seda Antifrizz</option>
+              <option value="Lino Rústico & Lienzo">Lino Rústico &amp; Lienzo Pesado</option>
+              <option value="Tusor 100% Algodón Prelavado">Tusor 100% Algodón Prelavado</option>
+              <option value="Gasa Pañalera & Doble Felpa">Gasa Pañalera &amp; Toalla Doble Felpa</option>
+              <option value="A asesorar con Elena">Quiero que Elena me recomiende la tela</option>
+            </select>
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="cq-bespoke-color">Tono Preferido</label>
+            <select id="cq-bespoke-color" class="q-select">
+              <option value="Crudo Natural">Crudo Natural</option>
+              <option value="Blanco Lino">Blanco Lino</option>
+              <option value="Champán Seda">Champán Seda</option>
+              <option value="Rosa Viejo">Rosa Viejo</option>
+              <option value="Verde Salvia">Verde Salvia</option>
+              <option value="Terracota Suave">Terracota Suave</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="q-form-grid-3" style="margin-bottom:0.8rem;">
+          <div class="q-field">
+            <label class="q-label" for="cq-bespoke-dims">Medidas aprox.</label>
+            <input type="text" id="cq-bespoke-dims" class="q-input" placeholder="Ej: 50 × 70 cm" />
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="cq-bespoke-emb">🪡 Bordar nombre/inicial</label>
+            <input type="text" id="cq-bespoke-emb" class="q-input" placeholder="Opcional (Sin cargo)" />
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="cq-bespoke-qty">Cantidad</label>
+            <input type="number" min="1" value="1" id="cq-bespoke-qty" class="q-input" />
+          </div>
+        </div>
+
+        <div class="q-field">
+          <label class="q-label" for="cq-bespoke-notes">Detalles adicionales (puntilla, forro impermeable, idea especial)</label>
+          <textarea id="cq-bespoke-notes" class="q-textarea" rows="2" placeholder="Contanos cómo te imaginás esta pieza..."></textarea>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap; padding:0.7rem 0.9rem; background:#FAF6F0; border:1px solid #E5DBD0; border-radius:8px; margin-top:0.5rem;">
+          <span id="cq-bespoke-file-status" style="font-size:0.76rem; color:#5F5852;">Opcional: podés adjuntar foto de tu espacio o boceto</span>
+          <label class="q-mini-btn" style="cursor:pointer;">
+            <span>📱 Adjuntar Foto / Idea</span>
+            <input type="file" id="cq-bespoke-file" accept="image/*" style="display:none;" />
+          </label>
+        </div>
+      </div>
+      <div class="q-modal-footer">
+        <button type="button" class="btn-admin-outline" data-q-close-modal>Cancelar</button>
+        <button type="button" class="btn-admin-cta" id="btn-cq-confirm-bespoke">
+          <span>✂️ Sumar a mi Presupuesto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de página cálido Divina Locura Deco -->
+  <footer class="site-footer no-print" style="margin-top:3rem; padding:2.5rem 1.5rem; background:#EAE3D8; border-top:1px solid #D8CFC2; text-align:center;">
+    <div class="container">
+      <div style="font-family:var(--font-serif); font-size:1.3rem; font-weight:600; letter-spacing:0.08em; color:#2B2625;">DIVINA LOCURA DECO</div>
+      <p style="font-size:0.84rem; color:#5F5852; margin:0.4rem auto 1rem auto; max-width:520px;">
+        Textiles nobles prelavados y piezas utilitarias confeccionadas a mano con dedicación por Elena.
+      </p>
+      <div style="display:flex; justify-content:center; gap:1.25rem; flex-wrap:wrap; font-size:0.8rem; font-weight:600;">
+        <a href="index.html" style="color:#A45A44;">Portada</a>
+        <a href="catalogo.html" style="color:#A45A44;">Catálogo Completo</a>
+        <a href="disenar.html" style="color:#A45A44;">Diseñador a Medida</a>
+        <a href="admin-presupuestos.html" style="color:#6C635C;">🔒 Acceso Taller (Elena &amp; Juanma)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="banco-data.js?v=20261128v3"></script>
+  <script src="products-data.js?v=20261128v3"></script>
+  <script src="workshop-db.js?v=20261128v3"></script>
+  <script src="presupuestos-pdf.js?v=20261128v3"></script>
+  <script src="presupuestos.js?v=20261128v3"></script>
+  <script>
+    // Interacción liviana del menú lateral en cotizar.html
+    (function () {
+      var hb = document.getElementById('hamburger-btn');
+      var dr = document.getElementById('side-drawer');
+      var cl = document.getElementById('drawer-close-btn');
+      var bd = document.getElementById('drawer-backdrop');
+      function openD() { if (dr) { dr.classList.add('is-open'); dr.setAttribute('aria-hidden', 'false'); } }
+      function closeD() { if (dr) { dr.classList.remove('is-open'); dr.setAttribute('aria-hidden', 'true'); } }
+      if (hb) hb.addEventListener('click', openD);
+      if (cl) cl.addEventListener('click', closeD);
+      if (bd) bd.addEventListener('click', closeD);
+    })();
+  </script>
+</body>
+</html>

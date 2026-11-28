@@ -1636,6 +1636,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const oBadge = document.getElementById('dock-orders-badge');
       if (oBadge) oBadge.textContent = orders.length;
 
+      const qBadge = document.getElementById('dock-quotes-badge');
+      if (qBadge && window.WorkshopDB.getQuotes) {
+        qBadge.textContent = window.WorkshopDB.getQuotes().length;
+      }
+
       const pBadge = document.getElementById('dock-prod-badge');
       if (pBadge) {
         const active = production.filter(p => p.phase !== 'completado');
@@ -3530,8 +3535,39 @@ const INITIAL_PRODUCTS = ${JSON.stringify(products, null, 2)};
     });
   }
 
+  function ensureCartQuotePdfButton() {
+    if (!cartDrawerFooter || document.getElementById('cart-btn-quote-pdf')) return;
+    const actionsBox = cartDrawerFooter.querySelector('.cart-actions-grid') || cartDrawerFooter.querySelector('.cart-drawer__actions') || cartDrawerFooter;
+    const qBtn = document.createElement('button');
+    qBtn.type = 'button';
+    qBtn.id = 'cart-btn-quote-pdf';
+    qBtn.className = 'btn btn--secondary';
+    qBtn.style.cssText = 'display:inline-flex; width:100%; justify-content:center; align-items:center; gap:0.5rem; background:#FAF6F0; color:#2B2625; border:1px solid #C9BBAE; font-weight:600; margin-top:0.35rem;';
+    qBtn.innerHTML = '<span>📑 Descargar mi Bolsa en Presupuesto PDF</span>';
+    actionsBox.appendChild(qBtn);
+
+    qBtn.addEventListener('click', () => {
+      const nEl = document.getElementById('cart-input-name');
+      const pEl = document.getElementById('cart-input-phone');
+      const eEl = document.getElementById('cart-input-email');
+      const aEl = document.getElementById('cart-input-address');
+      if ((nEl && nEl.value.trim()) || (pEl && pEl.value.trim())) {
+        try {
+          localStorage.setItem(STORAGE_KEY_CUSTOMER, JSON.stringify({
+            name: nEl ? nEl.value.trim() : '',
+            phone: pEl ? pEl.value.trim() : '',
+            email: eEl ? eEl.value.trim() : '',
+            address: aEl ? aEl.value.trim() : ''
+          }));
+        } catch (err) {}
+      }
+      window.location.href = 'cotizar.html?fromCart=1';
+    });
+  }
+
   function refreshMercadoPagoButtonVisibility() {
     ensureMercadoPagoButton();
+    ensureCartQuotePdfButton();
     const mpBtn = document.getElementById('cart-btn-mercadopago');
     if (mpBtn) {
       mpBtn.style.display = 'inline-flex';

@@ -28,6 +28,8 @@
   const KEY_COLOR_PALETTE = 'divinalocura_color_palette_db';
   const KEY_CATALOG_VER = 'divinalocura_catalog_ver';
   const KEY_IMAGE_BANK = 'divinalocura_image_bank';
+  const KEY_QUOTES = 'divinalocura_quotes_db';
+  const KEY_QUOTE_SEQ = 'divinalocura_quote_seq';
 
   // URL de Google Apps Script (si se pega acá queda fija para todos los dispositivos;
   // también se puede pegar desde Configuración de la Tienda sin tocar código).
@@ -335,6 +337,79 @@
     }
   ];
 
+  const SEED_QUOTES = [
+    {
+      id: 'COT-000101',
+      number: '000101',
+      date: '28/11/2026',
+      validity: '10 días corridos',
+      status: 'enviado',
+      theme: 'terracota',
+      client: {
+        company: 'MARIANA GÓMEZ · ESTUDIO INTERIORISMO',
+        attention: 'Mariana Gómez',
+        phone: '11 4567 8901',
+        email: 'mariana.g@gmail.com',
+        location: 'Palermo Soho, CABA'
+      },
+      introText: 'De nuestra mayor consideración, nos dirigimos a Ud. a fin de presentarle cotización artesanal de las siguientes creaciones confeccionadas a mano en nuestro taller:',
+      items: [
+        {
+          uid: 'qi-seed-1',
+          productId: 'p1',
+          isCustom: false,
+          isAlternative: false,
+          title: 'SET SKINCARE & ANTIFRIZZ COMPLETO',
+          variant: 'Satén Champán Seda · Kit Completo',
+          image: 'assets/images/catalog/woman-adjusting-satin-sleep-bonnet.jpg',
+          qty: 4,
+          unitPrice: 28500,
+          unitCost: 11200,
+          desc: 'Funda de almohada de satén sedoso anti-frizz, cofia doble faz regulable, antifaz acolchado y bolsita de lino artesanal con etiqueta de autor.'
+        },
+        {
+          uid: 'qi-seed-2',
+          productId: 'p2',
+          isCustom: false,
+          isAlternative: false,
+          title: 'REPASADOR WAFFLE & TOALLAS CON GUARDA FLORAL',
+          variant: 'Nido de Abeja Puro Algodón · Blanco Lino',
+          image: 'assets/images/catalog/handcrafted-cotton-towels-on-bench.jpg',
+          qty: 6,
+          unitPrice: 9800,
+          unitCost: 4100,
+          desc: 'Tejido nido de abeja 100% algodón prelavado súper absorbente con guarda floral botánica y tirita en cinta espigada rústica.'
+        },
+        {
+          uid: 'qi-seed-3',
+          productId: 'custom',
+          isCustom: true,
+          isAlternative: false,
+          title: 'PIEZA DE CAMA EN TUSOR PRELAVADO A MEDIDA',
+          variant: 'Confección Especial 2,40 × 0,90 m · Crudo Natural',
+          image: 'assets/images/banco/blanqueria-toallas/toalla-cruda-encaje-broderie.jpg',
+          qty: 1,
+          unitPrice: 46000,
+          unitCost: 18500,
+          desc: 'Pie de cama confeccionado a medida para colchón Queen en tusor pesado prelavado, con terminación desflecada artesanal y dos fundas de almohadón 50×50 cm haciendo juego.'
+        }
+      ],
+      showTotals: true,
+      showDeposit: true,
+      discountPercent: 5,
+      discountFixed: 0,
+      shippingCost: 0,
+      deliveryTime: '7 a 10 días hábiles desde la confirmación',
+      paymentTerms: 'Seña del 50% para iniciar el corte y confección · Saldo 50% contra entrega. Transferencia o Mercado Pago (Alias: DIVINA.LOCURA.DECO).',
+      footerNotes: 'Todas nuestras telas nobles son prelavadas en el taller para conservar su caída, suavidad y medida exacta lavado tras lavado.',
+      subtotal: 218800,
+      discountAmount: 10940,
+      totalAmount: 207860,
+      createdBy: 'elena',
+      updatedAt: '2026-11-28T12:00:00.000Z'
+    }
+  ];
+
   // =========================================================================
   // HELPER PARA LOCALSTORAGE + SINCRONIZACIÓN CON GOOGLE SHEETS
   // =========================================================================
@@ -348,6 +423,7 @@
   KEY_TO_COLLECTION[KEY_PRODUCTION] = 'production';
   KEY_TO_COLLECTION[KEY_PRODUCTS] = 'products';
   KEY_TO_COLLECTION[KEY_SETTINGS] = 'settings';
+  KEY_TO_COLLECTION[KEY_QUOTES] = 'quotes';
 
   let suppressCloudSync = false;
   const pendingCloudSaves = {};
@@ -444,22 +520,24 @@
     if (!getCloudUrl() || !getAdminToken()) return { ok: false, skipped: true };
     cloudMeta.syncing = true;
     notifySyncListeners({ status: 'saving', collection: collectionName });
-    const baseIds = (collectionName === 'orders' || collectionName === 'clients') ? getKnownIds(collectionName) : undefined;
+    const isMergeable = collectionName === 'orders' || collectionName === 'clients' || collectionName === 'quotes';
+    const baseIds = isMergeable ? getKnownIds(collectionName) : undefined;
     const res = await callCloud('save', { name: collectionName, data: data, baseIds: baseIds });
     cloudMeta.syncing = false;
     if (res && res.ok) {
       cloudMeta.lastSync = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
       cloudMeta.lastError = '';
-      if (Array.isArray(res.data) && (collectionName === 'orders' || collectionName === 'clients')) {
+      if (Array.isArray(res.data) && isMergeable) {
         suppressCloudSync = true;
-        setJson(collectionName === 'orders' ? KEY_ORDERS : KEY_CLIENTS, res.data, true);
+        const targetKey = collectionName === 'orders' ? KEY_ORDERS : (collectionName === 'clients' ? KEY_CLIENTS : KEY_QUOTES);
+        setJson(targetKey, res.data, true);
         setKnownIds(collectionName, res.data);
         suppressCloudSync = false;
       } else if (Array.isArray(data)) {
         setKnownIds(collectionName, data);
       }
       notifySyncListeners({ status: 'saved', collection: collectionName, lastSync: cloudMeta.lastSync });
-    } else {
+    } else if (collectionName !== 'quotes') {
       cloudMeta.lastError = (res && res.error) || 'No se pudo guardar en Google Sheets';
       notifySyncListeners({ status: 'error', error: cloudMeta.lastError });
     }
@@ -511,6 +589,10 @@
       if (!localStorage.getItem(KEY_EXPENSES)) setJson(KEY_EXPENSES, SEED_EXPENSES, true);
       if (!localStorage.getItem(KEY_ANALYTICS)) setJson(KEY_ANALYTICS, SEED_ANALYTICS, true);
       if (!localStorage.getItem(KEY_PRODUCTION)) setJson(KEY_PRODUCTION, SEED_PRODUCTION, true);
+      if (!localStorage.getItem(KEY_QUOTES)) setJson(KEY_QUOTES, SEED_QUOTES, true);
+      if (!localStorage.getItem(KEY_QUOTE_SEQ)) {
+        try { localStorage.setItem(KEY_QUOTE_SEQ, '101'); } catch (e) {}
+      }
     } finally {
       suppressCloudSync = false;
     }
@@ -1839,13 +1921,184 @@
     },
 
     // -----------------------------------------------------------------------
+    // PRESUPUESTOS & COTIZACIONES DE MARCA (ELENA & JUANMA)
+    // -----------------------------------------------------------------------
+    getQuotes: function () {
+      const list = getJson(KEY_QUOTES, SEED_QUOTES);
+      return Array.isArray(list) ? list : [];
+    },
+
+    getQuoteById: function (quoteId) {
+      if (!quoteId) return null;
+      return this.getQuotes().find(q => q && (q.id === quoteId || q.number === quoteId)) || null;
+    },
+
+    getNextQuoteNumber: function () {
+      let maxNum = 100;
+      try {
+        const storedSeq = parseInt(localStorage.getItem(KEY_QUOTE_SEQ) || '100', 10);
+        if (!isNaN(storedSeq) && storedSeq > maxNum) maxNum = storedSeq;
+      } catch (e) {}
+      this.getQuotes().forEach(q => {
+        const n = parseInt(String((q && q.number) || '').replace(/[^0-9]/g, ''), 10);
+        if (!isNaN(n) && n > maxNum) maxNum = n;
+      });
+      return String(maxNum + 1).padStart(6, '0');
+    },
+
+    saveQuote: function (quoteObj) {
+      if (!quoteObj || typeof quoteObj !== 'object') return null;
+      const quotes = this.getQuotes();
+      const rawNum = String(quoteObj.number || '').trim() || this.getNextQuoteNumber();
+      const cleanNum = rawNum.replace(/[^0-9A-Za-z-]/g, '') || this.getNextQuoteNumber();
+      const id = quoteObj.id || ('COT-' + cleanNum);
+
+      const items = Array.isArray(quoteObj.items) ? quoteObj.items : [];
+      const activeItems = items.filter(it => !it.isAlternative);
+      const calcBase = activeItems.length > 0 ? activeItems : items;
+      const subtotal = calcBase.reduce((acc, it) => {
+        const qty = Math.max(0, parseFloat(it.qty) || 0);
+        const unit = Math.max(0, parseFloat(it.unitPrice) || 0);
+        return acc + qty * unit;
+      }, 0);
+
+      const discPct = Math.max(0, Math.min(100, parseFloat(quoteObj.discountPercent) || 0));
+      const discFix = Math.max(0, parseFloat(quoteObj.discountFixed) || 0);
+      const discountAmount = Math.min(subtotal, Math.round((subtotal * (discPct / 100) + discFix) * 100) / 100);
+      const shippingCost = Math.max(0, parseFloat(quoteObj.shippingCost) || 0);
+      const totalAmount = Math.max(0, Math.round((subtotal - discountAmount + shippingCost) * 100) / 100);
+
+      const record = Object.assign({}, quoteObj, {
+        id: id,
+        number: cleanNum,
+        date: quoteObj.date || new Date().toLocaleDateString('es-AR'),
+        status: quoteObj.status || 'borrador',
+        theme: quoteObj.theme || 'terracota',
+        items: items,
+        subtotal: subtotal,
+        discountAmount: discountAmount,
+        shippingCost: shippingCost,
+        totalAmount: totalAmount,
+        updatedAt: new Date().toISOString()
+      });
+
+      const idx = quotes.findIndex(q => q && q.id === id);
+      if (idx >= 0) {
+        quotes[idx] = Object.assign({}, quotes[idx], record);
+      } else {
+        quotes.unshift(record);
+      }
+
+      const numInt = parseInt(cleanNum.replace(/[^0-9]/g, ''), 10);
+      if (!isNaN(numInt)) {
+        try {
+          const prevSeq = parseInt(localStorage.getItem(KEY_QUOTE_SEQ) || '100', 10) || 100;
+          if (numInt > prevSeq) localStorage.setItem(KEY_QUOTE_SEQ, String(numInt));
+        } catch (e) {}
+      }
+
+      setJson(KEY_QUOTES, quotes);
+
+      // Si el presupuesto incluye teléfono y nombre de clienta, mantener agenda al día sin pisar pedidos
+      if (record.client && record.client.phone && String(record.client.phone).replace(/[^0-9]/g, '').length >= 6) {
+        const existingCli = this.getClients().find(c => cleanPhoneKey(c.phone) === cleanPhoneKey(record.client.phone));
+        if (!existingCli) {
+          this.saveClient({
+            name: record.client.attention || record.client.company || 'Clienta',
+            phone: record.client.phone,
+            email: record.client.email || '',
+            address: record.client.location || '',
+            totalOrders: 0,
+            notes: `Cotización #${record.number}`
+          });
+        }
+      }
+
+      return record;
+    },
+
+    updateQuoteStatus: function (quoteId, newStatus, extra) {
+      const quotes = this.getQuotes();
+      const idx = quotes.findIndex(q => q && q.id === quoteId);
+      if (idx < 0) return null;
+      quotes[idx] = Object.assign({}, quotes[idx], { status: newStatus, updatedAt: new Date().toISOString() }, extra || {});
+      setJson(KEY_QUOTES, quotes);
+      return quotes[idx];
+    },
+
+    deleteQuote: function (quoteId) {
+      let quotes = this.getQuotes();
+      quotes = quotes.filter(q => q && q.id !== quoteId);
+      setJson(KEY_QUOTES, quotes);
+      return quotes;
+    },
+
+    convertQuoteToOrder: function (quoteId, opts) {
+      const quote = this.getQuoteById(quoteId);
+      if (!quote) return { ok: false, error: 'Presupuesto no encontrado.' };
+
+      const options = opts || {};
+      const activeItems = (quote.items || []).filter(it => !it.isAlternative);
+      const sourceItems = activeItems.length > 0 ? activeItems : (quote.items || []);
+      if (sourceItems.length === 0) {
+        return { ok: false, error: 'El presupuesto no tiene ítems para convertir en pedido.' };
+      }
+
+      const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+      const now = new Date();
+      const total = Number(quote.totalAmount) || 0;
+      const deposit = Math.round(total * 0.5);
+      const clientName = (quote.client && (quote.client.attention || quote.client.company)) || 'Clienta';
+
+      const orderItems = sourceItems.map(it => ({
+        id: it.productId && it.productId !== 'custom' ? it.productId : ('custom-' + Date.now()),
+        title: it.title + (it.variant ? ` (${it.variant})` : ''),
+        price: `$ ${Number(it.unitPrice || 0).toLocaleString('es-AR')} ARS`,
+        qty: Number(it.qty) || 1,
+        note: it.desc || '',
+        referenceImage: it.isCustom && it.image ? it.image : ''
+      }));
+
+      const newOrder = {
+        id: orderId,
+        quoteId: quote.id,
+        quoteNumber: quote.number,
+        date: now.toLocaleDateString('es-AR'),
+        time: now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+        customer: {
+          name: clientName,
+          phone: (quote.client && quote.client.phone) || '',
+          email: (quote.client && quote.client.email) || '',
+          address: (quote.client && quote.client.location) || 'A coordinar'
+        },
+        items: orderItems,
+        totalCount: orderItems.reduce((s, i) => s + (Number(i.qty) || 1), 0),
+        totalAmount: total,
+        discountAmount: Number(quote.discountAmount) || 0,
+        depositAmount: deposit,
+        pendingBalance: Math.max(0, total - deposit),
+        status: options.sendToProduction ? 'Cortando Telas' : 'pendiente',
+        estimatedDelivery: quote.deliveryTime || 'A coordinar',
+        workshopNote: `Generado desde Presupuesto #${quote.number}. ${quote.footerNotes || ''}`.trim()
+      };
+
+      this.addOrder(newOrder);
+      if (options.sendToProduction) {
+        this.ensureOrderInProduction(newOrder);
+      }
+      this.updateQuoteStatus(quote.id, 'aprobado', { linkedOrderId: orderId });
+
+      return { ok: true, order: newOrder };
+    },
+
+    // -----------------------------------------------------------------------
     // RESPALDO INTEGRAL DEL TALLER (JSON BACKUP EXPORT & IMPORT)
     // -----------------------------------------------------------------------
     exportBackupJson: function () {
       const backupData = {
         meta: {
           app: 'Divina Locura Deco - Taller de Confección & Gestión Integral',
-          version: '4.0.0',
+          version: '4.1.0',
           exportedAt: new Date().toISOString(),
           readableDate: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR')
         },
@@ -1853,6 +2106,7 @@
         settings: this.getSettings(),
         clients: this.getClients(),
         orders: this.getOrders(),
+        quotes: this.getQuotes(),
         chats: this.getChats(),
         stockProducts: this.getProductStock(),
         stockMaterials: this.getMaterials(),
@@ -1877,6 +2131,7 @@
         if (data.settings && typeof data.settings === 'object') setJson(KEY_SETTINGS, data.settings);
         if (Array.isArray(data.clients)) setJson(KEY_CLIENTS, data.clients);
         if (Array.isArray(data.orders)) setJson(KEY_ORDERS, data.orders);
+        if (Array.isArray(data.quotes)) setJson(KEY_QUOTES, data.quotes);
         if (data.chats && typeof data.chats === 'object') setJson(KEY_CHATS, data.chats);
         if (Array.isArray(data.stockProducts)) setJson(KEY_STOCK_PRODUCTS, data.stockProducts);
         if (Array.isArray(data.stockMaterials)) setJson(KEY_STOCK_MATERIALS, data.stockMaterials);
@@ -2090,6 +2345,7 @@
         } else {
           if (Array.isArray(res.orders)) { setJson(KEY_ORDERS, res.orders, true); setKnownIds('orders', res.orders); }
           if (Array.isArray(res.clients)) { setJson(KEY_CLIENTS, res.clients, true); setKnownIds('clients', res.clients); }
+          if (Array.isArray(res.quotes) && res.quotes.length) { setJson(KEY_QUOTES, res.quotes, true); setKnownIds('quotes', res.quotes); }
           if (res.chats && typeof res.chats === 'object') setJson(KEY_CHATS, res.chats, true);
           if (Array.isArray(res.stockProducts) && res.stockProducts.length) setJson(KEY_STOCK_PRODUCTS, res.stockProducts, true);
           if (Array.isArray(res.stockMaterials) && res.stockMaterials.length) setJson(KEY_STOCK_MATERIALS, res.stockMaterials, true);
@@ -2135,6 +2391,8 @@
         const r = await pushCollectionToCloud(list[i][0], list[i][1]);
         if (!r || !r.ok) return r || { ok: false };
       }
+      // Sincronización adicional de Presupuestos (tolerante si el script de Google aún no se republicó)
+      try { await pushCollectionToCloud('quotes', this.getQuotes()); } catch (e) {}
       return { ok: true };
     },
 

@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=20261114v9">
-  <link rel="stylesheet" href="admin.css?v=20261114v9">
+  <link rel="stylesheet" href="style.css?v=20261128v3">
+  <link rel="stylesheet" href="admin.css?v=20261128v3">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="dashboard">
@@ -49,6 +49,10 @@
       <nav class="admin-nav-links" aria-label="Navegación del Panel">
         <a href="admin.html" class="admin-nav-link is-active">
           <span>📊 Resumen</span>
+        </a>
+        <a href="admin-presupuestos.html" class="admin-nav-link">
+          <span>📑 Presupuestos</span>
+          <span class="admin-badge-count" id="nav-quotes-count">0</span>
         </a>
         <a href="admin-pedidos.html" class="admin-nav-link">
           <span>📋 Pedidos</span>
@@ -116,12 +120,33 @@
           </p>
         </div>
         <div class="admin-page-hero__actions">
-          <a href="admin-pedidos.html" class="btn-admin-cta">
-            <span>📋 Ver Todos los Pedidos</span>
+          <a href="admin-presupuestos.html" class="btn-admin-cta">
+            <span>📑 Armar Presupuesto PDF</span>
           </a>
-          <a href="admin-produccion.html" class="btn-admin-outline">
-            <span>✂️ Ir a Producción</span>
+          <a href="admin-pedidos.html" class="btn-admin-outline">
+            <span>📋 Ver Pedidos</span>
           </a>
+          <a href="admin-guia.html" class="btn-admin-outline" style="border-color:#A45A44; color:#8E4733;">
+            <span>📖 Tutorial del Panel</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- BIENVENIDA CON TUTORIAL EXPLICADO PARA MAMÁ (ELENA) -->
+      <section class="admin-welcome-guide-banner">
+        <div class="admin-welcome-guide-banner__text">
+          <h3 class="admin-welcome-guide-banner__title">🌸 ¿Querés ver qué podés hacer en cada sección del Panel?</h3>
+          <p class="admin-welcome-guide-banner__desc">
+            Armamos un tutorial interactivo explicado paso a paso (sin palabras técnicas) sobre Presupuestos PDF, Pedidos, Producción, Stock de Telas, Ganancias y Fotos. Además, en cualquier pantalla podés tocar <strong>“❓ ¿Cómo funciona?”</strong> arriba a la derecha.
+          </p>
+        </div>
+        <div class="admin-welcome-guide-banner__actions">
+          <a href="admin-guia.html" class="btn-admin-cta">
+            <span>📖 Abrir Tutorial Completo</span>
+          </a>
+          <button type="button" class="btn-admin-outline" onclick="window.DivinaLocuraAdmin && window.DivinaLocuraAdmin.openHelp('dashboard')">
+            <span>❓ Explicame esta pantalla</span>
+          </button>
         </div>
       </section>
 
@@ -176,6 +201,16 @@
         </div>
 
         <div class="admin-grid-3">
+
+          <a href="admin-presupuestos.html" class="admin-stat-card admin-stat-card--accent" style="text-decoration:none; color:inherit;">
+            <div class="admin-stat-header">
+              <span class="admin-stat-label">★ Cotizador Editorial</span>
+              <span class="admin-stat-icon">📑</span>
+            </div>
+            <h4 style="margin:0 0 0.5rem 0; font-size:1.15rem; color:#2B2625;">Presupuestos PDF &amp; WhatsApp</h4>
+            <p style="font-size:0.82rem; color:#5F5852; margin:0 0 1rem 0;">Cotizá creaciones del catálogo o a medida con foto, precios por cantidad, descarga directa en PDF e impresión A4.</p>
+            <span style="color:#A45A44; font-weight:700; font-size:0.84rem;">Abrir Presupuestos &rarr;</span>
+          </a>
           
           <a href="admin-pedidos.html" class="admin-stat-card" style="text-decoration:none; color:inherit;">
             <div class="admin-stat-header">
@@ -293,9 +328,9 @@
   </main>
 
   <!-- SCRIPTS -->
-  <script src="banco-data.js?v=20261114v9"></script>
-  <script src="products-data.js?v=20261114v9"></script>
-  <script src="workshop-db.js?v=20261114v9"></script>
-  <script src="admin.js?v=20261114v9"></script>
+  <script src="banco-data.js?v=20261128v3"></script>
+  <script src="products-data.js?v=20261128v3"></script>
+  <script src="workshop-db.js?v=20261128v3"></script>
+  <script src="admin.js?v=20261128v3"></script>
 </body>
 </html>

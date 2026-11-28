@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="only light">
-  <title>Guía & Tutorial de Taller | Divina Locura Deco</title>
-  
+  <title>Tutorial del Panel de Control para Elena | Divina Locura Deco</title>
+  <meta name="description" content="Tutorial interactivo y guía paso a paso de todas las secciones del Panel de Control de Divina Locura Deco explicado de forma simple para Elena.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="style.css?v=20261114v9">
-  <link rel="stylesheet" href="admin.css?v=20261114v9">
+
+  <link rel="stylesheet" href="style.css?v=20261128v3">
+  <link rel="stylesheet" href="admin.css?v=20261128v3">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body class="admin-body" data-admin-page="guia">
@@ -48,6 +49,10 @@
         <a href="admin.html" class="admin-nav-link">
           <span>📊 Resumen</span>
         </a>
+        <a href="admin-presupuestos.html" class="admin-nav-link">
+          <span>📑 Presupuestos</span>
+          <span class="admin-badge-count" id="nav-quotes-count">0</span>
+        </a>
         <a href="admin-pedidos.html" class="admin-nav-link">
           <span>📋 Pedidos</span>
           <span class="admin-badge-count" id="nav-orders-count">0</span>
@@ -83,16 +88,16 @@
   </div>
 
   <main class="admin-shell">
-    
+
     <!-- LOGIN GUARD -->
     <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
       <span class="admin-login-guard__icon">🔐</span>
-      <h3 class="admin-login-guard__title">Acceso al Panel de Control</h3>
-      <p class="admin-login-guard__desc">Ingresá tu clave de administrador para gestionar las operaciones del taller y la tienda.</p>
+      <h3 class="admin-login-guard__title">Acceso al Tutorial del Panel</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave (elena, mama o juanma) para abrir la guía interactiva paso a paso del taller.</p>
       <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
-        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador" autofocus />
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador (elena, mama o juanma)" autofocus />
         <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
-          <span>Ingresar al Panel 💻</span>
+          <span>Ingresar al Tutorial 🌸</span>
         </button>
       </form>
       <div style="margin-top:1.5rem;">
@@ -100,163 +105,142 @@
       </div>
     </div>
 
-    <!-- CONTENIDO GUÍA -->
+    <!-- CONTENIDO DE LA ACADEMIA / GUÍA INTERACTIVA PARA MAMÁ -->
     <div class="admin-content-area" id="admin-content-area">
-      
+
       <section class="admin-page-hero">
         <div class="admin-page-hero__info">
-          <span class="admin-page-kicker">Tutorial &middot; Consejos de Taller</span>
-          <h1 class="admin-page-title">Guía Paso a Paso para Elena</h1>
+          <span class="admin-page-kicker">Tutorial Interactivo &middot; Pensado Especialmente para Mamá (Elena)</span>
+          <h1 class="admin-page-title">Cómo Usar Cada Sección de tu Panel</h1>
           <p class="admin-page-desc">
-            Manual práctico para gestionar el taller con calidez: fotografía lookbook con luz natural, subida de nuevas piezas, confección y atención personalizada.
+            Explicado sin palabras difíciles ni tecnicismos: qué podés hacer en cada pestaña, qué cosas hace el sistema automáticamente por vos y consejos prácticos para el día a día del taller.
           </p>
         </div>
+        <div class="admin-page-hero__actions">
+          <a href="admin-presupuestos.html" class="btn-admin-cta">
+            <span>📑 Probar Presupuestos PDF</span>
+          </a>
+          <a href="admin.html" class="btn-admin-outline">
+            <span>📊 Volver al Resumen</span>
+          </a>
+        </div>
       </section>
 
-      <!-- PESTAÑAS DE LA GUÍA -->
-      <section class="admin-card" style="padding:0.75rem 1.25rem; margin-bottom:1.5rem;">
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-          <button type="button" class="btn-admin-nav guide-tab-btn is-active" data-guide-target="guide-step-1" style="color:#2B2625;">
-            📸 1. Fotografía Lookbook
+      <!-- PROGRESO DE RECORRIDO -->
+      <section class="guide-progress-card">
+        <div style="flex:1; min-width:250px;">
+          <span style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:#E5B7A3; display:block; margin-bottom:0.25rem;">🌸 Tu Recorrido Guiado</span>
+          <div style="font-family:var(--font-serif); font-size:1.3rem; font-weight:500; margin-bottom:0.2rem;" id="guide-progress-text">Conociste 0 de 11 secciones del Panel (0%)</div>
+          <div style="font-size:0.8rem; color:#CFC5BC;">Podés tildar cada sección a medida que la probás. Además, en cualquier pantalla tenés el botón <strong>“❓ ¿Cómo funciona?”</strong> arriba a la derecha.</div>
+          <div class="guide-progress-bar-track">
+            <div class="guide-progress-bar-fill" id="guide-progress-fill" style="width:0%;"></div>
+          </div>
+        </div>
+        <div style="min-width:250px; max-width:340px; width:100%;">
+          <label for="guide-search-input" style="display:block; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#E5B7A3; margin-bottom:0.35rem;">🔍 Buscar qué querés hacer</label>
+          <input type="text" id="guide-search-input" class="admin-input" placeholder="Ej: presupuesto, foto, precio, tela, whatsapp..." style="background:#FAF8F4;" />
+        </div>
+      </section>
+
+      <!-- ATAJOS POR SITUACIÓN REAL ("¿QUÉ QUERÉS HACER HOY?") -->
+      <section class="admin-card" style="padding:1.25rem 1.5rem;">
+        <div style="font-size:0.76rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#A45A44;">✨ Atajos Rápidos · Tocá lo que necesitás hacer hoy</div>
+        <div class="guide-quick-ask-chips">
+          <button type="button" class="guide-ask-chip" data-guide-jump="presupuestos">📑 Quiero pasar un presupuesto en PDF</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="pedidos">📋 Entró un pedido nuevo</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="produccion">✂️ Voy a cortar y coser una pieza</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="stock">🧵 Ver cuántos metros de tela quedan</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="finances">🧮 Calcular a qué precio vender algo</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="productos">📸 Cambiar un precio o subir producto</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="banco">🖼️ Elegir fotos listas del Banco</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="configuracion">✍️ Cambiar textos, WhatsApp o Alias</button>
+          <button type="button" class="guide-ask-chip" data-guide-jump="extras">☀️ Tips de fotos, empaque y Google Sheets</button>
+        </div>
+      </section>
+
+      <!-- FLUJO VISUAL DE PRINCIPIO A FIN -->
+      <section class="admin-card" style="padding:1.25rem 1.5rem;">
+        <div class="admin-card__header" style="margin-bottom:0.75rem; padding-bottom:0.65rem;">
+          <div>
+            <h3 class="admin-card__title" style="font-size:1.15rem;">🧵 El Camino de un Encargo (De Principio a Fin)</h3>
+            <div class="admin-card__subtitle">Tocá cualquier paso para ver cómo se hace en el Panel</div>
+          </div>
+        </div>
+        <div class="guide-flow-strip">
+          <button type="button" class="guide-flow-node" data-guide-jump="presupuestos">
+            <span class="guide-flow-node__step">Paso 1</span>
+            <span class="guide-flow-node__icon">📑</span>
+            <h4 class="guide-flow-node__title">Cotizás en PDF</h4>
+            <p class="guide-flow-node__desc">Elegís catálogo o a medida y lo mandás por WhatsApp.</p>
           </button>
-          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-2" style="color:#2B2625;">
-            ✨ 2. Subir una Nueva Creación
+          <button type="button" class="guide-flow-node" data-guide-jump="pedidos">
+            <span class="guide-flow-node__step">Paso 2</span>
+            <span class="guide-flow-node__icon">📋</span>
+            <h4 class="guide-flow-node__title">Confirmás Pedido</h4>
+            <p class="guide-flow-node__desc">Pasás a Pedido en 1 clic con seña 50% y fecha.</p>
           </button>
-          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-3" style="color:#2B2625;">
-            ✂️ 3. Gestionar Producción
+          <button type="button" class="guide-flow-node" data-guide-jump="produccion">
+            <span class="guide-flow-node__step">Paso 3</span>
+            <span class="guide-flow-node__icon">✂️</span>
+            <h4 class="guide-flow-node__title">Cortás &amp; Cosés</h4>
+            <p class="guide-flow-node__desc">Movés la tarjeta por las 5 fases del taller.</p>
           </button>
-          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-4" style="color:#2B2625;">
-            📦 4. Empaque &amp; Entrega
+          <button type="button" class="guide-flow-node" data-guide-jump="stock">
+            <span class="guide-flow-node__step">Paso 4</span>
+            <span class="guide-flow-node__icon">🧵</span>
+            <h4 class="guide-flow-node__title">Stock Automático</h4>
+            <p class="guide-flow-node__desc">Se descuentan solos los metros de tu rollo.</p>
           </button>
-          <button type="button" class="btn-admin-nav guide-tab-btn" data-guide-target="guide-step-5" style="color:#2B2625;">
-            ☁️ 5. Planilla de Google &amp; Subir Fotos
+          <button type="button" class="guide-flow-node" data-guide-jump="extras">
+            <span class="guide-flow-node__step">Paso 5</span>
+            <span class="guide-flow-node__icon">🎁</span>
+            <h4 class="guide-flow-node__title">Empaque &amp; Entrega</h4>
+            <p class="guide-flow-node__desc">Perfume, tarjetita escrita a mano y entrega.</p>
+          </button>
+          <button type="button" class="guide-flow-node" data-guide-jump="finances">
+            <span class="guide-flow-node__step">Paso 6</span>
+            <span class="guide-flow-node__icon">💰</span>
+            <h4 class="guide-flow-node__title">Ves tus Ganancias</h4>
+            <p class="guide-flow-node__desc">Balance mensual, señas y margen neto real.</p>
           </button>
         </div>
       </section>
 
-      <!-- PASO 1: FOTOGRAFÍA LOOKBOOK -->
-      <section class="admin-card guide-step-card" id="guide-step-1">
+      <!-- ACADEMIA INTERACTIVA: ÍNDICE DE LAS 11 SECCIONES + EXPLICACIÓN DETALLADA -->
+      <div id="guide-academy-anchor" style="scroll-margin-top:115px;"></div>
+      <section class="guide-academy-layout" style="margin-bottom:2rem;">
+        <nav class="guide-sidebar-nav" id="guide-sidebar-nav" aria-label="Secciones del Tutorial">
+          <!-- Inyectado por admin.js -->
+        </nav>
+
+        <div id="guide-lesson-host">
+          <!-- Lección activa inyectada por admin.js -->
+        </div>
+      </section>
+
+      <!-- MAPA COMPLETO DE TODAS LAS PANTALLAS (REFERENCIA RÁPIDA EN 1 PANTALLA) -->
+      <section class="admin-card">
         <div class="admin-card__header">
           <div>
-            <h3 class="admin-card__title">1. Secretos de Fotografía Lookbook (Inspiración Anthropologie &amp; Zara Home)</h3>
-            <div class="admin-card__subtitle">Cómo transmitir la textura y calidez de cada tejido artesanal con tu propio celular</div>
+            <h3 class="admin-card__title">🗺️ Mapa Completo de Todas las Secciones</h3>
+            <div class="admin-card__subtitle">Resumen rápido de cada pestaña de tu Panel de Control. Tocá cualquiera para leer su paso a paso arriba</div>
           </div>
         </div>
-
-        <div class="admin-grid-3" style="margin-top:1.25rem;">
-          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
-            <div style="font-size:1.75rem; margin-bottom:0.5rem;">☀️</div>
-            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Luz Natural Indirecta</h4>
-            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
-              Ubicá la pieza cerca de una ventana luminosa por la mañana o al atardecer. Nunca uses flash ni luz de foco artificial directo, la luz suave resalta las fibras del satén y el lino.
-            </p>
-          </div>
-
-          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
-            <div style="font-size:1.75rem; margin-bottom:0.5rem;">🔍</div>
-            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Plano Detalle de Costuras</h4>
-            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
-              Tomá una foto bien de cerca mostrando las terminaciones: el dobladillo impecable, el bordado a mano, el cierre invisible o el botón de madera. El detalle enamora a la clienta.
-            </p>
-          </div>
-
-          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
-            <div style="font-size:1.75rem; margin-bottom:0.5rem;">🌿</div>
-            <h4 style="margin:0 0 0.35rem 0; font-size:1.05rem; color:#2B2625;">Ambientación Orgánica</h4>
-            <p style="font-size:0.85rem; color:#5F5852; line-height:1.5; margin:0;">
-              Acompañá la pieza con un elemento natural sencillo: una ramita de eucalipto seco, una tabla de madera rústica o una vela de cera de soja sobre una mesa de madera clara.
-            </p>
-          </div>
+        <div class="guide-map-grid" id="guide-full-map-grid">
+          <!-- Inyectado por admin.js -->
         </div>
       </section>
 
-      <!-- PASO 2: SUBIR CREACIÓN -->
-      <section class="admin-card guide-step-card" id="guide-step-2" style="display:none;">
-        <div class="admin-card__header">
+      <!-- BLOQUE DE AYUDA DIRECTA CON JUANMA -->
+      <section class="admin-card" style="background:linear-gradient(135deg, #FAF6F0 0%, #FFFFFF 100%); border-color:#DFD1C2;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
           <div>
-            <h3 class="admin-card__title">2. Cómo Cargar o Modificar una Creación (con hasta 4 fotos)</h3>
-            <div class="admin-card__subtitle">Publicación inmediata en el catálogo y en Google Drive sin conocimientos de programación</div>
+            <h3 class="admin-card__title" style="margin-bottom:0.25rem;">💬 ¿Tenés alguna duda o querés cambiar algo especial?</h3>
+            <p style="margin:0; font-size:0.86rem; color:#5F5852;">Si algo no te sale o querés que agreguemos una función nueva al taller, le mandás un mensajito directo a Juanma.</p>
           </div>
-        </div>
-
-        <ol style="color:#5F5852; line-height:1.8; font-size:0.92rem; padding-left:1.5rem; margin:1rem 0;">
-          <li>Andá a la sección <strong><a href="admin-productos.html" style="color:#A45A44;">📸 Creaciones</a></strong> en la barra superior.</li>
-          <li>Hacé clic en el botón <strong>+ Nueva Creación Artesanal</strong> (o en <strong>✏️ Editar / Fotos</strong> sobre cualquier pieza existente).</li>
-          <li>Completá el nombre (ej. <em>Cofia de Satén Champán</em>), el precio en pesos y el costo estimado para calcular tu ganancia neta.</li>
-          <li>En <strong>📸 Fotos de la Creación</strong>, tocá <strong>📁 Subir foto</strong> para elegir hasta 4 fotos directo desde tu celular o computadora. Se comprimen solas y se guardan en Google Drive.</li>
-          <li>Hacé clic en <strong>✨ Guardar y Publicar</strong>. ¡Listo! Ya aparece en la boutique web y en el Lookbook.</li>
-        </ol>
-      </section>
-
-      <!-- PASO 3: GESTIONAR PRODUCCIÓN -->
-      <section class="admin-card guide-step-card" id="guide-step-3" style="display:none;">
-        <div class="admin-card__header">
-          <div>
-            <h3 class="admin-card__title">3. Control del Pipeline de Confección &amp; Stock Automático</h3>
-            <div class="admin-card__subtitle">Acompaña cada encargo a través de las 5 fases y descuenta los metros de tela automáticamente</div>
-          </div>
-        </div>
-
-        <p style="font-size:0.9rem; color:#5F5852; line-height:1.6;">
-          En la página de <strong><a href="admin-produccion.html" style="color:#A45A44;">✂️ Producción</a></strong> podés ver todas las piezas en orden. Cuando sumás una pieza a Corte o pasás un pedido a <em>En Confección</em>, <strong>el sistema descuenta automáticamente los metros de tela del rollo correspondiente</strong>:
-        </p>
-        <ul style="color:#5F5852; line-height:1.8; font-size:0.88rem; padding-left:1.5rem;">
-          <li><strong>Corte:</strong> Telas medidas y cortadas (descuenta los metros del rollo en <em>Stock &amp; Telas</em>).</li>
-          <li><strong>Costura:</strong> Ensamblado en máquina y costura de elásticos/fuelles.</li>
-          <li><strong>Bordado:</strong> Nombres personalizados, puntadas decorativas o flores.</li>
-          <li><strong>Calidad:</strong> Revisión minuciosa de hilos sobrantes y planchado al vapor.</li>
-          <li><strong>Empaque / Completado:</strong> Al marcar como <em>Completado</em>, el pedido pasa solo a <strong>Listo para Entregar ✨</strong>.</li>
-        </ul>
-      </section>
-
-      <!-- PASO 4: EMPAQUE & ENTREGA -->
-      <section class="admin-card guide-step-card" id="guide-step-4" style="display:none;">
-        <div class="admin-card__header">
-          <div>
-            <h3 class="admin-card__title">4. El Toque de Amor en el Empaque</h3>
-            <div class="admin-card__subtitle">La experiencia que convierte a una compradora en clienta fiel</div>
-          </div>
-        </div>
-
-        <p style="font-size:0.9rem; color:#5F5852; line-height:1.6;">
-          Cada entrega de Divina Locura Deco es un regalo artesanal. Recuerda siempre:
-        </p>
-        <ul style="color:#5F5852; line-height:1.8; font-size:0.88rem; padding-left:1.5rem;">
-          <li>Perfumar el papel de seda con unas gotitas de aroma a vainilla o flores blancas.</li>
-          <li>Incluir la tarjetita escrita a mano con el nombre de la clienta (ej: <em>"Hecho a mano con amor para Mariana"</em>).</li>
-          <li>Cerrar la bolsita de tela o caja kraft con hilo de yute natural o cinta de lino.</li>
-        </ul>
-      </section>
-
-      <!-- PASO 5: PLANILLA DE GOOGLE & FOTOS -->
-      <section class="admin-card guide-step-card" id="guide-step-5" style="display:none;">
-        <div class="admin-card__header">
-          <div>
-            <h3 class="admin-card__title">5. Cómo Conectar la Planilla de Google Sheets y Subir Fotos</h3>
-            <div class="admin-card__subtitle">Base de datos gratuita en vivo para ver todo en una planilla de Excel/Google y recibir avisos por mail</div>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:0.5rem;">
-          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
-            <h4 style="margin:0 0 0.6rem 0; color:#2B2625;">📊 Conectar Google Sheets en 4 pasos</h4>
-            <ol style="color:#5F5852; line-height:1.7; font-size:0.86rem; padding-left:1.25rem; margin:0;">
-              <li>Creá una Hoja de Cálculo nueva en Google Drive (ej. <em>Divina Locura - Base de Datos</em>).</li>
-              <li>En el menú superior de la planilla tocá <strong>Extensiones &rarr; Apps Script</strong>.</li>
-              <li>Borrá lo que haya, pegá el contenido del archivo <code>apps-script/Codigo.gs</code> y tocá <strong>Implementar &rarr; Nueva implementación &rarr; Aplicación web</strong> (Acceso: <em>Cualquier persona</em>).</li>
-              <li>Copiá la URL que te da Google, entrá a <strong><a href="admin-configuracion.html" style="color:#A45A44;">⚙️ Configuración</a></strong>, pegala y tocá <strong>☁️ Conectar y Sincronizar</strong>.</li>
-            </ol>
-          </div>
-
-          <div style="background:#FAF8F4; padding:1.25rem; border-radius:10px; border:1px solid rgba(43,38,37,0.08);">
-            <h4 style="margin:0 0 0.6rem 0; color:#2B2625;">📸 4 Formas de Subir Fotos Nuevas</h4>
-            <ul style="color:#5F5852; line-height:1.7; font-size:0.86rem; padding-left:1.25rem; margin:0;">
-              <li><strong>Opción 1 (Desde el Banco Visual ✨):</strong> Entrá a <strong><a href="admin-banco.html" style="color:#A45A44;">🖼️ Banco</a></strong>, mirá todas las fotos curadas con Google Flow o subí fotos nuevas y tocá <strong>✨ Crear Producto</strong> en 1 clic.</li>
-              <li><strong>Opción 2 (Desde Creaciones):</strong> En <em>📸 Creaciones</em> tocás <strong>📁 Subir foto</strong> (desde tu celular/PC) o <strong>🖼️ Elegir del Banco</strong>.</li>
-              <li><strong>Opción 3 (Pasándolas por el Chat del Asistente):</strong> Adjuntá las fotos o un link de Drive en el chat; las curamos y subimos al Banco Visual y al catálogo por vos.</li>
-              <li><strong>Opción 4 (Desde la Tienda logueada):</strong> Tocando el botón <em>✏️ Modificar</em> que aparece arriba de cada tarjeta cuando estás logueada como Elena o Juanma.</li>
-            </ul>
-          </div>
+          <a href="https://api.whatsapp.com/send?text=Hola%20Juanma!%20Estoy%20en%20el%20Panel%20de%20Control%20de%20Divina%20Locura%20y%20necesito%20una%20mano%20con%20algo%20%F0%9F%8C%B8" target="_blank" rel="noopener noreferrer" class="btn-admin-cta" style="background:#226B46; border-color:#1B5738;">
+            <span>💬 Pedirle una mano a Juanma</span>
+          </a>
         </div>
       </section>
 
@@ -264,9 +248,9 @@
 
   </main>
 
-  <script src="banco-data.js?v=20261114v9"></script>
-  <script src="products-data.js?v=20261114v9"></script>
-  <script src="workshop-db.js?v=20261114v9"></script>
-  <script src="admin.js?v=20261114v9"></script>
+  <script src="banco-data.js?v=20261128v3"></script>
+  <script src="products-data.js?v=20261128v3"></script>
+  <script src="workshop-db.js?v=20261128v3"></script>
+  <script src="admin.js?v=20261128v3"></script>
 </body>
 </html>

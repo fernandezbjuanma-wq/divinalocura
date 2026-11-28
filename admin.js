@@ -174,6 +174,19 @@
       cloudPill.className = 'btn-admin-nav admin-cloud-pill';
       topActions.insertBefore(cloudPill, topActions.firstChild);
     }
+
+    // 5. Botón de Ayuda Contextual ("❓ ¿Cómo funciona?") en TODAS las páginas del Panel
+    if (topActions && !document.getElementById('admin-context-help-btn')) {
+      const helpBtn = document.createElement('button');
+      helpBtn.type = 'button';
+      helpBtn.id = 'admin-context-help-btn';
+      helpBtn.className = 'btn-admin-nav btn-admin-nav--help';
+      helpBtn.title = 'Abrir explicación paso a paso de qué podés hacer en esta pantalla';
+      helpBtn.innerHTML = '<span>❓ ¿Cómo funciona?</span>';
+      helpBtn.addEventListener('click', () => openContextualHelpDrawer());
+      topActions.insertBefore(helpBtn, topActions.firstChild);
+    }
+
     refreshCloudPill();
   }
 
@@ -304,9 +317,13 @@
   function setupNavCounts() {
     if (!window.WorkshopDB) return;
     const orders = window.WorkshopDB.getOrders();
+    const quotes = window.WorkshopDB.getQuotes ? window.WorkshopDB.getQuotes() : [];
     const production = window.WorkshopDB.getProductionQueue ? window.WorkshopDB.getProductionQueue() : [];
     const activeProd = production.filter(p => p.phase !== 'completado');
     const chats = window.WorkshopDB.getChats();
+
+    const qBadge = document.getElementById('nav-quotes-count');
+    if (qBadge) qBadge.textContent = quotes.length;
 
     const oBadge = document.getElementById('nav-orders-count');
     if (oBadge) oBadge.textContent = orders.length;
@@ -324,6 +341,11 @@
     switch (pageId) {
       case 'dashboard':
         initDashboardPage();
+        break;
+      case 'presupuestos':
+        if (window.DivinaLocuraQuotes && typeof window.DivinaLocuraQuotes.initAdmin === 'function') {
+          window.DivinaLocuraQuotes.initAdmin();
+        }
         break;
       case 'pedidos':
         initPedidosPage();
@@ -532,8 +554,11 @@
                 <button type="button" class="btn-admin-cta btn-save-order" title="Guardar Cambios">
                   <span>Guardar</span>
                 </button>
+                <a href="admin-presupuestos.html?fromOrder=${encodeURIComponent(ord.id)}" class="btn-admin-outline" title="Abrir en el Cotizador Editorial para descargar PDF o enviar por WhatsApp">
+                  <span>📑 Presupuesto PDF</span>
+                </a>
                 <button type="button" class="btn-admin-outline btn-order-receipt-pdf" title="Generar Recibo / Orden de Taller Imprimible y PDF">
-                  <span>📄 Recibo PDF</span>
+                  <span>📄 Recibo</span>
                 </button>
                 <a href="admin-chat.html?phone=${encodeURIComponent(ord.customer ? ord.customer.phone : '')}" class="btn-admin-outline" title="Chatear con Clienta">
                   <span>💬 Chat</span>
@@ -757,9 +782,14 @@
           <td>📍 ${cli.address || '-'}</td>
           <td><span class="admin-badge admin-badge--ready">${cli.totalOrders || 0} pedidos</span></td>
           <td>
-            <a href="admin-chat.html?phone=${encodeURIComponent(cli.phone)}" class="btn-admin-nav" style="color:#2B2625;">
-              💬 Abrir Chat
-            </a>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <a href="admin-presupuestos.html?clientPhone=${encodeURIComponent(cli.phone)}" class="btn-admin-nav" style="color:#A45A44; border-color:rgba(164,90,68,0.3);">
+                📑 Cotizar
+              </a>
+              <a href="admin-chat.html?phone=${encodeURIComponent(cli.phone)}" class="btn-admin-nav" style="color:#2B2625;">
+                💬 Chat
+              </a>
+            </div>
           </td>
         </tr>
       `).join('');
@@ -2602,21 +2632,522 @@
   }
 
   // =========================================================================
-  // 9. PÁGINA: GUÍA & TUTORIAL DE TALLER (admin-guia.html)
+  // 9. TUTORIAL INTERACTIVO DEL PANEL PARA MAMÁ (ELENA) & AYUDA CONTEXTUAL
   // =========================================================================
-  function initGuiaPage() {
-    const tabs = document.querySelectorAll('.guide-tab-btn');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('is-active'));
-        tab.classList.add('is-active');
+  const GUIDE_PROGRESS_KEY = 'divinalocura_elena_guide_done_v1';
 
-        const target = tab.getAttribute('data-guide-target');
-        document.querySelectorAll('.guide-step-card').forEach(card => {
-          card.style.display = card.id === target ? 'block' : 'none';
+  const ADMIN_GUIDE_SECTIONS = [
+    {
+      id: 'dashboard',
+      icon: '📊',
+      shortTitle: 'Resumen General',
+      title: 'Resumen Ejecutivo del Taller',
+      href: 'admin.html',
+      btnLabel: 'Ir al Resumen',
+      summary: 'Es tu "escritorio de entrada". De un solo vistazo ves cómo viene el taller hoy: cuánto ingresó, cuánta ganancia neta quedó, cuántos pedidos tenés pendientes y qué piezas están en la máquina.',
+      steps: [
+        'Mirá las 4 tarjetas grandes de arriba: Ingresos Totales, Ganancia Neta, Pedidos Recibidos y Piezas En Confección.',
+        'Usá los botones de arriba a la derecha para saltar directo a 📑 Armar Presupuesto PDF, 📋 Ver Pedidos o ✂️ Ir a Producción.',
+        'En el centro tenés accesos directos a cada sección del taller (si no te acordás en qué pestaña estaba algo, acá están todas explicadas).',
+        'Abajo ves en vivo los últimos pedidos recibidos y qué piezas están ahora mismo en corte, costura o bordado.'
+      ],
+      automation: 'Todos los números de esta pantalla se calculan solos usando tus Pedidos, tus Gastos y tu cola de Producción. Nunca tenés que sumar a mano.',
+      tip: 'Si algún día te perdés en cualquier pantalla del Panel, tocá el botón “❓ ¿Cómo funciona?” arriba a la derecha y se abre la explicación exacta de esa sección.'
+    },
+    {
+      id: 'presupuestos',
+      icon: '📑',
+      shortTitle: 'Presupuestos PDF',
+      title: 'Sistema de Presupuestos, PDF & WhatsApp',
+      href: 'admin-presupuestos.html',
+      btnLabel: 'Abrir Presupuestos',
+      summary: 'Te permite armar presupuestos profesionales con toda la identidad de Divina Locura Deco (logo, fotos, precios, seña 50% y numeración automática de páginas) en menos de 2 minutos.',
+      steps: [
+        'Paso 1 (Clienta): Elegí una clienta ya guardada en “Autocompletar desde Directorio” o escribí el nombre, WhatsApp y localidad. Elegí el color de la hoja (Terracota, Carbón o Salvia) y el tono del saludo.',
+        'Paso 2 (Productos): Tocá “🛍️ + Agregar del Catálogo” para sumar cualquier producto publicado con foto y precio oficial, o “✨ + Personalizado / A Medida” para cotizar cortinas, ajuares, souvenirs o pedidos especiales con foto propia.',
+        'Cotizar por cantidad (10, 50, 100 u.): En cualquier producto tocá “📋 Otra cant.” para duplicar esa fila abajo con otro volumen y precio unitario. Si marcás “Opción alternativa”, no se suma al Total General.',
+        'Paso 3 (Enviar o Descargar): Tocá “📥 Descargar PDF” para bajar el archivo A4, “📲 Compartir Archivo PDF (Celular)” para adjuntarlo directo a WhatsApp desde el teléfono, “🖨️ Imprimir A4” o “💬 Enviar WhatsApp” (arma el mensaje prolijo + link interactivo).',
+        'Cuando la clienta aprueba: En el historial de abajo tocá “✨ A Pedido” y el presupuesto se transforma solo en un Pedido real y entra a Producción.'
+      ],
+      automation: 'Las clientas también pueden armarse su propio presupuesto oficial en cotizar.html (sin poder cambiar tus precios). Cuando te lo mandan por WhatsApp, tocando “🪡 Taller” lo importás acá para ajustarlo o hacerles una atención. Además tenés una 🔒 Calculadora Privada de Ganancia abajo que la clienta NUNCA ve en el PDF.',
+      tip: 'En el celular usá las 3 pestañas fijas de arriba (“✏️ 1. Armar Cotización”, “📄 2. Hoja PDF” y “🗂️ Guardados”) para trabajar súper cómoda sin tener que hacer zoom.'
+    },
+    {
+      id: 'pedidos',
+      icon: '📋',
+      shortTitle: 'Pedidos & Clientas',
+      title: 'Gestión de Pedidos & Directorio de Clientas',
+      href: 'admin-pedidos.html',
+      btnLabel: 'Abrir Pedidos',
+      summary: 'Acá llegan todos los encargos que hacen las clientas desde la tienda web (o los que convertiste desde Presupuestos), junto con tu agenda completa de clientas.',
+      steps: [
+        'Usá los filtros de arriba (Todos, ⏳ Pendientes, ✂️ En Confección, 🌸 Listos, ✅ Entregados) o el buscador por nombre, teléfono o #ID.',
+        'Si una clienta subió una foto o boceto desde “Diseñá tu Pieza a Medida”, la ves en miniatura en el pedido (tocándola se agranda para verla al lado de la máquina).',
+        'En cada tarjeta podés cambiar el Estado del Pedido, anotar la Fecha Estimada de Entrega y escribir Notas de Taller (ej: “bordar Emma en hilo crudo”), y luego tocar “Guardar”.',
+        'Desde cada pedido podés sacar un “📑 Presupuesto PDF”, un “📄 Recibo” imprimible con seña 50% y saldo, o abrir el “💬 Chat” directo con esa clienta.',
+        'Al final de la página está el Directorio de Clientas Registradas con botón directo “📑 Cotizar” y “💬 Chat”.'
+      ],
+      automation: 'Cuando pasás un pedido a “Cortando Telas” o “En Confección”, el sistema lo envía automáticamente al tablero de Producción y descuenta los metros estimados de tela.',
+      tip: 'Usá el campo “Notas de Taller de Elena” para anotar detalles de cintas, elásticos o dedicatorias: esa nota también sale prolija en la orden de taller imprimible.'
+    },
+    {
+      id: 'produccion',
+      icon: '✂️',
+      shortTitle: 'Producción (5 Fases)',
+      title: 'Línea de Confección Textil en 5 Fases',
+      href: 'admin-produccion.html',
+      btnLabel: 'Abrir Producción',
+      summary: 'Es tu pizarrón de taller organizado en 5 columnas: Corte → Costura → Bordado → Calidad → Empaque. Te ayuda a no olvidarte ninguna entrega.',
+      steps: [
+        'Para cargar un trabajo manual (por ejemplo una reposición de stock o un encargo que te pidieron por WhatsApp), completá el bloque “Ingresar Nueva Pieza a Producción” arriba.',
+        'Cada tarjetita muestra qué pieza es, para qué clienta, qué tela lleva, cuántos metros consume y para qué fecha se entrega.',
+        'A medida que avanzás en la máquina, tocá el botón de avanzar fase en la tarjeta para moverla de columna (Corte → Costura → Bordado → Calidad → Empaque).',
+        'Cuando ya está planchada y envuelta, marcá “Completado ✨”.'
+      ],
+      automation: 'Al ingresar una pieza a producción, se descuentan solos los metros del rollo correspondiente en Stock & Telas. Y cuando todas las piezas de un pedido llegan a Completado, el pedido pasa solo a “Listo para Entregar ✨”.',
+      tip: 'Si hacés piezas para tener stock propio (sin clienta todavía), poné “Stock Taller” en el nombre de clienta: al completarla suma +1 unidad al stock de entrega inmediata.'
+    },
+    {
+      id: 'stock',
+      icon: '🧵',
+      shortTitle: 'Stock & Telas',
+      title: 'Control de Rollos de Tela & Muestrario Público',
+      href: 'admin-stock.html',
+      btnLabel: 'Abrir Stock & Telas',
+      summary: 'Llevá la cuenta exacta de cuántos metros te quedan de Satén, Lino, Waffle, Tusor, puntillas y bolsitas, y administrá el Muestrario de Telas que ven las clientas en la tienda.',
+      steps: [
+        'Arriba podés agregar un rollo o insumo nuevo (nombre, categoría, metros/unidades, costo por metro y a partir de cuántos metros querés que te avise para reponer).',
+        'En la tabla “Rollos e Insumos” usá los botones + y − rápidos cuando compres o uses tela extra, o actualizá el costo por metro si cambió el proveedor.',
+        'Si un rollo baja del mínimo que pusiste, aparece una alerta visual para que compres antes de quedarte sin tela.',
+        'Más abajo tenés “📖 Telas que Tiene Elena para Encargos”: desde ahí editás fotos, descripciones, cuidados de lavado y colores del Muestrario público que ven las clientas.'
+      ],
+      automation: 'Cada vez que cortás una pieza en Producción se restan los metros acá; y cada vez que cargás un gasto de compra de tela en Ganancias (ej: “Compra 10m Satén”), se suman solos acá.',
+      tip: 'Mantener actualizado el costo por metro acá hace que la Calculadora de Ganancias te sugiera siempre precios rentables y reales.'
+    },
+    {
+      id: 'finances',
+      icon: '💰',
+      shortTitle: 'Ganancias & Costos',
+      title: 'Tablero Financiero, Señas & Calculadora de Precios',
+      href: 'admin-finances.html',
+      btnLabel: 'Abrir Ganancias',
+      summary: 'Muestra la plata real del taller: cuánto facturaste, cuánto gastaste en telas/mercería/packaging, cuánta ganancia neta te quedó y a qué precio conviene vender cada pieza.',
+      steps: [
+        'Elegí arriba el mes que querés revisar (o “Todos los períodos”) y fijá tu Presupuesto Mensual de gastos para que una barra verde/amarilla/roja te avise cómo venís.',
+        'Revisá el bloque “Flujo de Cobros & Señas” para saber cuánto ya cobraste de señas del 50% y cuánto te falta cobrar contra entrega.',
+        'Usá la “🧮 Calculadora de Costos de Confección & Precio Sugerido”: elegís la tela, metros, mercería, empaque y horas de costura, y te dice tu costo exacto y el precio sugerido con el margen que elijas.',
+        'En “Registro de Gastos & Compras” anotá cada compra en el Once, hilos, cajas o envíos. También podés exportar el balance a planilla CSV.'
+      ],
+      automation: 'Si anotás un gasto en categoría “Telas” escribiendo la cantidad (por ejemplo: “Compra 12m Satén Champán”), el sistema suma automáticamente esos 12 metros a tu rollo de Satén en Stock.',
+      tip: 'Antes de pasar un presupuesto a medida por primera vez, probá los metros y materiales 30 segundos en la Calculadora de Costos para asegurarte un buen margen.'
+    },
+    {
+      id: 'chat',
+      icon: '💬',
+      shortTitle: 'Chat con Clientas',
+      title: 'Bandeja de Mensajes Directos del Taller',
+      href: 'admin-chat.html',
+      btnLabel: 'Abrir Chat',
+      summary: 'Centraliza todas las conversaciones que inician las clientas desde la tienda web, para responderles con tu tono cálido sin mezclarlas con mensajes personales.',
+      steps: [
+        'A la izquierda ves la lista de clientas que escribieron (con su nombre y teléfono). Tocá una para leer el historial completo.',
+        'Escribí tu respuesta abajo o tocá cualquiera de las respuestas rápidas listas (confirmación de tela, aviso de pedido listo, datos de alias) para ahorrar tiempo.',
+        'Desde cualquier Pedido o desde el Directorio podés saltar directo al chat de esa clienta en 1 clic.'
+      ],
+      automation: 'Cuando una clienta hace un pedido desde la web, aparece automáticamente un mensaje de inicio en su conversación para que tengas el hilo ordenado.',
+      tip: 'Si preferís seguir la charla por WhatsApp, podés copiar el número o abrir directo el presupuesto por WhatsApp desde Pedidos o Presupuestos.'
+    },
+    {
+      id: 'productos',
+      icon: '📸',
+      shortTitle: 'Creaciones (Catálogo)',
+      title: 'Gestor de Creaciones & Precios de la Tienda',
+      href: 'admin-productos.html',
+      btnLabel: 'Abrir Creaciones',
+      summary: 'Desde acá controlás todo lo que se ve en tu tienda pública: crear piezas nuevas, cambiar precios, editar descripciones, colores disponibles y subir hasta 4 fotos por producto.',
+      steps: [
+        'Tocá “+ Nueva Creación Artesanal” para publicar un producto nuevo, o tocá “✏️ Editar / Fotos” en cualquiera de los 16 productos existentes.',
+        'Cargá el título, categoría, precio visible, costo de taller (privado para calcular tu ganancia) y metros aproximados de tela.',
+        'Elegí los colores disponibles tildando la paleta del taller y decidí si permite bordado personalizado.',
+        'En Fotos podés tocar “📁 Subir foto” desde tu celular/PC (se comprimen solas para que la web cargue rapidísimo) o “🖼️ Elegir del Banco” para usar fotos ya curadas.',
+        'Tocá “Guardar y Publicar” y se actualiza al instante en la Tienda, en el Catálogo y en el Cotizador de Presupuestos.'
+      ],
+      automation: 'Cada precio o foto nueva que guardás acá aparece automáticamente en el Cotizador de Presupuestos (tanto el tuyo como el de clientas) y en la Tienda Pública.',
+      tip: 'Para cambiar un precio rápido no hace falta volver a subir fotos: tocás Editar, cambiás solo el precio y guardás.'
+    },
+    {
+      id: 'banco',
+      icon: '🖼️',
+      shortTitle: 'Banco Visual (105+ Fotos)',
+      title: 'Banco Visual de Fotografías del Taller',
+      href: 'admin-banco.html',
+      btnLabel: 'Abrir Banco Visual',
+      summary: 'Es tu galería privada con más de 105 fotografías editoriales ordenadas por colección, indicando cuáles ya están publicadas en un producto y cuáles están libres para estrenar.',
+      steps: [
+        'Usá el buscador o los filtros de arriba (Blanquería & Toallas, Descanso & Satén, Neceseres, Infantil, etc.) y filtrá por “Disponibles” para ver fotos todavía sin publicar.',
+        'Tocá cualquier imagen para abrirla en pantalla grande y revisar detalles.',
+        'Tocá “✨ Crear Producto” debajo de cualquier foto y se abre el creador de productos ya precargado con esa imagen lista para ponerle título y precio.',
+        'También podés tocar “+ Subir Foto Nueva” para guardar tus fotos nuevas del celular ordenadas en el banco.'
+      ],
+      automation: 'El Banco Visual también está conectado al selector de fotos de Presupuestos y de Creaciones, así nunca tenés que buscar la misma foto dos veces en tu galería.',
+      tip: 'Cuando quieras lanzar una pieza nueva sin sacar fotos en el momento, entrá al Banco, filtrá por “Disponibles” y elegí una foto editorial ya lista.'
+    },
+    {
+      id: 'configuracion',
+      icon: '⚙️',
+      shortTitle: 'Configuración & Nube',
+      title: 'Configuración de Tienda, Textos, Google Sheets & Claves',
+      href: 'admin-configuracion.html',
+      btnLabel: 'Abrir Configuración',
+      summary: 'El tablero de llaves maestras: prendés o apagás secciones de la tienda, editás frases de la portada, configurás tu WhatsApp/Alias, conectás Google Sheets y cambiás contraseñas.',
+      steps: [
+        '☁️ Google Sheets & Drive: Pegando la URL de Apps Script (generada con apps-script/Codigo.gs) sincronizás pedidos, presupuestos, stock y fotos en vivo entre tu celular y la compu.',
+        '🎛️ Interruptores de Módulos: Podés prender o apagar con 1 clic las Cajas de Regalo, el Diseñador a Medida, el Muestrario de Telas o Cupones de Descuento si una semana estás a tope de trabajo.',
+        '✍️ Textos de la Página: Cambiá el anuncio superior, títulos de portada o la historia del taller sin tocar código.',
+        '💳 Contacto & Mercado Pago: Actualizá tu número de WhatsApp, usuario de Instagram, Alias de transferencia y link de Mercado Pago.',
+        '🔐 Claves & Respaldo: Cambiá tu clave (Elena) o la de Juanma, y descargá o restaurá un 💾 Respaldo JSON completo cuando quieras.'
+      ],
+      automation: 'El WhatsApp, Instagram y Alias que guardás en Configuración se actualizan automáticamente en el pie de todos tus Presupuestos PDF, recibos y botones de la tienda.',
+      tip: 'Una vez por semana tocá “💾 Respaldo” arriba a la derecha: baja un archivito JSON con absolutamente todo el taller por seguridad.'
+    },
+    {
+      id: 'extras',
+      icon: '🌸',
+      shortTitle: 'Fotos, Empaque & Google',
+      title: 'Secretos de Fotografía Lookbook, Empaque & Conexión a Google Sheets',
+      href: 'admin-banco.html',
+      btnLabel: 'Ir al Banco de Fotos',
+      summary: 'Consejos artesanales para que cada foto enamore como revista de decoración, cómo preparar un empaque inolvidable y los 4 pasos para conectar tu planilla de Google Sheets.',
+      steps: [
+        '☀️ Fotografía con Luz Natural Indirecta: Sacá las fotos cerca de una ventana a la mañana o al atardecer, sin flash. Sumá un detalle simple (eucalipto seco, madera clara o una vela) y sacá un plano bien cercano a la costura o bordado.',
+        '🎁 El Toque de Amor en el Empaque: Perfumá suavemente el papel de seda (vainilla o flores blancas), sumá una tarjetita escrita a mano con el nombre de la clienta y cerrá con hilo de yute o cinta de lino.',
+        '📊 Conectar Google Sheets (4 pasos): 1) Creá una Hoja de Cálculo en Google Drive → 2) Extensiones → Apps Script → 3) Pegá apps-script/Codigo.gs y tocá Implementar → Aplicación Web (acceso: Cualquier persona) → 4) Pegá esa URL en ⚙️ Configuración y tocá Conectar.',
+        '📸 4 Formas de Subir Fotos: Desde 🖼️ Banco Visual, desde 📸 Creaciones, desde la tienda pública logueada (botón ✏️ Modificar), o pasándoselas a Juanma.'
+      ],
+      automation: 'Al subir fotos desde tu celular, el sistema las comprime automáticamente al tamaño ideal (máx. 1200px) para que se vean nítidas y no ocupen espacio de más.',
+      tip: 'Si tenés cualquier duda técnica o querés agregar una función nueva al taller, abajo del tutorial tenés un botón directo para escribirle a Juanma por WhatsApp.'
+    }
+  ];
+
+  function getGuideDoneSet() {
+    try {
+      const arr = JSON.parse(localStorage.getItem(GUIDE_PROGRESS_KEY) || '[]');
+      return new Set(Array.isArray(arr) ? arr : []);
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function saveGuideDoneSet(setObj) {
+    try {
+      localStorage.setItem(GUIDE_PROGRESS_KEY, JSON.stringify(Array.from(setObj)));
+    } catch (e) {}
+  }
+
+  function openContextualHelpDrawer(forcedSectionId) {
+    const pageId = forcedSectionId || document.body.getAttribute('data-admin-page') || 'dashboard';
+    const sec = ADMIN_GUIDE_SECTIONS.find(s => s.id === pageId) || ADMIN_GUIDE_SECTIONS[0];
+
+    let backdrop = document.getElementById('admin-help-backdrop');
+    let drawer = document.getElementById('admin-help-drawer');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'admin-help-backdrop';
+      backdrop.className = 'admin-help-backdrop no-print';
+      document.body.appendChild(backdrop);
+    }
+    if (!drawer) {
+      drawer = document.createElement('aside');
+      drawer.id = 'admin-help-drawer';
+      drawer.className = 'admin-help-drawer no-print';
+      drawer.setAttribute('role', 'dialog');
+      drawer.setAttribute('aria-modal', 'true');
+      document.body.appendChild(drawer);
+    }
+
+    const closeDrawer = () => {
+      backdrop.classList.remove('is-open');
+      drawer.classList.remove('is-open');
+    };
+
+    drawer.innerHTML = `
+      <div class="admin-help-drawer__header">
+        <div>
+          <span class="admin-help-drawer__kicker">🌸 Ayuda Rápida para Elena · Esta Pantalla</span>
+          <h3 class="admin-help-drawer__title">${sec.icon} ${esc(sec.title)}</h3>
+        </div>
+        <button type="button" class="admin-help-drawer__close" id="btn-close-help-drawer" aria-label="Cerrar ayuda">✕</button>
+      </div>
+
+      <div class="admin-help-drawer__body">
+        <p class="admin-help-intro"><strong>¿Para qué sirve?</strong><br>${esc(sec.summary)}</p>
+
+        <div>
+          <h4 class="admin-help-subhead">✅ Qué podés hacer acá (paso a paso)</h4>
+          <ul class="admin-help-list">
+            ${sec.steps.map((st, idx) => `
+              <li>
+                <span class="admin-help-list__num">${idx + 1}</span>
+                <span>${esc(st)}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <div class="admin-help-auto-box">
+          <strong>⚙️ Lo que el sistema hace solo por vos:</strong><br>
+          ${esc(sec.automation)}
+        </div>
+
+        <div class="admin-help-tip-box">
+          <strong>💡 Consejo práctico de taller:</strong><br>
+          ${esc(sec.tip)}
+        </div>
+      </div>
+
+      <div class="admin-help-drawer__footer">
+        <a href="admin-guia.html#sec-${esc(sec.id)}" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>📖 Ver Tutorial Completo del Panel</span>
+        </a>
+        <button type="button" class="btn-admin-outline" id="btn-ok-help-drawer" style="width:100%; justify-content:center;">
+          <span>Entendido, seguir trabajando ✓</span>
+        </button>
+      </div>
+    `;
+
+    backdrop.onclick = closeDrawer;
+    const c1 = document.getElementById('btn-close-help-drawer');
+    const c2 = document.getElementById('btn-ok-help-drawer');
+    if (c1) c1.onclick = closeDrawer;
+    if (c2) c2.onclick = closeDrawer;
+
+    requestAnimationFrame(() => {
+      backdrop.classList.add('is-open');
+      drawer.classList.add('is-open');
+    });
+  }
+
+  function initGuiaPage() {
+    const sidebarEl = document.getElementById('guide-sidebar-nav');
+    const lessonHost = document.getElementById('guide-lesson-host');
+    const searchInput = document.getElementById('guide-search-input');
+    const progressText = document.getElementById('guide-progress-text');
+    const progressFill = document.getElementById('guide-progress-fill');
+    const mapGridEl = document.getElementById('guide-full-map-grid');
+
+    if (!sidebarEl || !lessonHost) return;
+
+    const doneSet = getGuideDoneSet();
+    let activeId = 'dashboard';
+
+    // Permitir entrar directo a una lección desde el hash (#sec-presupuestos)
+    const hashMatch = (window.location.hash || '').match(/#sec-([a-z0-9_-]+)/i);
+    if (hashMatch && ADMIN_GUIDE_SECTIONS.some(s => s.id === hashMatch[1])) {
+      activeId = hashMatch[1];
+    }
+
+    function updateProgressUi() {
+      const total = ADMIN_GUIDE_SECTIONS.length;
+      const count = Array.from(doneSet).filter(id => ADMIN_GUIDE_SECTIONS.some(s => s.id === id)).length;
+      const pct = Math.round((count / total) * 100);
+      if (progressText) {
+        progressText.textContent = count === total
+          ? `🎉 ¡Excelente Elena! Ya conocés todas las ${total} secciones del Panel de Control.`
+          : `Conociste ${count} de ${total} secciones del Panel (${pct}%)`;
+      }
+      if (progressFill) progressFill.style.width = `${pct}%`;
+    }
+
+    function renderSidebar() {
+      const term = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const filtered = ADMIN_GUIDE_SECTIONS.filter((sec) => {
+        if (!term) return true;
+        const hay = `${sec.title} ${sec.shortTitle} ${sec.summary} ${sec.steps.join(' ')} ${sec.automation} ${sec.tip}`.toLowerCase();
+        return hay.includes(term);
+      });
+
+      if (filtered.length === 0) {
+        sidebarEl.innerHTML = `<div style="padding:0.85rem; font-size:0.8rem; color:#8A837A;">No encontramos esa palabra. Probá con “presupuesto”, “foto”, “precio” o “tela”.</div>`;
+        return;
+      }
+
+      if (term && !filtered.some(s => s.id === activeId)) {
+        activeId = filtered[0].id;
+        renderLesson();
+      }
+
+      sidebarEl.innerHTML = filtered.map((sec, idx) => {
+        const isAct = sec.id === activeId;
+        const isDone = doneSet.has(sec.id);
+        return `
+          <button type="button" class="guide-sidebar-btn ${isAct ? 'is-active' : ''} ${isDone ? 'is-done' : ''}" data-guide-id="${esc(sec.id)}">
+            <span>${sec.icon} ${esc(sec.shortTitle)}</span>
+            <span class="guide-done-dot" title="${isDone ? 'Sección vista' : 'Pendiente de revisar'}">${isDone ? '✓' : '○'}</span>
+          </button>
+        `;
+      }).join('');
+
+      sidebarEl.querySelectorAll('[data-guide-id]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectSection(btn.getAttribute('data-guide-id'), true);
         });
       });
+    }
+
+    function renderLesson() {
+      const idx = ADMIN_GUIDE_SECTIONS.findIndex(s => s.id === activeId);
+      const sec = ADMIN_GUIDE_SECTIONS[idx >= 0 ? idx : 0];
+      const prevSec = idx > 0 ? ADMIN_GUIDE_SECTIONS[idx - 1] : null;
+      const nextSec = idx < ADMIN_GUIDE_SECTIONS.length - 1 ? ADMIN_GUIDE_SECTIONS[idx + 1] : null;
+      const isDone = doneSet.has(sec.id);
+
+      lessonHost.innerHTML = `
+        <article class="guide-lesson-card" id="sec-${esc(sec.id)}">
+          <div class="admin-card__header" style="align-items:flex-start;">
+            <div>
+              <span class="admin-page-kicker">Sección ${idx + 1} de ${ADMIN_GUIDE_SECTIONS.length} &middot; Explicación Clara</span>
+              <h2 class="admin-card__title" style="font-size:1.45rem;">${sec.icon} ${esc(sec.title)}</h2>
+              <p style="margin:0.4rem 0 0 0; font-size:0.9rem; color:#4A423E; line-height:1.58;">${esc(sec.summary)}</p>
+            </div>
+            <a href="${esc(sec.href)}" class="btn-admin-cta" style="white-space:nowrap;">
+              <span>${esc(sec.btnLabel)} ↗</span>
+            </a>
+          </div>
+
+          <div class="guide-lesson-grid">
+            <div>
+              <h4 class="admin-help-subhead">✅ Qué podés hacer en esta sección (Paso a Paso)</h4>
+              <ol class="guide-steps-ol">
+                ${sec.steps.map((st, sIdx) => `
+                  <li>
+                    <span class="guide-step-circle">${sIdx + 1}</span>
+                    <span>${esc(st)}</span>
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:0.95rem;">
+              <div class="admin-help-auto-box">
+                <div style="font-weight:700; margin-bottom:0.3rem;">⚙️ ¿Qué hace el sistema automáticamente?</div>
+                <div>${esc(sec.automation)}</div>
+              </div>
+
+              <div class="admin-help-tip-box">
+                <div style="font-weight:700; margin-bottom:0.3rem;">💡 Consejo práctico para Mamá</div>
+                <div>${esc(sec.tip)}</div>
+              </div>
+
+              <div style="background:#FFFFFF; border:1px solid #E5DDD2; border-radius:9px; padding:0.95rem 1rem;">
+                <div style="font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6C635C; margin-bottom:0.5rem;">Probá esta herramienta ahora</div>
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                  <a href="${esc(sec.href)}" class="btn-admin-outline" style="justify-content:center;">
+                    <span>${sec.icon} Abrir ${esc(sec.shortTitle)} en una pestaña</span>
+                  </a>
+                  <button type="button" class="btn-admin-nav" id="btn-guide-toggle-done" style="justify-content:center; ${isDone ? 'background:#EAF6EF; border-color:rgba(30,107,71,0.35); color:#1E6B47;' : ''}">
+                    <span>${isDone ? '✅ Ya entendí esta sección (tildada)' : '○ Marcar esta sección como entendida'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-lesson-footer">
+            <div>
+              ${prevSec ? `<button type="button" class="btn-admin-outline" id="btn-guide-prev">&larr; Anterior: ${prevSec.icon} ${esc(prevSec.shortTitle)}</button>` : '<span></span>'}
+            </div>
+            <div>
+              ${nextSec ? `<button type="button" class="btn-admin-cta" id="btn-guide-next">Siguiente: ${nextSec.icon} ${esc(nextSec.shortTitle)} &rarr;</button>` : `<button type="button" class="btn-admin-cta" id="btn-guide-finish">🎉 ¡Completar Recorrido!</button>`}
+            </div>
+          </div>
+        </article>
+      `;
+
+      const doneBtn = document.getElementById('btn-guide-toggle-done');
+      if (doneBtn) {
+        doneBtn.addEventListener('click', () => {
+          if (doneSet.has(sec.id)) doneSet.delete(sec.id);
+          else doneSet.add(sec.id);
+          saveGuideDoneSet(doneSet);
+          updateProgressUi();
+          renderSidebar();
+          renderLesson();
+        });
+      }
+
+      const prevBtn = document.getElementById('btn-guide-prev');
+      if (prevBtn && prevSec) prevBtn.addEventListener('click', () => selectSection(prevSec.id, true));
+
+      const nextBtn = document.getElementById('btn-guide-next');
+      if (nextBtn && nextSec) {
+        nextBtn.addEventListener('click', () => {
+          doneSet.add(sec.id);
+          saveGuideDoneSet(doneSet);
+          updateProgressUi();
+          selectSection(nextSec.id, true);
+        });
+      }
+
+      const finBtn = document.getElementById('btn-guide-finish');
+      if (finBtn) {
+        finBtn.addEventListener('click', () => {
+          doneSet.add(sec.id);
+          saveGuideDoneSet(doneSet);
+          updateProgressUi();
+          renderSidebar();
+          renderLesson();
+          adminToast('🌸 ¡Genia Elena! Ya sabés usar todo el Panel de Control.');
+        });
+      }
+    }
+
+    function renderFullMapGrid() {
+      if (!mapGridEl) return;
+      mapGridEl.innerHTML = ADMIN_GUIDE_SECTIONS.map((sec) => `
+        <button type="button" class="guide-map-tile" data-map-jump="${esc(sec.id)}">
+          <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+            <span style="font-size:1.35rem;">${sec.icon}</span>
+            <span style="font-size:0.72rem; font-weight:700; color:#A45A44;">Ver explicación &rarr;</span>
+          </div>
+          <strong style="font-size:0.9rem; color:#2B2625;">${esc(sec.shortTitle)}</strong>
+          <span style="font-size:0.78rem; color:#5F5852; line-height:1.45;">${esc(sec.summary)}</span>
+        </button>
+      `).join('');
+
+      mapGridEl.querySelectorAll('[data-map-jump]').forEach((tile) => {
+        tile.addEventListener('click', () => {
+          selectSection(tile.getAttribute('data-map-jump'), true);
+        });
+      });
+    }
+
+    function selectSection(secId, shouldScroll) {
+      if (!ADMIN_GUIDE_SECTIONS.some(s => s.id === secId)) return;
+      activeId = secId;
+      renderSidebar();
+      renderLesson();
+      if (shouldScroll) {
+        const anchor = document.getElementById('guide-academy-anchor');
+        if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', renderSidebar);
+    }
+
+    document.querySelectorAll('[data-guide-jump]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const targetId = el.getAttribute('data-guide-jump');
+        if (searchInput) searchInput.value = '';
+        selectSection(targetId, true);
+      });
     });
+
+    updateProgressUi();
+    renderSidebar();
+    renderLesson();
+    renderFullMapGrid();
   }
 
   // =========================================================================
@@ -2965,6 +3496,7 @@
     init: initAdminShell,
     toast: adminToast,
     downloadBackup: downloadWorkshopBackup,
+    openHelp: openContextualHelpDrawer,
     logout: logoutAdmin
   };
 

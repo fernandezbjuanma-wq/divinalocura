@@ -94,6 +94,16 @@ const TABLAS = {
       ['price', 'Precio', 'txt'], ['texture', 'Telas / Textura', 'txt'],
       ['tag', 'Etiqueta', 'txt'], ['desc', 'Descripción', 'txt'], ['_fotos', 'Fotos', 'ro']
     ]
+  },
+  quotes: {
+    hoja: 'Presupuestos',
+    columnas: [
+      ['id', 'ID', 'txt'], ['number', 'N° Cotización', 'txt'], ['date', 'Fecha', 'txt'],
+      ['client.company', 'Cliente / Empresa', 'txt'], ['client.attention', 'Atte.', 'txt'],
+      ['client.phone', 'WhatsApp', 'txt'], ['_piezas', 'Ítems Cotizados', 'ro'],
+      ['totalAmount', 'Total ($)', 'num'], ['status', 'Estado', 'txt'],
+      ['validity', 'Validez', 'txt'], ['linkedOrderId', 'Pedido Asociado', 'txt']
+    ]
   }
 };
 
@@ -106,7 +116,7 @@ const COLS_VISITAS = ['Fecha y hora', 'Día', 'Tipo', 'Página', 'Origen', 'Prod
 // Colecciones que el panel puede reemplazar enteras (solo con sesión iniciada)
 const REEMPLAZABLES = ['stockProducts', 'stockMaterials', 'expenses', 'production', 'products'];
 // Colecciones que se fusionan por ID (para no pisar pedidos que entran mientras Elena trabaja)
-const FUSIONABLES = ['orders', 'clients'];
+const FUSIONABLES = ['orders', 'clients', 'quotes'];
 
 // ============================================================================
 //  ENTRADA HTTP
@@ -279,6 +289,7 @@ function escribirTabla(nombre, lista) {
     if (json.length > 48000) {
       const copia = JSON.parse(json);
       (copia.images || []).forEach(img => { if (String(img.src || '').indexOf('data:') === 0) img.src = 'assets/images/hero-textile.jpg'; });
+      (copia.items || []).forEach(it => { if (it && String(it.image || '').indexOf('data:') === 0) it.image = ''; });
       json = JSON.stringify(copia).slice(0, 48000);
     }
     fila.push(json);

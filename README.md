@@ -10,6 +10,7 @@ Sitio web editorial y plataforma integral de administración para **Divina Locur
 
 ### 1. Tienda Pública (Estética Zara Home & Anthropologie)
 - [`index.html`](./index.html) — Página principal con portada dinámica multi-colección, catálogo interactivo, galería de espacios, historia del taller, carrito con Mercado Pago / Transferencia / WhatsApp y botón flotante desplazante (**Contacto & Atelier**).
+- [`cotizar.html`](./cotizar.html) — Cotizador de Autogestión para Clientas con precios oficiales protegidos, importación desde la Bolsa, piezas a medida, descarga instantánea en PDF A4 y envío directo a Elena por WhatsApp.
 - [`producto.html`](./producto.html) — Ficha editorial individual de cada creación con galería multivista, historia de confección, opiniones de clientas y accesos a WhatsApp e Instagram.
 - [`style.css`](./style.css) — Sistema de diseño editorial cálido (paleta lino, alabastro, terracota y carbón).
 - [`main.js`](./main.js) — Lógica principal de la tienda, carrito, asistente virtual, cuentas de clientas y sincronización en vivo.
@@ -18,6 +19,7 @@ Sitio web editorial y plataforma integral de administración para **Divina Locur
 
 ### 2. Panel de Control & Administración (Elena & Juanma)
 - [`admin.html`](./admin.html) — Tablero Ejecutivo de Resumen y KPIs del taller.
+- [`admin-presupuestos.html`](./admin-presupuestos.html) & [`presupuesto.html`](./presupuesto.html) — Cotizador Editorial de Marca (catálogo + piezas personalizadas a medida, paginación A4 automática, descarga directa en PDF, impresión y envío por WhatsApp con link interactivo).
 - [`admin-pedidos.html`](./admin-pedidos.html) — Gestión de pedidos de clientas, señas del 50%, pagos y entregas.
 - [`admin-produccion.html`](./admin-produccion.html) — Tablero Kanban de taller con descuento automático de metros de tela del stock.
 - [`admin-stock.html`](./admin-stock.html) — Inventario de rollos de tela, costos por metro y alertas de reposición.

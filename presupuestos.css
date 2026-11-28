@@ -1,0 +1,1634 @@
+/* ==========================================================================
+   DIVINA LOCURA DECO — SISTEMA DE PRESUPUESTOS & COTIZACIONES DE AUTOR
+   Identidad Editorial Cálida (Lino, Alabastro, Terracota & Carbón)
+   Optimizado para Constructor Móvil/Desktop, Hoja A4 Exacta, PDF e Impresión
+   ========================================================================== */
+
+:root {
+  --q-terracotta: #A45A44;
+  --q-terracotta-dark: #874633;
+  --q-terracotta-soft: #FAF1EC;
+  --q-charcoal: #2B2625;
+  --q-sage: #5A7665;
+  --q-clay: #C4987E;
+  --q-paper: #FFFFFF;
+  --q-linen: #F6F2EB;
+  --q-linen-warm: #EFE8DD;
+  --q-border: #D9CEC1;
+  --q-border-strong: #C4B5A5;
+  --q-text: #2B2625;
+  --q-muted: #6C635C;
+  --q-light-muted: #8E847B;
+}
+
+/* --------------------------------------------------------------------------
+   1. BARRA DE PESTAÑAS MÓVIL Y DISPOSICIÓN DEL CONSTRUCTOR
+   -------------------------------------------------------------------------- */
+.quotes-mobile-tabs {
+  display: none;
+  position: sticky;
+  top: 96px;
+  z-index: 950;
+  background: #FCFAF7;
+  border: 1px solid #DED4C7;
+  border-radius: 10px;
+  padding: 0.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 6px 20px rgba(43, 38, 37, 0.08);
+  gap: 0.35rem;
+}
+
+.quotes-mobile-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #5F5852;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.6rem 0.5rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.quotes-mobile-tab.is-active {
+  background: #A45A44;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(164, 90, 68, 0.28);
+}
+
+.quotes-workspace {
+  display: grid;
+  grid-template-columns: minmax(430px, 1.02fr) minmax(420px, 0.98fr);
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.quotes-builder-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.quotes-preview-col {
+  position: sticky;
+  top: 112px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. TARJETAS DEL CONSTRUCTOR (PANEL IZQUIERDO)
+   -------------------------------------------------------------------------- */
+.q-section-card {
+  background: #FCFAF7;
+  border: 1px solid #E3DAD0;
+  border-radius: 10px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 6px 22px rgba(43, 38, 37, 0.03);
+}
+
+.q-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.05rem;
+  border-bottom: 1px solid #ECE4DA;
+}
+
+.q-section-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.q-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #A45A44;
+  color: #FFFFFF;
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.q-section-title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2B2625;
+  margin: 0;
+}
+
+.q-form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.q-form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.q-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  margin-bottom: 0.8rem;
+}
+
+.q-field:last-child {
+  margin-bottom: 0;
+}
+
+.q-label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #5F5852;
+}
+
+.q-input,
+.q-select,
+.q-textarea {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1px solid #D9CEC1;
+  border-radius: 7px;
+  padding: 0.58rem 0.78rem;
+  font-family: var(--font-sans, 'Montserrat', sans-serif);
+  font-size: 0.85rem;
+  color: #2B2625;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.q-input:focus,
+.q-select:focus,
+.q-textarea:focus {
+  outline: none;
+  border-color: #A45A44;
+  box-shadow: 0 0 0 3px rgba(164, 90, 68, 0.13);
+}
+
+.q-textarea {
+  resize: vertical;
+  min-height: 66px;
+  line-height: 1.5;
+}
+
+/* Selector de estilo cromático del PDF */
+.q-theme-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.q-theme-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.42rem 0.78rem;
+  border-radius: 999px;
+  border: 1px solid #D9CEC1;
+  background: #FFFFFF;
+  color: #2B2625;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.q-theme-pill:hover {
+  border-color: #A45A44;
+}
+
+.q-theme-pill.is-active {
+  border-color: #2B2625;
+  background: #2B2625;
+  color: #FFFFFF;
+}
+
+.q-theme-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+/* Chips de plantillas rápidas de saludo */
+.q-preset-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.q-preset-chip {
+  border: 1px solid #DFD4C7;
+  background: #FAF6F0;
+  color: #5F5852;
+  border-radius: 999px;
+  padding: 0.25rem 0.68rem;
+  font-family: inherit;
+  font-size: 0.71rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.q-preset-chip:hover {
+  border-color: #A45A44;
+  color: #A45A44;
+  background: #FDF7F4;
+}
+
+/* Botones de agregar productos (Catálogo vs A Medida) */
+.q-add-buttons-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.btn-q-add-catalog,
+.btn-q-add-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.82rem 1rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-q-add-catalog {
+  background: #A45A44;
+  color: #FFFFFF;
+  border: 1px solid #8E4A38;
+  box-shadow: 0 4px 14px rgba(164, 90, 68, 0.22);
+}
+
+.btn-q-add-catalog:hover {
+  background: #8C4733;
+  transform: translateY(-1px);
+}
+
+.btn-q-add-custom {
+  background: #FFFFFF;
+  color: #2B2625;
+  border: 1.5px dashed #A45A44;
+}
+
+.btn-q-add-custom:hover {
+  background: #FAF1EC;
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+/* Lista de Ítems Editables en el Constructor */
+.q-editor-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.q-editor-item {
+  background: #FFFFFF;
+  border: 1px solid #DFD5C9;
+  border-radius: 9px;
+  padding: 0.95rem 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.q-editor-item:hover {
+  border-color: #C5B4A2;
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.05);
+}
+
+.q-editor-item.is-alternative {
+  background: #FBF9F5;
+  border-style: dashed;
+  border-color: #C4987E;
+}
+
+.q-editor-item__top {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.q-editor-item__photo-btn {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  border-radius: 7px;
+  border: 1px solid #DFD5C9;
+  background: #F6F2EB;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  group: photo;
+}
+
+.q-editor-item__photo-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.q-editor-item__photo-overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  background: rgba(43, 38, 37, 0.76);
+  color: #FFFFFF;
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 2px 4px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.q-editor-item__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.48rem;
+}
+
+.q-editor-item__numbers {
+  display: grid;
+  grid-template-columns: 0.8fr 1.1fr 1.1fr;
+  gap: 0.55rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid #F0E9E0;
+  align-items: end;
+}
+
+.q-editor-item__subtotal-box {
+  background: #F6F2EB;
+  border: 1px solid #E5DDD2;
+  border-radius: 7px;
+  padding: 0.52rem 0.68rem;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: #2B2625;
+}
+
+.q-editor-item__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed #ECE4DA;
+}
+
+.q-mini-btn {
+  background: #FAF8F4;
+  border: 1px solid #DBD0C3;
+  color: #3D3633;
+  border-radius: 6px;
+  padding: 0.28rem 0.58rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.16s ease;
+}
+
+.q-mini-btn:hover {
+  background: #EFE9DF;
+  border-color: #A45A44;
+  color: #2B2625;
+}
+
+.q-mini-btn--danger {
+  color: #B43C32;
+  border-color: rgba(180, 60, 50, 0.25);
+}
+
+.q-mini-btn--danger:hover {
+  background: #FDF2F1;
+  border-color: #B43C32;
+  color: #962B22;
+}
+
+/* Panel interno de rentabilidad (Solo visible para Elena & Juanma) */
+.q-internal-margin-box {
+  background: linear-gradient(135deg, #F4F8F5 0%, #FAF8F4 100%);
+  border: 1px solid rgba(90, 118, 101, 0.32);
+  border-radius: 9px;
+  padding: 0.9rem 1.05rem;
+  margin-top: 0.9rem;
+}
+
+.q-internal-margin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-top: 0.55rem;
+}
+
+.q-internal-stat {
+  background: #FFFFFF;
+  border: 1px solid rgba(90, 118, 101, 0.18);
+  border-radius: 7px;
+  padding: 0.5rem 0.65rem;
+}
+
+.q-internal-stat span {
+  display: block;
+  font-size: 0.67rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5F5852;
+}
+
+.q-internal-stat strong {
+  font-size: 0.94rem;
+  color: #2B2625;
+}
+
+/* --------------------------------------------------------------------------
+   3. BARRA DE ACCIONES DE EXPORTACIÓN (PDF / WHATSAPP / IMPRIMIR)
+   -------------------------------------------------------------------------- */
+.q-export-bar {
+  background: #FCFAF7;
+  border: 1px solid #DED4C7;
+  border-radius: 10px;
+  padding: 0.95rem 1.15rem;
+  box-shadow: 0 8px 24px rgba(43, 38, 37, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.q-export-primary-row {
+  display: grid;
+  grid-template-columns: 1.15fr 1.15fr 0.85fr;
+  gap: 0.55rem;
+}
+
+.btn-q-pdf {
+  background: #A45A44;
+  color: #FFFFFF;
+  border: 1px solid #8E4A38;
+  border-radius: 7px;
+  padding: 0.68rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(164, 90, 68, 0.25);
+}
+
+.btn-q-pdf:hover {
+  background: #874633;
+  transform: translateY(-1px);
+}
+
+.btn-q-whatsapp {
+  background: #226B46;
+  color: #FFFFFF;
+  border: 1px solid #1B5738;
+  border-radius: 7px;
+  padding: 0.68rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(34, 107, 70, 0.22);
+}
+
+.btn-q-whatsapp:hover {
+  background: #1A5537;
+  transform: translateY(-1px);
+}
+
+.btn-q-save {
+  background: #2B2625;
+  color: #FAF8F5;
+  border: 1px solid #2B2625;
+  border-radius: 7px;
+  padding: 0.68rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.38rem;
+  transition: all 0.2s ease;
+}
+
+.btn-q-save:hover {
+  background: #433B39;
+}
+
+.q-export-secondary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. ESCENARIO DE VISTA PREVIA A4 EN VIVO (ESCALADO FLUIDO)
+   -------------------------------------------------------------------------- */
+.q-stage-viewport {
+  background: #E5DDD2;
+  background-image: radial-gradient(circle at 50% 0%, #ECE5DC 0%, #DDD3C6 100%);
+  border: 1px solid #CFC3B4;
+  border-radius: 10px;
+  padding: 1.25rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - 235px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.q-stage-scale-wrap {
+  width: 794px;
+  transform-origin: top center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   5. HOJA EDITORIAL A4 (794px × 1123px = 210mm × 297mm)
+   Estructura inspirada en la referencia adjunta + Identidad Divina Locura Deco
+   ========================================================================== */
+.quote-a4-page {
+  width: 794px;
+  height: 1123px;
+  background: #FFFFFF;
+  color: #2B2625;
+  box-sizing: border-box;
+  padding: 40px 44px 34px 44px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 14px 38px rgba(43, 38, 37, 0.16);
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  --doc-accent: #A45A44;
+  --doc-accent-dark: #884633;
+  --doc-accent-soft: #FAF2ED;
+  --doc-header-fill: #F5EFE7;
+}
+
+.quote-a4-page[data-quote-theme="carbon"] {
+  --doc-accent: #2B2625;
+  --doc-accent-dark: #1B1716;
+  --doc-accent-soft: #F4F1EC;
+  --doc-header-fill: #F2EEE8;
+}
+
+.quote-a4-page[data-quote-theme="salvia"] {
+  --doc-accent: #557361;
+  --doc-accent-dark: #3F5949;
+  --doc-accent-soft: #F1F6F3;
+  --doc-header-fill: #EEF3F0;
+}
+
+/* Filete superior delicado de papelería boutique */
+.quote-a4-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--doc-accent);
+}
+
+/* Cabecera de Página (Repetida en cada hoja como en la referencia) */
+.qa4-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #D5C8B9;
+}
+
+.qa4-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.qa4-monogram {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--doc-accent-soft);
+  border: 1.5px solid var(--doc-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--doc-accent);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.qa4-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.qa4-brand-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #2B2625;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.qa4-brand-sub {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8C7A6B;
+  margin-top: 5px;
+}
+
+.qa4-title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 248px;
+}
+
+.qa4-badge-box {
+  width: 100%;
+  background: var(--doc-accent);
+  color: #FFFFFF;
+  text-align: center;
+  padding: 11px 18px;
+  border-radius: 3px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.qa4-quote-meta {
+  margin-top: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #2B2625;
+  letter-spacing: 0.02em;
+  text-align: right;
+}
+
+.qa4-quote-validity {
+  font-size: 9.2px;
+  font-weight: 500;
+  color: #7A7067;
+  margin-top: 2px;
+  text-align: right;
+}
+
+/* Bloque Destinatario & Saludo (Página 1) */
+.qa4-client-section {
+  padding: 14px 0 12px 0;
+}
+
+.qa4-client-company {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2B2625;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+
+.qa4-client-atte-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 11px;
+  color: #2B2625;
+  margin-bottom: 9px;
+}
+
+.qa4-client-atte strong {
+  font-weight: 700;
+}
+
+.qa4-client-contact-meta {
+  font-size: 9.8px;
+  color: #6C635C;
+  font-weight: 500;
+}
+
+.qa4-intro-text {
+  font-size: 10.6px;
+  font-style: italic;
+  color: #4A433E;
+  line-height: 1.48;
+  margin: 0;
+}
+
+/* Encabezado de Tabla Dividida (Estilo Prowork refinado Divina Locura) */
+.qa4-table-head {
+  display: grid;
+  grid-template-columns: 52% 12% 18% 18%;
+  gap: 4px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+.qa4-th {
+  background: var(--doc-header-fill);
+  border: 1px solid #C6B8A8;
+  padding: 8px 5px;
+  text-align: center;
+  font-size: 9.1px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  color: var(--doc-accent);
+  border-radius: 2px;
+}
+
+/* Filas de Productos (Con foto izquierda + métricas arriba y descripción abajo) */
+.qa4-items-wrap {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #CFC2B4;
+}
+
+.qa4-item-row {
+  display: grid;
+  grid-template-columns: 52% 48%;
+  border-bottom: 1px solid #CFC2B4;
+  min-height: 146px;
+}
+
+.qa4-item-left {
+  padding: 14px 14px 14px 6px;
+  border-right: 1px solid #CFC2B4;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.qa4-item-photo {
+  width: 98px;
+  height: 98px;
+  border-radius: 4px;
+  border: 1px solid #E4DBD0;
+  background: #F7F3EC;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qa4-item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.qa4-item-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--doc-accent);
+  text-align: center;
+  padding: 8px;
+}
+
+.qa4-item-photo-placeholder span {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.qa4-item-photo-placeholder small {
+  font-size: 7.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #8C7A6B;
+  margin-top: 3px;
+}
+
+.qa4-item-title-wrap {
+  flex: 1;
+  min-width: 0;
+  padding-top: 3px;
+}
+
+.qa4-item-title {
+  font-size: 10.6px;
+  font-weight: 700;
+  color: #2B2625;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.38;
+}
+
+.qa4-item-variant {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 9.2px;
+  font-weight: 600;
+  color: var(--doc-accent);
+  background: var(--doc-accent-soft);
+  padding: 2px 7px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+
+.qa4-item-alt-tag {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7D5B4F;
+  background: #F3ECE4;
+  border: 1px solid #DFD2C3;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.qa4-item-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.qa4-item-metrics {
+  display: grid;
+  grid-template-columns: 25% 37.5% 37.5%;
+  align-items: center;
+  padding: 9px 6px 9px 10px;
+  border-bottom: 1px solid #DDD2C5;
+  font-size: 10.5px;
+  color: #2B2625;
+}
+
+.qa4-metric-qty {
+  text-align: center;
+  font-weight: 600;
+}
+
+.qa4-metric-unit {
+  text-align: right;
+  padding-right: 8px;
+  font-weight: 500;
+  color: #4A433E;
+}
+
+.qa4-metric-sub {
+  text-align: right;
+  font-weight: 700;
+  color: #2B2625;
+}
+
+.qa4-item-desc {
+  padding: 10px 6px 12px 12px;
+  font-size: 9.8px;
+  line-height: 1.5;
+  color: #4A433E;
+  flex: 1;
+  white-space: pre-line;
+}
+
+/* Bloque Final de Condiciones y Resumen de Totales */
+.qa4-summary-section {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.qa4-conditions-box {
+  background: #FAF8F4;
+  border: 1px solid #E3DAD0;
+  border-left: 3px solid var(--doc-accent);
+  border-radius: 3px;
+  padding: 11px 13px;
+  font-size: 9.3px;
+  line-height: 1.52;
+  color: #4A433E;
+}
+
+.qa4-conditions-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--doc-accent);
+  margin-bottom: 5px;
+}
+
+.qa4-conditions-line {
+  margin-bottom: 4px;
+}
+
+.qa4-conditions-line:last-child {
+  margin-bottom: 0;
+}
+
+.qa4-totals-card {
+  border: 1px solid #CFC2B4;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.qa4-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 12px;
+  font-size: 10px;
+  border-bottom: 1px solid #EAE2D8;
+  color: #4A433E;
+}
+
+.qa4-total-row:last-child {
+  border-bottom: none;
+}
+
+.qa4-total-row--grand {
+  background: var(--doc-accent);
+  color: #FFFFFF;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.qa4-total-row--deposit {
+  background: var(--doc-accent-soft);
+  color: #2B2625;
+  font-weight: 600;
+  font-size: 9.6px;
+}
+
+/* Pie de Página Editorial en CADA Hoja (Barra Marca + Página X de Y) */
+.qa4-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 122px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.qa4-footer-brand-bar {
+  background: var(--doc-accent);
+  color: #FFFFFF;
+  border-radius: 3px;
+  padding: 9px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  gap: 2.5px;
+}
+
+.qa4-footer-line1 {
+  font-size: 9.2px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.qa4-footer-line2 {
+  font-size: 8.6px;
+  font-weight: 400;
+  opacity: 0.94;
+}
+
+.qa4-footer-page-box {
+  background: #E8DFD3;
+  border: 1px solid #D4C7B7;
+  color: #2B2625;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.6px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* --------------------------------------------------------------------------
+   6. MODALES DE CATÁLOGO, A MEDIDA, BANCO DE FOTOS Y WHATSAPP
+   -------------------------------------------------------------------------- */
+.q-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(32, 27, 25, 0.56);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.q-modal-backdrop.is-open {
+  display: flex;
+}
+
+.q-modal-dialog {
+  background: #FCFAF7;
+  border: 1px solid #DED4C7;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 22px 54px rgba(28, 24, 22, 0.28);
+  overflow: hidden;
+}
+
+.q-modal-dialog--narrow {
+  max-width: 620px;
+}
+
+.q-modal-header {
+  padding: 1.1rem 1.4rem;
+  background: #F5EFE7;
+  border-bottom: 1px solid #E2D8CB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.q-modal-title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 1.22rem;
+  font-weight: 600;
+  color: #2B2625;
+  margin: 0;
+}
+
+.q-modal-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #D5C8B9;
+  background: #FFFFFF;
+  color: #2B2625;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.q-modal-body {
+  padding: 1.25rem 1.4rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.q-modal-footer {
+  padding: 0.9rem 1.4rem;
+  background: #F5EFE7;
+  border-top: 1px solid #E2D8CB;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+/* Grilla del selector de productos del catálogo */
+.q-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 0.95rem;
+  margin-top: 0.95rem;
+}
+
+.q-cat-prod-card {
+  background: #FFFFFF;
+  border: 1px solid #E3DAD0;
+  border-radius: 9px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.q-cat-prod-card:hover {
+  transform: translateY(-2px);
+  border-color: #A45A44;
+  box-shadow: 0 8px 20px rgba(43, 38, 37, 0.08);
+}
+
+.q-cat-prod-card__img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  object-position: center 25%;
+  background: #F4EFE8;
+}
+
+.q-cat-prod-card__body {
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.q-cat-prod-card__title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #2B2625;
+  margin: 0;
+  line-height: 1.32;
+}
+
+.q-cat-prod-card__price {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #A45A44;
+}
+
+/* Badges de estado en Historial de Presupuestos */
+.q-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.62rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.q-status-pill--borrador {
+  background: #EFECE6;
+  color: #5F5852;
+}
+
+.q-status-pill--enviado {
+  background: #FDF2EC;
+  color: #A45A44;
+  border: 1px solid rgba(164, 90, 68, 0.25);
+}
+
+.q-status-pill--aprobado {
+  background: #EAF6EF;
+  color: #1E6B47;
+  border: 1px solid rgba(30, 107, 71, 0.25);
+}
+
+.q-status-pill--vencido {
+  background: #F9EDED;
+  color: #9E3831;
+}
+
+/* Vista Pública del Presupuesto (presupuesto.html) */
+.public-quote-shell {
+  min-height: 100vh;
+  background: #F3EFE8;
+  display: flex;
+  flex-direction: column;
+}
+
+.public-quote-topbar {
+  background: #FCFAF7;
+  border-bottom: 1px solid #E2D9CE;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  padding: 0.85rem 1.5rem;
+}
+
+.public-quote-topbar__inner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.public-quote-stage {
+  flex: 1;
+  padding: 2rem 1rem 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   7. ADAPTABILIDAD MÓVIL & TABLET (MAMÁ EN CELULAR)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1140px) {
+  .quotes-mobile-tabs {
+    display: flex;
+  }
+
+  .quotes-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .quotes-preview-col {
+    position: static;
+  }
+
+  .q-stage-viewport {
+    max-height: none;
+    padding: 0.75rem 0.35rem;
+  }
+
+  body[data-q-mobile-view="editor"] .quotes-preview-col,
+  body[data-q-mobile-view="editor"] #quotes-history-section {
+    display: none !important;
+  }
+
+  body[data-q-mobile-view="preview"] .quotes-builder-col,
+  body[data-q-mobile-view="preview"] #quotes-history-section {
+    display: none !important;
+  }
+
+  body[data-q-mobile-view="history"] .quotes-workspace {
+    display: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .quotes-mobile-tabs {
+    top: 8px;
+  }
+
+  .q-form-grid-2,
+  .q-form-grid-3,
+  .q-add-buttons-bar,
+  .q-export-primary-row,
+  .q-internal-margin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .q-editor-item__numbers {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .q-editor-item__subtotal-box {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ==========================================================================
+   8. COTIZADOR BOUTIQUE PARA CLIENTAS (cotizar.html)
+   ========================================================================== */
+.client-quote-page {
+  padding-bottom: 4.5rem;
+}
+
+.client-quote-hero {
+  text-align: center;
+  max-width: 780px;
+  margin: 0.75rem auto 2rem auto;
+}
+
+.client-quote-hero .section-title {
+  margin: 0.35rem 0 0.65rem 0;
+}
+
+.cq-cart-banner {
+  background: linear-gradient(90deg, #FAF3ED 0%, #FCFAF7 100%);
+  border: 1px solid #DFCBB9;
+  border-left: 4px solid #A45A44;
+  border-radius: 10px;
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cq-item-card {
+  background: #FFFFFF;
+  border: 1px solid #E3DAD0;
+  border-radius: 9px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cq-item-card:hover {
+  border-color: #C7B6A4;
+  box-shadow: 0 4px 14px rgba(43, 38, 37, 0.04);
+}
+
+.cq-item-card__head {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.cq-item-card__thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  border: 1px solid #E5DDD2;
+  background: #F6F2EB;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cq-item-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.cq-item-card__title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #2B2625;
+  margin: 0 0 0.2rem 0;
+  line-height: 1.3;
+}
+
+.cq-item-card__meta {
+  font-size: 0.75rem;
+  color: #8C5340;
+  font-weight: 600;
+}
+
+.cq-item-card__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.55rem;
+  border-top: 1px solid #F1EAE1;
+}
+
+.cq-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #D6C9BA;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #FAF8F4;
+}
+
+.cq-qty-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #2B2625;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cq-qty-btn:hover {
+  background: #EAE1D5;
+}
+
+.cq-qty-val {
+  width: 44px;
+  height: 32px;
+  border: none;
+  border-left: 1px solid #E3DAD0;
+  border-right: 1px solid #E3DAD0;
+  background: #FFFFFF;
+  text-align: center;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #2B2625;
+}
+
+.cq-price-summary {
+  text-align: right;
+}
+
+.cq-price-unit {
+  font-size: 0.72rem;
+  color: #7A7067;
+  display: block;
+}
+
+.cq-price-sub {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #2B2625;
+}
+
+.cq-bespoke-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+}
+
+.cq-bespoke-card {
+  background: #FFFFFF;
+  border: 1px solid #DED3C5;
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.cq-bespoke-card:hover {
+  border-color: #A45A44;
+  background: #FDF8F5;
+}
+
+.cq-bespoke-card.is-active {
+  border-color: #A45A44;
+  background: #FAF1EC;
+  box-shadow: 0 0 0 1px #A45A44;
+}
+
+.cq-bespoke-card strong {
+  font-size: 0.8rem;
+  color: #2B2625;
+}
+
+.cq-bespoke-card small {
+  font-size: 0.72rem;
+  color: #A45A44;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   9. IMPRESIÓN EXACTA A4 (@media print) — CERO BORDES CORTADOS, VECTORIAL
+   ========================================================================== */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body,
+  body.admin-body,
+  .public-quote-shell {
+    background: #FFFFFF !important;
+    background-image: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .announcement-bar,
+  .site-header,
+  .side-drawer,
+  .cart-drawer,
+  .floating-concierge,
+  .site-footer,
+  .footer-subfloor,
+  .atelier-page__breadcrumbs-wrap,
+  .client-quote-hero,
+  .cq-cart-banner,
+  .admin-top-nav,
+  .admin-control-subbar,
+  .admin-page-hero,
+  .quotes-mobile-tabs,
+  .quotes-builder-col,
+  .q-export-bar,
+  #quotes-kpis-section,
+  #quotes-history-section,
+  .floating-back-store-btn,
+  #admin-toast-container,
+  .q-modal-backdrop,
+  .public-quote-topbar,
+  .no-print {
+    display: none !important;
+  }
+
+  main,
+  .client-quote-page,
+  .container,
+  .admin-shell,
+  .admin-content-area,
+  .quotes-workspace,
+  .quotes-preview-col,
+  .q-stage-viewport,
+  .public-quote-stage {
+    display: block !important;
+    max-width: none !important;
+    max-height: none !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .q-stage-scale-wrap {
+    width: 210mm !important;
+    height: auto !important;
+    transform: none !important;
+    gap: 0 !important;
+    margin: 0 !important;
+  }
+
+  .quote-a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .quote-a4-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+}

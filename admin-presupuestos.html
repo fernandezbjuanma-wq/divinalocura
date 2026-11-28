@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="only light">
+  <title>Sistema de Presupuestos &amp; Cotizaciones PDF | Divina Locura Deco</title>
+  <meta name="description" content="Creador de presupuestos editoriales de Divina Locura Deco con productos del catálogo o a medida, descarga en PDF A4, impresión y envío por WhatsApp.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=20261128v3">
+  <link rel="stylesheet" href="admin.css?v=20261128v3">
+  <link rel="stylesheet" href="presupuestos.css?v=20261128v3">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23A45A44'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23FAF8F5' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body class="admin-body" data-admin-page="presupuestos" data-q-mobile-view="editor">
+
+  <!-- CABECERA SUPERIOR DE ADMINISTRACIÓN -->
+  <header class="admin-top-nav">
+    <div class="admin-top-nav__inner">
+      <a href="index.html" class="admin-brand-wrap" title="Volver a la Tienda Divina Locura Deco">
+        <span class="admin-brand-title">Divina Locura Deco</span>
+        <span class="admin-brand-subtitle">Taller Textil &amp; Blanquería de Autor</span>
+      </a>
+
+      <div class="admin-top-actions">
+        <a href="index.html" class="btn-admin-nav btn-admin-nav--store" title="Ir a la tienda pública">
+          <span>🛍️ Tienda Pública</span>
+        </a>
+        <button type="button" class="btn-admin-nav" id="admin-backup-btn" title="Descargar respaldo JSON completo">
+          <span>💾 Respaldo</span>
+        </button>
+        <button type="button" class="btn-admin-nav btn-admin-nav--logout" id="admin-logout-btn" title="Cerrar sesión">
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-control-subbar">
+    <div class="admin-control-subbar__inner">
+      <div class="admin-control-subbar__badge">
+        <span class="admin-dot-pulse"></span>
+        <span>Panel de Control</span>
+      </div>
+      <span class="admin-control-subbar__divider" aria-hidden="true"></span>
+      <nav class="admin-nav-links" aria-label="Navegación del Panel">
+        <a href="admin.html" class="admin-nav-link">
+          <span>📊 Resumen</span>
+        </a>
+        <a href="admin-presupuestos.html" class="admin-nav-link is-active">
+          <span>📑 Presupuestos</span>
+          <span class="admin-badge-count" id="nav-quotes-count">0</span>
+        </a>
+        <a href="admin-pedidos.html" class="admin-nav-link">
+          <span>📋 Pedidos</span>
+          <span class="admin-badge-count" id="nav-orders-count">0</span>
+        </a>
+        <a href="admin-produccion.html" class="admin-nav-link">
+          <span>✂️ Producción</span>
+          <span class="admin-badge-count" id="nav-production-count">0</span>
+        </a>
+        <a href="admin-stock.html" class="admin-nav-link">
+          <span>🧵 Stock &amp; Telas</span>
+        </a>
+        <a href="admin-finances.html" class="admin-nav-link">
+          <span>💰 Ganancias</span>
+        </a>
+        <a href="admin-chat.html" class="admin-nav-link">
+          <span>💬 Chat</span>
+          <span class="admin-badge-count" id="nav-chat-count">0</span>
+        </a>
+        <a href="admin-productos.html" class="admin-nav-link">
+          <span>📸 Creaciones</span>
+        </a>
+        <a href="admin-banco.html" class="admin-nav-link">
+          <span>🖼️ Banco</span>
+        </a>
+        <a href="admin-configuracion.html" class="admin-nav-link">
+          <span>⚙️ Configuración</span>
+        </a>
+        <a href="admin-guia.html" class="admin-nav-link">
+          <span>📖 Guía</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="admin-shell">
+
+    <!-- LOGIN GUARD (Elena / Mamá o Juanma) -->
+    <div class="admin-login-guard" id="admin-login-guard" style="display:none;">
+      <span class="admin-login-guard__icon">🔐</span>
+      <h3 class="admin-login-guard__title">Acceso al Sistema de Presupuestos</h3>
+      <p class="admin-login-guard__desc">Ingresá tu clave de taller (Elena / Mamá o Juanma) para armar cotizaciones, descargarlas en PDF y enviarlas por WhatsApp.</p>
+      <form id="guard-login-form" onsubmit="return false;" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="password" id="guard-pass-input" class="admin-input" placeholder="Clave de administrador (elena, mama o juanma)" autofocus />
+        <button type="button" id="guard-login-btn" class="btn-admin-cta" style="width:100%; justify-content:center;">
+          <span>Ingresar al Panel 🌸</span>
+        </button>
+      </form>
+      <div style="margin-top:1.5rem;">
+        <a href="index.html" style="color:#8A837A; text-decoration:none; font-size:0.85rem;">&larr; Volver a la Tienda Pública</a>
+      </div>
+    </div>
+
+    <!-- ÁREA DE CONTENIDO PROTEGIDA -->
+    <div class="admin-content-area" id="admin-content-area">
+
+      <!-- HÉROE DE PÁGINA -->
+      <section class="admin-page-hero">
+        <div class="admin-page-hero__info">
+          <span class="admin-page-kicker">Cotizador Editorial de Marca &middot; Elena &amp; Juanma</span>
+          <h1 class="admin-page-title">Sistema de Presupuestos &amp; PDF</h1>
+          <p class="admin-page-desc">
+            Armá cotizaciones con identidad Divina Locura Deco combinando piezas del catálogo o creaciones personalizadas a medida. Descargá el archivo PDF A4, imprimí o enviá directo por WhatsApp.
+          </p>
+        </div>
+        <div class="admin-page-hero__actions">
+          <button type="button" class="btn-admin-outline" id="btn-q-new-blank">
+            <span>✨ Nuevo Presupuesto en Blanco</span>
+          </button>
+          <button type="button" class="btn-admin-cta js-q-download-pdf">
+            <span>📥 Descargar PDF A4</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- KPIS COMPACTOS -->
+      <section class="admin-grid-4" id="quotes-kpis-section" style="margin-bottom:1.5rem;">
+        <div class="admin-stat-card admin-stat-card--accent">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Cotizaciones Emitidas</span>
+            <span class="admin-stat-icon">📑</span>
+          </div>
+          <div class="admin-stat-val" id="qkpi-count">0</div>
+          <p class="admin-stat-sub" id="qkpi-amount">$ 0 cotizados</p>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">En Evaluación / Borrador</span>
+            <span class="admin-stat-icon">📲</span>
+          </div>
+          <div class="admin-stat-val" id="qkpi-pending">0</div>
+          <p class="admin-stat-sub">Aguardando confirmación de clientas</p>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Aprobados &rarr; Pedidos</span>
+            <span class="admin-stat-icon">✅</span>
+          </div>
+          <div class="admin-stat-val" id="qkpi-approved" style="color:#1E6B47;">0</div>
+          <p class="admin-stat-sub">Convertidos en orden de taller</p>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-header">
+            <span class="admin-stat-label">Margen Estimado</span>
+            <span class="admin-stat-icon">📈</span>
+          </div>
+          <div class="admin-stat-val" id="qkpi-margin" style="color:#658572;">—</div>
+          <p class="admin-stat-sub">Rentabilidad promedio proyectada</p>
+        </div>
+      </section>
+
+      <!-- CONMUTADOR RÁPIDO PARA CELULARES (MAMÁ EN TELÉFONO) -->
+      <div class="quotes-mobile-tabs" role="tablist" aria-label="Vistas del Cotizador en Celular">
+        <button type="button" class="quotes-mobile-tab is-active" data-q-mob-tab="editor">
+          ✏️ 1. Armar Cotización
+        </button>
+        <button type="button" class="quotes-mobile-tab" data-q-mob-tab="preview">
+          📄 2. Hoja PDF (<span id="q-mob-pages-count">1 pág</span>)
+        </button>
+        <button type="button" class="quotes-mobile-tab" data-q-mob-tab="history">
+          🗂️ Guardados (<span id="q-mob-history-count">0</span>)
+        </button>
+      </div>
+
+      <!-- ESPACIO DE TRABAJO DIVIDIDO: CONSTRUCTOR (IZQ) + HOJA A4 EN VIVO (DER) -->
+      <div class="quotes-workspace">
+
+        <!-- COLUMNA IZQUIERDA: CONSTRUCTOR -->
+        <div class="quotes-builder-col">
+
+          <!-- PASO 1: ENCABEZADO, ESTILO Y DATOS DE LA CLIENTA -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">1</span>
+                <h2 class="q-section-title">Datos del Presupuesto &amp; Clienta</h2>
+              </div>
+              <div class="q-theme-pills" title="Color de identidad de la hoja PDF">
+                <button type="button" class="q-theme-pill is-active" data-q-theme-btn="terracota">
+                  <span class="q-theme-swatch" style="background:#A45A44;"></span> Terracota
+                </button>
+                <button type="button" class="q-theme-pill" data-q-theme-btn="carbon">
+                  <span class="q-theme-swatch" style="background:#2B2625;"></span> Carbón
+                </button>
+                <button type="button" class="q-theme-pill" data-q-theme-btn="salvia">
+                  <span class="q-theme-swatch" style="background:#557361;"></span> Salvia
+                </button>
+              </div>
+            </div>
+
+            <div class="q-form-grid-3" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="q-inp-number">Cotización N°</label>
+                <input type="text" id="q-inp-number" class="q-input" placeholder="000101" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-date">Fecha</label>
+                <input type="text" id="q-inp-date" class="q-input" placeholder="28/11/2026" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-validity">Validez de Oferta</label>
+                <input type="text" id="q-inp-validity" class="q-input" placeholder="Ej: 10 días corridos" />
+              </div>
+            </div>
+
+            <div class="q-form-grid-2" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="q-client-quick-select">Autocompletar desde Directorio</label>
+                <select id="q-client-quick-select" class="q-select">
+                  <option value="">— Elegir clienta registrada o escribir libremente —</option>
+                </select>
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-status">Estado del Presupuesto</label>
+                <select id="q-inp-status" class="q-select">
+                  <option value="borrador">📝 Borrador</option>
+                  <option value="enviado">📲 Enviado a Clienta</option>
+                  <option value="aprobado">✅ Aprobado / Confirmado</option>
+                  <option value="vencido">⏳ Vencido / Archivado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="q-form-grid-2" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="q-inp-company">Destinatario / Empresa / Nombre Principal</label>
+                <input type="text" id="q-inp-company" class="q-input" placeholder="Ej: FERNANDA JORRAT o ESTUDIO DECO" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-attention">Atte. (A la atención de)</label>
+                <input type="text" id="q-inp-attention" class="q-input" placeholder="Ej: María Fernanda Jorrat" />
+              </div>
+            </div>
+
+            <div class="q-form-grid-2" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="q-inp-phone">WhatsApp de la Clienta (para envío directo)</label>
+                <input type="tel" id="q-inp-phone" class="q-input" placeholder="Ej: 381 555 1234 o 11 4567 8901" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-location">Localidad / Envío (opcional)</label>
+                <input type="text" id="q-inp-location" class="q-input" placeholder="Ej: San Miguel de Tucumán / CABA" />
+              </div>
+            </div>
+
+            <div class="q-field">
+              <label class="q-label" for="q-inp-intro">Texto de Saludo &amp; Presentación</label>
+              <textarea id="q-inp-intro" class="q-textarea" rows="2"></textarea>
+              <div class="q-preset-chips">
+                <button type="button" class="q-preset-chip" data-q-intro-preset="formal">🏛️ Tono Formal (Como imagen)</button>
+                <button type="button" class="q-preset-chip" data-q-intro-preset="calido">🌸 Tono Cálido Minorista</button>
+                <button type="button" class="q-preset-chip" data-q-intro-preset="mayorista">🎁 Tono Mayorista / Souvenirs</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- PASO 2: PRODUCTOS DEL CATÁLOGO O PERSONALIZADOS A MEDIDA -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">2</span>
+                <h2 class="q-section-title">Productos Cotizados (Catálogo o A Medida)</h2>
+              </div>
+            </div>
+
+            <div class="q-add-buttons-bar">
+              <button type="button" class="btn-q-add-catalog" id="btn-q-add-catalog">
+                <span>🛍️ + Agregar del Catálogo</span>
+              </button>
+              <button type="button" class="btn-q-add-custom" id="btn-q-add-custom">
+                <span>✨ + Personalizado / A Medida</span>
+              </button>
+            </div>
+
+            <div class="q-editor-items-list" id="q-editor-items-list">
+              <!-- Se inyectan filas editables desde presupuestos.js -->
+            </div>
+          </section>
+
+          <!-- PASO 3: TOTALES, DESCUENTOS, SEÑA 50% Y CONDICIONES -->
+          <section class="q-section-card">
+            <div class="q-section-head">
+              <div class="q-section-step">
+                <span class="q-step-num">3</span>
+                <h2 class="q-section-title">Totales, Seña &amp; Condiciones de Taller</h2>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:1.25rem; flex-wrap:wrap; margin-bottom:1rem; padding:0.65rem 0.85rem; background:#FAF6F0; border-radius:7px; border:1px solid #EAE0D4;">
+              <label style="display:inline-flex; align-items:center; gap:0.45rem; font-size:0.8rem; font-weight:600; color:#2B2625; cursor:pointer;" title="Desactivalo si estás pasando opciones por escala (ej: 10, 50 y 100 unidades) y no querés sumar todo abajo">
+                <input type="checkbox" id="q-chk-show-totals" checked />
+                <span>Mostrar Cuadro de Total General al final</span>
+              </label>
+              <label style="display:inline-flex; align-items:center; gap:0.45rem; font-size:0.8rem; font-weight:600; color:#2B2625; cursor:pointer;">
+                <input type="checkbox" id="q-chk-show-deposit" checked />
+                <span>Detallar Seña 50% y Saldo 50%</span>
+              </label>
+            </div>
+
+            <div class="q-form-grid-3" style="margin-bottom:0.85rem;">
+              <div class="q-field">
+                <label class="q-label" for="q-inp-disc-pct">Bonificación (%)</label>
+                <input type="number" min="0" max="100" step="0.5" id="q-inp-disc-pct" class="q-input" value="0" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-disc-fix">Descuento Fijo ($)</label>
+                <input type="number" min="0" step="100" id="q-inp-disc-fix" class="q-input" value="0" />
+              </div>
+              <div class="q-field">
+                <label class="q-label" for="q-inp-shipping">Envío / Logística ($)</label>
+                <input type="number" min="0" step="100" id="q-inp-shipping" class="q-input" value="0" />
+              </div>
+            </div>
+
+            <div class="q-field">
+              <label class="q-label" for="q-inp-delivery">Plazo Estimado de Confección &amp; Entrega</label>
+              <input type="text" id="q-inp-delivery" class="q-input" placeholder="Ej: 5 a 7 días hábiles desde la confirmación" />
+            </div>
+
+            <div class="q-field">
+              <label class="q-label" for="q-inp-payment">Condiciones y Medios de Pago</label>
+              <textarea id="q-inp-payment" class="q-textarea" rows="2"></textarea>
+            </div>
+
+            <div class="q-field">
+              <label class="q-label" for="q-inp-footer-notes">Nota Artesanal / Observaciones Especiales</label>
+              <input type="text" id="q-inp-footer-notes" class="q-input" placeholder="Ej: Telas nobles prelavadas en taller..." />
+            </div>
+
+            <!-- PANEL PRIVADO DE RENTABILIDAD (SOLO ELENA & JUANMA, NO SALE EN EL PDF) -->
+            <div class="q-internal-margin-box">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <span style="font-size:0.74rem; font-weight:700; color:#2F573D; text-transform:uppercase; letter-spacing:0.06em;">🔒 Calculadora Privada de Ganancia (No sale en el PDF de la clienta)</span>
+              </div>
+              <div class="q-internal-margin-grid">
+                <div class="q-internal-stat">
+                  <span>Costo Taller Est.</span>
+                  <strong id="q-int-cost">$ 0</strong>
+                </div>
+                <div class="q-internal-stat">
+                  <span>Ganancia Neta</span>
+                  <strong id="q-int-profit">$ 0</strong>
+                </div>
+                <div class="q-internal-stat">
+                  <span>Rentabilidad</span>
+                  <strong id="q-int-margin">0% margen</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: BARRA DE ACCIONES + VISTA PREVIA A4 PAGINADA EN VIVO -->
+        <div class="quotes-preview-col">
+
+          <div class="q-export-bar">
+            <div class="q-export-primary-row">
+              <button type="button" class="btn-q-pdf js-q-download-pdf" title="Descargar el archivo .pdf listo para guardar o enviar">
+                <span>📥 Descargar PDF</span>
+              </button>
+              <button type="button" class="btn-q-whatsapp js-q-open-wa" title="Enviar resumen + link por WhatsApp a la clienta">
+                <span>💬 Enviar WhatsApp</span>
+              </button>
+              <button type="button" class="btn-q-save js-q-save-btn" title="Guardar en el historial y Google Sheets">
+                <span>💾 Guardar</span>
+              </button>
+            </div>
+
+            <div class="q-export-secondary-row">
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button type="button" class="q-mini-btn" id="btn-q-share-native-pdf" title="En celulares Android/iPhone abre directamente el menú para adjuntar el archivo PDF al chat de WhatsApp">
+                  <span>📲 Compartir Archivo PDF (Celular)</span>
+                </button>
+                <button type="button" class="q-mini-btn" id="btn-q-download-jpg" title="Descargar cada página como foto JPG de alta calidad para enviar como imagen en WhatsApp">
+                  <span>🖼️ Imagen HD</span>
+                </button>
+                <button type="button" class="q-mini-btn js-q-print-btn" title="Imprimir en papel A4 o guardar con la impresora nativa del sistema">
+                  <span>🖨️ Imprimir A4</span>
+                </button>
+              </div>
+              <span style="font-size:0.72rem; color:#7A7067; font-weight:600;">Vista Previa Real A4</span>
+            </div>
+          </div>
+
+          <!-- ESCENARIO CON HOJAS A4 AUTO-PAGINADAS -->
+          <div class="q-stage-viewport" id="q-stage-viewport">
+            <div class="q-stage-scale-wrap" id="q-stage-scale-wrap">
+              <!-- Hojas .quote-a4-page generadas dinámicamente -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- HISTORIAL DE PRESUPUESTOS GUARDADOS & CONVERSIÓN A PEDIDOS -->
+      <section class="admin-card" id="quotes-history-section" style="margin-top:2.25rem;">
+        <div class="admin-card__header">
+          <div>
+            <h3 class="admin-card__title">Historial de Presupuestos Guardados</h3>
+            <div class="admin-card__subtitle">Reabrí cualquier cotización para ajustarla, reenviarla por WhatsApp o convertirla en un Pedido de Taller en 1 clic</div>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+            <button type="button" class="btn-admin-nav is-active" data-q-hist-filter="todos">Todos</button>
+            <button type="button" class="btn-admin-nav" data-q-hist-filter="borrador">📝 Borradores</button>
+            <button type="button" class="btn-admin-nav" data-q-hist-filter="enviado">📲 Enviados</button>
+            <button type="button" class="btn-admin-nav" data-q-hist-filter="aprobado">✅ Aprobados</button>
+            <input type="text" id="q-history-search" class="q-input" placeholder="🔍 Buscar N° o clienta..." style="width:210px; padding:0.42rem 0.7rem;" />
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Cotización</th>
+                <th>Fecha</th>
+                <th>Clienta / Destinatario</th>
+                <th>Ítems</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones Rápidas</th>
+              </tr>
+            </thead>
+            <tbody id="q-history-tbody">
+              <!-- Inyectado por presupuestos.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: SELECTOR DE PRODUCTOS DEL CATÁLOGO
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="q-catalog-modal" role="dialog" aria-modal="true" aria-labelledby="q-cat-modal-title">
+    <div class="q-modal-dialog">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px;">Catálogo Oficial Divina Locura Deco</span>
+          <h3 class="q-modal-title" id="q-cat-modal-title">Elegir Creaciones del Catálogo</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+          <input type="text" id="q-catalog-search" class="q-input" placeholder="🔍 Buscar cofia, repasador, neceser, muñeca, ajuar..." style="max-width:340px;" />
+          <div class="bank-filter-pills">
+            <button type="button" class="bank-filter-pill is-active" data-q-cat-pill="todos">Todos</button>
+            <button type="button" class="bank-filter-pill" data-q-cat-pill="cuidado-personal">Satén &amp; Skincare</button>
+            <button type="button" class="bank-filter-pill" data-q-cat-pill="hogar">Hogar &amp; Cocina</button>
+            <button type="button" class="bank-filter-pill" data-q-cat-pill="organizacion">Organización</button>
+            <button type="button" class="bank-filter-pill" data-q-cat-pill="infantil">Bebés &amp; Infantil</button>
+          </div>
+        </div>
+
+        <div class="q-catalog-grid" id="q-catalog-modal-grid">
+          <!-- Tarjetas de productos -->
+        </div>
+      </div>
+      <div class="q-modal-footer">
+        <button type="button" class="btn-admin-cta" data-q-close-modal>
+          <span>Listo, volver al presupuesto &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: AGREGAR PIEZA PERSONALIZADA / A MEDIDA
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="q-custom-modal" role="dialog" aria-modal="true" aria-labelledby="q-cust-modal-title">
+    <div class="q-modal-dialog q-modal-dialog--narrow">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px;">Atelier &amp; Confección Especial</span>
+          <h3 class="q-modal-title" id="q-cust-modal-title">Agregar Creación Personalizada / A Medida</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <div class="q-field">
+          <label class="q-label" for="q-cust-title">Nombre de la Creación o Encargo</label>
+          <input type="text" id="q-cust-title" class="q-input" placeholder="Ej: Cortinas en Tusor Prelavado a Medida / Souvenirs Bordados" />
+        </div>
+
+        <div class="q-form-grid-2" style="margin-bottom:0.8rem;">
+          <div class="q-field">
+            <label class="q-label" for="q-cust-fabric">Sugerir Tela del Muestrario</label>
+            <select id="q-cust-fabric" class="q-select"></select>
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="q-cust-variant">Detalle de Tela, Color o Medida</label>
+            <input type="text" id="q-cust-variant" class="q-input" placeholder="Ej: Lino Crudo · 2,20 × 1,60 m" />
+          </div>
+        </div>
+
+        <div class="q-form-grid-3" style="margin-bottom:0.8rem;">
+          <div class="q-field">
+            <label class="q-label" for="q-cust-qty">Cantidad</label>
+            <input type="number" min="1" value="1" id="q-cust-qty" class="q-input" />
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="q-cust-price">Precio Unitario ($)</label>
+            <input type="number" min="0" step="0.01" id="q-cust-price" class="q-input" placeholder="Ej: 34500" />
+          </div>
+          <div class="q-field">
+            <label class="q-label" for="q-cust-cost">Costo Interno ($ opc.)</label>
+            <input type="number" min="0" step="100" id="q-cust-cost" class="q-input" placeholder="Solo interno" />
+          </div>
+        </div>
+
+        <div class="q-field">
+          <label class="q-label" for="q-cust-desc">Descripción Detallada para la Clienta</label>
+          <textarea id="q-cust-desc" class="q-textarea" rows="3" placeholder="Detalle de confección, medidas exactas, inicial o nombre bordado, forrería, packaging artesanal..."></textarea>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:1rem; padding:0.85rem; background:#FAF6F0; border:1px solid #E5DBD0; border-radius:8px; margin-top:0.5rem;">
+          <div id="q-cust-img-preview" style="width:76px; height:76px; border-radius:6px; border:1px solid #D9CEC1; background:#FFFFFF; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;"></div>
+          <div style="display:flex; flex-direction:column; gap:0.45rem; flex:1;">
+            <span style="font-size:0.76rem; font-weight:700; color:#2B2625;">Fotografía o Referencia en el PDF (Opcional)</span>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+              <label class="q-mini-btn" style="cursor:pointer;">
+                <span>📱 Subir Foto / Boceto</span>
+                <input type="file" id="q-cust-file-input" accept="image/*" style="display:none;" />
+              </label>
+              <button type="button" class="q-mini-btn" id="btn-cust-pick-bank">
+                <span>🖼️ Elegir del Banco (105+ Fotos)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="q-modal-footer">
+        <button type="button" class="btn-admin-outline" data-q-close-modal>Cancelar</button>
+        <button type="button" class="btn-admin-cta" id="btn-cust-confirm-add">
+          <span>✨ Agregar al Presupuesto</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: SELECTOR DE FOTOGRAFÍA (BANCO VISUAL + SUBIDA DESDE CELULAR)
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="q-photo-picker-modal" role="dialog" aria-modal="true" aria-labelledby="q-photo-modal-title">
+    <div class="q-modal-dialog">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px;">Fotografía de Producto</span>
+          <h3 class="q-modal-title" id="q-photo-modal-title">Elegir o Subir Foto para este Ítem</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <div style="display:flex; gap:0.65rem; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:0.9rem;">
+          <input type="text" id="q-photo-picker-search" class="q-input" placeholder="🔍 Filtrar fotos por nombre o categoría..." style="max-width:320px;" />
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <label class="btn-admin-cta" style="cursor:pointer; padding:0.5rem 0.9rem;">
+              <span>📱 Subir Foto desde Celular / PC</span>
+              <input type="file" id="q-photo-upload-input" accept="image/*" style="display:none;" />
+            </label>
+            <button type="button" class="btn-admin-outline" id="btn-photo-use-monogram" style="padding:0.5rem 0.85rem;">
+              <span>Usar Sello Monograma “DL”</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bank-picker-grid" id="q-photo-picker-grid">
+          <!-- Miniaturas del Banco Visual -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 4: ENVIAR PRESUPUESTO POR WHATSAPP
+       ======================================================================== -->
+  <div class="q-modal-backdrop" id="q-whatsapp-modal" role="dialog" aria-modal="true" aria-labelledby="q-wa-modal-title">
+    <div class="q-modal-dialog q-modal-dialog--narrow">
+      <div class="q-modal-header">
+        <div>
+          <span class="admin-page-kicker" style="margin-bottom:2px; color:#1E6B47;">Envío Directo a Clienta</span>
+          <h3 class="q-modal-title" id="q-wa-modal-title">Enviar Presupuesto por WhatsApp</h3>
+        </div>
+        <button type="button" class="q-modal-close" data-q-close-modal aria-label="Cerrar">✕</button>
+      </div>
+      <div class="q-modal-body">
+        <div class="q-field">
+          <label class="q-label" for="q-wa-modal-phone">Número de WhatsApp de la Clienta</label>
+          <input type="tel" id="q-wa-modal-phone" class="q-input" placeholder="Ej: 381 555 1234 o 11 4567 8901 (si lo dejás vacío podés elegir el contacto en WhatsApp)" />
+        </div>
+
+        <div style="margin:0.65rem 0;">
+          <label style="display:inline-flex; align-items:center; gap:0.45rem; font-size:0.8rem; font-weight:600; color:#2B2625; cursor:pointer;">
+            <input type="checkbox" id="q-wa-chk-link" checked />
+            <span>Incluir link interactivo para que la clienta vea y descargue la hoja PDF desde su celular</span>
+          </label>
+        </div>
+
+        <div class="q-field">
+          <label class="q-label" for="q-wa-modal-text">Vista previa del mensaje (podés editarlo antes de enviar)</label>
+          <textarea id="q-wa-modal-text" class="q-textarea" rows="9" style="font-size:0.8rem;"></textarea>
+        </div>
+
+        <div style="background:#FAF6F0; border:1px solid #E5DBD0; border-radius:8px; padding:0.75rem 0.9rem; font-size:0.78rem; color:#5F5852; margin-top:0.65rem;">
+          💡 <strong>Consejo práctico para Mamá:</strong> Podés tocar <strong>“1. Descargar PDF”</strong> para tener el archivo listo y luego <strong>“2. Abrir WhatsApp”</strong> (o usar <em>Compartir Archivo PDF</em> directo desde el celular).
+        </div>
+      </div>
+      <div class="q-modal-footer" style="justify-content:space-between;">
+        <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+          <button type="button" class="btn-admin-outline" id="btn-q-wa-download-pdf">
+            <span>📥 1. Descargar PDF</span>
+          </button>
+          <button type="button" class="btn-admin-outline" id="btn-q-wa-copy-link">
+            <span>🔗 Copiar Link</span>
+          </button>
+        </div>
+        <button type="button" class="btn-q-whatsapp" id="btn-q-wa-send-now">
+          <span>💬 2. Abrir WhatsApp y Enviar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="banco-data.js?v=20261128v3"></script>
+  <script src="products-data.js?v=20261128v3"></script>
+  <script src="workshop-db.js?v=20261128v3"></script>
+  <script src="presupuestos-pdf.js?v=20261128v3"></script>
+  <script src="presupuestos.js?v=20261128v3"></script>
+  <script src="admin.js?v=20261128v3"></script>
+</body>
+</html>
