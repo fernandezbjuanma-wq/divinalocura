@@ -338,6 +338,7 @@
   // Router de Inicialización según la Página Actual
   function initActivePage() {
     const pageId = document.body.getAttribute('data-admin-page');
+    injectInlineSectionTutorial(pageId);
     switch (pageId) {
       case 'dashboard':
         initDashboardPage();
@@ -2925,6 +2926,150 @@
       backdrop.classList.add('is-open');
       drawer.classList.add('is-open');
     });
+  }
+
+  const GUIDE_INLINE_COLLAPSED_KEY = 'divinalocura_elena_inline_collapsed_v1';
+
+  function getInlineCollapsedMap() {
+    try {
+      const obj = JSON.parse(localStorage.getItem(GUIDE_INLINE_COLLAPSED_KEY) || '{}');
+      return (obj && typeof obj === 'object') ? obj : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function setInlineCollapsed(pageId, collapsed) {
+    const map = getInlineCollapsedMap();
+    map[pageId] = !!collapsed;
+    try {
+      localStorage.setItem(GUIDE_INLINE_COLLAPSED_KEY, JSON.stringify(map));
+    } catch (e) {}
+  }
+
+  function injectInlineSectionTutorial(pageId) {
+    if (!pageId || pageId === 'guia') return;
+    const sec = ADMIN_GUIDE_SECTIONS.find(s => s.id === pageId);
+    if (!sec) return;
+
+    const contentArea = document.getElementById('admin-content-area');
+    if (!contentArea || document.getElementById('admin-inline-tutorial-box')) return;
+
+    const hero = contentArea.querySelector('.admin-page-hero');
+    const box = document.createElement('section');
+    box.id = 'admin-inline-tutorial-box';
+    box.className = 'admin-inline-tutorial no-print';
+    box.setAttribute('aria-label', `Tutorial de ${sec.shortTitle}`);
+
+    function renderInlineBox() {
+      const doneSet = getGuideDoneSet();
+      const isDone = doneSet.has(sec.id);
+      const collapsedMap = getInlineCollapsedMap();
+      // Si nunca la cerró ni la marcó entendida, empieza abierta para recibir a Elena con claridad
+      const isCollapsed = collapsedMap[sec.id] !== undefined ? !!collapsedMap[sec.id] : isDone;
+
+      box.classList.toggle('is-collapsed', isCollapsed);
+
+      box.innerHTML = `
+        <div class="admin-inline-tutorial__head" id="inline-tut-head" role="button" tabindex="0" aria-expanded="${!isCollapsed}">
+          <div class="admin-inline-tutorial__head-left">
+            <span class="admin-inline-tutorial__icon">${sec.icon}</span>
+            <div>
+              <div class="admin-inline-tutorial__kicker">
+                <span>🌸 Tutorial de esta sección</span>
+                ${isDone ? '<span class="admin-inline-tutorial__done-pill">✓ Ya vista</span>' : ''}
+              </div>
+              <h3 class="admin-inline-tutorial__title">¿Qué podés hacer en ${esc(sec.shortTitle)}?</h3>
+              <p class="admin-inline-tutorial__summary">${esc(sec.summary)}</p>
+            </div>
+          </div>
+          <div class="admin-inline-tutorial__head-actions">
+            <button type="button" class="btn-admin-outline" id="btn-inline-tut-toggle" style="padding:0.45rem 0.85rem; font-size:0.76rem;">
+              <span>${isCollapsed ? '📖 Ver paso a paso ▾' : 'Ocultar tutorial ▴'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-inline-tutorial__body">
+          <div class="admin-inline-tutorial__grid">
+            <div>
+              <h4 class="admin-help-subhead">✅ Paso a paso: lo que podés hacer acá</h4>
+              <ol class="admin-inline-tutorial__steps">
+                ${sec.steps.map((st, idx) => `
+                  <li>
+                    <span class="admin-help-list__num">${idx + 1}</span>
+                    <span>${esc(st)}</span>
+                  </li>
+                `).join('')}
+              </ol>
+            </div>
+
+            <div class="admin-inline-tutorial__side">
+              <div class="admin-help-auto-box">
+                <strong>⚙️ Lo que el sistema hace automáticamente:</strong><br>
+                ${esc(sec.automation)}
+              </div>
+              <div class="admin-help-tip-box">
+                <strong>💡 Consejo práctico para Mamá:</strong><br>
+                ${esc(sec.tip)}
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-inline-tutorial__foot">
+            <button type="button" class="btn-admin-cta" id="btn-inline-tut-done" style="padding:0.5rem 1rem; font-size:0.78rem; background:#2F6B4B; border-color:#26583D;">
+              <span>${isDone ? '✓ Minimizar tutorial para trabajar cómoda' : '✓ ¡Ya entendí! Minimizar para trabajar cómoda'}</span>
+            </button>
+            <a href="admin-guia.html#sec-${esc(sec.id)}" class="btn-admin-outline" style="padding:0.48rem 0.9rem; font-size:0.78rem;">
+              <span>📖 Ver Tutorial Completo de Todas las Secciones &rarr;</span>
+            </a>
+          </div>
+        </div>
+      `;
+
+      const toggleAction = (e) => {
+        if (e && e.target && e.target.closest('a')) return;
+        const nowCollapsed = !box.classList.contains('is-collapsed');
+        setInlineCollapsed(sec.id, nowCollapsed);
+        renderInlineBox();
+      };
+
+      const headEl = box.querySelector('#inline-tut-head');
+      const toggleBtn = box.querySelector('#btn-inline-tut-toggle');
+      const doneBtn = box.querySelector('#btn-inline-tut-done');
+
+      if (headEl) {
+        headEl.addEventListener('click', (e) => {
+          if (e.target && e.target.closest('#btn-inline-tut-toggle')) return;
+          toggleAction(e);
+        });
+        headEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleAction(e);
+          }
+        });
+      }
+      if (toggleBtn) toggleBtn.addEventListener('click', toggleAction);
+      if (doneBtn) {
+        doneBtn.addEventListener('click', () => {
+          const setObj = getGuideDoneSet();
+          setObj.add(sec.id);
+          saveGuideDoneSet(setObj);
+          setInlineCollapsed(sec.id, true);
+          renderInlineBox();
+          adminToast('🌸 ¡Genial! Podés volver a abrir el tutorial de esta sección cuando quieras.');
+        });
+      }
+    }
+
+    renderInlineBox();
+
+    if (hero && hero.parentNode) {
+      hero.insertAdjacentElement('afterend', box);
+    } else {
+      contentArea.insertBefore(box, contentArea.firstChild);
+    }
   }
 
   function initGuiaPage() {
