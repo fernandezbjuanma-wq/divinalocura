@@ -175,16 +175,9 @@
       topActions.insertBefore(cloudPill, topActions.firstChild);
     }
 
-    // 5. Botón de Ayuda Contextual ("❓ ¿Cómo funciona?") en TODAS las páginas del Panel
-    if (topActions && !document.getElementById('admin-context-help-btn')) {
-      const helpBtn = document.createElement('button');
-      helpBtn.type = 'button';
-      helpBtn.id = 'admin-context-help-btn';
-      helpBtn.className = 'btn-admin-nav btn-admin-nav--help';
-      helpBtn.title = 'Abrir explicación paso a paso de qué podés hacer en esta pantalla';
-      helpBtn.innerHTML = '<span>❓ ¿Cómo funciona?</span>';
-      helpBtn.addEventListener('click', () => openContextualHelpDrawer());
-      topActions.insertBefore(helpBtn, topActions.firstChild);
+    // 5. Menú desplegable fijo de Tutoriales ("🎓 Tutoriales ▾") en TODAS las páginas del Panel
+    if (topActions) {
+      injectTutorialDropdownMenu(topActions);
     }
 
     refreshCloudPill();
@@ -376,6 +369,8 @@
         initGuiaPage();
         break;
     }
+    refreshTutorialDropdownMenu();
+    maybeAutoStartSectionTour(pageId);
   }
 
   // =========================================================================
@@ -2653,7 +2648,7 @@
         'Abajo ves en vivo los últimos pedidos recibidos y qué piezas están ahora mismo en corte, costura o bordado.'
       ],
       automation: 'Todos los números de esta pantalla se calculan solos usando tus Pedidos, tus Gastos y tu cola de Producción. Nunca tenés que sumar a mano.',
-      tip: 'Si algún día te perdés en cualquier pantalla del Panel, tocá el botón “❓ ¿Cómo funciona?” arriba a la derecha y se abre la explicación exacta de esa sección.'
+      tip: 'Si algún día te olvidás cómo funciona cualquier pantalla, tocá el menú desplegable “🎓 Tutoriales ▾” arriba a la derecha para repetir el recorrido paso a paso.'
     },
     {
       id: 'presupuestos',
@@ -2929,6 +2924,827 @@
   }
 
   const GUIDE_INLINE_COLLAPSED_KEY = 'divinalocura_elena_inline_collapsed_v1';
+  const TOUR_SEEN_KEY = 'divinalocura_elena_tour_seen_v1';
+  let tourAutoChecked = false;
+  let activeTourState = null;
+  let tourDropdownGlobalWired = false;
+
+  function getTourSeenSet() {
+    try {
+      const arr = JSON.parse(localStorage.getItem(TOUR_SEEN_KEY) || '[]');
+      return new Set(Array.isArray(arr) ? arr : []);
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function saveTourSeenSet(setObj) {
+    try {
+      localStorage.setItem(TOUR_SEEN_KEY, JSON.stringify(Array.from(setObj)));
+    } catch (e) {}
+  }
+
+  // Paso final universal que muestra a Elena dónde queda guardado el menú desplegable de tutoriales
+  function buildFinalMenuStep(mobileViewOpt) {
+    const step = {
+      selector: '#admin-tour-menu-wrap',
+      title: '¡Guardado siempre acá en «🎓 Tutoriales ▾»!',
+      text: 'Si algún día te olvidás cómo hacer algo, tocá este botón desplegable arriba a la derecha. Desde ahí podés repetir este recorrido paso a paso o saltar al tutorial de cualquier otra sección.',
+      tip: 'También podés abrir el resumen rápido o el manual completo de las 10 secciones en un solo clic.'
+    };
+    if (mobileViewOpt) step.mobileView = mobileViewOpt;
+    return step;
+  }
+
+  const TOUR_STEPS_BY_PAGE = {
+    dashboard: [
+      {
+        selector: '.admin-nav-links',
+        title: 'Tu barra de secciones del taller',
+        text: 'Desde estas pestañas te movés por todo el negocio: Presupuestos PDF, Pedidos, Producción, Stock de Telas, Ganancias, Chat, Creaciones, Banco de Fotos y Configuración.',
+        tip: 'Los numeritos de colores te avisan cuántos presupuestos, pedidos o piezas en máquina tenés activos.'
+      },
+      {
+        selector: '.admin-grid-4',
+        title: 'Tus 4 números clave del día',
+        text: 'De un solo vistazo ves cuánto ingresó, cuánta ganancia neta quedó, cuántos pedidos recibiste y cuántas piezas están ahora mismo en la máquina.',
+        tip: 'Todo se calcula automáticamente con tus Pedidos, Gastos y Producción. Nunca tenés que sumar a mano.'
+      },
+      {
+        selector: '.admin-grid-3',
+        title: 'Accesos directos a cada herramienta',
+        text: 'Si alguna vez no te acordás en qué pestaña estaba una función, acá tenés todas las áreas con su título y explicación clara.',
+        tip: 'Tocá cualquier tarjeta para abrir directo esa sección.'
+      },
+      {
+        selector: '.admin-grid-2',
+        title: 'Últimos pedidos y piezas en confección',
+        text: 'Acá ves en vivo los encargos más recientes que entraron y qué piezas están ahora mismo en corte, costura o bordado.',
+        tip: 'Ideal para arrancar la mañana sabiendo qué conviene priorizar en el taller.'
+      },
+      buildFinalMenuStep()
+    ],
+    presupuestos: [
+      {
+        selector: '#quotes-kpis-section',
+        mobileView: 'editor',
+        title: 'Resumen de tus Presupuestos',
+        text: 'Acá arriba ves cuántos presupuestos armaste, cuánto suman en total y cuántos ya te aprobaron tus clientas.',
+        tip: 'En el celular usá las 3 pestañas («1. Armar», «2. Hoja PDF» y «Guardados») para moverte cómoda sin hacer zoom.'
+      },
+      {
+        selector: '.quotes-builder-col .q-section-card:nth-of-type(1)',
+        mobileView: 'editor',
+        title: 'Paso 1: Datos de la clienta y estilo de hoja',
+        text: 'Elegí una clienta guardada en “Autocompletar” o escribí nombre, WhatsApp y localidad. También elegís el color de la hoja (Terracota, Carbón o Salvia) y el tono del saludo.',
+        tip: 'El número de presupuesto (ej: DL-2026-001) y la fecha de validez se completan solos.'
+      },
+      {
+        selector: '.q-add-buttons-bar',
+        mobileView: 'editor',
+        title: 'Paso 2: Sumá productos del catálogo o a medida',
+        text: 'Tocá «🛍️ + Agregar del Catálogo» para elegir productos ya cargados con foto y precio, o «✨ + Personalizado / A Medida» para cotizar cortinas, ajuares o souvenirs especiales.',
+        tip: 'En cualquier producto podés tocar «📋 Otra cant.» para cotizar por 10, 50 o 100 unidades con distinto precio.'
+      },
+      {
+        selector: '.q-internal-margin-box',
+        mobileView: 'editor',
+        title: 'Calculadora privada de ganancia (solo la ves vos)',
+        text: 'Este bloque te muestra tu costo de confección y la ganancia neta que te deja este presupuesto antes de enviarlo.',
+        tip: 'Tranquila: estos números son 100% internos y NUNCA aparecen en el PDF ni en el link que ve la clienta.'
+      },
+      {
+        selector: '.q-export-bar',
+        mobileView: 'preview',
+        title: 'Paso 3: Descargá el PDF o envialo por WhatsApp',
+        text: 'Desde acá bajás la hoja profesional en PDF A4, la compartís directo por WhatsApp desde el celular, la imprimís o mandás el mensaje prolijo con link online.',
+        tip: 'La hoja se divide sola en varias páginas numeradas si el presupuesto tiene muchos productos.'
+      },
+      {
+        selector: '#quotes-history-section',
+        mobileView: 'history',
+        title: 'Historial y botón «✨ A Pedido»',
+        text: 'Todos los presupuestos que guardás quedan ordenados acá para editarlos, duplicarlos o pasarlos a Pedido real con un toque cuando la clienta confirma la seña.',
+        tip: 'Al tocar «✨ A Pedido», se crea solo el Pedido y las piezas entran automáticamente a tu tablero de Producción.'
+      },
+      buildFinalMenuStep('editor')
+    ],
+    pedidos: [
+      {
+        selector: '#pedidos-search-input',
+        closest: '.admin-card',
+        title: 'Buscá y filtrá pedidos al instante',
+        text: 'Filtrá por estado (Pendientes, En Confección, Listos o Entregados) o escribí el nombre, teléfono o número de pedido para encontrarlo en un segundo.',
+        tip: 'Ideal cuando una clienta te escribe por WhatsApp preguntando cómo va su encargo.'
+      },
+      {
+        selector: '#pedidos-list-container',
+        title: 'Tarjetas de cada encargo',
+        text: 'Acá cambiás el estado, anotás la fecha estimada de entrega y escribís tus Notas de Taller. También podés sacar un Recibo imprimible o un Presupuesto PDF en 1 clic.',
+        tip: 'Al pasar un pedido a “En Confección”, el sistema lo manda solo al tablero de Producción y descuenta la tela.'
+      },
+      {
+        selector: '#clients-table-tbody',
+        closest: '.admin-card',
+        title: 'Tu Directorio completo de Clientas',
+        text: 'Acá quedan guardadas todas las clientas con su teléfono y localidad. Con los botones de la derecha podés cotizarles o abrir el chat directo.',
+        tip: 'Todas estas clientas también te aparecen listas en el autocompletado de Presupuestos.'
+      },
+      buildFinalMenuStep()
+    ],
+    produccion: [
+      {
+        selector: '#form-add-production',
+        closest: '.admin-card',
+        title: 'Ingresá una nueva pieza a confeccionar',
+        text: 'Cargá encargos que te hicieron por WhatsApp o reposiciones de stock indicando producto, clienta, tela y metros aproximados.',
+        tip: 'Si ponés «Stock Taller» como clienta, al completarla suma automáticamente +1 unidad a tu stock disponible.'
+      },
+      {
+        selector: '.admin-kanban',
+        title: 'Tu pizarrón en 5 fases de taller',
+        text: 'Cada tarjeta avanza por Corte → Costura → Bordado → Calidad → Empaque con un solo botón, para que nunca se te pase una entrega.',
+        tip: 'Cuando terminás todas las piezas de un pedido, ese pedido pasa automáticamente a «Listo para Entregar ✨».'
+      },
+      buildFinalMenuStep()
+    ],
+    stock: [
+      {
+        selector: '#form-add-material',
+        closest: '.admin-card',
+        title: 'Agregá rollos de tela o insumos nuevos',
+        text: 'Registrá cada rollo (Satén, Lino, Waffle, Tusor, puntillas o bolsitas) con sus metros actuales, costo por metro y stock mínimo de alerta.',
+        tip: 'Si bajás del mínimo que definiste, el sistema te avisa con una alerta visual antes de quedarte sin tela.'
+      },
+      {
+        selector: '#materials-table-tbody',
+        closest: '.admin-card',
+        title: 'Control de rollos con botones + y − rápidos',
+        text: 'Sumá metros cuando comprás tela nueva, restá retazos o actualizá el costo por metro si cambió el precio del proveedor.',
+        tip: 'Tener el costo por metro al día hace que la Calculadora de Ganancias siempre te sugiera precios rentables.'
+      },
+      {
+        selector: '#showcase-fabrics-admin-grid',
+        closest: '.admin-card',
+        title: 'Muestrario público de telas de Elena',
+        text: 'Desde acá editás las fotos, colores y cuidados de lavado de las telas que ven tus clientas en la tienda web para encargos a medida.',
+        tip: 'Podés agregar una tela nueva o actualizar su foto directo desde tu celular.'
+      },
+      buildFinalMenuStep()
+    ],
+    finances: [
+      {
+        selector: '#fin-period-selector',
+        closest: '.admin-page-hero',
+        title: 'Elegí el mes que querés analizar',
+        text: 'Tocá cualquier mes (o «Todos los períodos») para ver exactamente cuánto facturaste, gastaste y ganaste en esa etapa.',
+        tip: 'También podés exportar el balance a planilla CSV si querés guardarlo en la compu.'
+      },
+      {
+        selector: '.admin-grid-3',
+        title: 'Facturación, Gastos y Ganancia Real',
+        text: 'Acá ves en limpio el total vendido, lo invertido en materiales/envíos, tu ganancia real y el seguimiento de señas del 50% ya cobradas vs. saldo pendiente.',
+        tip: 'Te permite saber siempre cuánta plata ya entró y cuánta vas a cobrar al entregar.'
+      },
+      {
+        selector: '#cost-calculator-card',
+        title: 'Calculadora de costos y precio sugerido',
+        text: 'Elegí la tela, metros, mercería, empaque y horas de costura: te calcula tu costo real y el precio de venta sugerido según el margen que elijas.',
+        tip: 'Probalo 30 segundos antes de cotizar una pieza a medida nueva para asegurarte una buena ganancia.'
+      },
+      {
+        selector: '#form-add-expense',
+        closest: '.admin-card',
+        title: 'Registrá tus compras y gastos del taller',
+        text: 'Anotá compras de telas, hilos, cajas o envíos para que tu ganancia neta sea siempre exacta.',
+        tip: 'Truco mágico: si en categoría “Telas” escribís algo como «Compra 12m Satén», se suman solos 12m a tu Stock.'
+      },
+      buildFinalMenuStep()
+    ],
+    chat: [
+      {
+        selector: '.admin-chat-sidebar',
+        title: 'Lista de clientas que te escribieron',
+        text: 'Acá ves a todas las clientas que iniciaron consulta o hicieron un pedido desde la tienda web. Tocá una para abrir su historial.',
+        tip: 'Así mantenés las consultas del taller ordenadas aparte de tus mensajes personales.'
+      },
+      {
+        selector: '.admin-chat-window',
+        title: 'Respondé rápido con plantillas listas',
+        text: 'Escribí tu mensaje abajo o tocá cualquiera de los botones de respuesta rápida (en costura, pedido listo o paquete despachado) para contestar en un segundo.',
+        tip: 'También podés continuar cualquier conversación por WhatsApp desde Pedidos o Presupuestos.'
+      },
+      buildFinalMenuStep()
+    ],
+    productos: [
+      {
+        selector: '#btn-new-product-page',
+        title: 'Publicá una nueva creación artesanal',
+        text: 'Tocá este botón para crear un producto nuevo con su título, categoría, precio visible, costo de taller, colores disponibles y hasta 4 fotos.',
+        tip: 'Las fotos que subís desde el celular se comprimen solas para que la tienda cargue rapidísimo.'
+      },
+      {
+        selector: '#products-table-tbody',
+        closest: '.admin-card',
+        title: 'Editá precios, colores o fotos en segundos',
+        text: 'Acá tenés todo tu catálogo publicado. Tocá «✏️ Editar / Fotos» en cualquier producto para actualizar un precio o cambiar una foto sin volver a cargar todo.',
+        tip: 'Cada precio nuevo que guardás acá se actualiza al instante en la Tienda y en el Cotizador de Presupuestos.'
+      },
+      buildFinalMenuStep()
+    ],
+    banco: [
+      {
+        selector: '#btn-bank-toggle-upload',
+        title: 'Subí fotos nuevas desde tu celular',
+        text: 'Guardá tus fotos nuevas organizadas por colección en el Banco Visual privado del taller para tenerlas siempre a mano.',
+        tip: 'Se optimizan automáticamente sin perder nitidez.'
+      },
+      {
+        selector: '#bank-filter-pills',
+        closest: '.admin-card',
+        title: 'Filtrá por colección o fotos todavía libres',
+        text: 'Usá el buscador o elegí una colección. Tocando «Disponibles» ves qué fotos editoriales todavía no están publicadas en ningún producto.',
+        tip: 'Ideal para estrenar productos nuevos usando fotos que ya sacaste.'
+      },
+      {
+        selector: '#admin-bank-grid',
+        title: 'Tu galería editorial lista para publicar',
+        text: 'Tocá cualquier imagen para verla en grande o tocá «✨ Crear Producto» para abrir el creador ya precargado con esa foto.',
+        tip: 'Estas fotos también están conectadas al selector de imágenes de Presupuestos.'
+      },
+      buildFinalMenuStep()
+    ],
+    configuracion: [
+      {
+        selector: '#cfg-cloud-url',
+        closest: '.admin-card',
+        title: 'Conexión a Google Sheets (Nube en vivo)',
+        text: 'Pegando acá la URL de Apps Script sincronizás pedidos, presupuestos, stock y fotos en tiempo real entre tu celular y la computadora.',
+        tip: 'Cuando está conectado, el puntito de «Google Sheets Activo» arriba se pone verde.'
+      },
+      {
+        selector: '#cfg-show-gift-boxes',
+        closest: '.admin-card',
+        title: 'Interruptores de secciones de la tienda',
+        text: 'Prendé o apagá con 1 clic Cajas de Regalo, Diseñador a Medida, Muestrario de Telas o Cupones si alguna semana estás a tope de trabajo.',
+        tip: 'Los cambios se reflejan en la tienda pública apenas tocás Guardar.'
+      },
+      {
+        selector: '#cfg-whatsapp',
+        closest: '.admin-card',
+        title: 'Tu WhatsApp, Instagram y Alias de cobro',
+        text: 'Actualizá tus datos de contacto y tu Alias o link de Mercado Pago desde un solo lugar.',
+        tip: 'Se actualizan solos en el pie de todos tus Presupuestos PDF, recibos y botones de la tienda.'
+      },
+      {
+        selector: '#cfg-pass-elena-current',
+        closest: '.admin-card',
+        title: 'Claves de acceso del taller',
+        text: 'Acá podés cambiar tu contraseña personal (Elena) o la de Juanma cuando necesites.',
+        tip: 'Acordate también de tocar «💾 Respaldo» arriba una vez por semana para guardar una copia de seguridad.'
+      },
+      buildFinalMenuStep()
+    ]
+  };
+
+  function closeTutorialDropdown() {
+    const wrap = document.getElementById('admin-tour-menu-wrap');
+    const btn = document.getElementById('btn-admin-tour-menu');
+    if (wrap) wrap.classList.remove('is-open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  function injectTutorialDropdownMenu(topActions) {
+    if (!topActions || document.getElementById('admin-tour-menu-wrap')) return;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'admin-tour-menu-wrap';
+    wrap.className = 'admin-tour-menu-wrap no-print';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'btn-admin-tour-menu';
+    btn.className = 'btn-admin-nav btn-admin-tour-menu';
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.title = 'Abrir menú desplegable de tutoriales paso a paso';
+    btn.innerHTML = '<span>🎓 Tutoriales ▾</span>';
+
+    const dropdown = document.createElement('div');
+    dropdown.id = 'admin-tour-dropdown';
+    dropdown.className = 'admin-tour-dropdown no-print';
+    dropdown.setAttribute('role', 'menu');
+
+    wrap.appendChild(btn);
+    wrap.appendChild(dropdown);
+    topActions.insertBefore(wrap, topActions.firstChild);
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !wrap.classList.contains('is-open');
+      if (willOpen) {
+        refreshTutorialDropdownMenu();
+        wrap.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+
+        // Posicionamiento seguro para que nunca se corte ni en celular ni en tablet/escritorio
+        const btnRect = btn.getBoundingClientRect();
+        if (window.innerWidth <= 680) {
+          dropdown.style.top = `${Math.min(Math.max(58, Math.round(btnRect.bottom + 8)), Math.max(68, window.innerHeight - 260))}px`;
+          dropdown.style.left = '';
+          dropdown.style.right = '';
+        } else {
+          dropdown.style.top = '';
+          if (btnRect.right < 350) {
+            dropdown.style.left = '0px';
+            dropdown.style.right = 'auto';
+          } else {
+            dropdown.style.right = '0px';
+            dropdown.style.left = 'auto';
+          }
+        }
+      } else {
+        closeTutorialDropdown();
+      }
+    });
+
+    if (!tourDropdownGlobalWired) {
+      tourDropdownGlobalWired = true;
+      document.addEventListener('click', (e) => {
+        const menuWrap = document.getElementById('admin-tour-menu-wrap');
+        if (menuWrap && menuWrap.classList.contains('is-open') && !menuWrap.contains(e.target)) {
+          closeTutorialDropdown();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeTutorialDropdown();
+      });
+    }
+
+    refreshTutorialDropdownMenu();
+  }
+
+  function refreshTutorialDropdownMenu() {
+    const dropdown = document.getElementById('admin-tour-dropdown');
+    if (!dropdown) return;
+
+    const pageId = document.body.getAttribute('data-admin-page') || 'dashboard';
+    const currentSec = ADMIN_GUIDE_SECTIONS.find(s => s.id === pageId);
+    const seenSet = getTourSeenSet();
+    const hasTourHere = !!TOUR_STEPS_BY_PAGE[pageId];
+    const tourSections = ADMIN_GUIDE_SECTIONS.filter(s => !!TOUR_STEPS_BY_PAGE[s.id]);
+
+    dropdown.innerHTML = `
+      <div class="admin-tour-dropdown__head">
+        <span class="admin-tour-dropdown__kicker">🌸 Guía Interactiva de Elena</span>
+        <div class="admin-tour-dropdown__title">
+          ${currentSec ? `${currentSec.icon} ${esc(currentSec.shortTitle)}` : 'Recorridos paso a paso'}
+        </div>
+      </div>
+
+      <button type="button" class="admin-tour-dropdown__primary" id="btn-tour-drop-start-here">
+        <span>${hasTourHere ? '▶ Iniciar recorrido paso a paso aquí' : '▶ Empezar recorrido desde el Inicio'}</span>
+      </button>
+
+      <button type="button" class="admin-tour-dropdown__secondary" id="btn-tour-drop-summary">
+        <span>📋 Ver resumen rápido de esta pantalla</span>
+      </button>
+
+      <div class="admin-tour-dropdown__label">Repetir recorrido en cualquier sección</div>
+      <div class="admin-tour-dropdown__list">
+        ${tourSections.map((sec) => {
+          const isCur = sec.id === pageId;
+          const isSeen = seenSet.has(sec.id);
+          return `
+            <button type="button" class="admin-tour-dropdown__item ${isCur ? 'is-current' : ''}" data-tour-jump="${esc(sec.id)}" data-tour-href="${esc(sec.href)}">
+              <span>${sec.icon} ${esc(sec.shortTitle)}</span>
+              ${isCur
+                ? `<span class="admin-tour-dropdown__status">${isSeen ? '✓ Aquí' : '▶ Aquí'}</span>`
+                : (isSeen
+                  ? '<span class="admin-tour-dropdown__status">✓ Visto</span>'
+                  : '<span style="font-size:0.7rem; color:#8C7A6B;">Ir →</span>')}
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="admin-tour-dropdown__foot">
+        <a href="admin-guia.html" class="admin-tour-dropdown__foot-link">📖 Guía Completa</a>
+        <button type="button" class="admin-tour-dropdown__foot-link" id="btn-tour-drop-reset">🔄 Reiniciar todos</button>
+      </div>
+    `;
+
+    const startHereBtn = dropdown.querySelector('#btn-tour-drop-start-here');
+    if (startHereBtn) {
+      startHereBtn.addEventListener('click', () => {
+        closeTutorialDropdown();
+        if (hasTourHere) {
+          startSectionSpotlightTour(pageId);
+        } else {
+          window.location.href = 'admin.html?tour=1';
+        }
+      });
+    }
+
+    const summaryBtn = dropdown.querySelector('#btn-tour-drop-summary');
+    if (summaryBtn) {
+      summaryBtn.addEventListener('click', () => {
+        closeTutorialDropdown();
+        openContextualHelpDrawer(pageId === 'guia' ? 'dashboard' : pageId);
+      });
+    }
+
+    dropdown.querySelectorAll('[data-tour-jump]').forEach((itemBtn) => {
+      itemBtn.addEventListener('click', () => {
+        const targetId = itemBtn.getAttribute('data-tour-jump');
+        const targetHref = itemBtn.getAttribute('data-tour-href');
+        closeTutorialDropdown();
+        if (targetId === pageId && TOUR_STEPS_BY_PAGE[pageId]) {
+          startSectionSpotlightTour(pageId);
+        } else if (targetHref) {
+          window.location.href = `${targetHref}?tour=1`;
+        }
+      });
+    });
+
+    const resetBtn = dropdown.querySelector('#btn-tour-drop-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        saveTourSeenSet(new Set());
+        closeTutorialDropdown();
+        refreshTutorialDropdownMenu();
+        adminToast('🔄 Recorridos reiniciados: volverán a mostrarse paso a paso al entrar a cada sección.');
+        if (hasTourHere) {
+          setTimeout(() => startSectionSpotlightTour(pageId), 260);
+        }
+      });
+    }
+  }
+
+  function pulseTutorialMenuButton() {
+    const btn = document.getElementById('btn-admin-tour-menu');
+    if (!btn) return;
+    btn.classList.remove('is-attention-pulse');
+    void btn.offsetWidth;
+    btn.classList.add('is-attention-pulse');
+    setTimeout(() => btn.classList.remove('is-attention-pulse'), 3000);
+  }
+
+  function cleanTourQueryParam() {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('tour')) {
+        url.searchParams.delete('tour');
+        window.history.replaceState({}, '', url.pathname + (url.search ? url.search : '') + url.hash);
+      }
+    } catch (e) {}
+  }
+
+  function stopSpotlightTour(options) {
+    const opts = options || {};
+    if (!activeTourState) return;
+    const st = activeTourState;
+    activeTourState = null;
+
+    if (st.timers && st.timers.length) {
+      st.timers.forEach(t => clearTimeout(t));
+    }
+    if (st.rafId) cancelAnimationFrame(st.rafId);
+    if (st.onScrollResize) {
+      window.removeEventListener('scroll', st.onScrollResize, true);
+      window.removeEventListener('resize', st.onScrollResize);
+    }
+    if (st.onKeyDown) {
+      document.removeEventListener('keydown', st.onKeyDown);
+    }
+
+    [st.clickshield, st.spotlight, st.popover].forEach((el) => {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    });
+    document.body.classList.remove('admin-tour-active');
+
+    if (opts.markSeen) {
+      const seenSet = getTourSeenSet();
+      seenSet.add(st.pageId);
+      saveTourSeenSet(seenSet);
+
+      if (opts.completed) {
+        const doneSet = getGuideDoneSet();
+        doneSet.add(st.pageId);
+        saveGuideDoneSet(doneSet);
+      }
+
+      cleanTourQueryParam();
+      refreshTutorialDropdownMenu();
+
+      const inlineBox = document.getElementById('admin-inline-tutorial-box');
+      if (inlineBox && typeof inlineBox._refreshInlineBox === 'function') {
+        inlineBox._refreshInlineBox();
+      }
+
+      pulseTutorialMenuButton();
+      if (opts.completed) {
+        adminToast('🎉 ¡Recorrido completado! Queda guardado arriba en «🎓 Tutoriales ▾» para repetirlo cuando quieras.');
+      } else {
+        adminToast('📌 Recorrido pausado. Cuando quieras volver a verlo, tocá «🎓 Tutoriales ▾» arriba.');
+      }
+    }
+  }
+
+  function applyMobileViewIfNeeded(viewName) {
+    if (!viewName || window.innerWidth > 1140) return;
+    const tabBtn = document.querySelector(`[data-q-mob-tab="${viewName}"]`);
+    if (tabBtn) {
+      tabBtn.click();
+    } else {
+      document.body.setAttribute('data-q-mobile-view', viewName);
+    }
+  }
+
+  function resolveTourStepElement(step) {
+    if (!step || !step.selector) return null;
+    const raw = document.querySelector(step.selector);
+    if (!raw) return null;
+    const target = step.closest ? (raw.closest(step.closest) || raw) : raw;
+    if (!target) return null;
+    const rect = target.getBoundingClientRect();
+    if (rect.width < 4 || rect.height < 4) return null;
+    return target;
+  }
+
+  function startSectionSpotlightTour(forcedPageId) {
+    const pageId = forcedPageId || document.body.getAttribute('data-admin-page') || 'dashboard';
+    const rawSteps = TOUR_STEPS_BY_PAGE[pageId];
+    if (!rawSteps || !rawSteps.length) {
+      openContextualHelpDrawer(pageId);
+      return;
+    }
+
+    // Cerrar cualquier tour anterior, menú desplegable o cajón abierto
+    stopSpotlightTour({ markSeen: false });
+    closeTutorialDropdown();
+    const openBackdrop = document.getElementById('admin-help-backdrop');
+    const openDrawer = document.getElementById('admin-help-drawer');
+    if (openBackdrop) openBackdrop.classList.remove('is-open');
+    if (openDrawer) openDrawer.classList.remove('is-open');
+
+    const secMeta = ADMIN_GUIDE_SECTIONS.find(s => s.id === pageId) || { icon: '🎓', shortTitle: 'Panel' };
+
+    const clickshield = document.createElement('div');
+    clickshield.className = 'admin-tour-clickshield no-print';
+
+    const spotlight = document.createElement('div');
+    spotlight.className = 'admin-tour-spotlight no-print';
+
+    const popover = document.createElement('div');
+    popover.className = 'admin-tour-popover no-print';
+    popover.setAttribute('role', 'dialog');
+    popover.setAttribute('aria-modal', 'true');
+    popover.setAttribute('aria-label', `Recorrido guiado de ${secMeta.shortTitle}`);
+
+    document.body.appendChild(clickshield);
+    document.body.appendChild(spotlight);
+    document.body.appendChild(popover);
+    document.body.classList.add('admin-tour-active');
+
+    const state = {
+      pageId,
+      steps: rawSteps,
+      index: 0,
+      currentTarget: null,
+      clickshield,
+      spotlight,
+      popover,
+      rafId: null,
+      timers: [],
+      onScrollResize: null,
+      onKeyDown: null
+    };
+    activeTourState = state;
+
+    function syncGeometry() {
+      if (!activeTourState || activeTourState !== state) return;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const isMobile = vw <= 680;
+      const target = state.currentTarget;
+
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        const pad = 8;
+        const left = Math.max(4, Math.round(rect.left - pad));
+        const right = Math.min(vw - 4, Math.round(rect.right + pad));
+        const top = Math.max(4, Math.round(rect.top - pad));
+        const bottom = Math.min(vh - 4, Math.round(rect.bottom + pad));
+        const width = Math.max(36, right - left);
+        const height = Math.max(32, bottom - top);
+
+        spotlight.style.opacity = '1';
+        spotlight.style.left = `${left}px`;
+        spotlight.style.top = `${top}px`;
+        spotlight.style.width = `${width}px`;
+        spotlight.style.height = `${height}px`;
+
+        if (!isMobile) {
+          const popRect = popover.getBoundingClientRect();
+          const popW = popRect.width || Math.min(410, vw - 24);
+          const popH = popRect.height || 240;
+          const gap = 14;
+          const margin = 14;
+          let pTop = margin;
+          let pLeft = Math.round(left + (width - popW) / 2);
+
+          if (bottom + gap + popH <= vh - margin) {
+            // Debajo del elemento resaltado
+            pTop = Math.round(bottom + gap);
+          } else if (top - gap - popH >= margin) {
+            // Arriba del elemento resaltado
+            pTop = Math.round(top - gap - popH);
+          } else if (right + gap + popW <= vw - margin) {
+            // A la derecha
+            pLeft = Math.round(right + gap);
+            pTop = Math.round(Math.min(Math.max(top, margin), vh - popH - margin));
+          } else if (left - gap - popW >= margin) {
+            // A la izquierda
+            pLeft = Math.round(left - gap - popW);
+            pTop = Math.round(Math.min(Math.max(top, margin), vh - popH - margin));
+          } else {
+            // Elemento muy grande: anclar elegante abajo a la derecha sin tapar el encabezado
+            pLeft = Math.round(vw - popW - 22);
+            pTop = Math.round(vh - popH - 22);
+          }
+
+          pLeft = Math.max(margin, Math.min(pLeft, vw - popW - margin));
+          pTop = Math.max(margin, Math.min(pTop, vh - popH - margin));
+          popover.style.left = `${pLeft}px`;
+          popover.style.top = `${pTop}px`;
+        } else {
+          popover.style.left = '';
+          popover.style.top = '';
+        }
+      } else {
+        // Sin elemento visible: centrar suavemente
+        spotlight.style.opacity = '0';
+        if (!isMobile) {
+          const popRect = popover.getBoundingClientRect();
+          const popW = popRect.width || 400;
+          const popH = popRect.height || 220;
+          popover.style.left = `${Math.max(14, Math.round((vw - popW) / 2))}px`;
+          popover.style.top = `${Math.max(20, Math.round((vh - popH) / 2))}px`;
+        }
+      }
+    }
+
+    function scrollForTarget(target) {
+      if (!target) return;
+      const isStickyHeader = !!(target.closest('.admin-top-nav') || target.closest('.admin-control-subbar'));
+      if (isStickyHeader) {
+        if (window.scrollY > 120) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        return;
+      }
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const topNav = document.querySelector('.admin-top-nav');
+      const subBar = document.querySelector('.admin-control-subbar');
+      const mobTabs = vw <= 1140 ? document.querySelector('.quotes-mobile-tabs') : null;
+      const stickyH = (topNav ? topNav.offsetHeight : 0) + (subBar ? subBar.offsetHeight : 0) + (mobTabs ? mobTabs.offsetHeight : 0);
+      const safeTop = Math.min(stickyH + 16, Math.round(vh * (vw <= 680 ? 0.34 : 0.3)));
+
+      const rect = target.getBoundingClientRect();
+      const absTop = rect.top + window.scrollY;
+      let targetScrollY;
+
+      if (vw <= 680) {
+        // En celular deja el elemento iluminado arriba, bien visible sobre el panel inferior
+        targetScrollY = Math.max(0, absTop - safeTop);
+      } else {
+        const availH = Math.max(200, vh - safeTop - 28);
+        if (rect.height <= availH * 0.56) {
+          targetScrollY = Math.max(0, absTop - safeTop - Math.round((availH - rect.height) * 0.32));
+        } else {
+          targetScrollY = Math.max(0, absTop - safeTop);
+        }
+      }
+
+      window.scrollTo({ top: Math.round(targetScrollY), behavior: 'smooth' });
+    }
+
+    function renderStep(stepIdx) {
+      if (!activeTourState || activeTourState !== state) return;
+      state.timers.forEach(t => clearTimeout(t));
+      state.timers = [];
+
+      state.index = Math.max(0, Math.min(stepIdx, state.steps.length - 1));
+      const step = state.steps[state.index];
+      const total = state.steps.length;
+      const isFirst = state.index === 0;
+      const isLast = state.index === total - 1;
+
+      if (step.mobileView) {
+        applyMobileViewIfNeeded(step.mobileView);
+      }
+
+      popover.innerHTML = `
+        <div class="admin-tour-popover__top">
+          <span class="admin-tour-popover__badge">Paso ${state.index + 1} de ${total} &middot; ${secMeta.icon} ${esc(secMeta.shortTitle)}</span>
+          <button type="button" class="admin-tour-popover__close" id="btn-tour-skip">Saltar ✕</button>
+        </div>
+        <h4 class="admin-tour-popover__title">${esc(step.title)}</h4>
+        <p class="admin-tour-popover__text">${esc(step.text)}</p>
+        ${step.tip ? `<div class="admin-tour-popover__tip"><strong>💡 Tip:</strong> ${esc(step.tip)}</div>` : ''}
+        <div class="admin-tour-popover__dots" aria-label="Progreso del recorrido">
+          ${state.steps.map((_, dIdx) => `
+            <span class="admin-tour-dot ${dIdx === state.index ? 'is-active' : (dIdx < state.index ? 'is-past' : '')}" data-tour-dot="${dIdx}" style="cursor:pointer;" title="Ir al paso ${dIdx + 1}"></span>
+          `).join('')}
+        </div>
+        <div class="admin-tour-popover__actions">
+          <div>
+            ${!isFirst ? '<button type="button" class="btn-admin-outline" id="btn-tour-prev" style="padding:0.46rem 0.85rem; font-size:0.78rem;">&larr; Anterior</button>' : '<span></span>'}
+          </div>
+          <div>
+            ${isLast
+              ? '<button type="button" class="btn-admin-cta" id="btn-tour-finish" style="padding:0.5rem 1rem; font-size:0.79rem; background:#2F6B4B; border-color:#26583D;">🎉 ¡Terminar recorrido!</button>'
+              : '<button type="button" class="btn-admin-cta" id="btn-tour-next" style="padding:0.5rem 1rem; font-size:0.79rem;">Siguiente &rarr;</button>'}
+          </div>
+        </div>
+      `;
+
+      const skipBtn = popover.querySelector('#btn-tour-skip');
+      const prevBtn = popover.querySelector('#btn-tour-prev');
+      const nextBtn = popover.querySelector('#btn-tour-next');
+      const finBtn = popover.querySelector('#btn-tour-finish');
+
+      if (skipBtn) skipBtn.addEventListener('click', () => stopSpotlightTour({ markSeen: true, completed: false }));
+      if (prevBtn) prevBtn.addEventListener('click', () => renderStep(state.index - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => renderStep(state.index + 1));
+      if (finBtn) finBtn.addEventListener('click', () => stopSpotlightTour({ markSeen: true, completed: true }));
+
+      popover.querySelectorAll('[data-tour-dot]').forEach((dotEl) => {
+        dotEl.addEventListener('click', () => {
+          const targetIdx = parseInt(dotEl.getAttribute('data-tour-dot'), 10);
+          if (!Number.isNaN(targetIdx)) renderStep(targetIdx);
+        });
+      });
+
+      // Resolver elemento destino (espera breve si hubo cambio de pestaña móvil)
+      const settleDelay = step.mobileView && window.innerWidth <= 1140 ? 90 : 15;
+      state.timers.push(setTimeout(() => {
+        state.currentTarget = resolveTourStepElement(step);
+        scrollForTarget(state.currentTarget);
+        syncGeometry();
+        // Re-sincronizar mientras termina el desplazamiento suave
+        state.timers.push(setTimeout(syncGeometry, 200));
+        state.timers.push(setTimeout(syncGeometry, 460));
+      }, settleDelay));
+    }
+
+    state.onScrollResize = () => {
+      if (state.rafId) cancelAnimationFrame(state.rafId);
+      state.rafId = requestAnimationFrame(syncGeometry);
+    };
+
+    state.onKeyDown = (e) => {
+      if (!activeTourState || activeTourState !== state) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        stopSpotlightTour({ markSeen: true, completed: false });
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (state.index < state.steps.length - 1) renderStep(state.index + 1);
+        else stopSpotlightTour({ markSeen: true, completed: true });
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (state.index > 0) renderStep(state.index - 1);
+      }
+    };
+
+    window.addEventListener('scroll', state.onScrollResize, true);
+    window.addEventListener('resize', state.onScrollResize);
+    document.addEventListener('keydown', state.onKeyDown);
+
+    renderStep(0);
+  }
+
+  function maybeAutoStartSectionTour(pageId) {
+    if (tourAutoChecked || !pageId || pageId === 'guia') return;
+    if (!TOUR_STEPS_BY_PAGE[pageId]) return;
+    tourAutoChecked = true;
+
+    const params = new URLSearchParams(window.location.search);
+    const forcedByUrl = params.get('tour') === '1';
+    const seenSet = getTourSeenSet();
+    if (!forcedByUrl && seenSet.has(pageId)) return;
+
+    setTimeout(() => {
+      const guardEl = document.getElementById('admin-login-guard');
+      if (guardEl && guardEl.style.display !== 'none') return;
+      if (activeTourState) return;
+      startSectionSpotlightTour(pageId);
+    }, 480);
+  }
 
   function getInlineCollapsedMap() {
     try {
@@ -2965,8 +3781,8 @@
       const doneSet = getGuideDoneSet();
       const isDone = doneSet.has(sec.id);
       const collapsedMap = getInlineCollapsedMap();
-      // Si nunca la cerró ni la marcó entendida, empieza abierta para recibir a Elena con claridad
-      const isCollapsed = collapsedMap[sec.id] !== undefined ? !!collapsedMap[sec.id] : isDone;
+      // Empieza compacta para no competir con el recorrido interactivo spotlight; Elena puede desplegarla o lanzar el recorrido en 1 clic
+      const isCollapsed = collapsedMap[sec.id] !== undefined ? !!collapsedMap[sec.id] : true;
 
       box.classList.toggle('is-collapsed', isCollapsed);
 
@@ -2984,8 +3800,11 @@
             </div>
           </div>
           <div class="admin-inline-tutorial__head-actions">
-            <button type="button" class="btn-admin-outline" id="btn-inline-tut-toggle" style="padding:0.45rem 0.85rem; font-size:0.76rem;">
-              <span>${isCollapsed ? '📖 Ver paso a paso ▾' : 'Ocultar tutorial ▴'}</span>
+            <button type="button" class="btn-admin-cta" id="btn-inline-tut-tour" style="padding:0.46rem 0.9rem; font-size:0.76rem;">
+              <span>▶ Recorrido paso a paso</span>
+            </button>
+            <button type="button" class="btn-admin-outline" id="btn-inline-tut-toggle" style="padding:0.45rem 0.82rem; font-size:0.76rem;">
+              <span>${isCollapsed ? '📖 Ver resumen ▾' : 'Ocultar resumen ▴'}</span>
             </button>
           </div>
         </div>
@@ -3018,7 +3837,7 @@
 
           <div class="admin-inline-tutorial__foot">
             <button type="button" class="btn-admin-cta" id="btn-inline-tut-done" style="padding:0.5rem 1rem; font-size:0.78rem; background:#2F6B4B; border-color:#26583D;">
-              <span>${isDone ? '✓ Minimizar tutorial para trabajar cómoda' : '✓ ¡Ya entendí! Minimizar para trabajar cómoda'}</span>
+              <span>${isDone ? '✓ Minimizar resumen para trabajar cómoda' : '✓ ¡Ya entendí! Minimizar para trabajar cómoda'}</span>
             </button>
             <a href="admin-guia.html#sec-${esc(sec.id)}" class="btn-admin-outline" style="padding:0.48rem 0.9rem; font-size:0.78rem;">
               <span>📖 Ver Tutorial Completo de Todas las Secciones &rarr;</span>
@@ -3035,12 +3854,20 @@
       };
 
       const headEl = box.querySelector('#inline-tut-head');
+      const tourBtn = box.querySelector('#btn-inline-tut-tour');
       const toggleBtn = box.querySelector('#btn-inline-tut-toggle');
       const doneBtn = box.querySelector('#btn-inline-tut-done');
 
+      if (tourBtn) {
+        tourBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          startSectionSpotlightTour(sec.id);
+        });
+      }
+
       if (headEl) {
         headEl.addEventListener('click', (e) => {
-          if (e.target && e.target.closest('#btn-inline-tut-toggle')) return;
+          if (e.target && (e.target.closest('#btn-inline-tut-toggle') || e.target.closest('#btn-inline-tut-tour'))) return;
           toggleAction(e);
         });
         headEl.addEventListener('keydown', (e) => {
@@ -3058,11 +3885,12 @@
           saveGuideDoneSet(setObj);
           setInlineCollapsed(sec.id, true);
           renderInlineBox();
-          adminToast('🌸 ¡Genial! Podés volver a abrir el tutorial de esta sección cuando quieras.');
+          adminToast('🌸 ¡Genial! Podés repetir el recorrido cuando quieras desde «🎓 Tutoriales ▾» arriba.');
         });
       }
     }
 
+    box._refreshInlineBox = renderInlineBox;
     renderInlineBox();
 
     if (hero && hero.parentNode) {
@@ -3186,8 +4014,13 @@
               <div style="background:#FFFFFF; border:1px solid #E5DDD2; border-radius:9px; padding:0.95rem 1rem;">
                 <div style="font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#6C635C; margin-bottom:0.5rem;">Probá esta herramienta ahora</div>
                 <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                  ${TOUR_STEPS_BY_PAGE[sec.id] ? `
+                    <a href="${esc(sec.href)}?tour=1" class="btn-admin-cta" style="justify-content:center;">
+                      <span>▶ Hacer recorrido guiado paso a paso ahí</span>
+                    </a>
+                  ` : ''}
                   <a href="${esc(sec.href)}" class="btn-admin-outline" style="justify-content:center;">
-                    <span>${sec.icon} Abrir ${esc(sec.shortTitle)} en una pestaña</span>
+                    <span>${sec.icon} Abrir ${esc(sec.shortTitle)}</span>
                   </a>
                   <button type="button" class="btn-admin-nav" id="btn-guide-toggle-done" style="justify-content:center; ${isDone ? 'background:#EAF6EF; border-color:rgba(30,107,71,0.35); color:#1E6B47;' : ''}">
                     <span>${isDone ? '✅ Ya entendí esta sección (tildada)' : '○ Marcar esta sección como entendida'}</span>
@@ -3642,6 +4475,8 @@
     toast: adminToast,
     downloadBackup: downloadWorkshopBackup,
     openHelp: openContextualHelpDrawer,
+    startTour: startSectionSpotlightTour,
+    stopTour: stopSpotlightTour,
     logout: logoutAdmin
   };
 
